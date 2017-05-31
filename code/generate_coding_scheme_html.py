@@ -34,7 +34,7 @@ def get_list(g):
 
     output = []
     for result in qres:
-        output.append([result.code.n3(g.namespace_manager)[11:],
+        output.append([result.code.n3(g.namespace_manager)[6:], # citec:
                       result.round.toPython(),
                       result.order.toPython(),
                       result.comment.toPython().replace("\n","\n<br />")
