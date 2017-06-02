@@ -31,7 +31,7 @@ def get_template_for_scope(g, scope):
 
     sparql_query = sparql_query.format(scope)
 
-    print(sparql_query)
+    #print(sparql_query)
 
     qres = g.query(sparql_query)
 
