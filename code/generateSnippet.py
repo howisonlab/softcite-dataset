@@ -83,6 +83,16 @@ if __name__ == '__main__':
         'body': \"\"\"<FIXME> rdf:type transition:projectURL ;
 
                       .\"\"\"
+      'memo':
+        'prefix': 'mem'
+        'body': 'ca:memo """ """'
+      'has_supplement':
+        'prefix': 'hs'
+        'body': 'citec:has_supplement [ rdf:type citec:supplement ;
+                           citec:isPresent FIXME ] ;'
+      'has_in_text_mention':
+       'prefix': 'hitm'
+       'body': 'citec:has_in_text_mention bioj:FIXME ;'
       'article block':
         'prefix': 'artb'
         'body': \"\"\"
