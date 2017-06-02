@@ -22,8 +22,8 @@ def get_list(g):
     WHERE {{
         ?code ca:codingOrder ?order ;
               ca:codingRound ?round ;
-              rdfs:comment ?comment .
-        OPTIONAL { ?code ca:example ?example }
+              rdfs:comment ?comment ; 
+              ca:example ?example .
     }} ORDER BY ASC(?round) ASC(?order)
     """
 
