@@ -18,11 +18,12 @@ g.parse("data/softcite-coding-scheme.ttl", format="n3")
 def get_list(g):
 
     sparql_query = """
-    SELECT ?code ?round ?order ?comment ?example
+    SELECT ?code ?scope ?round ?order ?comment ?example
     WHERE {{
         ?code ca:codingOrder ?order ;
               ca:codingRound ?round ;
-              rdfs:comment ?comment ; 
+              rdfs:comment ?comment ;
+              ca:appliesTo ?scope ;
               ca:example ?example .
     }} ORDER BY ASC(?round) ASC(?order)
     """
@@ -36,15 +37,14 @@ def get_list(g):
     output = []
     for result in qres:
         output.append([result.code.n3(g.namespace_manager)[6:], # citec:
-                      result.round.toPython(),
-                      result.order.toPython(),
+                      result.scope.toPython(),
                       result.comment.toPython().replace("\n","\n<br />"),
                       result.example.toPython().replace("\n","\n<br />")
                       ])
 #have a function that calls the relevant code for phase 1, 2, 3 and then place that content appropriately
 
     print(tabulate.tabulate(output,
-      headers = ["Code", "Phase", "Order", "Comment", "Example"],
+      headers = ["Code", "Scope", "Comment", "Example"],
       tablefmt="html")
       )
     # for result in qres:
