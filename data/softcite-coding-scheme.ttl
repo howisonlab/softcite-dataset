@@ -15,6 +15,7 @@
 
 #STRUCTURE OF YOUR CODED FILE (using snippets)
 
+#ARTICLE BLOCK
 # bioj:a2004-46-NATURE rdf:type bioj:article ;
 #		bioj:has_supplement bioj:a2004-46-NATURE-supp1 ;
 #		bioj:has_supplement bioj:a2004-46-NATURE-supp2 ;
@@ -25,6 +26,7 @@
 
 # citec:coded_no_selections TRUE - use to show no selections.
 
+#SELECTION BLOCK
 # bioj:a2004-46-NATURE-C01 rdf:type bioj:selection ;
 # bioj:full_quote "The molecule is rich in proline residues (13%) and analysis of its amino acid sequence with PONDR [21] indicates that in the absence of other viral components at least the N-terminal half of the subunit would be disordered.";
 
@@ -34,16 +36,38 @@
             #      ca:appliesCode [ rdf:type citec:in-text_mention ];
             #    ] ;
 
-bioj:has_supplement
+#CITED BLOCK
+
+citec:has_supplement
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """Applies to article. FIXME""" ;
+    rdfs:comment """Applies to article. Enter true if the article references supplementary materials or if the supplementary  materials were assigned to you. Enter false if there is no mention or supplementary materials assigned with this article.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 1 ;
     ca:template """
                                            ca:comment \"\"""" ;
 .
 
-bioj:full_quote
+citec:full_quote
+    rdf:type ca:ContentAnalysisCode ;
+    rdfs:comment """This code is a quotation taken directly from the article that provides the content that mentions the software.
+
+    Highlight this quote in your pdf. Also copy and paste directly from the pdf to this code—no need to remove hyphens from line breaks.""" ;
+    ca:codingOrder 1 ;
+    ca:codingRound 1 ;
+    ca:template """
+                                           ca:comment \"\"""" ;
+.
+
+citec:on_pdf_page
+    rdf:type ca:ContentAnalysisCode ;
+    rdfs:comment """This code provides the page of the pdf that your selection (i.e. full quote) can be found on. This refers specifically to the pdf page, not the journal page.""" ;
+    ca:codingOrder 1 ;
+    ca:codingRound 1 ;
+    ca:template """
+                                           ca:comment \"\"""" ;
+.
+
+citec:on_page
     rdf:type ca:ContentAnalysisCode ;
     rdfs:comment """FIXME""" ;
     ca:codingOrder 1 ;
@@ -70,36 +94,13 @@ citec:has_selection
                                            ca:comment \"\"""" ;
 .
 
-citec:in-text_mention
+citec:mention_type
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """Mention of software in the text part of the paper""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
+    rdfs:comment """This code applies to the selection and describes where the article mentions the software.
 
-citec:reference
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """A software relevant reference. If multiple references are present in the coding unit and refer to the same piece of software, multiple has_reference codes should be attached to the same in-text_mention, not broken up.""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
+    True to in_text if the software from this selection is mentioned in the text.
 
-citec:software_used
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """For mentions of software that was used in the research""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:software_not_used
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """For mentions of software that the authors didn't use (e.g., they discuss why they didn't use it).	This code should be used for software that the authors considered (e.g., the competitors of the software they used).""" ;
+    True to in_reference if the software from this selection is mentioned in the references.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
@@ -108,16 +109,18 @@ citec:software_not_used
 
 citec:software_name
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """whatever the name is""" ;
+    rdfs:comment """This code describes the name of the software as the authors refer to it in the selection.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
                                            ca:comment \"\"""" ;
 .
 
-citec:version_number
+citec:software_was_used
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """whatever the version number is. If use date as version number include both codes""" ;
+    rdfs:comment """This code applies to the selection and describes whether or not the authors actually made use of or developed the software being mentioned.
+
+    Reply true if the authors used or developed this software and false if they only considered using the software or simply mentioned its existence.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
@@ -126,16 +129,30 @@ citec:version_number
 
 citec:url
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """whatever the url is""" ;
+    rdfs:comment """This code describes whether or not there is a URL in the text and provides the URL.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
                                            ca:comment \"\"""" ;
 .
 
+citec:version_number
+    rdfs:type ca:ContentAnalysisCode ;
+    rdfs:comment """This code provides the version number as described in the mention.
+
+    Reply true if a version of some sort is provided. Reply false if there is no way to distinguish the version.
+
+    In label, provide the version number or the date, if no specific version number is provided.""" ;
+    ca:codingOrder 1 ;
+    ca:codingRound 3 ;
+    ca:template """
+                                           ca:comment \"\"""" ;
+.
+
+
 citec:date
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """A date used to indicate a version of the software.  Not the date of the paper or reference. If use date as version number include both codes""" ;
+    rdfs:comment """This code provides a date used to indicate a version of the software.  This is not the date of the paper or reference. """ ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
@@ -145,24 +162,6 @@ citec:date
 citec:creator
     rdfs:type ca:ContentAnalysisCode ;
     rdfs:comment """A mention of the creator of the software, don't include names as citation anchors.  Haven't decided what to do about references here yet. Example of where to use: Software, written by xyz, was used for ... 'coupled to MetaMorph imaging software (Universal Imaging Corporation, Downingtown, PA).'  Code just the company name""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:memo
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Any interesting issues that come up in the paper""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:configuration_details
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Any interesting issues that come up in the paper""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
@@ -207,7 +206,18 @@ citec:project_name
 
 citec:creator
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """unlike in the rest of the text, code the author names of the paper, and include the full string of multiple authors as a single value for a :creator code""" ;
+    rdfs:comment """If in text this is about whether or not there is a description of who made the software. The reference doesn't count. If it is a reference rather than in text you can count the authors. 
+
+    unlike in the rest of the text, code the author names of the paper, and include the full string of multiple authors as a single value for a :creator code. """ ;
+    ca:codingOrder 1 ;
+    ca:codingRound 3 ;
+    ca:template """
+                                           ca:comment \"\"""" ;
+.
+
+citec:memo
+    rdfs:type ca:ContentAnalysisCode ;
+    rdfs:comment """Any interesting issues that come up in the paper""" ;
     ca:codingOrder 1 ;
     ca:codingRound 3 ;
     ca:template """
