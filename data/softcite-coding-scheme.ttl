@@ -13,6 +13,7 @@
 
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
+
 #STRUCTURE OF YOUR CODED FILE (using snippets)
 
 #ARTICLE BLOCK
@@ -41,7 +42,9 @@
 
 #CITATION BLOCK
 
+#Codes apply to the article or a selection from the article. A selection may be an in text mention or a reference. Many codes below apply to both in text mentions and references, but may be used slightly differently because those contexts are slightly different. If you're currently coding an in text mention do not refer to the citations to gather more information and vice versa.
 
+#You will read the article, highlight in text mentions (a selection) and their corresponding references, if present (another selection). Those selections will then be coded using the options below.
 
 #BELOW CODES ARE IN ARTICLE BLOCK
 citec:has_supplement
@@ -51,6 +54,7 @@ citec:has_supplement
     ca:codingRound 1 ;
     ca:template """citec:isPresent FIXME""" ;
 .
+
 citec:has_in_text_mention
     rdf:type ca:ContentAnalysisCode ;
     rdfs:comment """Applies to article. This code is applied to each in text mention of software.
@@ -71,16 +75,16 @@ citec:coded_no_in_text_mentions
     rdf:type ca:ContentAnalysisCode ;
     rdfs:comment """Applies to article. This code is used if the article made no mention of software.
 
-    Reply true if there was no mention of software in the article. Reply false if there was a mention (i.e. if you have responses for has_in_text_mention above).""" ;
+    Reply true if there was no mention of software in the article. Reply false if there was a mention (i.e. it's false if you have responses for has_in_text_mention above).""" ;
     ca:codingOrder 1 ;
     ca:codingRound 2 ;
     ca:template """citec:isPresent FIXME;"""" ;
 .
 
-#BELOW CODES ARE IN MENTION BLOCK
+#BELOW CODES ARE IN SELECTION BLOCK
 citec:memo
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Any interesting issues that come up in the paper""" ;
+    rdfs:comment """Use this space to record any interesting issues that come up in the paper.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 2 ;
     ca:template """ \"FIXME\" ;""" ;
@@ -88,9 +92,9 @@ citec:memo
 
 citec:full_quote
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code is a quotation taken directly from the article that provides the content that mentions the software.
+    rdfs:comment """This code is a quotation taken directly from the article that provides the content that mentions the software (i.e. the full quote is the selection you will code).
 
-    Highlight this quote in your pdf. Also copy and paste directly from the pdf to this code—no need to remove hyphens from line breaks.""" ;
+    Highlight this quote in your pdf. Copy and paste directly from the pdf to this code; there is no need to remove hyphens from line breaks.""" ;
 
     ca:example """We  used  Detrended  Corre-spondence Analysis in PC-ORD (McCune, 1993) to depict multivariatechanges in dominance of species neighborhoods for each focal speciesin recently burned and long-unburned sites.""";
 
@@ -111,10 +115,10 @@ citec:mention_type
     rdf:type ca:ContentAnalysisCode ;
     rdfs:comment """This code applies to the selection and describes where the article mentions the software.
 
-    Use in-text if the software from this selection is mentioned in the text. Alternatively, use reference if the software from this selection is mentioned in the references.""" ;
+    Use in-text if the software from this selection is from the body of the article. Alternatively, use reference if the software from this selection is mentioned in the references.""" ;
     ca:codingOrder 1 ;
     ca:codingRound 2 ;
-    ca:template """rdfs:label FIXME:\"in-text\" | \"reference\" ;""" ;
+    ca:template """rdfs:label \"FIXME:in_text | reference\" ;""" ;
 .
 
 citec:software_was_used
@@ -139,17 +143,6 @@ citec:software_name
                                   rdfs:label \"FIXME\" ;""" ;
 .
 
-citec:url
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides a URL if the text mention provided one.
-
-    Mark as true if the in text mention did provide a URL. Mark as false if no URL was provided. Do not look to the citation for a URL. Copy and paste the URL and enter it into the label.""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 2 ;
-    ca:template """citec:isPresent FIXME ;
-                                  rdfs:label \"FIXME\" ;""" ;
-.
-
 citec:version_number
     rdfs:type ca:ContentAnalysisCode ;
     rdfs:comment """This code provides the version number as described in the mention.
@@ -166,7 +159,6 @@ citec:version_number
                                       rdfs:label \"FIXME\" ;""" ;
 .
 
-
 citec:version_date
     rdfs:type ca:ContentAnalysisCode ;
     rdfs:comment """This code provides a date used to indicate a version of the software.  This is not the date of the paper or citation.
@@ -180,61 +172,38 @@ citec:version_date
                                       rdfs:label \"FIXME\" """ ;
 .
 
+citec:url
+    rdfs:type ca:ContentAnalysisCode ;
+    rdfs:comment """This code provides a URL if the selection provided one.
+
+    Mark as true if there is a URL provided. Mark as false if no URL was provided. Copy and paste the URL and enter it into the label.""" ;
+    ca:codingOrder 1 ;
+    ca:codingRound 2 ;
+    ca:template """citec:isPresent FIXME ;
+                                  rdfs:label \"FIXME\" ;""" ;
+.
+
 citec:creator
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides the creator of the software as described in the in text mention.
+    rdfs:comment """This code provides the creator of the software as described in the in text mention or the reference, depending on which you are coding.
 
-     don't include names as citation anchors.  Haven't decided what to do about references here yet. Example of where to use: Software, written by xyz, was used for ... 'coupled to MetaMorph imaging software (Universal Imaging Corporation, Downingtown, PA).'  Code just the company name""" ;
+    Enter true if a creator is named. Enter false if no creator is provided. Copy the creator as named in the in text mention or reference and paste it after label. If multiple creators are named, select them all and enter them into the label. If this is an in text selection, the creator would be whoever that text indicates the software creator to be. If this is a reference selection, the creator is the list of authors.
+
+    Software, written by xyz, was used for ... 'coupled to MetaMorph imaging software (Universal Imaging Corporation, Downingtown, PA).'  Code just the company name""" ;
     ca:example ""
     ca:codingOrder 1 ;
     ca:codingRound 2 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
+    ca:template """citec:isPresent FIXME ;
+                                      rdfs:label \"FIXME\"""" ;
 .
 
-citec:creator
+citec:reference_type
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """If in text this is about whether or not there is a description of who made the software. The reference doesn't count. If it is a reference rather than in text you can count the authors.
+    rdfs:comment """This code is only applied to reference selections and is used to categorize the type of reference that it is.
 
-    unlike in the rest of the text, code the author names of the paper, and include the full string of multiple authors as a single value for a :creator code. """ ;
+    Each option is mutually exclusive. Apply 'publication' if the reference is to a formal publication of some sort. Apply 'user_guide' if the reference is to a user guide for the software. Apply 'project_page' if the reference is just pointing to the software's online website. Apply 'project_name' IF WHAT?? """ ;
     ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:publication
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Reference to a paper primarily detailing the software itself (cited because it uses or introduces the software)""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:users_guide
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Reference to a user’s manual for the software""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:project_page
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """URL for the software’s online presence - downloads, orders, FAQs""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
-.
-
-citec:project_name
-    rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """Descriptive data about the software""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 3 ;
-    ca:template """
-                                           ca:comment \"\"""" ;
+    ca:codingRound 2 ;
+    ca:template """citec:isPresent FIXME ;
+                                      rdfs:label \"FIXME: publication | user_guide | project_page | project_name\"""" ;
 .
