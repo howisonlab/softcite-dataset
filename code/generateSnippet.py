@@ -32,7 +32,6 @@ def get_template_for_scope(g, scope):
     sparql_query = sparql_query.format(scope)
 
     #print(sparql_query)
-
     qres = g.query(sparql_query)
 
 # header = """
@@ -46,8 +45,7 @@ def get_template_for_scope(g, scope):
     template = """
                     ca:isTargetOf
                         [ rdf:type ca:CodeApplication ;
-                          ca:hasCoder "{}" ;
-                          ca:codedAt "FIXME"^^xsd:dateTime ;
+                          ca:hasCoder "{}" ;=
                           ca:appliesCode [ rdf:type {} ;
                                            {}
                                          ] ;
