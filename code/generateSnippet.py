@@ -43,13 +43,13 @@ def get_template_for_scope(g, scope):
 # print(header)
 
     template = """
-                    ca:isTargetOf
-                        [ rdf:type ca:CodeApplication ;
-                          ca:hasCoder "{}" ;=
-                          ca:appliesCode [ rdf:type {} ;
-                                           {}
-                                         ] ;
-                        ] ;"""
+                            ca:isTargetOf
+                                [ rdf:type ca:CodeApplication ;
+                                  ca:hasCoder "{}" ;
+                                  ca:appliesCode [ rdf:type {} ;
+                                                   {}
+                                                 ] ;
+                                ] ;"""
 
 #have a function that calls the relevant code for phase 1, 2, 3 and then place that content appropriately
 
@@ -66,53 +66,69 @@ def get_template_for_scope(g, scope):
 if __name__ == '__main__':
 
     completeTemplate = """
-    '.source.turtle':
-      'true':
-        'prefix': 'tr'
-        'body': 'true'
-      'false':
-        'prefix': 'fa'
-        'body': 'false'
-      'comment':
-        'prefix': 'ca'
-        'body': 'ca:comment """ """'
+      'memo':
+        'prefix': 'mem'
+        'body': 'ca:memo """ """'
       'url':
         'prefix': 'url'
         'body': \"\"\"<FIXME> rdf:type transition:projectURL ;
 
                       .\"\"\"
-      'memo':
-        'prefix': 'mem'
-        'body': 'ca:memo """ """'
-      'has_supplement':
-        'prefix': 'hs'
-        'body': \"\"\"
-                    citec:has_supplement [ rdf:type citec:supplement ;
-                                           citec:isPresent FIXME ] ;\"\"\"
-      'has_in_text_mention':
-       'prefix': 'hitm'
-       'body': 'citec:has_in_text_mention bioj:FIXME ;'
       'article block':
         'prefix': 'artb'
         'body': \"\"\"
-                    {}\"\"\"
+                        @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+                        @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+                        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+                        @prefix owl:     <http://www.w3.org/2002/07/owl#> .
+
+                        @prefix ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#> .
+                        @prefix doap: <http://usefulinc.com/ns/doap#> .
+
+                        @prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
+                        @prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
+                        @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
+
+                        @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
+
+
+                        bioj:aFIXME rdf:type bioj:article ;
+
+                            citec:has_supplement [ rdf:type citec:supplement ;
+                                                   citec:isPresent FIXME ] ;
+
+                            citec:has_in_text_mention bioj:FIXME ;
+
+                            citec:coded_no_in_text_mentions bioj:FIXME ;
+
+                        .\"\"\"
       'in-text block':
          'prefix': 'itb'
          'body': \"\"\"
-                    {}\"\"\"
+                        bioj-cited:aFIXME rdf:type citec:in_text_mention ;
+                            citec:full_quote FIXME ;
+
+                            citec:on_pdf_page FIXME  ;
+                            {}
+                            citec:has_reference bioj-cited:aFIXME ;
+                        .\"\"\"
       'reference block':
          'prefix': 'refb'
          'body': \"\"\"
-                    {}\"\"\"
+                        bioj-cited:aFIXME rdf:type citec:reference ;
+                            citec:full_quote FIXME ;
+
+                            citec:on_pdf_page FIXME  ;
+                            {}
+                        .\"\"\"
     """
 
-    article_string = get_template_for_scope(g, "article")
+    #article_string = get_template_for_scope(g, "article")
     in_text_mention_string = get_template_for_scope(g, "in-text_mention") + get_template_for_scope(g, "both")
     reference_string = get_template_for_scope(g, "reference") + get_template_for_scope(g, "both")
 
 
-    outputString = completeTemplate.format(article_string,
-                            in_text_mention_string,
+    outputString = completeTemplate.format(in_text_mention_string,
                             reference_string
                             )
 
