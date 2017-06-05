@@ -1,6 +1,6 @@
 """generate markdown from coding-scheme.ttl"""
 
-# Usage: python3 code/generate_coding_scheme.py > docs/coding-scheme.html
+# Usage: python3 code/generate_coding_scheme_html.py > docs/coding-scheme.html
 
 import rdflib
 import pprint
