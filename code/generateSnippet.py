@@ -69,11 +69,6 @@ if __name__ == '__main__':
       'memo':
         'prefix': 'mem'
         'body': 'ca:memo """ """'
-      'url':
-        'prefix': 'url'
-        'body': \"\"\"<FIXME> rdf:type transition:projectURL ;
-
-                      .\"\"\"
       'article block':
         'prefix': 'artb'
         'body': \"\"\"
@@ -92,30 +87,30 @@ if __name__ == '__main__':
                         @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
 
-                        bioj:aFIXME rdf:type bioj:article ;
+                        biojFIXME: rdf:type bioj:article ;
 
                             citec:has_supplement [ rdf:type citec:supplement ;
                                                    citec:isPresent FIXME ] ;
 
-                            citec:has_in_text_mention bioj:FIXME ;
+                            citec:has_in_text_mention biojFIXME:like a2002-22-AM_J_BOT_AB04 ;
 
-                            citec:coded_no_in_text_mentions bioj:FIXME ;
+                            citec:coded_no_in_text_mentions biojFIXME: ;
 
                         .\"\"\"
       'in-text block':
          'prefix': 'itb'
          'body': \"\"\"
-                        bioj-cited:aFIXME rdf:type citec:in_text_mention ;
+                        biojFIXME:like a2002-22-AM_J_BOT_AB04 rdf:type citec:in_text_mention ;
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
                             {}
-                            citec:has_reference bioj-cited:aFIXME ;
+                            citec:has_reference bioj-citedFIXME:like a002-22-AM_J_BOT_Staden-1996 ;
                         .\"\"\"
       'reference block':
          'prefix': 'refb'
          'body': \"\"\"
-                        bioj-cited:aFIXME rdf:type citec:reference ;
+                        bioj-citedFIXME:like a002-22-AM_J_BOT_Staden-1996 rdf:type citec:reference ;
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
