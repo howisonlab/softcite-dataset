@@ -36,8 +36,9 @@ def get_list(g):
 
     output = []
     for result in qres:
+        opt_scope = result.scope.toPython() if result.scope else ""
         output.append([result.code.n3(g.namespace_manager)[6:], # citec:
-                      result.scope.toPython(),
+                      opt_scope,
                       result.comment.toPython().replace("\n","\n<br />"),
                       result.example.toPython().replace("\n","\n<br />")
                       ])
