@@ -8,6 +8,7 @@ def test_individual_file_parse(file_to_check):
         print("Parsing {}".format(file_to_check))
         print("Seek line numbers for errors with:")
         print("python3 code/parseTurtle.py -f {}".format(file_to_check))
+        print("Use ctrl-G to jump to line number")
         g.parse(file_to_check, format="n3")
 
 """Uses metafunc to create a list of arguments for test_individual_file_parse"""
