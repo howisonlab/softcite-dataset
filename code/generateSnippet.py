@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
                             citec:has_in_text_mention biojFIXME: ;
 
-                            citec:coded_no_in_text_mentions biojFIXME: ;
+                            citec:coded_no_in_text_mentions bioj:FIXME ;
 
                         .\"\"\"
       'in-text block':
