@@ -92,7 +92,7 @@ if __name__ == '__main__':
                             citec:has_supplement [ rdf:type citec:supplement ;
                                                    citec:isPresent FIXME ] ;
 
-                            citec:has_in_text_mention biojFIXME:like a2002-22-AM_J_BOT_AB04 ;
+                            citec:has_in_text_mention biojFIXME: ;
 
                             citec:coded_no_in_text_mentions biojFIXME: ;
 
@@ -100,17 +100,17 @@ if __name__ == '__main__':
       'in-text block':
          'prefix': 'itb'
          'body': \"\"\"
-                        biojFIXME:like a2002-22-AM_J_BOT_AB04 rdf:type citec:in_text_mention ;
+                        biojFIXME: rdf:type citec:in_text_mention ;
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
                             {}
-                            citec:has_reference bioj-citedFIXME:like a002-22-AM_J_BOT_Staden-1996 ;
+                            citec:has_reference bioj-citedFIXME: ;
                         .\"\"\"
       'reference block':
          'prefix': 'refb'
          'body': \"\"\"
-                        bioj-citedFIXME:like a002-22-AM_J_BOT_Staden-1996 rdf:type citec:reference ;
+                        bioj-citedFIXME: rdf:type citec:reference ;
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
