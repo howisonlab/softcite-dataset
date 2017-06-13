@@ -220,7 +220,7 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/(\w+)/softcite-dataset.git',
+    matches = re.search('origin.*github.com/(.*+)/softcite-dataset.git',
                         remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
