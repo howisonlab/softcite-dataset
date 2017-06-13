@@ -104,6 +104,8 @@ if __name__ == '__main__':
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
+
+                            citec:spans_pages FIXME ; # true/false
                             {}
                             citec:has_reference bioj-citedFIXME: ;
                         .\"\"\"
@@ -114,6 +116,8 @@ if __name__ == '__main__':
                             citec:full_quote FIXME ;
 
                             citec:on_pdf_page FIXME  ;
+
+                            citec:spans_pages FIXME ; # true/false
                             {}
                         .\"\"\"
     """
