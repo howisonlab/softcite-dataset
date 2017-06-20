@@ -5,11 +5,13 @@ import rdflib
 """Defines a test that takes file_to_check as an argument"""
 def test_individual_file_parse(file_to_check):
         g = rdflib.Graph()
-        print("Parsing {}".format(file_to_check))
-        print("Seek line numbers for errors with:")
-        print("python3 code/parseTurtle.py -f {}".format(file_to_check))
-        print("Use ctrl-G to jump to line number")
-        g.parse(file_to_check, format="n3")
+
+        try:
+            g.parse(file_to_check, format="n3")
+        except rdflib.plugins.parsers.notation3.BadSyntax as bs:
+            pytest.fail("BadSyntax: Use python3 code/parseTurtle.py -f {}".format(file_to_check))
+
+        assert len(g) > 0, "File should not be empty"
 
 """Uses metafunc to create a list of arguments for test_individual_file_parse"""
 def pytest_generate_tests(metafunc):
