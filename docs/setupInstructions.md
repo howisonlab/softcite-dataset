@@ -90,7 +90,7 @@ From the terminal, execute the following command:
 
 A new file will be added to your individuals folder. You may need to right click on it and hit refresh to make the new file appear. The new file will contain the prefixes and article block for your new assignment.
 
-## Github Tutorials
+## Git Tutorials
 
 There are many free tutorials on how to use git that might be useful.
 
