@@ -24,7 +24,7 @@ def get_list(g):
               ca:codingRound ?round ;
               rdfs:comment ?comment ;
               ca:example ?example .
-        OPTIONAL {{ ?code ca:appliesTo ?scope }}
+        OPTIONAL {{ ?code ca:scope ?scope }}
     }} ORDER BY ASC(?round) ASC(?order)
     """
 
