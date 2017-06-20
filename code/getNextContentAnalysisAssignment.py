@@ -252,7 +252,7 @@ if __name__ == '__main__':
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-    username = get_username_from_github()
+    username = sys.argv[1]
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
