@@ -40,7 +40,7 @@ bioj:a{} rdf:type bioj:article ;
     citec:has_supplement [ rdf:type citec:supplement ;
                            citec:isPresent FIXME ] ;
 
-    citec:has_in_text_mention FIXME
+    citec:has_in_text_mention FIXME ;
 
     citec:coded_no_in_text_mentions FIXME ;
 .
@@ -220,7 +220,7 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/(.*+)/softcite-dataset.git',
+    matches = re.search('github.com/[\w\-.]+/softcite-dataset.git',
                         remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
