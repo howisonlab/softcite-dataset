@@ -84,9 +84,9 @@ After you have completely finished coding an article, you can make a pull reques
 
 When you have finished coding one article and committed your work, you can request another article to work on.
 
-From the terminal, execute the following command:
+From the terminal, execute the following command followed by your github username
 
-`$ python3 code/getNextContentAnalysisAssignment.py`
+`$ python3 code/getNextContentAnalysisAssignment.py <username>`
 
 A new file will be added to your individuals folder. You may need to right click on it and hit refresh to make the new file appear. The new file will contain the prefixes and article block for your new assignment.
 
