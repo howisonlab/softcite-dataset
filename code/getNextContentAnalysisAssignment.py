@@ -220,7 +220,7 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/[\w-.]+/softcite-dataset.git',
+    matches = re.search('github.com/[\w\-.]+/softcite-dataset.git',
                         remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
@@ -252,7 +252,7 @@ if __name__ == '__main__':
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-    username = "raghu-achukola"
+    username = get_username_from_github()
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
