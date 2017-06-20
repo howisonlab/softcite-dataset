@@ -40,7 +40,7 @@ bioj:a{} rdf:type bioj:article ;
     citec:has_supplement [ rdf:type citec:supplement ;
                            citec:isPresent FIXME ] ;
 
-    citec:has_in_text_mention FIXME
+    citec:has_in_text_mention FIXME ;
 
     citec:coded_no_in_text_mentions FIXME ;
 .
