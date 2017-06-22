@@ -1,5 +1,5 @@
 """generate snippet from coding-scheme.ttl.
-Usage: python3 code/generateSnippet.py <github_user_name> > my_snippet
+Usage: python3 code/generateSnippet.py <github_user_name> > mySnippet
 """
 
 import rdflib
@@ -68,54 +68,26 @@ if __name__ == '__main__':
     completeTemplate = """
       'memo':
         'prefix': 'mem'
-        'body': 'ca:memo """ """'
-      'article block':
-        'prefix': 'artb'
-        'body': \"\"\"
-                        @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
-                        @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-                        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-                        @prefix owl:     <http://www.w3.org/2002/07/owl#> .
-
-                        @prefix ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#> .
-                        @prefix doap: <http://usefulinc.com/ns/doap#> .
-
-                        @prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
-                        @prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
-                        @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
-
-                        @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
-
-
-                        biojFIXME: rdf:type bioj:article ;
-
-                            citec:has_supplement [ rdf:type citec:supplement ;
-                                                   citec:isPresent FIXME ] ;
-
-                            citec:has_in_text_mention biojFIXME: ;
-
-                            citec:coded_no_in_text_mentions bioj:FIXME ;
-
-                        .\"\"\"
+        'body': 'ca:memo ; # use triple  quotes'
       'in-text block':
          'prefix': 'itb'
          'body': \"\"\"
-                        biojFIXME: rdf:type citec:in_text_mention ;
-                            citec:full_quote FIXME ;
+                        biojFIXME: rdf:type citec:in_text_mention ; # use in text mention name
+                            citec:full_quote FIXME ; # use triple quotes
 
-                            citec:on_pdf_page FIXME  ;
+                            citec:on_pdf_page FIXME  ; # integer
 
                             citec:spans_pages FIXME ; # true/false
                             {}
-                            citec:has_reference bioj-citedFIXME: ;
+                            citec:has_reference bioj-citedFIXME: ; # name reference like bioj-cited:a2004-40-NAT_GENET_Author-YYYY, no quotes
                         .\"\"\"
       'reference block':
          'prefix': 'refb'
          'body': \"\"\"
                         bioj-citedFIXME: rdf:type citec:reference ;
-                            citec:full_quote FIXME ;
+                            citec:full_quote FIXME ; # use triple quotes
 
-                            citec:on_pdf_page FIXME  ;
+                            citec:on_pdf_page FIXME  ; # integer
 
                             citec:spans_pages FIXME ; # true/false
                             {}
