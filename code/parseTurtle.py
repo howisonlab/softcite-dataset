@@ -7,12 +7,17 @@ import glob
 import getopt
 import os
 import subprocess
+import re
 
 def find_all_turtle_files(dir_to_check = "data"):
     files = []
     files += glob.glob(dir_to_check + "*.ttl")
     # Add individuals
     files.extend(glob.glob(dir_to_check + "/individuals-**/*.ttl"))
+
+    # remove demo files
+    regex = re.compile(r'demo')
+    files = [i for i in files if not regex.search(i)]
 
     return files
 
