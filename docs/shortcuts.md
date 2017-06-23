@@ -33,7 +33,8 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. Paste what you copied in step 4 below all of the comments in snippets.cson. Select everything you pasted and hit shift+tab until the first line *and only the first line* is as far left as it can go. It is important that you do not change the way the lines nest within one another; you want to move the entire block of content that you pasted leftward. The indentation and content should begin like this:
 
-  ```'.source.turtle':
+  ```
+    '.source.turtle':
         'true':
           'prefix': 'tr'
           'body': 'true'
@@ -54,7 +55,7 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. Run the generateSnippet script again:
 
-  `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+    `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
 
 1. In Atom, right click the softcite-dataset directory and select "Refresh." The mySnippet file should appear.
 
@@ -62,10 +63,11 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. Paste the contents of the softcite-dataset mySnippet file into snippets.cson below the content you pasted earlier. This additional content should begin like this:
 
-  ```'memo':
-        'prefix': 'mem'
-        'body': 'ca:memo ; # use triple  quotes'
-  ```
+    ```
+      'memo':
+          'prefix': 'mem'
+          'body': 'ca:memo ; # use triple  quotes'
+    ```
 1. Adjust the indentation of the content you just pasted in using shift+tab so that `'memo'` is one indentation in (i.e. it is parallel with 'true' in the example above). This new content must be nested within `'.source.turtle'` but not indented within any of the snippets you added already.
 
 1. Save snippets.cson and close the file.
@@ -78,15 +80,15 @@ If there is a new code added to the coding scheme or there has been a formatting
 
 2. In the terminal, change directory to the project whose snippets you will be updating. If you are updating softcite snippets, you would use this command:
 
-`$ cd softcite-dataset/`
+    `$ cd softcite-dataset/`
 
 2. Run the generateSnippet script:
 
-`$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+    `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
 
-For example, if your Github username is jdoe, your command would look like:
+    For example, if your Github username is jdoe, your command would look like:
 
-`python3 code/generateSnippet.py jdoe > mySnippet`
+    `python3 code/generateSnippet.py jdoe > mySnippet`
 
 2. In Atom, right click the directory for the project whose snippets you are updating and select "Refresh." A file named mySnippet should then appear.
 
@@ -122,8 +124,9 @@ Follow these instructions to enable the time/date keybinding:
 
 3. Paste the following content into the keymap.cson file, ensuring that the second line is indented within the first:
 
-```'atom-text-editor':
-      'shift-cmd-t': 'date:datetime'
-```
+      ```
+        'atom-text-editor':
+            'shift-cmd-t': 'date:datetime'
+      ```
 
 3. Save and close keypmap.cson.
