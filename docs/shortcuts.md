@@ -102,3 +102,27 @@ For example, if your Github username is jdoe, your command would look like:
 9. Save snippets.cson and close the file.
 
 10. Delete and close mySnippet.
+
+## Keybinding
+
+Follow these instructions to enable the time/date keybinding:
+
+1. Ensure that you have installed the Date package in Atom. You can double check this by visiting preferences/settings (on a Mac vs. PC, respectively) and clicking on "Packages." If it is not installed, visit "Install" and search for "Date" then press "Install."
+
+2. In your settings/preferences, click on "Packages" and then click on the "settings" button in the box for the Date package.
+
+3. Update the Time Format field so that it reads: HH24:MI:SS
+
+4. Update the Date Time Format field so that it reads: YYYY-MM-DDTHH24:MI:SS-05:00
+
+5. Close your settings.
+
+6. Find and open your keymap file. On a Mac, you will find this under the "Atom" menu. On a PC this will be listed under "File."
+
+7. Paste the following content into the keymap.cson file, ensuring that the second line is indented within the first:
+
+```'atom-text-editor':
+      'shift-cmd-t': 'date:datetime'
+```
+
+8. Save and close keypmap.cson.
