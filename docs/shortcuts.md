@@ -66,8 +66,39 @@ If you are not in transition still, you do not need the ../ in the above command
       'prefix': 'mem'
       'body': 'ca:memo ; # use triple  quotes'
       ```
-14. Adjust the indentation of the content you just pasted in using shift+tab so that 'memo' is one indentation in (i.e. it is parallel with 'true' in the example above). This new content must be nested within '.source.turtle' but not indented within any of the snippets you added already.
+14. Adjust the indentation of the content you just pasted in using shift+tab so that `'memo'` is one indentation in (i.e. it is parallel with 'true' in the example above). This new content must be nested within `'.source.turtle'` but not indented within any of the snippets you added already.
 
 15. Save snippets.cson and close the file.
 
 16. Delete and close mySnippet.
+
+### Updating Snippets
+If there is a new code added to the coding scheme or there has been a formatting change, you may need to update your snippets.cson file. To update your snippets follow these instructions.
+
+1. In the terminal, change directory to the project whose snippets you will be updating. If you are updating softcite snippets, you would use this command:
+
+`$ cd softcite-dataset/`
+
+2. Run the generateSnippet script:
+
+`$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+
+For example, if your Github username is jdoe, your command would look like:
+
+`python3 code/generateSnippet.py jdoe > mySnippet`
+
+3. In Atom, right click the directory for the project whose snippets you are updating and select "Refresh." A file named mySnippet should then appear.
+
+4. Open the mySnippet file and select and copy the entire contents to your clipboard.
+
+5. If you are using a Mac, click on the Atom menu and select "Snippets." If you are using a PC, click on File and select "Snippets." A file should open in Atom called snippets.cson.
+
+6. Highlight all of the content that is associated with the project's snippets you are updating. If you are updating snippets for the Transition project, highlight all of the content from `'.source.turtle':` up until  `'memo':`; if you are updating snippets for Softcite, then highlight all of the content from `'memo':` until the end of the document. Delete the highlighted content.
+
+7. Paste the content you copied in step 4 so that it replaces the content you just deleted.
+
+8. Using shift+tab, adjust the indentation of the block of content you just pasted. See steps 6 and 13 of "Setting up Snippets for the First Time" for examples of what your indentation should look like.
+
+9. Save snippets.cson and close the file.
+
+10. Delete and close mySnippet.
