@@ -1,3 +1,4 @@
+---
 title: "Setting up Keyboard Shortcuts"
 ---
 # Setting up Keyboard Shortcuts
