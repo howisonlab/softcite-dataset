@@ -15,15 +15,15 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. In the terminal, after signing into the lab server, switch directories to Transition
 
-`$ cd transition/`
+  `$ cd transition/`
 
 1. Run the following command. This command will execute a script that will write the text you will need to a file named mySnippet.
 
-`$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+  `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
 
-For example, if your Github username is jdoe, your command would look like:
+  For example, if your Github username is jdoe, your command would look like:
 
-`python3 code/generateSnippet.py jdoe > mySnippet`
+  `python3 code/generateSnippet.py jdoe > mySnippet`
 
 1. In Atom, right click the transition directory and select "Refresh." A file named mySnippet should then appear.
 
@@ -33,14 +33,14 @@ For example, if your Github username is jdoe, your command would look like:
 
 1. Paste what you copied in step 4 below all of the comments in snippets.cson. Select everything you pasted and hit shift+tab until the first line *and only the first line* is as far left as it can go. It is important that you do not change the way the lines nest within one another; you want to move the entire block of content that you pasted leftward. The indentation and content should begin like this:
 
-```'.source.turtle':
-      'true':
-        'prefix': 'tr'
-        'body': 'true'
-      'false':
-        'prefix': 'fa'
-        'body': 'false'
-```
+  ```'.source.turtle':
+        'true':
+          'prefix': 'tr'
+          'body': 'true'
+        'false':
+          'prefix': 'fa'
+          'body': 'false'
+  ```
 
 1. Save snippets.cson. Do not close the file.
 
@@ -48,13 +48,13 @@ For example, if your Github username is jdoe, your command would look like:
 
 1. In the terminal, switch directories to softcite-dataset. Assuming you are still in transition, you will execute this command:
 
-`$ cd ../softcite-dataset/`
+    `$ cd ../softcite-dataset/`
 
-If you are not in transition still, you do not need the ../ in the above command.
+    If you are not in transition still, you do not need the ../ in the above command.
 
 1. Run the generateSnippet script again:
 
-`$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+  `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
 
 1. In Atom, right click the softcite-dataset directory and select "Refresh." The mySnippet file should appear.
 
@@ -62,10 +62,10 @@ If you are not in transition still, you do not need the ../ in the above command
 
 1. Paste the contents of the softcite-dataset mySnippet file into snippets.cson below the content you pasted earlier. This additional content should begin like this:
 
-```'memo':
-      'prefix': 'mem'
-      'body': 'ca:memo ; # use triple  quotes'
-```
+  ```'memo':
+        'prefix': 'mem'
+        'body': 'ca:memo ; # use triple  quotes'
+  ```
 1. Adjust the indentation of the content you just pasted in using shift+tab so that `'memo'` is one indentation in (i.e. it is parallel with 'true' in the example above). This new content must be nested within `'.source.turtle'` but not indented within any of the snippets you added already.
 
 1. Save snippets.cson and close the file.
