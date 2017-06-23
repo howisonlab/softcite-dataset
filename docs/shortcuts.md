@@ -13,17 +13,17 @@ We use snippets to paste in most of the content of a data file. To set up your s
 
 Your snippets file requires a certain format so that Atom can understand what shortcuts are able to be used with different languages. The indentation in your snippets file is meaningful. Because the Howison Lab uses snippets for both the Transition project and the Softcite project, but Atom only has one snippets file, you must follow the instructions in the order below, or the formatting will not be correct.
 
-1. In the terminal, after signing into the lab server, switch directories to Transition
+1. In the terminal, after signing into the lab server, switch directories to Transition:
 
-  `$ cd transition/`
+    `$ cd transition/`
 
 1. Run the following command. This command will execute a script that will write the text you will need to a file named mySnippet.
 
-  `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
+    `$ python3 code/generateSnippet.py <your Github username> > mySnippet`
 
-  For example, if your Github username is jdoe, your command would look like:
+    For example, if your Github username is jdoe, your command would look like:
 
-  `python3 code/generateSnippet.py jdoe > mySnippet`
+    `python3 code/generateSnippet.py jdoe > mySnippet`
 
 1. In Atom, right click the transition directory and select "Refresh." A file named mySnippet should then appear.
 
@@ -100,7 +100,7 @@ If there is a new code added to the coding scheme or there has been a formatting
 
 2. Paste the content you copied in step 4 so that it replaces the content you just deleted.
 
-2. Using shift+tab, adjust the indentation of the block of content you just pasted. See steps 6 and 13 of "Setting up Snippets for the First Time" for examples of what your indentation should look like.
+2. Using shift+tab, adjust the indentation of the block of content you just pasted. See steps 6 and 13 of [Setting up Snippets for the First Time](#Setting up Snippets for the First Time) for examples of what your indentation should look like.
 
 2. Save snippets.cson and close the file.
 
