@@ -15,6 +15,12 @@ When you have an up to date HTML coding scheme, all you need to do to use it is 
 
     `$ cd softcite-dataset/`
 
+1. Commit any changes you have. See Committing Changes in the [Working on Softcite Data Files](setupInstructions#committing-changes) page for a refresher on how to do this.
+
+1. Pull the latest changes from the Howison Lab repo:
+
+    `$ git pull upstream master`
+
 1. Run the following command. This command will execute a script that will create the HTML file you need:
 
     `python3 code/generate_coding_scheme_html.py > docs/coding-scheme.html`
@@ -27,18 +33,6 @@ When you have an up to date HTML coding scheme, all you need to do to use it is 
 
 ## Updating the HTML Coding Scheme
 
-If the coding scheme has changed, you will need to update your coding-scheme.html file so that it reflects the most recent version. To update your HTML file, follow these instructions:
-
-2. In the terminal, after signing into the lab server, switch directories to softcite-dataset:
-
-    `$ cd softcite-dataset/`
-
-2. Commit any changes you have. See Committing Changes in the [Working on Softcite Data Files](setupInstructions#committing-changes) page for a refresher on how to do this.
-
-2. Pull the latest changes from the Howison Lab repo:
-
-    `$ git pull upstream master`
-
-2. Execute steps 2-5 from [Using the HTML Coding Scheme for the First Time](#using-the-html-coding-scheme-for-the-first-time) above. This will run a script that writes over the old HTML file with the new contents. You may need to right click on the file name in the navigation pane and click refresh.
+If the coding scheme has changed, you will need to update your coding-scheme.html file so that it reflects the most recent version. To update your HTML file, follow the instructions above from [Using the HTML Coding Scheme for the First Time](#using-the-html-coding-scheme-for-the-first-time). This, instead of making an HTML file for the first time, will run a script that writes over the old HTML file with the new contents. You may need to right click on the file name in the navigation pane and click refresh.
 
 [Return Home](index.md)
