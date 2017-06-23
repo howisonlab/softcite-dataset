@@ -1,6 +1,8 @@
 ---
 title: "Working on Softcite Data Files"
 ---
+[Return Home](index.md)
+
 # Working on Softcite Data Files
 
 This is the basic information you need to get into the Howison lab server and to commit your changes.
@@ -95,10 +97,12 @@ A new file will be added to your individuals folder. You may need to right click
 
 ## Git Tutorials
 
-There are many free tutorials on how to use git that might be useful.
+There are many free tutorials on how to use git that might be useful:
 
 1. [https://www.codecademy.com/learn/learn-git](https://www.codecademy.com/learn/learn-git)
 1. [http://gitimmersion.com/](http://gitimmersion.com/)
 1. [https://help.github.com/](https://help.github.com/)
 
 Git cheat sheet: [https://education.github.com/git-cheat-sheet-education.pdf](https://education.github.com/git-cheat-sheet-education.pdf)
+
+[Return Home](index.md)
