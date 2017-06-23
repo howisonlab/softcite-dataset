@@ -11,6 +11,8 @@ This is how you can access the lab's server where your work is stored:
 
 ### Macs
 
+In the terminal, enter the following command:
+
 `$ ssh <username>@howisonlab.ischool.utexas.edu`
 
 Note that a $ preceding a line is just indicating that you type everything after that. Do not type the $ yourself.
@@ -37,14 +39,15 @@ To edit your server files, you'll need to open the folder that you made your .ft
 
 Before committing, you will need to confirm that there are no problems with your files. You will run the command pytest, and repair any errors if necessary.
 
+1. Check if there are any errors:
 
 `$ pytest --tb line`
 
-Check if there are any errors. If a file has an error, it will be shown under “FAILURES” and look like:
+ If a file has an error, it will be shown under “FAILURES” and look like:
 
 `Failed: BadSyntax: Use python3 code/parseTurtle.py -f data/individuals--<username>/<filename>.ttl`
 
-To find out exactly where the error in that particular file is, copy the line line that begins with `python3 code/`… and run that as a command:
+2. To find out exactly where the error in that particular file is, copy the line line that begins with `python3 code/`… and run that as a command:
 
 `$ python3 code/parseTurtle.py -f data/individuals-<username>/<filename>.ttl`
 
@@ -52,31 +55,31 @@ The command will run and spew out something that ends with an error saying somet
 
 `rdflib.plugins.parsers.notation3.BadSyntax: at line 330 of <>:`
 
-In Atom, *if this was a file you edited*, visit the line number in the file (which was named after running the previous command) and resolve the error, save, commit, and push as described below.
+3. In Atom, *if this was a file you edited*, visit the line number in the file (which was named after running the previous command) and resolve the error, save, commit, and push as described below.
 
 ## Committing Changes
 
 When you need to save your changes, you will make a commit. The first step is to check what files have been changed. Then, add the files that are in your individuals folder (don't add anything in the cache or anything you don't remember modifying). Then double check you've added everything you need. Then make a commit and include a message. Finally, you'll push your changes up to your Github repo. Step by step:
 
+1. View which files were modified:
+
 `$ git status`
 
-view which files were modified
+2. Add the files you want:
 
 `$ git add <name of modified file>`
 
-add the files you want
+3. View which files were modified to check you got everything:
 
 `$ git status`
 
-view which files were modified to check you got everything
+4. Enter your commit message:
 
 `$ git commit –m “<message content>”`
 
-enter your commit message
+5. Push commit up to Github:
 
 `$ git push origin master`
-
-push commit up to Github
 
 After you have completely finished coding an article, you can make a pull request. To do that, visit your repo on Github and click the "New Pull Request" button.
 
