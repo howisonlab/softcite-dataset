@@ -1,6 +1,8 @@
 ---
 title: "Setting up Keyboard Shortcuts"
 ---
+[Return Home](index.md)
+
 # Setting up Keyboard Shortcuts
 
 Keyboard shortcuts are useful to speed up your work and prevent typos. Below are instructions on how to do initial shortcut set up as well as make changes to your settings later.
@@ -33,15 +35,15 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. Paste what you copied in step 4 below all of the comments in snippets.cson. Select everything you pasted and hit shift+tab until the first line *and only the first line* is as far left as it can go. It is important that you do not change the way the lines nest within one another; you want to move the entire block of content that you pasted leftward. The indentation and content should begin like this:
 
-  ```
-    '.source.turtle':
-        'true':
-          'prefix': 'tr'
-          'body': 'true'
-        'false':
-          'prefix': 'fa'
-          'body': 'false'
-  ```
+    ```
+      '.source.turtle':
+          'true':
+            'prefix': 'tr'
+            'body': 'true'
+          'false':
+            'prefix': 'fa'
+            'body': 'false'
+    ```
 
 1. Save snippets.cson. Do not close the file.
 
@@ -100,7 +102,7 @@ If there is a new code added to the coding scheme or there has been a formatting
 
 2. Paste the content you copied in step 4 so that it replaces the content you just deleted.
 
-2. Using shift+tab, adjust the indentation of the block of content you just pasted. See steps 6 and 13 of [Setting up Snippets for the First Time](#Setting up Snippets for the First Time) for examples of what your indentation should look like.
+2. Using shift+tab, adjust the indentation of the block of content you just pasted. See steps 6 and 13 of [Setting up Snippets for the First Time](#setting-up-snippets-for-the-first-time) for examples of what your indentation should look like.
 
 2. Save snippets.cson and close the file.
 
@@ -130,3 +132,5 @@ Follow these instructions to enable the time/date keybinding:
       ```
 
 3. Save and close keypmap.cson.
+
+[Return Home](index.md)

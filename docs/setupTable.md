@@ -1,6 +1,8 @@
 ---
 title: "Viewing the Coding Scheme in HTML"
 ---
+[Return Home](index.md)
+
 # Viewing the Coding Scheme in HTML
 
 The coding scheme .ttl file is not always easy to read and a printed version will not always be up to date. To ensure that you have an up to date version and eliminate any difficulty in reading it, follow the instructions below.
@@ -31,10 +33,12 @@ If the coding scheme has changed, you will need to update your coding-scheme.htm
 
     `$ cd softcite-dataset/`
 
-2. Commit any changes you have. See Committing Changes in the [Working on Softcite Data Files](setupInstructions) page for a refresher on how to do this.
+2. Commit any changes you have. See Committing Changes in the [Working on Softcite Data Files](setupInstructions#committing-changes) page for a refresher on how to do this.
 
 2. Pull the latest changes from the Howison Lab repo:
 
     `$ git pull upstream master`
 
-2. Execute steps 2-5 from [Using the HTML Coding Scheme for the First Time](#Using the HTML Coding Scheme for the First Time) above. This will run a script that writes over the old HTML file with the new contents.
+2. Execute steps 2-5 from [Using the HTML Coding Scheme for the First Time](#using-the-html-coding-scheme-for-the-first-time) above. This will run a script that writes over the old HTML file with the new contents.
+
+[Return Home](index.md)
