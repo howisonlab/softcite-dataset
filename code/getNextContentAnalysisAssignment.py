@@ -38,11 +38,11 @@ def generate_template_file(pub_id, username):
 bioj:a{} rdf:type bioj:article ;
 
     citec:has_supplement [ rdf:type citec:supplement ;
-                           citec:isPresent FIXME ] ;
+                           citec:isPresent FIXME ] ; # true/false
 
-    citec:has_in_text_mention FIXME ;
+    citec:has_in_text_mention FIXME ; # name in text mention like bioj:a2004-40-NAT_GENET_JC01, no quotes
 
-    citec:coded_no_in_text_mentions FIXME ;
+    citec:coded_no_in_text_mentions FIXME ; # true/false
 .
 """
     content = header.format(pub_id, pub_id)
