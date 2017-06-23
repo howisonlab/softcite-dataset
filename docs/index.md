@@ -4,7 +4,9 @@ title: "PDFs for softcite"
 # Instructions
 
 [Getting Started with Editing Softcite Files ](setupInstructions.md)
+
 [Setting up Keyboard Shortcuts](shortcuts.md)
+
 [Viewing the Coding Scheme in HTML](setupTable.md)
 
 
