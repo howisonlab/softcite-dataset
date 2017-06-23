@@ -39,6 +39,6 @@ If the coding scheme has changed, you will need to update your coding-scheme.htm
 
     `$ git pull upstream master`
 
-2. Execute steps 2-5 from [Using the HTML Coding Scheme for the First Time](#using-the-html-coding-scheme-for-the-first-time) above. This will run a script that writes over the old HTML file with the new contents.
+2. Execute steps 2-5 from [Using the HTML Coding Scheme for the First Time](#using-the-html-coding-scheme-for-the-first-time) above. This will run a script that writes over the old HTML file with the new contents. You may need to right click on the file name in the navigation pane and click refresh.
 
 [Return Home](index.md)
