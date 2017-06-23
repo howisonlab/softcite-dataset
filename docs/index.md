@@ -3,7 +3,7 @@ title: "PDFs for softcite"
 ---
 # Instructions
 
-[Getting Started with Editing Softcite Files ](setupInstructions.md)
+[Working on Softcite Data Files](setupInstructions.md)
 
 [Setting up Keyboard Shortcuts](shortcuts.md)
 
