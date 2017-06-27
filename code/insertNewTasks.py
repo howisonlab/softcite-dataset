@@ -76,7 +76,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY random_order ASC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
@@ -110,7 +110,7 @@ def create_database(cursor):
 CREATE TABLE assignments (
     id INT AUTO_INCREMENT,    -- primary key
     pub_id VARCHAR(255) NOT NULL,  -- doubled
-    random_order INT UNIQUE NOT NULL,      -- unique
+    random_order INT UNIQUE NOT NULL AUTO_INCREMENT,      -- unique
     assigned BOOLEAN NOT NULL DEFAULT False,      --
     assigned_to VARCHAR(24), -- NULL
     asssigned_timestamp DATETIME,
@@ -131,7 +131,7 @@ These are read from oa_shuffled_with_header.csv which is randomized. It was rand
 tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
 This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
 """
-def insert_pmc_tasks(filename, conn):
+def insert_pmc_tasks(filename, conn, num_to_insert):
     import os.path
     #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
     # headers:
@@ -142,19 +142,25 @@ def insert_pmc_tasks(filename, conn):
                                     quotechar='"',
                                     fieldnames = ["File","Article Citation","Accession ID","Last Updated (YYYY-MM-DD HH:MM:SS)","PMID","License"])
         pubs_to_code = []
+        inserted_count = 0
         for row in myCSVReader:
+            if (inserted_count >= num_to_insert):
+                break
             print(row)
+            print(inserted_count)
             destination = "docs/pdf-files/pmc_oa_files/{}.pdf".format(row["Accession ID"])
-            if not (os.path.exists(destination)):
+            if (os.path.exists(destination)):
+                continue
+            else:
                 pubs_to_code.append(row["Accession ID"])
                 get_via_ftp(destination, row["File"])
                 write_to_index(row["Article Citation"],row["Accession ID"])
+                inserted_count += 1
 
         doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
 
-        for order, task in enumerate(doubled_list):
-            print(order, task)
-            # insert_task(conn, order, task)
+        for task in doubled_list:
+            insert_task(conn, task)
 """Get tar.gz, extract, then save to docs folder."""
 def get_via_ftp(destination, ftp_location):
     import subprocess
@@ -241,11 +247,11 @@ def randomize_and_insert(conn):
     for order, task in enumerate(doubled_list):
         insert_task(conn, order, task)
 
-def insert_task(conn, order, task):
-    insert_sql = """INSERT INTO assignments(pub_id, random_order)
-                         VALUE (%(task)s, %(order)s)
+def insert_task(conn, task):
+    insert_sql = """INSERT INTO assignments(pub_id)
+                         VALUE (%(task)s)
                  """
-    conn.execute(insert_sql, {"task": task, "order": order})
+    conn.execute(insert_sql, {"task": task})
     print("Inserted {}".format(task))
 
 import os
@@ -290,7 +296,7 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(sys.argv[1], connection)
+    insert_pmc_tasks(sys.argv[1], cursor, 5)
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 

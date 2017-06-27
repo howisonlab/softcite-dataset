@@ -34,17 +34,19 @@ def generate_template_file(pub_id, username):
 @prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
 @prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
 @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
+@prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/>
+@prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#>
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-dataset/pdf-files/{}.pdf
-bioj:a{} rdf:type bioj:article ;
+# https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
+pmcid:{} rdf:type bioj:article ;
 
     citec:has_supplement [ rdf:type citec:supplement ;
                            citec:isPresent FIXME ] ; # true/false
 
-    citec:has_in_text_mention FIXME ; # name in text mention like bioj:a2004-40-NAT_GENET_JC01, no quotes
+    citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
 
-    citec:coded_no_in_text_mentions FIXME ; # true/false
+#    citec:coded_no_in_text_mentions FIXME ; # true/false
 .
 """
     content = header.format(pub_id, pub_id)
@@ -74,7 +76,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY random_order ASC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
