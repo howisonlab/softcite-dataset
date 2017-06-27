@@ -2,7 +2,6 @@
 title: "PUBMED Open Access PDFs for softcite"
 ---
 # PDF files for coding
-  1. [PMC5217865: Clin Exp Immunol. 2017 Feb 23; 187(2):284-293](PMC5217865.pdf)
   1. [PMC5304233: Prev Med Rep. 2017 Jan 26; 6:17-22](PMC5304233.pdf)
   1. [PMC3028497: Biomed Opt Express. 2010 Dec 3; 2(1):44-57](PMC3028497.pdf)
   1. [PMC3481138: Cell Death Dis. 2012 Oct 25; 3(10):e413](PMC3481138.pdf)
