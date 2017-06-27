@@ -269,7 +269,7 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(sys.argv[1], connection)
+    # insert_pmc_tasks(sys.argv[1], connection)
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 
@@ -278,13 +278,9 @@ if __name__ == '__main__':
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-<<<<<<< HEAD
-    username = "skshenoy"
-=======
     username = sys.argv[1]
->>>>>>> 604cd17b9d37deb0a5c1e8a7c5676dd2e17ddb40
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
-    # pub_id = get_new_task(cursor, username)
-    # generate_template_file(pub_id, username)
+    pub_id = get_new_task(cursor, username)
+    generate_template_file(pub_id, username)
