@@ -12,6 +12,8 @@ import pprint
 import os
 import pwd
 import re
+import csv
+import sys
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
@@ -121,6 +123,29 @@ CREATE TABLE assignments (
 
     cursor.execute(sql)
 
+"""Insert PMC tasks.
+
+These are read from oa_shuffled_with_header.csv which is randomized. It was randomized on 21 June 2017 using:
+tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
+This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
+"""
+def insert_pmc_tasks(filename, conn):
+    #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
+    # headers:
+    # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
+    with open(filename) as csvfile:
+        myCSVReader = csv.DictReader(csvfile,
+                                    delimiter=",",
+                                    quotechar='"')
+        pubs_to_code = []
+        for row in myCSVReader:
+            file_list.append(row["Accession ID"])
+
+        doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
+
+        for order, task in enumerate(doubled_list):
+            print(order + task)
+            # insert_task(conn, order, task)
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
@@ -244,9 +269,10 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
+    insert_pmc_tasks(sys.argv[1], connection)
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
-    import sys
+
     # Check that script is run from right location.
     neededPath = "code/getNextContentAnalysisAssignment.py"
     if (sys.argv[0] != neededPath):
@@ -256,5 +282,5 @@ if __name__ == '__main__':
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
-    pub_id = get_new_task(cursor, username)
-    generate_template_file(pub_id, username)
+    # pub_id = get_new_task(cursor, username)
+    # generate_template_file(pub_id, username)
