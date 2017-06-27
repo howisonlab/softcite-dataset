@@ -5,12 +5,19 @@ import pprint
 import sys
 import glob
 import getopt
+import os
+import subprocess
+import re
 
 def find_all_turtle_files(dir_to_check = "data"):
     files = []
     files += glob.glob(dir_to_check + "*.ttl")
     # Add individuals
     files.extend(glob.glob(dir_to_check + "/individuals-**/*.ttl"))
+
+    # remove demo files
+    regex = re.compile(r'demo')
+    files = [i for i in files if not regex.search(i)]
 
     return files
 
@@ -57,7 +64,7 @@ def usage():
 def main(argv):
     grammar = "kant.xml"
     try:
-        opts, args = getopt.getopt(argv, "af:", ["help", "grammar="])
+        opts, args = getopt.getopt(argv, "uaf:", ["help", "grammar="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -65,7 +72,20 @@ def main(argv):
 
     for o, a in opts:
         if o == "-a":
-            build_parse_data_set()
+            full_dataset = build_parse_data_set()
+            full_dataset.serialize(
+              destination="data/full_dataset.ttl",
+              format="turtle"
+            )
+        elif o == "-u":
+            reply = subprocess.check_output(
+                    ["curl",   'https://api.data.world/v0/uploads/jameshowison/software-citations/files/full_dataset.ttl',
+                    "--upload-file", "data/full_dataset.ttl",
+                    "-H",
+                    "Authorization: Bearer {}".format(os.environ['DATA_WORLD_KEY'])
+                    ]
+            ).decode("utf8")
+            print(reply)
         elif o == "-f":
             parse_individual_file(a)
         else:
