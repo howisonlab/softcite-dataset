@@ -132,17 +132,23 @@ tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
 This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
 """
 def insert_pmc_tasks(filename, conn):
+    import os.path
     #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
     # headers:
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
     with open(filename) as csvfile:
         myCSVReader = csv.DictReader(csvfile,
                                     delimiter=",",
-                                    quotechar='"')
+                                    quotechar='"',
+                                    fieldnames = ["File","Article Citation","Accession ID","Last Updated (YYYY-MM-DD HH:MM:SS)","PMID","License"])
         pubs_to_code = []
         for row in myCSVReader:
-            pubs_to_code.append(row["Accession ID"])
-            get_via_ftp(row["File"],row["Accession ID"])
+            print(row)
+            destination = "docs/pdf-files/pmc_oa_files/{}.pdf".format(row["Accession ID"])
+            if not (os.path.exists(destination)):
+                pubs_to_code.append(row["Accession ID"])
+                get_via_ftp(destination, row["File"])
+                write_to_index(row["Article Citation"],row["Accession ID"])
 
         doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
 
@@ -150,16 +156,20 @@ def insert_pmc_tasks(filename, conn):
             print(order, task)
             # insert_task(conn, order, task)
 """Get tar.gz, extract, then save to docs folder."""
-def get_via_ftp(filename, pmcid):
+def get_via_ftp(destination, ftp_location):
     import subprocess
-    destination = "docs/pdf-files/pmc_oa_files/{}.tar.gz".format(pmcid)
-    subprocess.run(
-        ["curl", "-o", destination, "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/{}".format(filename)]
-    )
-    subprocess.run(
-        ["tar", "xf", destination, "-C", "docs/pdf-files/pmc_oa_files/"]
-    )
 
+    subprocess.run(
+        ["curl", "-o", destination, "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/{}".format(
+                                                ftp_location)]
+        )
+
+def write_to_index(citation, pmcid):
+    path = "docs/pdf-files/pmc_oa_files/index.md"
+    template = "  1. [{pmcid}: {cite}]({pmcid}.pdf)\n"
+    with open(path, "a") as index_file:
+        # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
+        index_file.write(template.format(cite = citation, pmcid = pmcid))
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
