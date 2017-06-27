@@ -68,12 +68,13 @@ citec:has_in_text_mention
 
     If you find a mention in a footnote, code the footnote as one mention and the sentence the footnote linked to as another.""" ;
     ca:example """- Your first mention, if your initials are AB and the article title is 2002-22-AM_J_BOT would read a2002-22-AM_J_BOT_AB01
+
                   - Your fourth mention would read a2002-22-AM_J_BOT_AB04""";
     ca:codingOrder 2 ;
     ca:codingRound 1 ;
     #ca:scope "article" ; # in-text_mention | reference
     #SCOPE IS COMMENTED OUT BECAUSE THIS IS ADDED TO generateSnippet.py MANUALLY
-    ca:template """<FIXME>""" ;
+    ca:template """FIXME""" ;
 .
 
 citec:coded_no_in_text_mentions
@@ -86,7 +87,7 @@ citec:coded_no_in_text_mentions
     ca:codingRound 1 ;
     #ca:scope "article" ; # in-text_mention | reference
     #SCOPE IS COMMENTED OUT BECAUSE THIS IS ADDED TO generateSnippet.py MANUALLY
-    ca:template """FIXME;""" ;
+    ca:template """FIXME ;""" ;
 .
 
 citec:memo
@@ -97,13 +98,13 @@ citec:memo
     ca:codingRound 1 ;
     # ca:scope "article" ; # in-text_mention | reference
     #SCOPE IS COMMENTED OUT BECAUSE THIS IS ADDED TO generateSnippet.py MANUALLY
-    ca:template """FIXME;""" ;
+    ca:template """FIXME ;""" ;
 .
 
 #BELOW CODES ARE IN SELECTION BLOCK
 citec:full_quote
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code is a quotation taken directly from the article that provides the content that mentions the software (i.e. the full quote is the selection you will code).
+    rdfs:comment """Applies to both in text mentions and references. This code is a quotation taken directly from the article that provides the content that mentions the software (i.e. the full quote is the selection you will code).
 
     Highlight this quote in your pdf. Copy and paste directly from the pdf to this code; there is no need to remove hyphens from line breaks. Your selection needs to be long enough to make it easy to identify which sentence you are referring to. Do not change the indentation of your quote. Use triple quotes around the quote.""" ;
 
@@ -118,7 +119,7 @@ citec:full_quote
 
 citec:on_pdf_page
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides the page of the pdf that your selection (i.e. full quote) can be found on. This refers specifically to the pdf page, not the journal page. If selection spans pages put the first page here and set citec:spans_pages to true.""" ;
+    rdfs:comment """Applies to both in text mentions and references. This code provides the page of the pdf that your selection (i.e. full quote) can be found on. This refers specifically to the pdf page, not the journal page. If selection spans pages put the first page here and set citec:spans_pages to true.""" ;
     ca:example """- 5""" ;
     ca:codingOrder 2 ;
     ca:codingRound 2 ;
@@ -127,15 +128,31 @@ citec:on_pdf_page
     ca:template """ FIXME ;""" ;
 .
 
+citec:spans_pages
+    rdf:type ca:ContentAnalysisCode ;
+    rdfs:comment """Applies to both in text mentions and references. This code indicates whether or not the quote starts on one page but continues to a secont page.
+
+    If the in text mention or reference starts and stops on different PDF pages, enter true. If it is only on one page, enter false.""" ;
+    ca:example """ """ ;
+    ca:codingOrder 2.5 ;
+    ca:codingRound 2 ;
+    #ca:scope "both" ; # in-text_mention | reference
+    #SCOPE IS COMMENTED OUT BECAUSE THIS IS ADDED TO generateSnippet.py MANUALLY
+    ca:template """ FIXME ;""" ;
+.
+
 citec:mention_type
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code applies to the selection and describes if the mention is software or something else and then establishes how certain you are about this. A selection should only be coded if you were sure it was software, from context, or if you had to web search. No need to record things that were clearly not software.
+    rdfs:comment """Applies to in text mentions. This code applies to the selection and describes if the mention is software or something else and then establishes how certain you are about this. A selection should only be coded if you were sure it was software, from context, or if you had to web search. No need to record things that were clearly not software.
 
     If you are unsure if something is software, do a web search or find some other means to establish what the mention is actually referring to.
 
     - Use "software" if the mention is software
+
     - Use "algorithm" if the mention is referring to a process or algorithm
+
     - Use "hardware" if the mention is referring to a piece of hardware or a physical object (that may or may not have software installed on it)
+
     - Use "other" if the mention is none of the above
 
     Indicate your certainty on a scale of 1-10, where 10 is the most certain about your categorization.
@@ -146,27 +163,27 @@ citec:mention_type
     ca:codingOrder 3 ;
     ca:codingRound 2 ;
     ca:scope "in-text_mention" ;
-    ca:template """rdfs:label FIXME software | algorithm |  hardware | other ;
-                                                   ca:certainty FIXME1-10 ;
-                                                   ca:memo FIXME ;""" ;
+    ca:template """rdfs:label FIXME software | algorithm |  hardware | other ; # put one in triple quotes
+                                                   ca:certainty FIXME1-10 ; # integer
+                                                   ca:memo FIXME ; # use triple quotes """ ;
 .
 
 
 citec:software_was_used
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code applies to the selection and describes whether or not the authors actually made use of or developed the software being mentioned.
+    rdfs:comment """Applies to in text mentions. This code applies to the selection and describes whether or not the authors actually made use of or developed the software being mentioned.
 
     Reply true if the authors used or developed this software and false if they only considered using the software or simply mentioned its existence.""" ;
     ca:example """ """ ;
     ca:codingOrder 4 ;
     ca:codingRound 2 ;
     ca:scope "in-text_mention" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME;""" ;
+    ca:template """citec:isPresent FIXME; # true/false""" ;
 .
 
 citec:software_name
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code describes the name of the software as the authors refer to it in the selection.
+    rdfs:comment """Applies to both in text mentions and references. This code describes the name of the software as the authors refer to it in the selection.
 
     Reply true if there was a specific name provided, then enter the name in the label. Reply false if the name of the software was never provided (e.g. if they only mention the creator or the purpose of the software). Do not include the version number in the label.""" ;
     ca:example """- PC-ORD
@@ -175,13 +192,13 @@ citec:software_name
     ca:codingOrder 5 ;
     ca:codingRound 2 ;
     ca:scope "both" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME ;
-                                                   rdfs:label FIXME ;""" ;
+    ca:template """citec:isPresent FIXME ; # true/false
+                                                   rdfs:label FIXME ; # use triple quotes""" ;
 .
 
 citec:version_number
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides the version number as described in the selection.
+    rdfs:comment """Applies to both in text mentions and references. This code provides the version number as described in the selection.
 
     Reply true if a version is provided. Reply false if there is no way to distinguish the version.
 
@@ -191,13 +208,13 @@ citec:version_number
     ca:codingOrder 6 ;
     ca:codingRound 2 ;
     ca:scope "both" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME ;
-                                                   rdfs:label FIXME ;""" ;
+    ca:template """citec:isPresent FIXME ; # true/false
+                                                   rdfs:label FIXME ; # use triple quotes""" ;
 .
 
 citec:version_date
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides a date used to indicate a version of the software.
+    rdfs:comment """Applies to both in text mentions and references. This code provides a date used to indicate a version of the software.
 
     If you are coding an in text mention, enter true if a date is provided that tells you when the software itself was created. This is not the date of a paper's publication--if the only date in the in text mention is the date that a paper was published, then you will enter false. If you are coding a reference and the reference includes a date of any kind, enter true. Enter false if no date is provided. If there is a date, enter that as the label. Use the date as provided in the paper (e.g. 2/3/2001), don't change the format.)""" ;
     ca:example """ - May 2012
@@ -205,43 +222,45 @@ citec:version_date
     ca:codingOrder 7 ;
     ca:codingRound 2 ;
     ca:scope "both" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME ;
-                                                   rdfs:label FIXME ;""" ;
+    ca:template """citec:isPresent FIXME ; # true/false
+                                                   rdfs:label FIXME ; # use triple quotes""" ;
 .
 
 citec:url
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides a URL if the selection includes one.
+    rdfs:comment """Applies to both in text mentions and references. This code provides a URL if the selection includes one.
 
     Mark as true if there is a URL provided. Mark as false if no URL was provided. Copy and paste the URL and enter it into the label. If the URL is found in a footnote without any other text, consider the URL to be part of the selection that has the footnote. If, however, the footnote includes more text than just the URL, it becomes its own mention.""" ;
     ca:example """- http://timat2.sourceforge.net""" ;
     ca:codingOrder 8 ;
     ca:codingRound 2 ;
     ca:scope "both" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME ;
-                                                   rdfs:label FIXME ;""" ;
+    ca:template """citec:isPresent FIXME ; # true/false
+                                                   rdfs:label FIXME ; # use triple quotes""" ;
 .
 
 citec:creator
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code provides the creator of the software as described in the in text mention or the reference, depending on which you are coding.
+    rdfs:comment """Applies to both in text mentions and references. This code provides the creator of the software as described in the in text mention or the reference, depending on which you are coding.
 
     Enter true if a creator is named. Enter false if no creator is provided. Copy the creator as named in the in text mention or reference and paste it as the label. If multiple creators are named, select them all and enter them into the label.
 
     If this is an in text selection, the creator would be whoever that text indicates the software creator to be, including from an "Author-Year" style citation. If this is a reference selection, the creator is the list of authors, including 'et al.' if relevant. It is ok to have a creator on the in-text_mention and on the associated reference.""" ;
     ca:example """- If your selection is, 'Software, written by xyz, was used for ...,' then your rdfs:label is xyz.
+
                   - If your selection is '....coupled to MetaMorph imaging software (Universal Imaging Corporation, Downingtown, PA),' your rdfs:label is Universal Imaging Corporation.'
+
                   - If your selection is 'MCCUNE, B. 1993. Multivariate analysis on the PC-ORD system. Oregon State University, Corvallis, Oregon. USA,' then your rdfs:label is MCCUNE, B.'""" ;
     ca:codingOrder 9 ;
     ca:codingRound 2 ;
     ca:scope "both" ; # in-text_mention | reference
-    ca:template """citec:isPresent FIXME ;
-                                                   rdfs:label FIXME ;""" ;
+    ca:template """citec:isPresent FIXME ; # true/false
+                                                   rdfs:label FIXME ; # use triple quotes""" ;
 .
 
 citec:has_reference
     rdf:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code names the reference that an in text selection cites, if it cites one.
+    rdfs:comment """Applies to in text mentions. This code names the reference that an in text selection cites, if it cites one.
 
     It should be named the same thing that the reference is referred to as in its own reference block below. It should start with a, followed by the article name (e.g. 002-22-AM_J_BOT), followed by an underscore and then enough information to make it a unique name. Using the first author on the reference followed by the date is a good way to ensure uniqueness, but it is possible you will need to append the character a or the character b after the date if there are multiple references by the same author in the same year.
 
@@ -249,24 +268,29 @@ citec:has_reference
 
     ca:example """- a2002-22-AM_J_BOT_Staden-1996
                   - a2002-22-AM_J_BOT_Staden-1996b""" ;
-    ca:codingOrder 1 ;
-    ca:codingRound 1 ;
+    ca:codingOrder 10 ;
+    ca:codingRound 2 ;
     # ca:scope "article" ; # in-text_mention | reference
     #SCOPE IS COMMENTED OUT BECAUSE THIS IS ADDED TO generateSnippet.py MANUALLY
-    ca:template """citec:isPresent FIXME""" ;
+    ca:template """FIXME""" ;
 .
 
 citec:reference_type
     rdfs:type ca:ContentAnalysisCode ;
-    rdfs:comment """This code is only applied to reference selections and is used to categorize the type of reference that it is. Each option is mutually exclusive.
+    rdfs:comment """This code is only applied to reference selections. It is used to categorize the type of reference that it is. Each option is mutually exclusive.
+
     - Apply "publication" if the reference is to a formal publication of some sort.
+
     - Apply "user_guide" if the reference is to a user guide for the software.
+
     - Apply "project_page" if the reference is just pointing to the software's online website.
+
     - Apply "project_name" if the reference is informal and mentions the name of the software but provides no URL (see examples).""" ;
     ca:example """- If your reference selection is 'STADEN, R. 1996. The staden sequence analysis package. Molecular Biotechnology 5:233–241,' then you would code that as a publication because it is an article in the journal Molecular Biotechnology.
+
                   - If your reference selection is 'MCCUNE, B. 1993. Multivariate analysis on the PC-ORD system. Oregon State University, Corvallis, Oregon. USA,' then you would code that as project_name because it is neither a publication, nor a user guide, nor does it link to the project's webpage. It only names the project as an entity that exists.""" ;
-    ca:codingOrder 10 ;
+    ca:codingOrder 11 ;
     ca:codingRound 2 ;
     ca:scope "reference" ; # in-text_mention | reference
-    ca:template """rdfs:label FIXME: publication | user_guide | project_page | project_name ;""" ;
+    ca:template """rdfs:label FIXME publication | user_guide | project_page | project_name ; # put one in triple quotes""" ;
 .
