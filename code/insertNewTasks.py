@@ -296,7 +296,7 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(sys.argv[1], cursor, 5)
+    insert_pmc_tasks(sys.argv[1], cursor, int(sys.argv[2]))
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 
