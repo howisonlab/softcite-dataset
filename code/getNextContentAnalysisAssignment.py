@@ -41,15 +41,18 @@ def generate_template_file(pub_id, username):
 # https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
 pmcid:{} rdf:type bioj:article ;
 
-    citec:has_supplement [ rdf:type citec:supplement ;
-                           citec:isPresent FIXME ] ; # true/false
-
     citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
 
-#    citec:coded_no_in_text_mentions FIXME ; # true/false
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "{}" ;
+          ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                           citec:isPresent FIXME; # true/false
+                         ] ;
+        ] ;
 .
 """
-    content = header.format(pub_id, pub_id)
+    content = header.format(pub_id, pub_id, username)
 
     ttl_file = open(filename, "x")
     ttl_file.write(content)
@@ -280,7 +283,11 @@ if __name__ == '__main__':
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-    username = sys.argv[1]
+    try:
+        username = sys.argv[1]
+    except IndexError:
+        raise Exception("Must pass github username as argument")
+
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
