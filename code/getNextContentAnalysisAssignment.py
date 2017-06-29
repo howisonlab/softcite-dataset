@@ -34,8 +34,8 @@ def generate_template_file(pub_id, username):
 @prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
 @prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
 @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
-@prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/>
-@prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#>
+@prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/> .
+@prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
 # https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
