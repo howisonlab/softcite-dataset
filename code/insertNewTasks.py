@@ -12,6 +12,10 @@ import pprint
 import os
 import pwd
 import re
+import csv
+import sys
+from random import shuffle
+from itertools import repeat
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
@@ -72,7 +76,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY random_order ASC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
@@ -106,7 +110,7 @@ def create_database(cursor):
 CREATE TABLE assignments (
     id INT AUTO_INCREMENT,    -- primary key
     pub_id VARCHAR(255) NOT NULL,  -- doubled
-    random_order INT UNIQUE NOT NULL,      -- unique
+    random_order INT UNIQUE NOT NULL AUTO_INCREMENT,      -- unique
     assigned BOOLEAN NOT NULL DEFAULT False,      --
     assigned_to VARCHAR(24), -- NULL
     asssigned_timestamp DATETIME,
@@ -121,6 +125,57 @@ CREATE TABLE assignments (
 
     cursor.execute(sql)
 
+"""Insert PMC tasks.
+
+These are read from oa_shuffled_with_header.csv which is randomized. It was randomized on 21 June 2017 using:
+tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
+This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
+"""
+def insert_pmc_tasks(filename, conn, num_to_insert):
+    import os.path
+    #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
+    # headers:
+    # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
+    with open(filename) as csvfile:
+        myCSVReader = csv.DictReader(csvfile,
+                                    delimiter=",",
+                                    quotechar='"',
+                                    fieldnames = ["File","Article Citation","Accession ID","Last Updated (YYYY-MM-DD HH:MM:SS)","PMID","License"])
+        pubs_to_code = []
+        inserted_count = 0
+        for row in myCSVReader:
+            if (inserted_count >= num_to_insert):
+                break
+            print(row)
+            print(inserted_count)
+            destination = "docs/pdf-files/pmc_oa_files/{}.pdf".format(row["Accession ID"])
+            if (os.path.exists(destination)):
+                continue
+            else:
+                pubs_to_code.append(row["Accession ID"])
+                get_via_ftp(destination, row["File"])
+                write_to_index(row["Article Citation"],row["Accession ID"])
+                inserted_count += 1
+
+        doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
+
+        for task in doubled_list:
+            insert_task(conn, task)
+"""Get tar.gz, extract, then save to docs folder."""
+def get_via_ftp(destination, ftp_location):
+    import subprocess
+
+    subprocess.run(
+        ["curl", "-o", destination, "ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/{}".format(
+                                                ftp_location)]
+        )
+
+def write_to_index(citation, pmcid):
+    path = "docs/pdf-files/pmc_oa_files/index.md"
+    template = "  1. [{pmcid}: {cite}]({pmcid}.pdf)\n"
+    with open(path, "a") as index_file:
+        # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
+        index_file.write(template.format(cite = citation, pmcid = pmcid))
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
@@ -183,9 +238,6 @@ def get_pubs_to_code():
 
 
 def randomize_and_insert(conn):
-    from random import shuffle
-    from itertools import repeat
-
     pubs_to_code = get_pubs_to_code()
     shuffle(pubs_to_code)
 
@@ -195,11 +247,11 @@ def randomize_and_insert(conn):
     for order, task in enumerate(doubled_list):
         insert_task(conn, order, task)
 
-def insert_task(conn, order, task):
-    insert_sql = """INSERT INTO assignments(pub_id, random_order)
-                         VALUE (%(task)s, %(order)s)
+def insert_task(conn, task):
+    insert_sql = """INSERT INTO assignments(pub_id)
+                         VALUE (%(task)s)
                  """
-    conn.execute(insert_sql, {"task": task, "order": order})
+    conn.execute(insert_sql, {"task": task})
     print("Inserted {}".format(task))
 
 import os
@@ -244,18 +296,18 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
+    insert_pmc_tasks(sys.argv[1], cursor, int(sys.argv[2]))
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
-    import sys
+
     # Check that script is run from right location.
-    neededPath = "code/getNextContentAnalysisAssignment.py"
-    if (sys.argv[0] != neededPath):
-        raise Exception("Must run script from ~/transition")
-
-    username = sys.argv[1]
-
+    # neededPath = "code/getNextContentAnalysisAssignment.py"
+    # if (sys.argv[0] != neededPath):
+    #     raise Exception("Must run script from ~/softcite")
+    #
+    # username = sys.argv[1]
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
-    pub_id = get_new_task(cursor, username)
-    generate_template_file(pub_id, username)
+    # pub_id = get_new_task(cursor, username)
+    # generate_template_file(pub_id, username)
