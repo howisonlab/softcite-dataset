@@ -12,6 +12,8 @@ import pprint
 import os
 import pwd
 import re
+import csv
+import sys
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
@@ -32,20 +34,25 @@ def generate_template_file(pub_id, username):
 @prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
 @prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
 @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
+@prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/> .
+@prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-dataset/pdf-files/{}.pdf
-bioj:a{} rdf:type bioj:article ;
+# https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
+pmcid:{} rdf:type bioj:article ;
 
-    citec:has_supplement [ rdf:type citec:supplement ;
-                           citec:isPresent FIXME ] ; # true/false
+    citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
 
-    citec:has_in_text_mention FIXME ; # name in text mention like bioj:a2004-40-NAT_GENET_JC01, no quotes
-
-    citec:coded_no_in_text_mentions FIXME ; # true/false
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "{}" ;
+          ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                           citec:isPresent FIXME; # true/false
+                         ] ;
+        ] ;
 .
 """
-    content = header.format(pub_id, pub_id)
+    content = header.format(pub_id, pub_id, username)
 
     ttl_file = open(filename, "x")
     ttl_file.write(content)
@@ -72,7 +79,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY random_order ASC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
@@ -121,6 +128,29 @@ CREATE TABLE assignments (
 
     cursor.execute(sql)
 
+"""Insert PMC tasks.
+
+These are read from oa_shuffled_with_header.csv which is randomized. It was randomized on 21 June 2017 using:
+tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
+This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
+"""
+def insert_pmc_tasks(filename, conn):
+    #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
+    # headers:
+    # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
+    with open(filename) as csvfile:
+        myCSVReader = csv.DictReader(csvfile,
+                                    delimiter=",",
+                                    quotechar='"')
+        pubs_to_code = []
+        for row in myCSVReader:
+            file_list.append(row["Accession ID"])
+
+        doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
+
+        for order, task in enumerate(doubled_list):
+            print(order + task)
+            # insert_task(conn, order, task)
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
@@ -244,15 +274,20 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
+    # insert_pmc_tasks(sys.argv[1], connection)
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
-    import sys
+
     # Check that script is run from right location.
     neededPath = "code/getNextContentAnalysisAssignment.py"
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-    username = sys.argv[1]
+    try:
+        username = sys.argv[1]
+    except IndexError:
+        raise Exception("Must pass github username as argument")
+
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
     # # username = "tester"
