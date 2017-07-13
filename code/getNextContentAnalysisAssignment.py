@@ -283,15 +283,10 @@ if __name__ == '__main__':
     if (sys.argv[0] != neededPath):
         raise Exception("Must run script from ~/transition")
 
-<<<<<<< HEAD
-
-    username = sys.argv[1]
-=======
     try:
         username = sys.argv[1]
     except IndexError:
         raise Exception("Must pass github username as argument")
->>>>>>> upstream/master
 
     # # print(username)
     # # username = pwd.getpwuid(os.getuid()).pw_name
