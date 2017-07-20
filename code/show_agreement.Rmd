@@ -1,0 +1,213 @@
+---
+title: "SciSoft Coding Agreement"
+subtitle: James Howison
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(data.world) # loads saved config see quickstart vignette
+
+prefixes <- "
+PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+
+softcite_ds = "https://data.world/jameshowison/software-citations/"
+
+# should pull from coding scheme
+valid_codes = c("has_supplement",
+"has_in_text_mention",
+"coded_no_in_text_mentions",
+"memo",
+"full_quote",
+"on_pdf_page",
+"spans_pages",
+"mention_type",
+"software_was_used",
+"software_name",
+"version_number",
+"version_date",
+"url",
+"creator",
+"has_reference",
+"reference_type")
+```
+
+
+This shows basic agreement stats for the scisoft content analysis.
+
+```{r}
+top_code_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
+WHERE {
+    ?article citec:has_in_text_mention ?selection .
+    ?selection ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:mention_type ]
+        ] .
+    ?selection citec:full_quote ?full_quote ;
+               citec:on_pdf_page ?on_pdf_page ;
+               citec:spans_pages ?spans_pages
+    }"
+))
+top_codes <- data.world::query(top_code_query, softcite_ds)
+top_codes <- as.tibble(top_codes)
+```
+
+SPARQL queries return everything as URLs, but we want just the localPart at the end.
+
+```{r}
+top_codes <- top_codes %>%
+       mutate_at(vars(article, selection), funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article,selection), funs(str_sub(.,2)))
+```
+
+
+
+```{r}
+# Focus on PMC dataset.
+top_codes <- top_codes %>% filter(str_detect(article, "PMC"))
+```
+
+
+```{r}
+num_articles <- top_codes %>% summarize(article_total = n_distinct(article))
+num_articles$article_total
+
+# number of mentions per article
+top_codes %>% 
+  group_by(article, coder) %>% 
+  summarize(selection_count = n_distinct(selection))
+
+```
+
+```{r}
+require(RecordLinkage)
+
+top_codes <- top_codes %>% filter(str_detect(article,"PMC"))
+
+links <- compare.linkage(top_codes, top_codes, blockfld = c("article","on_pdf_page"), strcmp = T, exclude = c("selection", "coder", "spans_pages"))
+pairs <- as.tibble(links$pairs) %>% 
+  select(id1, id2, full_quote) %>% 
+  filter(id1 != id2) %>% # exclude self matches. 
+  rename(selection_id = id1, match_id = id2, full_quote_match_score = full_quote)
+
+# sort group by full_quote, take top 1, can produce ties
+top_matches <- pairs %>% 
+  group_by(selection_id) %>% 
+  top_n(1, full_quote_match_score) %>% 
+  ungroup()
+  
+# add rowname as integer to top_codes for joining.
+sel_lookup <- rownames_to_column(top_codes) 
+sel_lookup$id <- as.integer(sel_lookup$rowname)
+sel_lookup <- sel_lookup %>% select(id, selection)
+
+# change ids to selection names
+top_matches <- left_join(top_matches, sel_lookup, 
+                         by = c("selection_id" = "id")) %>% 
+  select(-selection_id, selection, match_id, full_quote_match_score)
+
+# now change id in top_match to selection name
+top_matches <- left_join(top_matches, sel_lookup, 
+                         by = c("match_id" = "id")) %>% 
+  rename(selection = selection.x, top_match = selection.y) %>% 
+  select(-match_id)
+
+```
+
+Ok, so now avoid matching with own selections.
+
+```{r}
+# remove articles with only 1 coder.
+# This helps to avoid NAs in the possible matches. See
+multi_coders <- top_codes %>% 
+  group_by(article) %>% 
+  mutate(num_coder = n_distinct(coder)) %>% 
+  ungroup() %>%
+  filter(num_coder > 1)
+
+get_possible_matches <- function(curr_article, curr_coder, data) {
+  m <- data %>% filter(article == curr_article, coder != curr_coder )
+  select(m, -article, -coder, -num_coder)
+}
+
+
+poss_matches <- multi_coders %>% 
+  group_by(article, coder) %>%
+  summarize(poss_matches = list(get_possible_matches(article, coder, multi_coders))) 
+
+data_for_matching <- multi_coders %>% 
+  select(-num_coder) %>% 
+  group_by(article, coder) %>% 
+  nest(.key = "selections") 
+
+
+grouped_data <- left_join(poss_matches, data_for_matching)
+   # removes any NAs
+  
+
+map2(grouped_data$selections, grouped_data$poss_matches, compare.linkage, strcmp = T, exclude = c("selection", "spans_pages"))
+
+```
+
+
+
+```{r}
+lower_code_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder ?selection ?code ?present ?label
+WHERE {
+    ?article citec:has_in_text_mention ?selection .
+    ?selection ca:isTargetOf ?ca .
+    ?ca ca:hasCoder ?coder ;
+        ca:appliesCode ?code_block .
+    ?code_block rdf:type ?code ;
+                citec:isPresent ?present .
+OPTIONAL { ?code_block rdfs:label ?label }
+}"
+))
+lower_codes <- data.world::query(lower_code_query, softcite_ds)
+lower_codes <- as.tibble(lower_codes)
+lower_codes <- lower_codes %>% mutate(present = (present == "true"))
+```
+
+Join them together, vertically. Convert present column to boolean
+
+```{r}
+df <- rbind(lower_codes, top_codes)
+df <- distinct(df)
+```
+
+```{r}
+df$code <- readr::parse_factor(df$code, levels = valid_codes)
+```
+
+Now obtain a graph showing counts of codes per user for each article
+```{r, echo=FALSE}
+p <- df %>% 
+  group_by(article, coder) %>% 
+ # summarize(num_mentions = n()) %>% 
+  ggplot(aes(x = coder)) +
+  geom_bar() +
+  scale_y_continuous(breaks = c(2,4,6,8), minor_breaks = FALSE) +
+  facet_wrap_paginate(~ article, ncol = 2, nrow = 2, page = 2) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+p
+```
+
+
