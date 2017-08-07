@@ -131,8 +131,36 @@ top_matches <- left_join(top_matches, sel_lookup,
 Ok, so now avoid matching with own selections.
 
 ```{r}
+# Function to generate lookups for tibbles
+my.lookup <- function(data) {
+  data_lookup <- rownames_to_column(data) 
+  data_lookup$id <- as.integer(data_lookup$rowname)
+  data_lookup <- data_lookup %>% select(id, selection)
+  return(data_lookup)
+}
+
+# Function to return matching results from compare.linkage in friendly way
+my.compare.linkage <- function(data1, data2, ...) {
+  linkage <- compare.linkage(data1, data2, ...)
+  pairs <- linkage$pairs %>% select(-is_match, -on_pdf_page) %>% rename(match_score = full_quote)
+  # swap ids.
+  data1_lookup <- my.lookup(data1)
+  data2_lookup <- my.lookup(data2)
+  
+  pairs <- left_join(pairs, data2_lookup, by = c("id2" = "id"))
+  pairs <- pairs %>% rename(poss_match = selection)
+  
+  pairs <- left_join(pairs, data1_lookup, by = c("id1" = "id"))
+  
+  pairs <- pairs %>% select(-id1, -id2)
+
+}
+```
+
+
+```{r}
 # remove articles with only 1 coder.
-# This helps to avoid NAs in the possible matches. See
+# This helps to avoid NAs in the possible matches.
 multi_coders <- top_codes %>% 
   group_by(article) %>% 
   mutate(num_coder = n_distinct(coder)) %>% 
@@ -155,12 +183,38 @@ data_for_matching <- multi_coders %>%
   nest(.key = "selections") 
 
 
+# removes any NAs
 grouped_data <- left_join(poss_matches, data_for_matching)
-   # removes any NAs
-  
 
-map2(grouped_data$selections, grouped_data$poss_matches, compare.linkage, strcmp = T, exclude = c("selection", "spans_pages"))
+results <- grouped_data %>% 
+  mutate(pairs = map2(selections, poss_matches,
+                              my.compare.linkage, 
+                              strcmp = T, exclude = c("selection", "spans_pages")  )
+                        )
 
+results %>% 
+  select(-selections, -poss_matches) %>% 
+  unnest() %>% 
+  select(article, coder, selection, poss_match, match_score)
+
+
+# This lovely expression gets the data table that results from matching the selections table and the poss_matches table for row 1 (which is brentbiglin's selections for article PMC2529246)
+# note that it uses row_names (id1, id2) which refer to the order of 
+# rows in selections and poss_matches ...
+# results[1,]$rec_links[[1]]$pairs
+```
+What we really want back is the ids of possible matches for each selection, in order.  
+
+article, coder, selection, poss_match, match_score
+PMC2529246, brent, PMC2529246_BB01, PMC2529246_JH01, 1.0000
+PMC2529246, brent, PMC2529246_BB01, PMC2529246_JH02, 0.220
+PMC2529246, brent, PMC2529246_BB02, PMC2529246_JH01, 0.35
+PMC2529246, brent, PMC2529246_BB02, PMC2529246_JH02, 1.0000
+PMC2529246, james, PMC2529246_JH01, PMC2529246_BB01, 1.0000
+
+Need to convert ids back to selection names. Then somehow unest?
+```{r}
+results[1,]
 ```
 
 
