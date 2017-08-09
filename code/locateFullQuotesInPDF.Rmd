@@ -1,0 +1,178 @@
+---
+title: "Find quotes in PDF text"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(data.world) # loads saved config see quickstart vignette
+
+prefixes <- "
+PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+
+softcite_ds = "https://data.world/jameshowison/software-citations/"
+
+# should pull from coding scheme
+valid_codes = c("has_supplement",
+"has_in_text_mention",
+"coded_no_in_text_mentions",
+"memo",
+"full_quote",
+"on_pdf_page",
+"spans_pages",
+"mention_type",
+"software_was_used",
+"software_name",
+"version_number",
+"version_date",
+"url",
+"creator",
+"has_reference",
+"reference_type")
+```
+
+This gets the codes from the top of the files.
+
+```{r}
+top_code_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
+WHERE {
+    ?article citec:has_in_text_mention ?selection .
+    ?selection ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:mention_type ]
+        ] .
+    ?selection citec:full_quote ?full_quote ;
+               citec:on_pdf_page ?on_pdf_page ;
+               citec:spans_pages ?spans_pages
+    }"
+))
+top_codes <- data.world::query(top_code_query, softcite_ds)
+top_codes <- as.tibble(top_codes)
+```
+
+SPARQL queries return everything as URLs, but we want just the localPart at the end.
+
+```{r}
+top_codes <- top_codes %>%
+       mutate_at(vars(article, selection), funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article,selection), funs(str_sub(.,2)))
+```
+
+
+```{r}
+# Focus on PMC dataset.
+top_codes <- top_codes %>% filter(str_detect(article, "PMC"))
+```
+
+Now load the pdf for each article
+
+```{r}
+library(extractr)
+
+my_extract <- function(p) {
+  pdf_t <- extract(p)
+  return(BString(pdf_t$data))
+}
+
+folder <-  "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/docs/pdf-files/pmc_oa_files/"
+txt <- extract(paste(folder, "PMC3808809.pdf", sep=""))
+txt$data
+print(str_c(txt, collapse = " "))
+
+articles <- top_codes %>% 
+  select(article) %>% 
+  distinct() %>% 
+  head(5) %>%
+  mutate(path = str_c(folder, article, ".pdf", sep=""))
+
+# with an unvectorized function use map.
+articles <- articles %>% 
+  mutate(extract_object = map(.$path, extract),
+         # just gets extract_object$data.
+         pdf_as_text = map_chr(extract_object, "data"),
+         pdf_as_xstring = map(pdf_as_text, BString)
+         ) 
+
+# to get just a single string out! pull gets a column as vector and unlist
+
+
+mismatch_num = 10
+test <- left_join(articles, top_codes, by = "article") %>% 
+  mutate(results = map2(full_quote, pdf_as_xstring, matchPattern, with.indels = T, max.mismatch = mismatch_num)) %>%
+  # length, start, end are accessor functions on the result of matchPattern
+  mutate(num_found = map_int(results, length))
+
+found <- test %>% 
+  filter(num_found > 0) %>% 
+  mutate(start = map_int(results, start),
+         end = map_int(results, end))
+
+select(found, num_found, start, end)
+
+```
+To map a three parameter function you have to have a data frame with just those columns. So in this I reshape the found data frame inside the mutate call.
+```{r}
+
+just_params_for_sub_str <- found %>% 
+  select(pdf_as_xstring, start, end) %>% 
+  rename(x = pdf_as_xstring) 
+
+#%>% 
+  # attempt to fix the location of the substring, but it's not consistent.
+ # mutate(start = start - mismatch_num) 
+  
+
+# I had issues in the below because pmap returns a list and there
+# isn't the equivalent of pmap_chr for bstrings
+# rowwise solves this. Documentation makes this clear:
+# "Its main impact is to allow you to work with list-variables in summarise() and mutate() without having to use [[1]]."
+compare <- found %>% 
+  mutate(substring_xstring = pmap(just_params_for_sub_str, subseq)) %>% 
+  rowwise() %>% 
+  mutate(substring = as.character(substring_xstring)) %>% 
+  select(selection, full_quote, substring)
+
+View(compare)
+```
+
+```{r}
+View(select(found, full_quote, substring))
+full_string <- "the cat sat on the mat the cat"
+res <- matchPattern("the cat", full_string, with.indels = T, max.mismatch = 10)
+substr(full_string, start(res), end(res))
+
+start(res[4])
+
+res <- matchPattern("batman", "the cat sat on the mat")
+
+as.data.frame(res)
+
+start(res)
+
+
+as.matrix(res)
+View(test)
+
+
+test2 <- left_join(articles,top_codes) %>% ungroup() %>% 
+  mutate(results = map2(.$full_quote, .$pdf_as_text, matchPattern, with.indels = T, max.mismatch = 10))
+
+test2 %>% mutate(text_only = map(.$results, "data"))
+
+test2[2,]$results
+```
+
