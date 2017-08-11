@@ -135,7 +135,7 @@ match_selection <- function(df, pdf_as_xstring) {
   results <- matchPattern(full_quote, pdf_as_xstring)
   if (length(results) == 0) {
       mismatch_allow <- floor(str_length(full_quote) / 6)
-      mismatch_allow <- 10
+      # mismatch_allow <- 10
       results <- matchPattern(full_quote, pdf_as_xstring, 
                           with.indels = T, max.mismatch = mismatch_allow)
   }
@@ -172,9 +172,17 @@ known_problematic = c("PMC5039120_SK02", "PMC5039120_BB02",
                       # interspersed columns
                       "PMC5039120_BB01", "PMC5039120_SK01",
                       # interspersed columns
-                      "PMC5238813_RA08", "PMC5238813_SK28")
+                      "PMC5238813_RA08", "PMC5238813_SK28",
                       # article has extraction issues, these two don't match
-                      
+                      "PMC5080194_MD02", "PMC5080194_RA01",
+                      # below here are those that find two matches
+                      # These two are found twice in the same article)
+                      "PMC5339831_BB01", "PMC5339831_SK01",
+                      # These two match but are same text as next two
+                      "PMC5339831_BB02", "PMC5339831_SK02",
+                      # These two match but are same as last two.
+                      "PMC3309518_RA09")
+                      # This one shows up twice.
 
 achievable <- top_codes %>% filter(!(selection %in% known_problematic) )
 
@@ -201,12 +209,8 @@ Article PMC4926940 similarly extracts with text from each column interspersed, s
 These are taken out in the achieveables conversion, above.
 
 Another technique might be to start with the name of the software highlighted and expand from there until the specific mention is found?
-```{r}
-multiples <- found %>% filter(num_found > 1)
 
-multiples %>% unnest(start)
-
-```
+PMC3198286_RA01 RA_02 and RA_03 are just too long?
 
 PMC3309518_RA09 shows up twice because of indels allowing too much flexibility.
 
@@ -219,4 +223,24 @@ These show up twice because there are 2 very similar sentences about the same so
 PMC5339831_BB01 has two very similar sentences, but it's definitely the first one, BB02 is the second one.  (first has PerkinElmer)
 
 PMC5339831_SK01 and SK02 are the same story.
+
+```{r}
+# Now need to figure out which overlap with which.
+
+# runs once for each article and coder
+does_match <- function(df) {
+  art <- df[[1, "article"]]
+  coder <- df[[1, "coder"]]
+  others <- found %>% filter(article = art, coder != coder)
+  
+  my_sel_as_range <- 
+}
+
+get_ranges <- function(df) {
+  return(df %>% select(start, width) %>% pmap(IRanges))
+}
+
+# run for each article and coder
+ddply(found, .(article, coder), does_match)
+```
 
