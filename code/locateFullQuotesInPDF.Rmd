@@ -143,7 +143,7 @@ match_selection <- function(df, pdf_as_xstring) {
    results <- list(results)
    df %>% mutate(num_found = map_int(results, length),
                  start = map(results, start),
-                 width = map(results, width))
+                 end = map(results, end))
 }
 
 
@@ -226,21 +226,77 @@ PMC5339831_SK01 and SK02 are the same story.
 
 ```{r}
 # Now need to figure out which overlap with which.
+found <- found %>% 
+  mutate(range = map2(start, end, IRanges))
 
-# runs once for each article and coder
-does_match <- function(df) {
-  art <- df[[1, "article"]]
-  coder <- df[[1, "coder"]]
-  others <- found %>% filter(article = art, coder != coder)
-  
-  my_sel_as_range <- 
+get_possible_matches <- function(curr_article, curr_coder, data) {
+  m <- data %>% filter(article == curr_article, coder != curr_coder )
+  m %>% pull(selection)
 }
 
-get_ranges <- function(df) {
-  return(df %>% select(start, width) %>% pmap(IRanges))
+poss_matches <- found %>%
+  select(article, coder, selection, range) %>% 
+  group_by(article, coder) %>%
+  mutate(poss_match = list(get_possible_matches(article, coder, found))) %>% 
+  unnest(poss_match)
+
+# Now have a row for every possible pair.
+# Must have found available
+does_overlap <- function(sel, poss_overlap, found) {
+  sel_range_list <- (found %>% filter(selection == sel))[[1, "range"]]
+  sel_range <- sel_range_list[[1]] # unlist
+  poss_overlap_range_list <- found %>% 
+    filter(selection == poss_overlap) %>% pull(range)
+  poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
+  num_overlap = nrow(as.matrix(findOverlaps(sel_range, poss_overlap_range)))
+  return(num_overlap != 0)
 }
 
-# run for each article and coder
-ddply(found, .(article, coder), does_match)
+# does_overlap("PMC2529246_BB02", "PMC2529246_MS02", found)
+
+poss_matches <- poss_matches %>% 
+  rowwise() %>% 
+  mutate(match = does_overlap(selection, poss_match, found))
+
+poss_matches %>% group_by(match) %>% tally()
+
+final_matches <- poss_matches %>% filter(match == T) %>% 
+  rename(matching_selection = poss_match) %>% 
+  select(selection, matching_selection)
+
+top_codes_with_matches <- left_join(top_codes, final_matches, by = "selection") %>% mutate(matched = !is.na(matching_selection))
+
+top_codes_with_matches %>% group_by(matched) %>% tally()
+
+# Should add in manual matches from list above.
+
+```
+
+```{r}
+library(IRanges)
+self <- tribble(
+  ~start, ~end,
+  1,   6,
+  6,   8
+)
+
+other <- tribble(
+  ~start, ~end,
+  1,   14,
+  7,   14
+)
+
+self_r <-  self %>% mutate(range = map2(start, end, IRanges))
+other_r <- other %>% mutate(range = map2(start, end, IRanges))
+
+run_match <- function(df, other_list) {
+  self_list <-  RangesList(df[[1, "range"]])
+  return(overlapsAny(self_list, other_list))
+}
+
+dlply(self_r, .(start), run_match, RangesList(other_r$range))
+
+
+# Hmmm, even using RangesLists it still just matches each pair
 ```
 
