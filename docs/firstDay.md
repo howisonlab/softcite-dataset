@@ -17,7 +17,7 @@ Before you can get started working on the Softcite project, you'll need several 
 
 1. You have signed up for and downloaded the Chrome extension called Hypothesis. You can sign up and download the extension here: https://web.hypothes.is. You might need to check your email at some point during the sign up process to confirm your account.
 
-# During the First Meeting(s)
+# During the First Meeting
 
 After you have those five items installed on your computer, you are ready to attend the first meeting. There is still more setup to do before you can start training or collecting data, however. Follow these instructions to finish your set up:
 
@@ -86,6 +86,4 @@ Copy what the terminal returns to you (e.g. /home/jlcohoon).
 
 You are now viewing your empty directory on the iSchool Server! You will add a copy of the Softcite repository (collection of data, code, and documentation) to your directory in later steps. Each Research Assistant will have their own copy of the repository (AKA "repo"). We will use git and Github to share our work with one another.
 
-##Set up Your Keyboard Shortcuts
-
-## Open the Coding Scheme
+[Return Home](index.md)
