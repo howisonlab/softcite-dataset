@@ -68,9 +68,23 @@ Enter your password in the terminal window that opens.
 
 *Note:* You will need to keep this folder. Do not forget where you put it. Do not delete it until you are no longer working for with the Howison Lab.
 
-1. In Atom, click on the **Packages** menu in the top navigation bar. In the dropdown that opens, click **Remote-FTP**. In the dropdown that opens from there, click on **Toggle.**
-
 1. In Atom, click on the **Packages** menu in the top navigation bar. In the dropdown that opens, click **Remote-FTP**. In the dropdown that opens from there, click on **Create SFTP config file.**
+
+1. In the file that opened (called .ftpconfig), you will change several fields. Change the User and Password fields so that they match your iSchool username and password. Change the Host field so that it reads "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+
+1. In your terminal window, as for the directory's path (i.e. exactly where the folder you are in is located on the iSchool server) by entering the following command:
+
+$pwd
+
+Copy what the terminal returns to you (e.g. /home/jlcohoon).
+
+1. In Atom in the .ftpconfig file, paste what you copied from the terminal into the Remote field.
+
+1. Save and close your .ftpconfig file.
+
+1. In Atom, click on the **Packages** menu in the top navigation bar. In the dropdown that opens, click **Remote-FTP**. In the dropdown that opens from there, click on **Toggle.** Click the **Connect** button in the pane that just opened.
+
+You are now viewing your empty directory on the iSchool Server! You will add a copy of the Softcite repository (collection of data, code, and documentation) to your directory in later steps. Each Research Assistant will have their own copy of the repository (AKA "repo"). We will use git and Github to share our work with one another.
 
 ##Set up Your Keyboard Shortcuts
 
