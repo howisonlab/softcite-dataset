@@ -19,7 +19,7 @@ Before you can get started working on the Softcite project, you'll need several 
 
 # During the First Meeting
 
-After you have those five items installed on your computer, you are ready to attend the first meeting. There is still more setup to do before you can start training or collecting data, however. Follow these instructions to finish your set up:
+After you have those five items installed on your computer, you are ready to attend the first meeting. There is still more setup to do before you can start training or collecting data, however. On your first day you will continue to set up Atom, make accounts, and give yourself access to the iSchool (Information School) server. Follow these instructions to continue your set up:
 
 ## Sign Up for Github
 If you do not have an account already, sign up for Github. You can sign up here: https://github.com/. Github is an online platform that allows users to share and document their code. It is built on the version control system, git. Git and Github are not the same thing, but Github adds functionality and a social/communicative aspect to git. Git itself allows you to keep track of versions of a file. We will discuss this more as a group.
