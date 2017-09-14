@@ -5,6 +5,8 @@ title: "PDFs for softcite"
 
 [First Day Setup](firstDay.md)
 
+[Second Day Setup](secondDay.md)
+
 [Viewing the Coding Scheme in HTML](setupTable.md)
 
 [Setting up Keyboard Shortcuts](shortcuts.md)
