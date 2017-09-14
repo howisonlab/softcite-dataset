@@ -3,12 +3,15 @@ title: "PDFs for softcite"
 ---
 # Instructions
 
-[Working on Softcite Data Files](setupInstructions.md)
-
-[Setting up Keyboard Shortcuts](shortcuts.md)
+[First Day Setup](firstDay.md)
 
 [Viewing the Coding Scheme in HTML](setupTable.md)
 
+[Setting up Keyboard Shortcuts](shortcuts.md)
+
+[Working on Softcite Data Files](setupInstructions.md)
+
+[Git and Github resources](gitResources.md)
 
 # Training Group 1
 
