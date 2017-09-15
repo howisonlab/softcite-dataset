@@ -95,14 +95,4 @@ From the terminal, execute the following command followed by your github usernam
 
 A new file will be added to your individuals folder. You may need to right click on it and hit refresh to make the new file appear. The new file will contain the prefixes and article block for your new assignment.
 
-## Git Tutorials
-
-There are many free tutorials on how to use git that might be useful:
-
-1. [https://www.codecademy.com/learn/learn-git](https://www.codecademy.com/learn/learn-git)
-1. [http://gitimmersion.com/](http://gitimmersion.com/)
-1. [https://help.github.com/](https://help.github.com/)
-
-Git cheat sheet: [https://education.github.com/git-cheat-sheet-education.pdf](https://education.github.com/git-cheat-sheet-education.pdf)
-
 [Return Home](index.md)

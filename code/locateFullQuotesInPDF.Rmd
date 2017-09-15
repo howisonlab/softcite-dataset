@@ -1,0 +1,318 @@
+---
+title: "Find quotes in PDF text"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(data.world) # loads saved config see quickstart vignette
+
+prefixes <- "
+PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+
+softcite_ds = "https://data.world/jameshowison/software-citations/"
+
+# should pull from coding scheme
+valid_codes = c("has_supplement",
+"has_in_text_mention",
+"coded_no_in_text_mentions",
+"memo",
+"full_quote",
+"on_pdf_page",
+"spans_pages",
+"mention_type",
+"software_was_used",
+"software_name",
+"version_number",
+"version_date",
+"url",
+"creator",
+"has_reference",
+"reference_type")
+```
+
+This gets the codes from the top of the files.
+
+```{r}
+top_code_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
+WHERE {
+    ?article citec:has_in_text_mention ?selection .
+    ?selection ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:mention_type ]
+        ] .
+    ?selection citec:full_quote ?full_quote ;
+               citec:on_pdf_page ?on_pdf_page ;
+               citec:spans_pages ?spans_pages
+    }"
+))
+top_codes <- data.world::query(top_code_query, softcite_ds)
+top_codes <- as.tibble(top_codes)
+```
+
+SPARQL queries return everything as URLs, but we want just the localPart at the end.
+
+```{r}
+top_codes <- top_codes %>%
+       mutate_at(vars(article, selection), funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article,selection), funs(str_sub(.,2)))
+```
+
+
+```{r}
+# Focus on PMC dataset 
+top_codes <- top_codes %>% filter(str_detect(article, "PMC"))
+
+# Only retain selections from articles with multiple coders
+multi_coders <- top_codes %>% 
+  group_by(article) %>% 
+  mutate(num_coder = n_distinct(coder)) %>% 
+  ungroup() %>%
+  filter(num_coder > 1)
+```
+
+Now load the pdf for each article
+
+```{r}
+library(extractr)
+
+my_extract <- function(p) {
+  pdf_t <- extract(p)
+  return(BString(pdf_t$data))
+}
+
+folder <-  "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/docs/pdf-files/pmc_oa_files/"
+# txt <- extract(paste(folder, "PMC3808809.pdf", sep=""))
+# txt$data
+# print(str_c(txt, collapse = " "))
+
+articles <- multi_coders %>% 
+  select(article) %>% 
+  distinct() %>% 
+  mutate(path = str_c(folder, article, ".pdf", sep=""))
+
+# with an unvectorized function use map (or use rowwise())
+articles <- articles %>% 
+  mutate(extract_object = map(.$path, extract),
+         # just gets extract_object$data.
+         pdf_as_text = map_chr(extract_object, "data"),
+         pdf_as_xstring = map(pdf_as_text, BString)
+         ) 
+
+# to get just a single string out! pull gets a column as vector and unlist
+
+matches <- left_join(articles, multi_coders, by = "article") %>% 
+  mutate(results = map2(full_quote, pdf_as_xstring, matchPattern, 
+                        with.indels = T, max.mismatch = 10)) %>%
+  # length, start, end are accessor functions on the result of matchPattern
+  mutate(num_found = map_int(results, length))
+
+#matches %>% 
+#  filter(num_found > 1)
+
+found <- matches %>% 
+  filter(num_found == 1) %>% 
+  mutate(start = map_int(results, start),
+         end = map_int(results, end))
+
+# select(found, num_found, start, end)
+
+```
+
+Next task is to locate overlapping BStrings. Bioconductor's IRanges has a findOverlaps function for just this.  For each article, create a BString, then for each full_quote define that as an IRange.  Then can use findOverlaps. One can use this directly with start and end, which I have in the found df.
+
+```{r}
+found <- found %>% 
+  mutate(range = map2(start, end, IRanges))
+```
+
+Before doing overlap test need to set up data. Find possible matches (same article, different coder) and expand data frame so that each row is a possible combo.
+
+```{r}
+# get selections on same article but by a different coder.
+get_possible_matches <- function(curr_article, curr_coder, data) {
+  m <- data %>% filter(article == curr_article, coder != curr_coder )
+  m %>% pull(selection)
+}
+
+poss_matches <- found %>%
+  select(article, coder, selection, start, end) %>% 
+  group_by(article, coder) %>%
+  mutate(poss_match = list(get_possible_matches(article, coder, found))) %>% 
+  unnest()
+
+nrow(poss_matches)
+# remove duplicates by pasting together in same order
+poss_matches <- poss_matches %>% 
+  mutate(key = paste0(pmin(selection, poss_match), 
+                      pmax(selection, poss_match))) %>% 
+  distinct(key, .keep_all = T)
+
+nrow(poss_matches)
+
+```
+
+Now ready to do overlap test.
+
+```{r}
+# Must have found available
+does_overlap <- function(sel, poss_overlap, found) {
+  sel_range_list <- found %>% filter(selection == sel) %>% pull(range) 
+  sel_range <- sel_range_list[[1]] # unlist
+  poss_overlap_range_list <- found %>% 
+    filter(selection == poss_overlap) %>% pull(range)
+  poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
+  num_overlap = nrow(as.matrix(findOverlaps(sel_range, poss_overlap_range)))
+  return(num_overlap != 0)
+}
+# does_overlap("PMC2529246_BB02", "PMC2529246_MS02", found)
+
+poss_matches <- poss_matches %>% 
+  rowwise() %>% 
+  mutate(match = does_overlap(selection, poss_match, found))
+
+poss_matches %>% group_by(match) %>% tally()
+
+final_matches <- poss_matches %>% filter(match == T) %>% 
+  rename(matching_selection = poss_match) %>% 
+  select(article, coder, selection, matching_selection)
+
+quote_lookup <- select(found, selection, full_quote)
+
+final_matches_with_quotes <- final_matches %>% left_join(quote_lookup, by=c("matching_selection" = "selection")) %>% 
+  rename(full_quote_match = full_quote) %>% 
+  left_join(quote_lookup, by=c("selection" = "selection"))
+
+nrow(final_matches_with_quotes)
+View(select(final_matches_with_quotes, full_quote, full_quote_match))
+
+```
+
+To map a three parameter function you have to have a data frame with just those columns. So in this I reshape the found data frame inside the mutate call.
+```{r}
+
+just_params_for_sub_str <- found %>% 
+  select(pdf_as_xstring, start, end) %>% 
+  rename(x = pdf_as_xstring) 
+
+# I had issues in the below because pmap returns a list and there
+# isn't the equivalent of pmap_chr for bstrings
+# rowwise solves this. Documentation makes this clear:
+# "Its main impact is to allow you to work with list-variables in summarise() and mutate() without having to use [[1]]."
+compare <- found %>% 
+  mutate(substring_xstring = pmap(just_params_for_sub_str, subseq)) %>% 
+  rowwise() %>% 
+  mutate(substring = as.character(substring_xstring)) %>% 
+  select(selection, full_quote, substring)
+
+View(compare)
+```
+
+Little test of IRange
+
+```{r}
+library(IRanges)
+
+full_string <- "the cat sat on the mat"
+res1 <- matchPattern("the cat sat", full_string)
+range1 <- IRanges(start = start(res1), end = end(res1))
+res2 <- matchPattern("cat sat on the mat", full_string)
+range2 <- IRanges(start = start(res2), end = end(res2))
+nrow(as.matrix(findOverlaps(range1, range2)))
+
+res3 <- matchPattern("batman", full_string)
+range3 <- IRanges(start = start(res3), width = width(res3))
+nrow(as.matrix(findOverlaps(range1, range3)))
+```
+
+
+
+
+
+
+
+Ok putting it all together.
+
+1. get top_codes
+2. retain only selections from articles with multiple coders
+3. get pdf_as_text for each article
+4. get range for selection
+5. get possible matches for selection
+6. unnest
+7. find overlap
+
+```{r}
+
+```
+
+
+```{r}
+multi_coders <- top_codes %>% 
+  group_by(article) %>% 
+  mutate(num_coder = n_distinct(coder)) %>% 
+  ungroup() %>%
+  filter(num_coder > 1)
+
+get_possible_matches <- function(curr_article, curr_coder, data) {
+  m <- data %>% filter(article == curr_article, coder != curr_coder )
+  select(m, -article, -coder, -num_coder)
+}
+
+
+poss_matches <- multi_coders %>% 
+  group_by(article, coder) %>%
+  summarize(poss_matches = list(get_possible_matches(article, coder, multi_coders))) 
+
+data_for_matching <- multi_coders %>% 
+  select(-num_coder) %>% 
+  group_by(article, coder) %>% 
+  nest(.key = "selections") 
+
+
+# removes any NAs
+grouped_data <- left_join(poss_matches, data_for_matching)
+```
+
+
+
+```{r}
+View(select(found, full_quote, substring))
+full_string <- "the cat sat on the mat the cat"
+res <- matchPattern("the cat", full_string, with.indels = T, max.mismatch = 10)
+substr(full_string, start(res), end(res))
+
+start(res[4])
+
+res <- matchPattern("batman", "the cat sat on the mat")
+
+as.data.frame(res)
+
+start(res)
+
+
+as.matrix(res)
+View(test)
+
+
+test2 <- left_join(articles,top_codes) %>% ungroup() %>% 
+  mutate(results = map2(.$full_quote, .$pdf_as_text, matchPattern, with.indels = T, max.mismatch = 10))
+
+test2 %>% mutate(text_only = map(.$results, "data"))
+
+test2[2,]$results
+```
+
