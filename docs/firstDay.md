@@ -49,13 +49,9 @@ You will want to do a few things to make reading files in Atom easier on your ey
 When working in the Howison Lab, you will be working on your own machine but editing files that are hosted on an iSchool server. As you make changes to those files you will use git to keep track of your edits, and then will push those edits to Github so that the rest of the lab can see your work as well. To access the files on the iSchool server, you will need to create an .ftpconfig file. You started this process when you downloaded the Remote-FTP package in the [Download Atom Packages](#download-atom-packages) section. If you have set up your [iSchool account](#make-an-ischool-account) as well, continue by following these instructions:
 
 1. *If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
-
 `$ssh <iSchool username>@howisonlab.ischool.utexas.edu`
-
 *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
-
 ![Login Example](/images/loginExample.png)
-
 Enter your password after the prompt. As you type, it will not show you the characters. Continue by moving to step 3.
 
 1. *If you are using a PC:* Open PuTTY. In the "User" field, enter your iSchool username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
@@ -74,7 +70,7 @@ Enter your password in the terminal window that opens.
 
 1. In your terminal window, as for the directory's path (i.e. exactly where the folder you are in is located on the iSchool server) by entering the following command:
 
-$pwd
+`$pwd`
 
 Copy what the terminal returns to you (e.g. /home/jlcohoon).
 
