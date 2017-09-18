@@ -25,7 +25,11 @@ Enter the following in the server field: howisonlab.ischool.utexas.edu. Click co
 
 ### Access From Off Campus
 
-When you need to connect to the server from home, you'll need to use a VPN. The business school has useful instructions [https://www.mccombs.utexas.edu/Tech/Web-Team/Sitecore-Training/VPN-login](https://www.mccombs.utexas.edu/Tech/Web-Team/Sitecore-Training/VPN-login).  You will need to download CISCO AnyConnect, regardless of what kind of computer you use. Note that when you put your "second password" in you won't be typing your password for a second time, but entering "push," "SMS," or "phone" according to the instructions below that field.
+When you need to connect to the server from home, you'll need to use a VPN. There is a university [wiki page](https://wikis.utexas.edu/pages/viewpage.action?spaceKey=networking&title=Connecting+to+the+UT+VPN+Service) that includes instructions on how to do this.  You will need to download CISCO AnyConnect, regardless of what kind of computer you use. You will also need to set up two factor authentication. The wiki page explains what you need.
+
+When you are actually attempting to use AnyConnect, note that when you put your "Duo Passcode" in (in the empty field in the image below) you won't be typing your password for a second time, but entering "push," "SMS," or "phone" according to the instructions below that field. 
+
+![AnyConnect image](/images/anyconnect.png)
 
 ## Moving to the Right Repo
 
@@ -94,15 +98,5 @@ From the terminal, execute the following command followed by your github usernam
   `$ python3 code/getNextContentAnalysisAssignment.py <username>`
 
 A new file will be added to your individuals folder. You may need to right click on it and hit refresh to make the new file appear. The new file will contain the prefixes and article block for your new assignment.
-
-## Git Tutorials
-
-There are many free tutorials on how to use git that might be useful:
-
-1. [https://www.codecademy.com/learn/learn-git](https://www.codecademy.com/learn/learn-git)
-1. [http://gitimmersion.com/](http://gitimmersion.com/)
-1. [https://help.github.com/](https://help.github.com/)
-
-Git cheat sheet: [https://education.github.com/git-cheat-sheet-education.pdf](https://education.github.com/git-cheat-sheet-education.pdf)
 
 [Return Home](index.md)

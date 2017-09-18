@@ -127,14 +127,13 @@ CREATE TABLE assignments (
 
 """Insert PMC tasks.
 
-These are read from oa_shuffled_with_header.csv which is randomized. It was randomized on 21 June 2017 using:
+These are read from oa_list_shuffled.csv which is randomized. It was randomized on 21 June 2017 using:
 tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
 This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
+md5sum = 1bd372f619fad53987ab83d2eafa68f0
 """
-def insert_pmc_tasks(filename, conn, num_to_insert):
+def insert_pmc_tasks(conn, num_to_insert, filename = "docs/pdf-files/pmc_oa_files/oa_list_shuffled.csv" ):
     import os.path
-    #filename = "data/pmc_oa_dataset/oa_shuffled_with_header.csv"
-    # headers:
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
     with open(filename) as csvfile:
         myCSVReader = csv.DictReader(csvfile,
@@ -154,8 +153,9 @@ def insert_pmc_tasks(filename, conn, num_to_insert):
             else:
                 pubs_to_code.append(row["Accession ID"])
                 get_via_ftp(destination, row["File"])
-                write_to_index(row["Article Citation"],row["Accession ID"])
-                inserted_count += 1
+                if (os.path.exists(destination)):
+                    write_to_index(row["Article Citation"], row["Accession ID"])
+                    inserted_count += 1
 
         doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
 
@@ -296,7 +296,7 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(sys.argv[1], cursor, int(sys.argv[2]))
+    insert_pmc_tasks(cursor, int(sys.argv[1]))
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 
