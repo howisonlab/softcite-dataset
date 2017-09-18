@@ -5,6 +5,8 @@ title: "Second Day Setup"
 
 # During the Second Meeting
 
+More instructions will be added soon!
+
 ## Fork and Clone the Softcite Repo
 
 ## Set up Your Remotes
