@@ -13,21 +13,27 @@ This is how you can access the lab's server where your work is stored:
 
 ### Macs
 
-In the terminal, enter the following command:
+*If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
 
-  `$ ssh <username>@howisonlab.ischool.utexas.edu`
+    `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
-Note that a $ preceding a line is just indicating that you type everything after that. Do not type the $ yourself.
+    *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
+
+    ![Login Example](/images/loginExample.png)
+
+    Enter your password after the prompt. As you type, it will not show you the characters.
 
 ### Windows (using Putty)
 
-Enter the following in the server field: howisonlab.ischool.utexas.edu. Click connect and then enter your username and password into the command line window that opens.
+*If you are using a PC:* Open PuTTY. In the "User" field, enter your lab username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+
+    Enter your password in the terminal window that opens.
 
 ### Access From Off Campus
 
 When you need to connect to the server from home, you'll need to use a VPN. There is a university [wiki page](https://wikis.utexas.edu/pages/viewpage.action?spaceKey=networking&title=Connecting+to+the+UT+VPN+Service) that includes instructions on how to do this.  You will need to download CISCO AnyConnect, regardless of what kind of computer you use. You will also need to set up two factor authentication. The wiki page explains what you need.
 
-When you are actually attempting to use AnyConnect, note that when you put your "Duo Passcode" in (in the empty field in the image below) you won't be typing your password for a second time, but entering "push," "SMS," or "phone" according to the instructions below that field. 
+When you are actually attempting to use AnyConnect, note that when you put your "Duo Passcode" in (in the empty field in the image below) you won't be typing your password for a second time, but entering "push," "SMS," or "phone" according to the instructions below that field.
 
 ![AnyConnect image](/images/anyconnect.png)
 
