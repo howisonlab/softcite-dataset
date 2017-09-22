@@ -10,15 +10,11 @@ Now that you have all the accounts that you will need going forward, you can mov
 
 Each time you work on the Softcite project you will need to access your folder on the lab server. This means you will need to sign in (like you did last time to create your .ftpconfig file). To sign in:
 
-*If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
+*If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command, then enter your username and password as prompted. Remember not to type the $ or angled brackets.
 
     `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
-    Remember, don't type the $ or angled brackets (< >).
-
-*If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
-
-    Enter your username and password in the terminal window that opens.
+*If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself). Enter your username and password in the terminal window that opens.
 
 You are now logged into the lab server and are in your home directory. Your home directory will house any files or folders (like the Softcite repository) that you place there. Other students in the lab each have their own home directory. You can confirm that you are in your home directory by looking in the terminal window at the text that precedes your cursor. It should say yourUserName@howisonlab, like in the example below.
 
@@ -122,13 +118,9 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
     `$ cd softcite-dataset/`
 
-1. Run the following command, substituting your own Github username for <yourGithubUsername>. This command will execute a script that will output the text you need into a file named mySnippet.
+1. Run the following command, substituting your own Github username for "jdoe." Keep the angled bracket. This command will execute a script that will output the text you need into a file named mySnippet.
 
-    `$ python3 code/generateSnippet.py <yourGithubUsername> > mySnippet`
-
-    For example, if your Github username is jdoe, your command would look like:
-
-    `python3 code/generateSnippet.py jdoe > mySnippet`
+    `$ python3 code/generateSnippet.py jdoe > mySnippet`
 
 1. In Atom, right click the softcite-dataset directory and select "Refresh." A file named mySnippet should then appear.
 
@@ -154,7 +146,7 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
     If it doesn't, double check that you changed "Plain Text" to Turtle, check that you don't have empty lines between the code you pasted into snippets.cson, and check that your indentation matches the examples. Be sure to save snippets.cson after any changes and before testing. Ask for help if you still have trouble.
 
-1. If your text appeared, you can close the mySnippet file. Right click on the file in the file tree on the left and delete it.
+1. If your text appeared, you can close the mySnippet file. Right click on the file in the file tree and delete it.
 
 ## Set up Keybinding
 There is one more keyboard shortcut you need to set up. Follow these instructions to enable the time/date keybinding:
@@ -175,6 +167,8 @@ There is one more keyboard shortcut you need to set up. Follow these instruction
         'atom-text-editor':
             'shift-cmd-t': 'date:datetime'
       ```
+
+1. Test that it works by hitting shift+cmd+t at the same time (for PCs and Macs). A time/date signature should appear. Once you've seen it work, delete the test. Ask for help if it isn't working.
 
 1. Save and close keypmap.cson.
 
