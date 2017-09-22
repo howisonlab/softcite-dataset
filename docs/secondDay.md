@@ -16,7 +16,6 @@ Each time you work on the Softcite project you will need to access your folder o
 
     Remember, don't type the $ or angled brackets (< >).
 
-
 *If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
     Enter your username and password in the terminal window that opens.
@@ -178,7 +177,5 @@ There is one more keyboard shortcut you need to set up. Follow these instruction
       ```
 
 1. Save and close keypmap.cson.
-
-## Open the Coding Scheme
 
 [Return Home](index.md)
