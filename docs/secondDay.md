@@ -19,9 +19,9 @@ Each time you work on the Softcite project you will need to access your folder o
     ![Login Example](/images/loginExample.png)
 
 
-*If you are using a PC:* Open PuTTY. In the "User" field, enter your lab username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+*If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
-    Enter your password in the terminal window that opens.
+    Enter your username and password in the terminal window that opens.
 
 You are now logged into the lab server and are in your home directory. Your home directory will house any files or folders (like the Softcite repository) that you place there. Other students in the lab each have their own home directory. You can confirm that you are in your home directory by looking in the terminal window at the text that precedes your cursor. It should say yourUserName@howisonlab, like in the example below.
 
@@ -54,11 +54,11 @@ To make this happen, you first need to *fork* the Howison Lab's repo so that you
 
     ![Clone](/images/clone.png)
 
-1. In your terminal window, from your home directory (see the [example image above](homeDirectoryExample)), type the following command:
+1. In your terminal window, from your home directory (see the [example image above](#homeDirectoryExample)), type the following command:
 
     `$git clone <copied HTTPS URL>`
 
-Remember, you do not type the $ yourself. Do not put the angled brackets in your command. See this example:
+    Remember, you do not type the $ yourself. Do not put the angled brackets in your command. See this example:
 
     ![Git Clone Command](/images/gitClone.png)
 
@@ -69,6 +69,33 @@ Remember, you do not type the $ yourself. Do not put the angled brackets in your
 You have now created your own fork of the  Softcite repo and cloned it to your folder on the lab server!
 
 ## Set up Your Remotes
+When you forked from the Howison Lab repo and cloned your fork, git made connections between your repo on the lab server and your fork on Github. Thats great, but you need a way for your fork to communicate with the Howison Lab repo. *Remotes* will let you communicate between those three versions of the Softcite repo.
+
+When you made your clone, git automatically made one remote for you. To see that remote, follow these instructions:
+
+1. In your open terminal window, after having logged in, *change directories* so that you are in the softcite-dataset folder, rather than your home folder. To do that, type the following command and hit enter:
+
+    `$cd softcite-dataset`
+
+1. To ask git to show you the remote it's made already, in the terminal type the following command and hit enter:
+
+    `$git remote -v`
+
+    That should show you two rows of text in three columns. The first column is the name of the remote. Yours should be called origin. Origin is your fork on Github. You know that because the next column provides you with the remote's address, which should be the URL that points to your fork. The third column reads *fetch* or *push*. Fetching means that you are asking for updates. We won't do that much. Pushing means you are sending your changes. We will do that a lot.
+
+You will need to create another remote yourself. Follow these instructions to do so:
+
+1. In your browser, go to the Howison Lab Softcite repo: https://github.com/howisonlab/softcite-dataset
+
+1. Click **Clone or download** and copy the HTTPS URL like you did before.
+
+1. In the terminal, type the following command and hit enter. Do not use the angled brackets in your command:
+
+    `$git remote add upstream <howisonlab HTTPS for softcite>`
+
+    This command created a new remote named *upstream* (a standard name for remotes in git) that points to the Howison Lab's Softcite repo on Github.
+
+
 
 ## Set up Your Keyboard Shortcuts
 
