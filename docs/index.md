@@ -11,9 +11,9 @@ title: "PDFs for softcite"
 
 [Understanding Git](conceptualGit.md)
 
-[Update Snippets](shortcuts.md)
-
 [Working on Softcite Data Files](setupInstructions.md)
+
+[Update Snippets](shortcuts.md)
 
 [Git and Github resources](gitResources.md)
 
