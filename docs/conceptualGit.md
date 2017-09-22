@@ -1,3 +1,8 @@
+---
+title: "Understanding Git"
+---
+[Return Home](index.md)
+
 ## A Maritime Business Lesson on Commits, Pushing, and Pulling
 As you work, you will be making changes to your clone. You will want to save those changes. You will want to back up those changes to your fork on Github. You will also want to share those changes with the Howison Lab repo.
 
@@ -20,3 +25,5 @@ The store inspects your goods, thinks they're great and puts them on the shelves
 Sometimes the store comes out with a new product you have to have. In our case, that might be an update to the coding scheme. You order that product from the store and it shows up on your island along with all of the other new products from other island merchants. In git terms, to get those updates, we would `pull` the files from `upstream`—that would give us anything from the Howison Lab that we didn't already have—the new coding scheme and other students' data files.
 
 None of this works properly if you do it out of order or skip a step. You can't commit to work if you haven't already staged it. Pushing to Origin won't do anything worthwhile if the if you haven't committed to any work. If you don't make a pull request, then Howison Lab will never have your changes. And, if there aren't any updated files in the Howison Lab repo, your pull upstream command will just come up empty.
+
+[Return Home](index.md)
