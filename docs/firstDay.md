@@ -19,18 +19,18 @@ Before you can get started working on the Softcite project, you'll need several 
 
 # During the First Meeting
 
-After you have those five items installed on your computer, you are ready to attend the first meeting. There is still more setup to do before you can start training or collecting data, however. On your first day you will continue to set up Atom, make accounts, and give yourself access to the iSchool (Information School) server. Follow these instructions to continue your set up:
+After you have those five items installed on your computer, you are ready to attend the first meeting. There is still more setup to do before you can start training or collecting data, however. On your first day you will continue to set up Atom, make accounts, and give yourself access to the lab server. Follow these instructions to continue your set up:
 
 ## Sign Up for Github
 If you do not have an account already, sign up for Github. You can sign up here: https://github.com/. Github is an online platform that allows users to share and document their code. It is built on the version control system, git. Git and Github are not the same thing, but Github adds functionality and a social/communicative aspect to git. Git itself allows you to keep track of versions of a file. We will discuss this more as a group.
 
-## Make an iSchool Account
-You will also need an account to access the iSchool (Information School) server. Dr. Howison will help you create one of these. It might be helpful if your iSchool username and your Github username are the same.
+## Make a Lab Account
+You will also need an account to access the lab server. Dr. Howison will help you create one of these. It might be helpful if your lab username and your Github username are the same.
 
-*Note:* Students will need to be added to the allowed-users file for them to be able to access the repo on the iSchool server.
+*Note:* Students will need to be added to the allowed-users file for them to be able to access the repo on the lab server.
 
 ## Download Atom Packages
-You will need to set up Atom so that it has all of the add-on packages we will be using. We will install four packages. To install the packages, in Atom, click on **File** (for PC users) or Atom (for Mac users). Then click on **Preferences**. A new menu will appear:
+You will need to set up Atom so that it has all of the add-on packages we will be using. We will install four packages. To install the packages, in Atom, click on **File** (for PC users) or **Atom** (for Mac users). Then click on **Settings** (for PC users) or **Preferences** (for Mac users). A new menu will appear:
 
 ![Atom Preferences Menu](/images/atomPreferencesMenu.png)
 
@@ -41,16 +41,16 @@ In that menu, click on **Install**. On that page, search for "language-RDF," the
 Repeat that process, searching for and installing three more packages: Date, Remote-FTP, and Open-In-Browser.
 
 ## Customize Atom Preferences
-You will want to do a few things to make reading files in Atom easier on your eyes. You can adjust your preferences however you like, but we strongly suggest that you make the following changes to the editor. To make these changes, open your Preferences by clicking on **File** (for PC users) or Atom (for Mac users). Then click on **Preferences**. Then, in the menu that opens, click on **Editor**. Scroll down until you see the Scroll Sensitivity field and several check boxes below that. Adjust your settings to match these:
+You will want to do a few things to make reading files in Atom easier on your eyes. You can adjust your preferences however you like, but we strongly suggest that you make the following changes to the editor. To make these changes, open your Preferences by clicking on **File** (for PC users) or **Atom** (for Mac users). Then click on **Settings** (for PC users) or **Preferences** (for Mac users). Then, in the menu that opens, click on **Editor**. Scroll down until you see the Scroll Sensitivity field and several check boxes below that. Adjust your settings to match these:
 
 ![Editor Settings](/images/editorSettings.png)
 
 ## Set up Your .ftpconfig File
-When working in the Howison Lab, you will be working on your own machine but editing files that are hosted on an iSchool server. As you make changes to those files you will use git to keep track of your edits, and then will push those edits to Github so that the rest of the lab can see your work as well. To access the files on the iSchool server, you will need to create an .ftpconfig file. You started this process when you downloaded the Remote-FTP package in the [Download Atom Packages](#download-atom-packages) section. If you have set up your [iSchool account](#make-an-ischool-account) as well, continue by following these instructions:
+When working in the Howison Lab, you will be working on your own machine but editing files that are hosted on a lab server. As you make changes to those files you will use git to keep track of your edits, and then will push those edits to Github so that the rest of the lab can see your work as well. To access the files on the lab server, you will need to create an .ftpconfig file. You started this process when you downloaded the Remote-FTP package in the [Download Atom Packages](#download-atom-packages) section. If you have set up your [lab account](#make-a-lab-account) as well, continue by following these instructions:
 
 1. *If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
 
-    `$ssh <iSchool username>@howisonlab.ischool.utexas.edu`
+    `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
     *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
 
@@ -58,9 +58,9 @@ When working in the Howison Lab, you will be working on your own machine but edi
 
     Enter your password after the prompt. As you type, it will not show you the characters. Continue by moving to step 3.
 
-1. *If you are using a PC:* Open PuTTY. In the "User" field, enter your iSchool username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+1. *If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
-    Enter your password in the terminal window that opens.
+    Enter your username and password in the terminal window that opens.
 
 1. In Atom, make a new project by clicking the **Atom** or **File** menu for Macs and PCs, respectively. Then click **Open Folder** and in the window that opens, click **New Folder**. Name this new folder "howisonLabOnServer."
 
@@ -70,9 +70,9 @@ When working in the Howison Lab, you will be working on your own machine but edi
 
 1. In Atom, click on the **Packages** menu in the top navigation bar. In the dropdown that opens, click **Remote-FTP**. In the dropdown that opens from there, click on **Create SFTP config file.**
 
-1. In the file that opened (called .ftpconfig), you will change several fields. Change the User and Password fields so that they match your iSchool username and password. Change the Host field so that it reads "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+1. In the file that opened (called .ftpconfig), you will change several fields. Change the User and Password fields so that they match your lab username and password. Change the Host field so that it reads "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
-1. In your terminal window, as for the directory's path (i.e. exactly where the folder you are in is located on the iSchool server) by entering the following command:
+1. In your terminal window, as for the directory's path (i.e. exactly where the folder you are in is located on the lab server) by entering the following command:
 
     `$pwd`
 
@@ -84,6 +84,6 @@ When working in the Howison Lab, you will be working on your own machine but edi
 
 1. In Atom, click on the **Packages** menu in the top navigation bar. In the dropdown that opens, click **Remote-FTP**. In the dropdown that opens from there, click on **Toggle.** Click the **Connect** button in the pane that just opened.
 
-You are now viewing your empty directory on the iSchool Server! You will add a copy of the Softcite repository (collection of data, code, and documentation) to your directory in later steps. Each Research Assistant will have their own copy of the repository (AKA "repo"). We will use git and Github to share our work with one another.
+You are now viewing your empty directory on the lab Server! You will add a copy of the Softcite repository (collection of data, code, and documentation) to your directory in later steps. Each Research Assistant will have their own copy of the repository (AKA "repo"). We will use git and Github to share our work with one another.
 
 [Return Home](index.md)

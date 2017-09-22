@@ -9,9 +9,11 @@ title: "PDFs for softcite"
 
 [Viewing the Coding Scheme in HTML](setupTable.md)
 
-[Setting up Keyboard Shortcuts](shortcuts.md)
+[Understanding Git](conceptualGit.md)
 
 [Working on Softcite Data Files](setupInstructions.md)
+
+[Update Snippets](shortcuts.md)
 
 [Git and Github resources](gitResources.md)
 
