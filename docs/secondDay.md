@@ -88,6 +88,9 @@ You will need to create another remote yourself. Follow these instructions to do
 
     This command created a new remote named *upstream* (a standard name for remotes in git) that points to the Howison Lab's Softcite repo on Github.
 
+1. Enter one more command into the terminal that should help you not need to enter your password too frequently. Copy and paste this into your terminal and hit enter:
+
+    `$ git config --global credential.helper 'cache --timeout=3600'`
 
 ## Set up Your Snippets
 We have set up a number of keyboard shortcuts that should make your work easier. These are called snippets. You will run a python script that will output a file containing the code you need to set up your snippets.
