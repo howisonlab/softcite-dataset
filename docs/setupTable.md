@@ -15,7 +15,11 @@ When you have an up to date HTML coding scheme, all you need to do to use it is 
 
     `$ cd softcite-dataset/`
 
-1. Commit any changes you have. See Committing Changes in the [Working on Softcite Data Files](setupInstructions#committing-changes) page for a refresher on how to do this.
+1. Check that you have not edited any files:
+
+    `$ git status`
+
+1. If there are modified files that should be saved, make a commit. See Committing Changes in the [Working on Softcite Data Files](setupInstructions#committing-changes) page for a refresher on how to do this. If you have not yet coded an article, and deleted any files that you have been told to delete, you should not have to commit anything.
 
 1. Pull the latest changes from the Howison Lab repo:
 
@@ -25,9 +29,11 @@ When you have an up to date HTML coding scheme, all you need to do to use it is 
 
     `python3 code/generate_coding_scheme_html.py > docs/coding-scheme.html`
 
-1. In Atom, under the softcite-dataset directory, expand the docs folder and double click to open coding-scheme.html.
+1. In Atom, under the softcite-dataset directory, expand the docs folder and double click to open data-table.css. You can close it as soon as it opens—that file needs to be opened once for formatting to work.
 
-1. Hovering over the open file (not the file name in the navigation tree), right click click on "view in browser." This will not work if you have not yet installed the browser-plus package. Visit your preferences to install that package if necessary.
+1. Double click to open coding-scheme.html. You may need to right click the docs folder and click **refresh**.
+
+1. Hovering over the open coding-scheme.html file (not the file name in the navigation tree), right click click on "view in browser." This will not work if you have not yet installed the browser-plus package. Visit your preferences to install that package if necessary.
 
 1. Visit your web browser to see the HTML file. Atom will not automatically direct you to the new tab even though it opens the file for you, so you must click to the browser yourself. If it works, you should see a table version of the coding scheme with a blue background.
 
