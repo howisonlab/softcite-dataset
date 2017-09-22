@@ -58,9 +58,9 @@ When working in the Howison Lab, you will be working on your own machine but edi
 
     Enter your password after the prompt. As you type, it will not show you the characters. Continue by moving to step 3.
 
-1. *If you are using a PC:* Open PuTTY. In the "User" field, enter your lab username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
+1. *If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
-    Enter your password in the terminal window that opens.
+    Enter your username and password in the terminal window that opens.
 
 1. In Atom, make a new project by clicking the **Atom** or **File** menu for Macs and PCs, respectively. Then click **Open Folder** and in the window that opens, click **New Folder**. Name this new folder "howisonLabOnServer."
 
