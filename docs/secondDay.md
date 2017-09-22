@@ -6,7 +6,7 @@ title: "Second Day Setup"
 # During the Second Meeting
 Now that you have all the accounts that you will need going forward, you can move on with your setup. In this phase, you will be getting access to the Softcite repository where you will save the data you collect. You will also set up some keyboard shortcuts to make that collection easier.
 
-## But, first, Sign in
+## But, first, sign in
 
 Each time you work on the Softcite project you will need to access your folder on the lab server. This means you will need to sign in (like you did last time to create your .ftpconfig file). To sign in:
 
@@ -14,10 +14,7 @@ Each time you work on the Softcite project you will need to access your folder o
 
     `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
-    *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
-
-    ![Login Example](/images/loginExample.png)
-
+    Remember, don't type the $ or angled brackets (< >).
 
 *If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
 
@@ -54,7 +51,7 @@ To make this happen, you first need to *fork* the Howison Lab's repo so that you
 
     ![Clone](/images/clone.png)
 
-1. In your terminal window, from your home directory (see the [example image above](#homeDirectoryExample)), type the following command:
+1. In your terminal window, from your home directory (see the example image above in "But, first, sign in"), type the following command:
 
     `$git clone <copied HTTPS URL>`
 
@@ -96,9 +93,89 @@ You will need to create another remote yourself. Follow these instructions to do
     This command created a new remote named *upstream* (a standard name for remotes in git) that points to the Howison Lab's Softcite repo on Github.
 
 
+## Set up Your Snippets
+We have set up a number of keyboard shortcuts that should make your work easier. These are called snippets. You will run a python script that will output a file containing the code you need to set up your snippets.
 
-## Set up Your Keyboard Shortcuts
+Your snippets file requires a certain format so that Atom can understand what shortcuts are able to be used with different languages. The indentation in your snippets file is meaningful. Ask for help if you need. Follow these instructions to set up your snippets:
 
-## Open the Coding Scheme
+1. In Atom, in the top navigation bar, click on **Atom** (**File**, if you're on a PC) and select **Snippets**.  A file should open in Atom called snippets.cson.
+
+1. Paste the following code into that file, below all of the comments that are already there. Include the single quotation marks.
+
+    ```
+      '.source.turtle':
+          'true':
+            'prefix': 'tr'
+            'body': 'true'
+          'false':
+            'prefix': 'fa'
+            'body': 'false'
+    ```
+
+1. Select everything you just pasted and hit shift+tab until the first line *and only the first line* is as far left as it can go. It is important that you do not change the way the lines nest within one another; you want to move the entire block of content that you pasted leftward, not one line at a time. The indentation and content should look just like the code you copied from above.
+
+1. In the terminal, double check that you are in the softcite-dataset directory. You can check by using the print working directory command:
+
+    `$ pwd`
+
+    If the file path it lists ends in /softcite-dataset, you are in the correct directory. Otherwise, if it ends in your username, switch directories to softcite-dataset:
+
+    `$ cd softcite-dataset/`
+
+1. Run the following command, substituting your own Github username for <yourGithubUsername>. This command will execute a script that will output the text you need into a file named mySnippet.
+
+    `$ python3 code/generateSnippet.py <yourGithubUsername> > mySnippet`
+
+    For example, if your Github username is jdoe, your command would look like:
+
+    `python3 code/generateSnippet.py jdoe > mySnippet`
+
+1. In Atom, right click the softcite-dataset directory and select "Refresh." A file named mySnippet should then appear.
+
+1. Open the mySnippet file, select the entire contents of the file, and copy it to your clipboard. Paste it in snippets.cson on the next line below what you pasted in previously. This additional content should begin like this:
+
+    ```
+      'memo':
+          'prefix': 'mem'
+          'body': 'ca:memo ; # use triple  quotes'
+    ```
+
+    You want 'memo' to be indented to the same degree as 'false' above it. Select the entirety of the text you pasted during this step and use tab to move outward or shift+tab as necessary.
+
+    Do not have any blank lines between the code blocks you pasted.
+
+1. Save snippets.cson.
+
+1. In mySnippet, delete all of the text. On the very bottom of your Atom window, you should see something that reads "Plain Text." Click it.
+
+1. In the window that popped up, search for "Turtle" and select the Turtle option.
+
+1. Test your snippets by typing "itb" in your now empty mySnippet file. Hit tab on your keyboard. A bunch of text should appear.
+
+    If it doesn't, double check that you changed "Plain Text" to Turtle, check that you don't have empty lines between the code you pasted into snippets.cson, and check that your indentation matches the examples. Be sure to save snippets.cson after any changes and before testing. Ask for help if you still have trouble.
+
+1. If your text appeared, you can close the mySnippet file. Right click on the file in the file tree on the left and delete it.
+
+## Set up Keybinding
+There is one more keyboard shortcut you need to set up. Follow these instructions to enable the time/date keybinding:
+
+1. In your settings/preferences (respectively for PC vs Mac), click on **Packages** and then click on **Settings** in the box for the Date package.
+
+1. Update the Time Format field so that it reads: HH24:MI:SS
+
+1. Update the Date Time Format field so that it reads: YYYY-MM-DDTHH24:MI:SS-05:00
+
+1. Close your settings.
+
+1. Find and open your keymap file. On a Mac, you will find this under the "Atom" menu. On a PC this will be listed under "File."
+
+1. Paste the following content into the keymap.cson file, ensuring that the second line is indented within the first:
+
+      ```
+        'atom-text-editor':
+            'shift-cmd-t': 'date:datetime'
+      ```
+
+1. Save and close keypmap.cson.
 
 [Return Home](index.md)
