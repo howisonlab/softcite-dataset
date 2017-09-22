@@ -13,6 +13,8 @@ We use snippets to paste in most of the content of a data file. To set up your s
 
 ### Setting up Snippets for the First Time
 
+These instructions assume that you are participating in both the Softcite project and the Transition Project. If you are only participating in one, they will not work appropriately. Ask for help.
+
 Your snippets file requires a certain format so that Atom can understand what shortcuts are able to be used with different languages. The indentation in your snippets file is meaningful. Because the Howison Lab uses snippets for both the Transition project and the Softcite project, but Atom only has one snippets file, you must follow the instructions in the order below, or the formatting will not be correct.
 
 1. In the terminal, after signing into the lab server, switch directories to Transition:
