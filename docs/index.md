@@ -7,7 +7,7 @@ title: "PDFs for softcite"
 
 [Second Day Setup](secondDay.md)
 
-[Viewing the Coding Scheme in HTML](setupTable.md)
+[Coding Scheme](coding-scheme.html)
 
 [Understanding Git](conceptualGit.md)
 
