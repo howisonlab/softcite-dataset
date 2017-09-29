@@ -53,7 +53,7 @@ Before committing, you will need to confirm that there are no problems with your
 
 1. Check if there are any errors:
 
-    `$ pytest --tb line`
+    `$ pytest`
 
     If a file has an error, it will be shown under “FAILURES” and look like:
 
