@@ -15,7 +15,7 @@ This is how you can access the lab's server where your work is stored:
 
 *If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
 
-    `$ssh <lab username>@howisonlab.ischool.utexas.edu`
+  `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
 *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
 
