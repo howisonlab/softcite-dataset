@@ -17,17 +17,15 @@ This is how you can access the lab's server where your work is stored:
 
     `$ssh <lab username>@howisonlab.ischool.utexas.edu`
 
-    *Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
+*Note:* When shown a command to enter into the terminal (also referred to as the command line), the command will be prefaced with the dollar sign symbol: $. This is not a key that you are meant to type yourself, instead it means, "Type everything after this." For example, your login should look like this:
 
-    ![Login Example](/images/loginExample.png)
+![Login Example](/images/loginExample.png)
 
-    Enter your password after the prompt. As you type, it will not show you the characters.
+Enter your password after the prompt. As you type, it will not show you the characters.
 
 ### Windows (using Putty)
 
-*If you are using a PC:* Open PuTTY. In the "User" field, enter your lab username. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself).
-
-    Enter your password in the terminal window that opens.
+*If you are using a PC:* Open PuTTY. In the "Hostname" field, enter "howisonlab.ischool.utexas.edu" (do not use quotes yourself). Enter your username and password in the terminal window that opens.
 
 ### Access From Off Campus
 
@@ -39,13 +37,13 @@ When you are actually attempting to use AnyConnect, note that when you put your 
 
 ## Moving to the Right Repo
 
-Once you've logged onto the server, you'll need to move to the correct folder. For now, we're only working on softcite work, so you'll change directories in the terminal:
+Once you've logged onto the server, you'll need to move to the correct folder. In the terminal, enter this command to change directories:
 
   `$ cd softcite-dataset/`
 
 ## Opening the Server in Atom
 
-To edit your server files, you'll need to open the folder that you made your .ftpconfig file in Atom. Then, you can open the FTP remote pane by going to packages>ftp remote>toggle. Then, from the pane that opens, you can hit connect. You can collapse the pane that has your .ftpconfig file in it—you won't need that.
+To edit your server files, you'll need to open the folder that you made your .ftpconfig file in Atom. Then, you can open the FTP remote pane by going to **Packages** in the top navigation bar and clicking on **ftp remote**. Click on **toggle** in the dropdown that opens. Then, from the pane that opens, you can click **Connect**. You can collapse the pane that has your .ftpconfig file in it (the pane that says howisonLabOnServer at the top)—you won't need that.
 
 ## Checking for Errors
 
