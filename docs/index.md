@@ -3,7 +3,7 @@ title: "PDFs for softcite"
 ---
 # Instructions
 
-[First Day Setup!](firstDay.md)
+[First Day Setup](firstDay.md)
 
 [Second Day Setup](secondDay.md)
 
