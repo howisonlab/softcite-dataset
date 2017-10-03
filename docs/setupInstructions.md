@@ -45,6 +45,35 @@ Once you've logged onto the server, you'll need to move to the correct folder. I
 
 To edit your server files, you'll need to open the folder that you made your .ftpconfig file in Atom. Then, you can open the FTP remote pane by going to **Packages** in the top navigation bar and clicking on **ftp remote**. Click on **toggle** in the dropdown that opens. Then, from the pane that opens, you can click **Connect**. You can collapse the pane that has your .ftpconfig file in it (the pane that says howisonLabOnServer at the top)—you won't need that.
 
+## Coding an article
+An example of a coded article can be seen [here](/practice-files/example-PMC2529246.ttl). That example has several in-text mentions as well as a reference. It is also formatted correctly—note that each block ends with a period and blocks are not nested within one another. Follow these steps to code an article:
+
+1. You should have the [coding scheme](coding-scheme.html) open in a separate tab or window.
+
+1. Open the data file you are editing in Atom. There should be a comment near the top of the file that contains a URL. Enter that URL in your browser to open the article you will code.
+
+1. Turn on the Hypothesis extension and make sure you are logged in. Read the article and highlight, using Hypothesis, any mentions of software that you find.
+
+1. Return to your data file. If you found a mention of software in the article (referred to as an in-text mention), give it a name according to the instructions that are in the coding scheme. If you found more than one, copy the line you used to name the first one and paste it on the next line, changing the name of the second mention so that it says 02 instead of 01 at the end. Name each of the mentions you found in this manner. If you found no mention, delete the line asking you to name the mention and enter false for coded_no_in_text_mentions. An example of a data file for an article that had no mentions can be seen [here](/practice-files/example-PMC2627193.ttl). Refer to the coding scheme for more information.
+
+1. Use your snippets to create an in-text mention block below the period that ends the article block (where you just entered the names of the mentions).
+
+1. At the top of the in-text mention block you just created, change pmcidFIXME: so that it is the name of the first in-text mention (e.g. pmcid:PMC5304233_JC01). Refer to the coding scheme for more information.
+
+1. Follow the coding scheme, working through the in-text mention block to replace the FIXMEs with your responses.
+
+1. At the end of the in-text mention block, after the period, use your snippets to create a reference block *if your in-text mention had a reference*. Replace the pmcid-citedFIXME: so that it has the name of the reference as you created it while coding the in-text mention (e.g. pmcid-cited:PMC5304233_Doe-2004)
+
+1. Continue to create in-text mention blocks and reference blocks as needed. Follow the coding scheme to guide your responses.
+
+1. Save your file, then check for errors and commit according to the instructions in the sections below.
+
+Remember that you are only recording information about the sentence that contains the mention. That means that if one in-text mention of a piece of software contains a version number but a later mention of the same software has no version number, the second in-text mention block should say that there was no version number.
+
+Remember that if multiple in-text mentions have the same reference, you only need to code that reference block once. If a second in-text mention has the same reference as an earlier mention, just provide that reference's name as you created it for the first mention in the second mention's has_reference code. In other words, you only code each unique reference once but can recall it multiple times throughout your data file.
+
+Finally, remember that if you one sentence contains multiple mentions of software, you will code that sentence multiple times. Each time you will give it a separate name though the full_quote response will be identical. Your in-text mention blocks will differ from one another as you give the name of the software, creator, version number, etc.
+
 ## Checking for Errors
 
 Before committing, you will need to confirm that there are no problems with your files. You will run the command pytest, and repair any errors if necessary.
