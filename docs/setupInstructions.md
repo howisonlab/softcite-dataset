@@ -46,7 +46,7 @@ Once you've logged onto the server, you'll need to move to the correct folder. I
 To edit your server files, you'll need to open the folder that you made your .ftpconfig file in Atom. Then, you can open the FTP remote pane by going to **Packages** in the top navigation bar and clicking on **ftp remote**. Click on **toggle** in the dropdown that opens. Then, from the pane that opens, you can click **Connect**. You can collapse the pane that has your .ftpconfig file in it (the pane that says howisonLabOnServer at the top)—you won't need that.
 
 ## Coding an article
-An example of a coded article can be seen [here](/practice-files/example-PMC2529246.ttl). That example has several in-text mentions as well as a reference. It is also formatted correctly—note that each block ends with a period and blocks are not nested within one another. Follow these steps to code an article:
+An example of a coded article can be seen [here](/practice-files/example-PMC2529246.ttl). That example has several in-text mentions as well as a reference. It is also formatted correctly—note that each block ends with a period and blocks are not nested within one another. Remember to use triple quotes for strings (i.e. text that isn't "true" or "false"). Booleans (i.e. "true" or "false") do not need quotes. Integers (e.g. 10 or 6) do not need quotes. Follow these steps to code an article:
 
 1. You should have the [coding scheme](coding-scheme.html) open in a separate tab or window.
 
