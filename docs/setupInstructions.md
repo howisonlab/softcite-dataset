@@ -108,11 +108,15 @@ Before committing, you will need to confirm that there are no problems with your
 
     `$ pytest`
 
-    If a file has an error, it will be shown under “FAILURES” and look like:
+    If a file has an error, it will be shown under “FAILURES.” At the very bottom of that section (i.e. just above where your cursor is ready to enter a new command) there will be a sentence that reads:
 
     `Failed: BadSyntax: Use python3 code/parseTurtle.py -f data/individuals--<username>/<filename>.ttl`
 
-1. To find out exactly where the error in that particular file is, copy the line line that begins with `python3 code/`… and run that as a command:
+    This image shows an example:
+
+    ![Bad syntax example](badSyntax.png)
+
+1. To find out exactly where the error in that particular file is, copy the line that begins with `python3 code/parseTurtle.py`… and run that as a command:
 
     `$ python3 code/parseTurtle.py -f data/individuals-<username>/<filename>.ttl`
 
@@ -120,7 +124,7 @@ Before committing, you will need to confirm that there are no problems with your
 
     `rdflib.plugins.parsers.notation3.BadSyntax: at line 330 of <>:`
 
-1. In Atom, *if this was a file you edited*, visit the line number in the file (which was named after running the previous command) and resolve the error, save, commit, and push as described below.
+1. In Atom, *if this was a file you edited*, visit the line number in the file (which was named after running the previous command—line 330 in the above example) and resolve the error, save, commit, and push as described below.
 
 ## Committing Changes
 
