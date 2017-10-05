@@ -47,13 +47,13 @@ To edit your server files, you'll need to open the folder that you made your .ft
 
 ## Pulling Upstream
 
-As changes are made to the scripts and other changes are made to the Howison Lab repo, you will need to access those changes. To do so, you will need to *pull upstream*. If you ar conceptually confused about why you would do this, read the explanation on the [Understanding Git in our Context](conceptualGit.md) page. Follow these instructions to pull upstream:
+As changes are made to the scripts and other changes are made to the Howison Lab repo, you will need to access those changes. To do so, you will need to *pull upstream*. If you are conceptually confused about why you would do this, read the explanation on the [Understanding Git in our Context](conceptualGit.md) page. Follow these instructions to pull upstream:
 
 1. In your terminal, ensure you are logged in and are in the softcite-dataset directory.
 
 1. Execute the following command:
 
-`$ git pull upstream master`
+    `$ git pull upstream master`
 
 1. The terminal should show that it did some work. It may say you are up to date. It may say that it created a bunch of files. It also might show you a screen like the following:
 
@@ -114,7 +114,7 @@ Before committing, you will need to confirm that there are no problems with your
 
     This image shows an example:
 
-    ![Bad syntax example](badSyntax.png)
+    ![Bad syntax example](/images/badSyntax.png)
 
 1. To find out exactly where the error in that particular file is, copy the line that begins with `python3 code/parseTurtle.py`… and run that as a command:
 
