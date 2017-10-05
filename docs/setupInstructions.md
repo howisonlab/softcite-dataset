@@ -45,7 +45,33 @@ Once you've logged onto the server, you'll need to move to the correct folder. I
 
 To edit your server files, you'll need to open the folder that you made your .ftpconfig file in Atom. Then, you can open the FTP remote pane by going to **Packages** in the top navigation bar and clicking on **ftp remote**. Click on **toggle** in the dropdown that opens. Then, from the pane that opens, you can click **Connect**. You can collapse the pane that has your .ftpconfig file in it (the pane that says howisonLabOnServer at the top)—you won't need that.
 
-## Coding an article
+## Pulling Upstream
+
+As changes are made to the scripts and other changes are made to the Howison Lab repo, you will need to access those changes. To do so, you will need to *pull upstream*. If you ar conceptually confused about why you would do this, read the explanation on the [Understanding Git in our Context](conceptualGit.md) page. Follow these instructions to pull upstream:
+
+1. In your terminal, ensure you are logged in and are in the softcite-dataset directory.
+
+1. Execute the following command:
+
+`$ git pull upstream master`
+
+1. The terminal should show that it did some work. It may say you are up to date. It may say that it created a bunch of files. It also might show you a screen like the following:
+
+![Pull upstream screen](/images/pullUpstream.png)
+
+If you see that screen, don't worry! It's just asking you to accept the merge of the changes it found upstream into your own working directory. Move forward by:
+
+1. Type control+o (for both Mac and PC). This will change the screen slightly so that it asks you to enter a commit message. Ignore that and proceed to the next step.
+
+1. Hit your enter key. This will change the options at the bottom of that screen. Move to the next step.
+
+1. Type control+x. This will exit that screen.
+
+When the merge is complete your terminal should be ready for your next command. The line above your curser should read, "Merge made by the 'recursive' strategy."
+
+If you see errors telling you about a merge conflict, you can ask for help or read more about them [on the web](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/). However, remember that you should only ever modify files that belong to you—don't modify files that are in someone else's individuals folder or in the code or docs folders.
+
+## Coding an Article
 An example of a coded article can be seen [here](/practice-files/example-PMC2529246.ttl). That example has several in-text mentions as well as a reference. It is also formatted correctly—note that each block ends with a period and blocks are not nested within one another. Remember to use triple quotes for strings (i.e. text that isn't "true" or "false"). Booleans (i.e. "true" or "false") do not need quotes. Integers (e.g. 10 or 6) do not need quotes. Follow these steps to code an article:
 
 1. You should have the [coding scheme](coding-scheme.html) open in a separate tab or window.
