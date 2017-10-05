@@ -2,24 +2,26 @@
 title: "SoftCite - Interim Year 1 Report for Sloan Foundation"
 author: "James Howison, Jason Priem, and Heather Piwowar"
 date: "October 1st, 2017"
-output: pdf_document
+output:
+  rmarkdown::pdf_document:
+    fig_caption: yes        
+    includes:  
+      in_header: preamble-latex.tex
 urlcolor: blue
-# bibliography: report.bib
+# fig_width: 4in
+# fig_caption: true
+bibliography: report.bib
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
 ```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
 library(tidyverse)
-library(data.world)
+# library(data.world)
 library(glue)
 ```
 
 
-```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
 
 # Datasets are referenced by their URL or path
 dataset_key <- "https://data.world/jameshowison/software-citations"
@@ -68,7 +70,7 @@ no_mentions <- results_df %>% filter(has_mentions == F) %>% pull(article) %>% n_
 
 ```
 
-```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
 qry_string = "SELECT ?article ?coder ?selection ?quote ?page ?software
 WHERE {
 	?article citec:has_in_text_mention ?selection .
@@ -107,7 +109,7 @@ articles_in_count_order <- results_df %>%
 #   labs(title="Count of mentions per article")
 
 ```
-```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
 # Software per article
 
 results_df <- results_df %>%
@@ -149,37 +151,40 @@ In this report we describe progress in each of these activities.
 
 ## Progress on "Gold Standard" dataset development
 
-Since coding began in Spring 2017 the team at UT Austin has coded `r num_articles` articles from the PubMed Open Access Collection, finding `r num_selections` mentions of software (and many, many more examples of sentences that do not mention software, just as important to the machine learning). The coders have found `r with_mentions` articles with mentions of software and `r no_mentions` articles without software mentions and thus far have identified `r unique_software` separate software packages. En route we trained a doctoral student (Hannah Cohoon) in content analysis, revised our coding scheme to best match the future machine learning task, established a collaborative workflow hosted on github ([publicly available repository](https://github.com/howisonlab/softcite-dataset), [documentation](https://howisonlab.github.io/softcite-dataset/)). We have on-boarded and trained ~35 undergraduate and masters students.
+Since coding began in Spring 2017 the team at UT Austin has coded `#r num_articles` articles from the PubMed Open Access Collection, finding `#r num_selections` mentions of software (and many, many more examples of sentences that do not mention software, just as important to the machine learning). The coders have found `#r with_mentions` articles with mentions of software and `#r no_mentions` articles without software mentions and thus far have identified `#r unique_software` separate software packages. En route we trained a doctoral student (Hannah Cohoon) in content analysis, revised our coding scheme to best match the future machine learning task, established a collaborative workflow hosted on github ([publicly available repository](https://github.com/howisonlab/softcite-dataset), [documentation](https://howisonlab.github.io/softcite-dataset/)). We have on-boarded and trained ~35 undergraduate and masters students.
 
 We are growing the student group: from ~4 in Spring 2017, ~8 over Summer 2017, to ~25 in Fall 2017 (the fall group has only just finished training and has not yet contibuted coding of new articles). In addition we have reached out to the minority-serving institution Houston Tillotson University and will on-board a group of ~5 coders from there in the next two weeks. Currently each article is being coded by two students, but as agreement between new coders improves, only a small percentage will be double coded.
 
 Our speed of coding is accelerating; we expect to have ~400 PubMed articles coded by the end of this semester. We will then move onto collections from astronomy and economics. Nonetheless, we are also exploring two techniques to move faster. Both techniques will require validation from our current completely manually coded dataset and so must follow the work we're currently doing. 
 
-The first is bootstraping using a "whitelist" of software packages, identifying sentences with those words in them. We would then manually code just those sentences. Assuming that packages known beforehand (and therefore on the white list) are not mentioned in systematically different ways bootstraping can train a system to learn generally how packages are mentioned and apply that learning to find mentions of packages not on the whitelist. Colleagues, such as Pan et al. (2015), have taken this approach but they have not had the fully manually coded set to validate their approach; our manually coded full dataset will provide validation.
+The first is bootstraping using a "whitelist" of software packages, identifying sentences with those words in them. We would then manually code just those sentences. Assuming that packages known beforehand (and therefore on the white list) are not mentioned in systematically different ways bootstraping can train a system to learn generally how packages are mentioned and apply that learning to find mentions of packages not on the whitelist. Colleagues have taken this approach [@pan_assessing_2015] but they have not had the fully manually coded set to validate their approach; our manually coded full dataset will provide validation.
 
 The second approach takes advantage of one finding so far: software mentions cluster together in articles. However they do not cluster predictably (e.g., one paper might have multiple clusters and clusters are not neccessarily only in methods sections). We will experiment using a whitelist to locate mentions of known packages and then expand up and down 2 or 3 paragraphs to increase our chance of finding mentions of packages not on the whitelist; this ought to amerliorate bias resulting from the choice of the whitelist and allow us to more reliably characterize mentions per article en rouate to a full machine learning system.
 
 ## Progress towards machine learning discovery of software mentions
 
-The machine learning to automate recognition of software mentions builds on the dataset discussed above; only when it is large enough will we be able to begin training.  However, we have worked to ensure that the results of manual coding are most useful for machine learning training. Specifically we have experimented with approaches to converting the pdf articles to text in a way that we can label the sentences identified by the coders. As expected this is a difficult process (issues include headers and column conversion problems). We have two approaches to this. First we chose to work with the PubMed Open Access dataset which has clean XML encoded versions of each article, that decision will enable us to get started training without solving pdf conversion issues. Second Heather and Jason at ImpactStory have been exploring new generation pdf conversion tools, such as CERMINE (CERMINE, 2017; Tkaczyk et al, 2015), which identify elements such as headers, columns, tables etc. prior to text conversion.
+The machine learning to automate recognition of software mentions builds on the dataset discussed above; only when it is large enough will we be able to begin training.  However, we have worked to ensure that the results of manual coding are most useful for machine learning training. Specifically we have experimented with approaches to converting the pdf articles to text in a way that we can label the sentences identified by the coders. As expected this is a difficult process (issues include headers and column conversion problems). We have two approaches to this. First we chose to work with the PubMed Open Access dataset which has clean XML encoded versions of each article, that decision will enable us to get started training without solving pdf conversion issues. Second Heather and Jason at ImpactStory have been exploring new generation pdf conversion tools, such as CERMINE [@noauthor_cermine_2017; @tkaczyk_cermine_2015], which identify elements such as headers, columns, tables etc. prior to text conversion.
 
 ## Progress towards CiteAs
 
-The CiteAs tool, available at [citeas.org](http://citeas.org), allows users to map from software to ways to cite that software. The backend system provides an API (in preparation for future integration into other tools, both ours and others) integrated with the database described above. The web frontend uses the API to provide the current application. The open repository is available at https://github.com/Impactstory/citeas-api
-
+The CiteAs tool, available at [citeas.org](http://citeas.org), allows users to map from software to ways to cite that software. The backend system provides an API (in preparation for future integration into other tools, both ours and others) integrated with the database described above. The web frontend uses the API to provide the current application. The open repository is available at https://github.com/Impactstory/citeas-api and [https://github.com/Impactstory/citeas-webapp](https://github.com/Impactstory/citeas-webapp). 
 Users can provide the text name of a software package "yt", a URL such as a project landing page "yt-project.org" or "`https://cran.r-project.org/web/packages/stringr`" or a DOI (publication or software), such as "10.5281/zenodo.160400". The system then checks the database and if no entry is found kicks off a procedure to locate an appropriate citation. Potential sources are checked in sequence and those results returned to users with a provenance chain which helps users known where the suggestions come from and will help software projects adjust how they request citations.
 
 As an example Figure 1 shows a screenshot showing the results of querying "yt-project". In the background the system has downloaded the page and parsed it for a citation request. In the case of `yt` the citation request on the yt-project homepage links to a bibtex file which was then downloaded and parsed to provide the citation.
 
-![CiteAs output for yt-project](yt-project-screenshot.png)
+![CiteAs output for http://yt-project.org](yt-project-screenshot.png){width=70%}
 
-![CiteAs output for stringr](stringr.png)
+Figure 2 shows an example of a user seeking a citation for an R package. The system downloads the URL `https://cran.r-project.org/web/packages/stringr` and identifies a link to a repository (here the repository is github). We then seek a file in the repository that makes a citation request, checking README and the DESCRIPTION file on CRAN (in the future we will also check for a CITATION or CITATION.TXT in the repository). The citation below is built from the DESCRIPTION file.
 
-The second screenshot below, Figure 2, shows an example of a user seeking a citation for an R package. The system downloads the URL `https://cran.r-project.org/web/packages/stringr` and identifies a link to a repository (here the repository is github). We then seek a file in the repository that makes a citation request, checking README and the DESCRIPTION file on CRAN (in the future we will also check for a CITATION / CITATION.TXT in the repository). The citation below is built from the DESCRIPTION file.
+![CiteAs output for stringr](stringr.png){width=70%}
 
-The provenance chain is illustrated in the API output below, Figure 3, (actually for the CERMINE tool cited above, CiteAs was provided with the url `https://github.com/CeON/CERMINE`), this shows the locations and techniques that CiteAs attempted in finding a citation. In this case the system identified DOIs located in the README file; the DOIs relate to both an article and to a zenodo archived version of the software. These DOIs are each are mapped to a citation and a prefered citation displayed to the user. In future versions, to be released first week of October, all found citations will be presented to the user as options, together with the provenance of how they were located.
+The provenance chain is illustrated in the API output included at the end of the document, Figure 3, shows the locations and techniques that CiteAs attempted in finding a citation. In this case the system identified DOIs located in the README file; the DOIs relate to both an article and to a zenodo archived version of the software. These DOIs are each are mapped to a citation and a prefered citation displayed to the user.
 
-![CiteAs API data showing origns of CERMINE citation](cermine-prov.png)
+![CiteAs API data showing origns of CERMINE citation](cermine-prov.png){width=70%}
+
+We are exposing these citations alternatives in the interface, shown below in Figure 4, in reference the the stringr package.
+
+![CiteAs interface showing provenance chain](stringr-prov-image.png){height=3in}
 
 ## Progress towards database linking software tools to associated citations
 
@@ -211,8 +216,3 @@ While the grant was for 2 years, we have adjusted our budgeting to anticipate co
 
 # References
 
-CERMINE: Content ExtRactor and MINEr. (2017). Java, Centre for Open Science. Retrieved from https://github.com/CeON/CERMINE (Original work published October 8, 2012)
-
-Pan, X., Yan, E., Wang, Q., & Hua, W. (2015). Assessing the impact of software on science: A bootstrapped learning of software entities in full-text papers. Journal of Informetrics, 9(4), 860–871. https://doi.org/10.1016/j.joi.2015.07.012
-
-Tkaczyk, D., Szostek, P., Fedoryszak, M., Dendek, P. J., & Bolikowski, Ł. (2015). CERMINE: automatic extraction of structured metadata from scientific literature. International Journal on Document Analysis and Recognition (IJDAR), 18(4), 317–335. https://doi.org/10.1007/s10032-015-0249-8
