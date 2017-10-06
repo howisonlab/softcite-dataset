@@ -14,14 +14,15 @@ bibliography: report.bib
 ---
 
 
-```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, setup, include=FALSE, echo=F, results='hide', message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
 library(tidyverse)
-# library(data.world)
+library(data.world)
 library(glue)
 ```
 
 
-```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
 
 # Datasets are referenced by their URL or path
 dataset_key <- "https://data.world/jameshowison/software-citations"
@@ -70,7 +71,7 @@ no_mentions <- results_df %>% filter(has_mentions == F) %>% pull(article) %>% n_
 
 ```
 
-```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
 qry_string = "SELECT ?article ?coder ?selection ?quote ?page ?software
 WHERE {
 	?article citec:has_in_text_mention ?selection .
@@ -109,7 +110,7 @@ articles_in_count_order <- results_df %>%
 #   labs(title="Count of mentions per article")
 
 ```
-```{r, eval=F, echo=F, results='hide', message=FALSE, warning=FALSE}
+```{r, echo=F, results='hide', message=FALSE, warning=FALSE}
 # Software per article
 
 results_df <- results_df %>%
@@ -151,7 +152,7 @@ In this report we describe progress in each of these activities.
 
 ## Progress on "Gold Standard" dataset development
 
-Since coding began in Spring 2017 the team at UT Austin has coded `#r num_articles` articles from the PubMed Open Access Collection, finding `#r num_selections` mentions of software (and many, many more examples of sentences that do not mention software, just as important to the machine learning). The coders have found `#r with_mentions` articles with mentions of software and `#r no_mentions` articles without software mentions and thus far have identified `#r unique_software` separate software packages. En route we trained a doctoral student (Hannah Cohoon) in content analysis, revised our coding scheme to best match the future machine learning task, established a collaborative workflow hosted on github ([publicly available repository](https://github.com/howisonlab/softcite-dataset), [documentation](https://howisonlab.github.io/softcite-dataset/)). We have on-boarded and trained ~35 undergraduate and masters students.
+Since coding began in Spring 2017 the team at UT Austin has coded `r num_articles` articles from the PubMed Open Access Collection, finding `r num_selections` mentions of software (and many, many more examples of sentences that do not mention software, just as important to the machine learning). The coders have found `r with_mentions` articles with mentions of software and `r no_mentions` articles without software mentions and thus far have identified `r unique_software` separate software packages. En route we trained a doctoral student (Hannah Cohoon) in content analysis, revised our coding scheme to best match the future machine learning task, established a collaborative workflow hosted on github ([publicly available repository](https://github.com/howisonlab/softcite-dataset), [documentation](https://howisonlab.github.io/softcite-dataset/)). We have on-boarded and trained ~35 undergraduate and masters students.
 
 We are growing the student group: from ~4 in Spring 2017, ~8 over Summer 2017, to ~25 in Fall 2017 (the fall group has only just finished training and has not yet contibuted coding of new articles). In addition we have reached out to the minority-serving institution Houston Tillotson University and will on-board a group of ~5 coders from there in the next two weeks. Currently each article is being coded by two students, but as agreement between new coders improves, only a small percentage will be double coded.
 
@@ -207,9 +208,8 @@ Our priorities for work in the immediate future are:
 1. Expand and accelerate our gold-standard dataset production at UT Austin.
 2. Soft-launch CiteAs.org and monitor feedback and iterate the tool
 3. Prototype machine learning using the gold-standard dataset
-4. Drawing on the database and API created for CiteAs and machine learning results as they become available we will:
-  - Develop CiteSuggest
-  - Develop Software ImpactStory
+4. Drawing on the database and API created for CiteAs and machine learning results as they become available we will develop CiteSuggest, then develop Software ImpactStory.
+
 5. James at UT Austin will recruit an additional doctoral student to undertake socio-technical studies of the three tools.
 
 While the grant was for 2 years, we have adjusted our budgeting to anticipate completing the work over three years, so that we can gather sufficient coded articles and implement the machine learning. ImpactStory plans to implement initial versions of the prototypes and work on the machine learning but then slow their pace of work until a large enough "gold standard" collection has been completed.
