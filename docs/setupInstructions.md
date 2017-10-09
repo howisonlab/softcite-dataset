@@ -116,6 +116,8 @@ Before committing, you will need to confirm that there are no problems with your
 
     ![Bad syntax example](/images/badSyntax.png)
 
+    If there are no errors, you will see a message that says how many items passed and how quickly. There will be no "BadSyntax" message.
+
 1. To find out exactly where the error in that particular file is, copy the line that begins with `python3 code/parseTurtle.py`… and run that as a command:
 
     `$ python3 code/parseTurtle.py -f data/individuals-<username>/<filename>.ttl`
