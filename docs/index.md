@@ -9,13 +9,15 @@ title: "PDFs for softcite"
 
 [Coding Scheme](coding-scheme.html)
 
-[Understanding Git](conceptualGit.md)
-
 [Working on Softcite Data Files](setupInstructions.md)
 
 [Update Snippets](shortcuts.md)
 
+[Understanding Git in our Context](conceptualGit.md)
+
 [Git and Github resources](gitResources.md)
+
+[Asking for Help](askForHelp.md)
 
 # Training Group 1
 
