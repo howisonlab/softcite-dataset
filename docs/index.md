@@ -17,6 +17,8 @@ title: "PDFs for softcite"
 
 [Git and Github resources](gitResources.md)
 
+[Asking for Help](askForHelp.md)
+
 # Training Group 1
 
 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
