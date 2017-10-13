@@ -11,8 +11,6 @@ Before you can get started working on the Softcite project, you'll need several 
 
 1. You have downloaded the Atom text editor. You can download it here: https://atom.io.
 
-1. You have Python 3 installed on your computer. If you don't have it already, I recommend installing Anaconda as it will also include a whole bunch of other packages that might be useful to you in the future. You can install Anaconda here: https://www.continuum.io/downloads.
-
 1. If you work on a PC, you will need to install PuTTY. If you don't have it already, you can download it here: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html.
 
 1. You have signed up for and downloaded the Chrome extension called Hypothesis. You can sign up and download the extension here: https://web.hypothes.is. You might need to check your email at some point during the sign up process to confirm your account.
