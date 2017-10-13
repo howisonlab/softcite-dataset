@@ -82,13 +82,13 @@ An example of a coded article can be seen [here](/practice-files/example-PMC2529
 
 1. Return to your data file. If you found a mention of software in the article (referred to as an in-text mention), give it a name according to the instructions that are in the coding scheme. If you found more than one, copy the line you used to name the first one and paste it on the next line, changing the name of the second mention so that it says 02 instead of 01 at the end. Name each of the mentions you found in this manner. If you found no mention, delete the line asking you to name the mention and enter false for coded_no_in_text_mentions. An example of a data file for an article that had no mentions can be seen [here](/practice-files/example-PMC2627193.ttl). Refer to the coding scheme for more information.
 
-1. Use your snippets to create an in-text mention block below the period that ends the article block (where you just entered the names of the mentions).
+1. Use your snippets to create an in-text mention block below the period that ends the article block (where you just entered the names of the mentions). This snippet, for an in-text mention block, is *itb*.
 
 1. At the top of the in-text mention block you just created, change pmcidFIXME: so that it is the name of the first in-text mention (e.g. pmcid:PMC5304233_JC01). Refer to the coding scheme for more information.
 
 1. Follow the coding scheme, working through the in-text mention block to replace the FIXMEs with your responses.
 
-1. At the end of the in-text mention block, after the period, use your snippets to create a reference block *if your in-text mention had a reference*. Replace the pmcid-citedFIXME: so that it has the name of the reference as you created it while coding the in-text mention (e.g. pmcid-cited:PMC5304233_Doe-2004)
+1. At the end of the in-text mention block, after the period, use your snippets to create a reference block *if your in-text mention had a reference*. This snippet, for a reference block, is *refb*. Replace the pmcid-citedFIXME: so that it has the name of the reference as you created it while coding the in-text mention (e.g. pmcid-cited:PMC5304233_Doe-2004)
 
 1. Continue to create in-text mention blocks and reference blocks as needed. Follow the coding scheme to guide your responses.
 
@@ -102,19 +102,21 @@ Finally, remember that if you one sentence contains multiple mentions of softwar
 
 ## Checking for Errors
 
-Before committing, you will need to confirm that there are no problems with your files. You will run the command pytest, and repair any errors if necessary.
+Before committing, you will need to confirm that there are no problems with your files. You will run the command code/softcite-test, and repair any errors if necessary.
 
 1. Check if there are any errors:
 
-    `$ pytest`
+    `$ code/softcite-test`
 
-    If a file has an error, it will be shown under “FAILURES.” At the very bottom of that section (i.e. just above where your cursor is ready to enter a new command) there will be a sentence that reads:
+    If a file has an error, it will be shown under “FAILURES.” In that section (i.e. just above where your cursor is ready to enter a new command) there will be a sentence that reads:
 
     `Failed: BadSyntax: Use python3 code/parseTurtle.py -f data/individuals--<username>/<filename>.ttl`
 
     This image shows an example:
 
     ![Bad syntax example](/images/badSyntax.png)
+
+    If there are no errors, you will see a message that says how many items passed and how quickly. There will be no "BadSyntax" message.
 
 1. To find out exactly where the error in that particular file is, copy the line that begins with `python3 code/parseTurtle.py`… and run that as a command:
 
