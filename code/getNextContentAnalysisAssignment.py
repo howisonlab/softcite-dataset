@@ -250,13 +250,15 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/[\w\-.]+/softcite-dataset.git',
-                        remotes_string)
+    # remotes_list = remotes_string.split()
+    # remote = remotes_list[1]
+    # print(remote)
+    matches = re.search('github.com/(.*?)/softcite-dataset.git', remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username
+    return username.lower()
 
 if __name__ == '__main__':
 
@@ -284,7 +286,9 @@ if __name__ == '__main__':
         raise Exception("Must run script from ~/transition")
 
     try:
-        username = sys.argv[1]
+        username = get_username_from_github()
+        # username = sys.argv[1]
+        print("Got username '{}'".format(username))
     except IndexError:
         raise Exception("Must pass github username as argument")
 
