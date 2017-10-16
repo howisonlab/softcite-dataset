@@ -258,7 +258,7 @@ def get_username_from_github():
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username
+    return username.lower()
 
 if __name__ == '__main__':
 
