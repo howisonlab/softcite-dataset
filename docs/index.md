@@ -7,13 +7,17 @@ title: "PDFs for softcite"
 
 [Second Day Setup](secondDay.md)
 
-[Viewing the Coding Scheme in HTML](setupTable.md)
-
-[Setting up Keyboard Shortcuts](shortcuts.md)
+[Coding Scheme](coding-scheme.html)
 
 [Working on Softcite Data Files](setupInstructions.md)
 
+[Update Snippets](shortcuts.md)
+
+[Understanding Git in our Context](conceptualGit.md)
+
 [Git and Github resources](gitResources.md)
+
+[Asking for Help](askForHelp.md)
 
 # Training Group 1
 
