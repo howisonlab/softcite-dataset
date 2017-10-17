@@ -35,6 +35,8 @@ When you are actually attempting to use AnyConnect, note that when you put your 
 
 ![AnyConnect image](/images/anyconnect.png)
 
+*Were you visiting this section while setting up your .ftpconfig file?* Return to those instructions by clicking [here](firstDay.md).
+
 ## Moving to the Right Repo
 
 Once you've logged onto the server, you'll need to move to the correct folder. In the terminal, enter this command to change directories:
