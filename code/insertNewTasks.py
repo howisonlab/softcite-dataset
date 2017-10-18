@@ -317,6 +317,7 @@ def download_xml_for_pmc_id(pmc_id, destination):
 def extract_and_move_xml(path, pmc_id):
     import tarfile
     import re
+    import shutil, os
 
     reT = re.compile(r'.*.nxml')
 
@@ -328,6 +329,18 @@ def extract_and_move_xml(path, pmc_id):
     else:
         to_get = [m for m in t.getmembers() if reT.search(m.name)]
         t.extractall(path, members=to_get)
+
+def rename_xml_file(path, pmc_id):
+    # get nxml filename
+    nxml_files = glob.iglob("{}/{}/*.nxml".format(
+                            path, pmc_id))
+    if(len(nxml_files) != 1):
+        print("Found more than one nxml file")
+        pprint.pprint(nxml_files)
+        exit()
+    else:
+        print("Found file:")
+        pprint.pprint(nxml_files)
 
 if __name__ == '__main__':
 
@@ -347,6 +360,7 @@ if __name__ == '__main__':
     # randomize_and_insert(cursor)
     # insert_pmc_tasks(cursor, int(sys.argv[1]))
     get_xml_for_pdf()
+    rename_xml_file("docs/pdf-files/pmc_oa_files/", "5421183")
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
