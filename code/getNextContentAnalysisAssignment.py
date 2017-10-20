@@ -86,7 +86,12 @@ def get_new_task(conn, coder):
 
     result = conn.fetchone()
 
-    # store id, give pub_id to student
+    try:
+        new_task_id = result["task_id"]
+    except TypeError:
+        print("TypeError finding new tasks, "
+              "no tasks in queue?")
+        exit()
 
     set_assignment = """
     UPDATE assignments
@@ -95,7 +100,7 @@ def get_new_task(conn, coder):
         asssigned_timestamp = NOW()
     WHERE id = %(task_id)s
     """
-    param_dict = {"coder": coder, "task_id": result["task_id"]}
+    param_dict = {"coder": coder, "task_id": new_task_id}
     conn.execute(set_assignment, param_dict)
 
     check_assign = """
@@ -250,13 +255,15 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/[\w\-.]+/softcite-dataset.git',
-                        remotes_string)
+    # remotes_list = remotes_string.split()
+    # remote = remotes_list[1]
+    # print(remote)
+    matches = re.search('origin.*?github.com/(.*?)/softcite-dataset', remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username
+    return username.lower()
 
 if __name__ == '__main__':
 
@@ -284,7 +291,9 @@ if __name__ == '__main__':
         raise Exception("Must run script from ~/transition")
 
     try:
-        username = sys.argv[1]
+        username = get_username_from_github()
+        # username = sys.argv[1]
+        print("Got username '{}'".format(username))
     except IndexError:
         raise Exception("Must pass github username as argument")
 
