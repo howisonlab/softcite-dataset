@@ -7,6 +7,7 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(data.world) # loads saved config see quickstart vignette
+library(stringdist)
 
 prefixes <- "
 PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
@@ -142,18 +143,24 @@ my.lookup <- function(data) {
 # Function to return matching results from compare.linkage in friendly way
 my.compare.linkage <- function(data1, data2, ...) {
   linkage <- compare.linkage(data1, data2, ...)
-  pairs <- linkage$pairs %>% select(-is_match, -on_pdf_page) %>% rename(match_score = full_quote)
+  pairs <- linkage$pairs %>% 
+    select(-is_match, -on_pdf_page) %>% 
+    rename(match_score = full_quote)
+  
   # swap ids.
   data1_lookup <- my.lookup(data1)
   data2_lookup <- my.lookup(data2)
   
-  pairs <- left_join(pairs, data2_lookup, by = c("id2" = "id"))
-  pairs <- pairs %>% rename(poss_match = selection)
-  
-  pairs <- left_join(pairs, data1_lookup, by = c("id1" = "id"))
-  
-  pairs <- pairs %>% select(-id1, -id2)
+  pairs <- pairs %>% 
+    left_join(data2_lookup, by = c("id2" = "id")) %>% 
+    rename(poss_match = selection) %>% 
+    left_join(data1_lookup, by = c("id1" = "id")) %>% 
+    select(-id1, -id2)
 
+}
+
+my.stringdist <- function(string1, string2) {
+  return(stringsim(string1, string2, method = "jaccard"))
 }
 ```
 
@@ -188,35 +195,102 @@ grouped_data <- left_join(poss_matches, data_for_matching)
 
 results <- grouped_data %>% 
   mutate(pairs = map2(selections, poss_matches,
-                              my.compare.linkage, 
-                              strcmp = T, exclude = c("selection", "spans_pages")  )
-                        )
+                      my.compare.linkage, 
+                      strcmp=T, exclude=c("selection", "spans_pages"),
+                      strcmpfun = my.stringdist # method defined above
+                      )
+        )
 
-results %>% 
+unnested_results <- results %>% 
   select(-selections, -poss_matches) %>% 
   unnest() %>% 
-  select(article, coder, selection, poss_match, match_score)
-
-
-# This lovely expression gets the data table that results from matching the selections table and the poss_matches table for row 1 (which is brentbiglin's selections for article PMC2529246)
-# note that it uses row_names (id1, id2) which refer to the order of 
-# rows in selections and poss_matches ...
-# results[1,]$rec_links[[1]]$pairs
+  select(article, coder, selection, poss_match, match_score) %>%
+  ungroup()
 ```
-What we really want back is the ids of possible matches for each selection, in order.  
 
-article, coder, selection, poss_match, match_score
-PMC2529246, brent, PMC2529246_BB01, PMC2529246_JH01, 1.0000
-PMC2529246, brent, PMC2529246_BB01, PMC2529246_JH02, 0.220
-PMC2529246, brent, PMC2529246_BB02, PMC2529246_JH01, 0.35
-PMC2529246, brent, PMC2529246_BB02, PMC2529246_JH02, 1.0000
-PMC2529246, james, PMC2529246_JH01, PMC2529246_BB01, 1.0000
+Now we can rejoin with top codes, or get highest match for each, or a threshold. Some don't (or won't after threshold) have any matches. Should produce an NA when joining with top_codes.
 
-Need to convert ids back to selection names. Then somehow unest?
 ```{r}
-results[1,]
+
+# How many have a high match?
+filter(unnested_results, match_score > 0.8) %>% tally()
+
+# Which have more than one high match? Likely these are multiples mentions in a sentence.
+filter(unnested_results, match_score == 1) %>% group_by(selection) %>% tally() %>% filter(n > 1) %>% ungroup() %>% tally()
+
+# Let's see the full quotes of best matches, have to join on two column
+best_matches <- unnested_results %>% group_by(selection) %>% top_n(n=1, match_score) %>% 
+  left_join(select(top_codes, selection, full_quote), by = "selection") %>% 
+  left_join(select(top_codes, selection, full_quote), by = c("poss_match" = "selection"))
+
+# Put most likely match, over threshold, into original frame.
+# This pipeline brings the best match them into top_codes.
+top_codes_with_matches <- unnested_results %>% 
+  filter(match_score > .8) %>% 
+  group_by(selection) %>% 
+  top_n(n=1, match_score) %>% 
+  select(selection, poss_match) %>% 
+  right_join(top_codes, by = "selection") %>% 
+  select(article, coder, selection, everything())
+
+# put full_quote from top_code into the unnested_results table, for ease of visual comparison.
+# selection and poss_match
+unnested_results_with_quotes <- unnested_results %>% 
+  left_join(select(top_codes, selection, full_quote), by = "selection") %>%
+  rename(full_quote_selection = full_quote) %>% 
+  left_join(select(top_codes, selection, full_quote), by = c("poss_match" = "selection")) %>%
+  rename(full_quote_poss_match = full_quote)
 ```
 
+
+What we actually want to know is: for each article that had at least 2 coders, what was the percentage agreement in identifying selections?
+
+percentage agreement = count of matched / all selections.
+
+```{r}
+# selections from articles with more than 1 coder.
+multi_coder_selections <- top_codes_with_matches %>% 
+  group_by(article) %>% 
+  mutate(num_coder = n_distinct(coder)) %>% 
+  ungroup() %>%
+  filter(num_coder > 1) 
+
+# total number of selections by either coder, matched and un-matched.
+unmatched_counts <- multi_coder_selections %>% 
+  group_by(article) %>% 
+  filter(is.na(poss_match)) %>% 
+  summarize(unmatched_count = n_distinct(selection))
+
+# total number of matched selections (A -> B, B -> A counts as 2.)
+matched_counts <- multi_coder_selections %>% 
+  filter(!is.na(poss_match)) %>% 
+  group_by(article) %>% 
+  summarize(matched_count = n_distinct(selection))
+
+percent_agree <- multi_coder_selections %>% distinct(article)
+#percent_agree$matched_count <- 0
+#percent_agree$unmatched_count <- 0
+
+percent_agree <- percent_agree %>% 
+  left_join(unmatched_counts, by = "article") %>%
+  left_join(matched_counts, by = "article") %>%
+  mutate(unmatched_count = replace(unmatched_count, is.na(unmatched_count), 0),
+         matched_count = replace(matched_count, is.na(matched_count), 0)
+        ) %>% 
+  mutate(percent_agree = matched_count / ( matched_count + unmatched_count )) %>% 
+  filter(percent_agree < 1)
+
+
+ggplot(percent_agree, aes(x=reorder(article, percent_agree), y=percent_agree)) + geom_bar(stat="identity") + scale_y_continuous(labels=scales::percent) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+```{r}
+# lowest agreement
+arrange(percent_agree, percent_agree)
+```
+```{r}
+data <- unnested_results_with_quotes %>% filter(article == "PMC2816832") %>% distinct(selection, poss_match, .keep_all=T) 
+View(data %>% arrange(match_score))
+```
 
 
 ```{r}
@@ -261,7 +335,48 @@ p <- df %>%
 ```
 
 ```{r}
-p
+library(Biostrings)
+#pairwiseAlignment(pattern = c("succeed", "precede"), subject = "supersede")
+
+aligns <- pairwiseAlignment(pattern = c("The GenomeRNAi database", "The GenomeRNAi database provides access"), subject = "The GenomeRNAi database provides access topublish", type = "overlap")
+
+summary(aligns)
+
+compareStrings(pattern = c("The GenomeRNAi database"), subject = "The GenomeRNAi database provides access topublish")
+
+nmatch(c("The GenomeRNAi database","The GenomeRNAi database provides access topublish"))
 ```
 
+
+```{r}
+
+quote1 = "the cat sat on the mat"
+quote1list <- quote1 %>% str_to_lower() %>% str_split(" ") %>% unlist()
+quote2 <- "on the mat"
+quote2list <- quote2 %>% str_to_lower() %>% str_split(" ") %>% unlist()
+
+quote1list
+quote2list
+overlap <- intersect(quote1list, quote2list)
+diffa <- setdiff(quote1list, quote2list)
+diffb <- setdiff(quote2list, quote1list)
+
+length(overlap) / (length(overlap) + length(c(diffa, diffb)))
+length(overlap) / 
+
+
+selection_overlap <- function(quote1, quote2) {
+  # normalize and split on spaces
+  quote1list <- quote1 %>% str_to_lower() %>% str_split(" ") %>% unlist()
+  quote2list <- quote2 %>% str_to_lower() %>% str_split(" ") %>% unlist()
+  overlap <- intersect(quote1list, quote2list)
+  return(length(overlap) / length(union(quote1list, quote2list)))
+}
+
+selection_overlap("the cat sat on the mat", "on the mat")
+selection_overlap("the cat sat on the mat", "doctor who")
+selection_overlap("the cat sat on the mat", "because two the cat sat on")
+
+
+```
 
