@@ -35,6 +35,8 @@ When you are actually attempting to use AnyConnect, note that when you put your 
 
 ![AnyConnect image](/images/anyconnect.png)
 
+*Were you visiting this section while setting up your .ftpconfig file?* Return to those instructions by clicking [here](firstDay.md).
+
 ## Moving to the Right Repo
 
 Once you've logged onto the server, you'll need to move to the correct folder. In the terminal, enter this command to change directories:
@@ -160,7 +162,7 @@ When you have finished coding one article and committed your work, you can reque
 
 From the terminal, execute the following command followed by your github username:
 
-  `$ python3 code/getNextContentAnalysisAssignment.py <username>`
+  `$ python3 code/getNextContentAnalysisAssignment.py`
 
 A new file will be added to your individuals folder. You may need to right click on it and hit refresh to make the new file appear. The new file will contain the prefixes and article block for your new assignment.
 
