@@ -1,14 +1,11 @@
 """Assign new work to a coder.
 
-1. Script connects to mysql database to get new work assignment (publication)
-   - find the next publication that they have not coded.
-2. git pull upstream to renew coding scheme
-3. use coding scheme and work assignment to create individuals file
-4. and place in the right place.  Coders will git status, add, commit.
+Inserts new tasks for coders to do.
 """
 
 import pymysql
 import pprint
+import glob
 import os
 import pwd
 import re
@@ -151,16 +148,22 @@ def insert_pmc_tasks(conn, num_to_insert, filename = "docs/pdf-files/pmc_oa_file
             if (os.path.exists(destination)):
                 continue
             else:
-                pubs_to_code.append(row["Accession ID"])
+                pmcid_to_insert = row["Accession ID"]
                 get_via_ftp(destination, row["File"])
+
                 if (os.path.exists(destination)):
-                    write_to_index(row["Article Citation"], row["Accession ID"])
+                    write_to_index(row["Article Citation"],
+                                   pmcid_to_insert)
+                    for task_num in range(0,2):
+                        insert_task(conn, pmcid_to_insert)
                     inserted_count += 1
 
-        doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
+        # doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
 
-        for task in doubled_list:
-            insert_task(conn, task)
+        # for task in doubled_list:
+        #     print("Inserting {}".format(task))
+        #     insert_task(conn, task)
+
 """Get tar.gz, extract, then save to docs folder."""
 def get_via_ftp(destination, ftp_location):
     import subprocess
@@ -248,11 +251,15 @@ def randomize_and_insert(conn):
         insert_task(conn, order, task)
 
 def insert_task(conn, task):
+    print("Inserting {}".format(task))
     insert_sql = """INSERT INTO assignments(pub_id)
                          VALUE (%(task)s)
                  """
     conn.execute(insert_sql, {"task": task})
-    print("Inserted {}".format(task))
+    if conn.rowcount == 1:
+        print("Inserted {}".format(task))
+    else:
+        print("Failed to insert")
 
 import os
 import errno
@@ -272,13 +279,68 @@ def get_username_from_github():
             ["git", "remote", "-v"]
     ).decode("utf8")
     # print(remotes_string)
-    matches = re.search('origin.*github.com/[\w\-.]+/softcite-dataset.git',
+    matches = re.search('origin.*github.com/(.*?)/softcite-dataset.git',
                         remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
 
     return username
+
+def get_xml_for_pdf():
+    path = "docs/pdf-files/pmc_oa_files/"
+
+    for filename in glob.iglob(path + "*.pdf"):
+        matches = re.search("PMC(.*).pdf", filename)
+        pmc_id = matches.group(1)
+        destination = "{}/{}.tgz".format(path, pmc_id)
+        if not os.path.exists(destination):
+            download_xml_for_pmc_id(pmc_id, destination)
+        xml_destination = "{}/{}.nxml".format(path, pmc_id)
+        if not os.path.exists(xml_destination):
+            extract_and_move_xml(path, pmc_id)
+
+def download_xml_for_pmc_id(pmc_id, destination):
+    import requests
+    base_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id="
+    response_xml = requests.get(base_url + pmc_id).text
+    print(response_xml)
+    matches = re.search('format="tgz".*?href="(.*?)"', response_xml)
+    tgz_url = matches.group(1)
+
+    import subprocess
+
+    subprocess.run(
+        ["curl", "-o", destination, tgz_url]
+        )
+
+def extract_and_move_xml(path, pmc_id):
+    import tarfile
+    import re
+    import shutil, os
+
+    reT = re.compile(r'.*.nxml')
+
+    tar_filename = "{}/{}.tgz".format(path, pmc_id)
+    try:
+        t = tarfile.open(tar_filename, 'r')
+    except IOError as e:
+        print(e)
+    else:
+        to_get = [m for m in t.getmembers() if reT.search(m.name)]
+        t.extractall(path, members=to_get)
+
+def rename_xml_file(path, pmc_id):
+    # get nxml filename
+    nxml_files = glob.iglob("{}/{}/*.nxml".format(
+                            path, pmc_id))
+    if(len(nxml_files) != 1):
+        print("Found more than one nxml file")
+        pprint.pprint(nxml_files)
+        exit()
+    else:
+        print("Found file:")
+        pprint.pprint(nxml_files)
 
 if __name__ == '__main__':
 
@@ -296,7 +358,10 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(cursor, int(sys.argv[1]))
+    # insert_pmc_tasks(cursor, int(sys.argv[1]))
+    get_xml_for_pdf()
+    rename_xml_file("docs/pdf-files/pmc_oa_files/", "5421183")
+    # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 
