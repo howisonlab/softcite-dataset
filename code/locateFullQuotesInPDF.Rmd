@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
-library(plyr)
+# library(plyr)
 library(tidyverse)
 library(data.world) # loads saved config see quickstart vignette
 
@@ -47,22 +47,24 @@ valid_codes = c("has_supplement",
 This gets the codes from the top of the files.
 
 ```{r}
-top_code_query <- data.world::qry_sparql(paste(prefixes,
-      "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
-WHERE {
-    ?article citec:has_in_text_mention ?selection .
-    ?selection ca:isTargetOf
-        [ rdf:type ca:CodeApplication ;
-          ca:hasCoder ?coder ;
-          ca:appliesCode [ rdf:type citec:mention_type ]
-        ] .
-    ?selection citec:full_quote ?full_quote ;
-               citec:on_pdf_page ?on_pdf_page ;
-               citec:spans_pages ?spans_pages
-    }"
-))
-top_codes <- data.world::query(top_code_query, softcite_ds)
-top_codes <- as.tibble(top_codes)
+# top_code_query <- data.world::qry_sparql(paste(prefixes,
+#       "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
+# WHERE {
+#     ?article citec:has_in_text_mention ?selection .
+#     ?selection ca:isTargetOf
+#         [ rdf:type ca:CodeApplication ;
+#           ca:hasCoder ?coder ;
+#           ca:appliesCode [ rdf:type citec:mention_type ]
+#         ] .
+#     ?selection citec:full_quote ?full_quote ;
+#                citec:on_pdf_page ?on_pdf_page ;
+#                citec:spans_pages ?spans_pages
+#     }"
+# ))
+# top_codes <- data.world::query(top_code_query, softcite_ds)
+# top_codes <- as.tibble(top_codes)
+# write_csv(top_codes, "top_codes.csv")
+top_codes <- read_csv("top_codes.csv")
 ```
 
 SPARQL queries return everything as URLs, but we want just the localPart at the end.
@@ -125,7 +127,8 @@ match_in_article <- function(df) {
   #df <- top_codes[36, ]
   art <- df[[1, "article"]] # grouping variable
   pdf_as_string = (articles %>% filter(article == art))$pdf_as_string[[1]] 
-  ddply(df, .(selection), match_selection, BString(pdf_as_string))
+  # ddply(df, .(selection), match_selection, BString(pdf_as_string))
+  df %>% group_by(selection) %>% do(match_selection(., BString(pdf_as_string)))
 }
 
 match_selection <- function(df, pdf_as_xstring) {
@@ -139,11 +142,12 @@ match_selection <- function(df, pdf_as_xstring) {
       results <- matchPattern(full_quote, pdf_as_xstring, 
                           with.indels = T, max.mismatch = mismatch_allow)
   }
-  
+  # Matching something with a header and footer in it, could be arbitrary
+  # length.  Could split the string in everyway and find the parts?
    results <- list(results)
    df %>% mutate(num_found = map_int(results, length),
-                 start = map(results, start),
-                 end = map(results, end))
+                 start = map_int(results, start),
+                 end = map_int(results, end))
 }
 
 
@@ -186,7 +190,11 @@ known_problematic = c("PMC5039120_SK02", "PMC5039120_BB02",
 
 achievable <- top_codes %>% filter(!(selection %in% known_problematic) )
 
-found <- ddply(achievable, .(article), match_in_article, .progress = "text")
+# found <- ddply(achievable, .(article), match_in_article, .progress = "text")
+
+# the dot here is a pronoun for the group, ie the split up dataframe.
+found <- achievable %>% group_by(article) %>% do(match_in_article(.))
+
 
 found %>% filter(num_found == 0)
 found %>% filter(num_found > 1)
@@ -229,25 +237,44 @@ PMC5339831_SK01 and SK02 are the same story.
 found <- found %>% 
   mutate(range = map2(start, end, IRanges))
 
-get_possible_matches <- function(curr_article, curr_coder, data) {
-  m <- data %>% filter(article == curr_article, coder != curr_coder )
-  m %>% pull(selection)
+# Probable issues in passing in found, which is grouped.
+get_possible_matches <- function(df, found) {
+  # filter the found dataframe to find possible matches
+  curr_article <- df[[1,"article"]]
+  curr_coder <- df[[1,"coder"]]
+  others <- found %>% filter(article == curr_article, coder != curr_coder ) %>% 
+    transmute(possible_match = selection, possible_range = range)
+  
+  df %>% rowwise() %>% mutate(poss_match = list(others))
 }
+
+return_group <- function(df) {
+  # head(df, 2)
+  m = tibble(new_col = "hat")
+  m$selection <- df$selection
+  m
+}
+
+found %>% group_by(article) %>% do(return_group(.))
 
 poss_matches <- found %>%
   select(article, coder, selection, range) %>% 
   group_by(article, coder) %>%
-  mutate(poss_match = list(get_possible_matches(article, coder, found))) %>% 
+  do(get_possible_matches(., found)) %>% 
   unnest(poss_match)
+
+poss_matches %>% unnest(poss_match)
+
+poss_matches[[300,"range"]]
 
 # Now have a row for every possible pair.
 # Must have found available
-does_overlap <- function(sel, poss_overlap, found) {
-  sel_range_list <- (found %>% filter(selection == sel))[[1, "range"]]
-  sel_range <- sel_range_list[[1]] # unlist
-  poss_overlap_range_list <- found %>% 
-    filter(selection == poss_overlap) %>% pull(range)
-  poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
+does_overlap <- function(sel_range, poss_overlap_range) {
+ # sel_range_list <- (found %>% filter(selection == sel))[[1, "range"]]
+#  sel_range <- sel_range_list[[1]] # unlist
+#  poss_overlap_range_list <- found %>% 
+#  filter(selection == poss_overlap) %>% pull(range)
+ # poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
   num_overlap = nrow(as.matrix(findOverlaps(sel_range, poss_overlap_range)))
   return(num_overlap != 0)
 }
@@ -255,8 +282,7 @@ does_overlap <- function(sel, poss_overlap, found) {
 # does_overlap("PMC2529246_BB02", "PMC2529246_MS02", found)
 
 poss_matches <- poss_matches %>% 
-  rowwise() %>% 
-  mutate(match = does_overlap(selection, poss_match, found))
+  mutate(match = map2(range, poss_overlap_range, does_overlap))
 
 poss_matches %>% group_by(match) %>% tally()
 
@@ -298,5 +324,18 @@ dlply(self_r, .(start), run_match, RangesList(other_r$range))
 
 
 # Hmmm, even using RangesLists it still just matches each pair
+```
+```{r}
+# take found and nest each coder into a column?
+nest_coders <- function(df) {
+  coders <- split(df, df$coder)
+  coders[1] <- coders[1] %>% select(-article)
+  coders[2] <- coders[2] %>% select(-article)
+  
+  tibble(coder1 = coders[1], coder2 = coders[2])
+}
+
+(found %>% group_by(article) %>% do(nest_coders(.)))[[1,"coder1"]]
+(found %>% group_by(article) %>% do(nest_coders(.)))[[10,"coder1"]]
 ```
 
