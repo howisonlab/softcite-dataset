@@ -294,10 +294,11 @@ def get_xml_for_pdf():
         matches = re.search("PMC(.*).pdf", filename)
         pmc_id = matches.group(1)
         destination = "{}/{}.tgz".format(path, pmc_id)
-        if (os.path.exists(destination)):
-            continue
-        else:
+        if not os.path.exists(destination):
             download_xml_for_pmc_id(pmc_id, destination)
+        xml_destination = "{}/{}.nxml".format(path, pmc_id)
+        if not os.path.exists(xml_destination):
+            extract_and_move_xml(path, pmc_id)
 
 def download_xml_for_pmc_id(pmc_id, destination):
     import requests
@@ -312,6 +313,34 @@ def download_xml_for_pmc_id(pmc_id, destination):
     subprocess.run(
         ["curl", "-o", destination, tgz_url]
         )
+
+def extract_and_move_xml(path, pmc_id):
+    import tarfile
+    import re
+    import shutil, os
+
+    reT = re.compile(r'.*.nxml')
+
+    tar_filename = "{}/{}.tgz".format(path, pmc_id)
+    try:
+        t = tarfile.open(tar_filename, 'r')
+    except IOError as e:
+        print(e)
+    else:
+        to_get = [m for m in t.getmembers() if reT.search(m.name)]
+        t.extractall(path, members=to_get)
+
+def rename_xml_file(path, pmc_id):
+    # get nxml filename
+    nxml_files = glob.iglob("{}/{}/*.nxml".format(
+                            path, pmc_id))
+    if(len(nxml_files) != 1):
+        print("Found more than one nxml file")
+        pprint.pprint(nxml_files)
+        exit()
+    else:
+        print("Found file:")
+        pprint.pprint(nxml_files)
 
 if __name__ == '__main__':
 
@@ -329,8 +358,10 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(cursor, int(sys.argv[1]))
-    # get_xml_for_pdf()
+    # insert_pmc_tasks(cursor, int(sys.argv[1]))
+    get_xml_for_pdf()
+    rename_xml_file("docs/pdf-files/pmc_oa_files/", "5421183")
+    # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
 
