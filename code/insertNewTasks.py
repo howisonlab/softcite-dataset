@@ -129,7 +129,7 @@ tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
 This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
 md5sum = 1bd372f619fad53987ab83d2eafa68f0
 """
-def insert_pmc_tasks(conn, num_to_insert, filename = "docs/pdf-files/pmc_oa_files/oa_list_shuffled.csv" ):
+def insert_pmc_tasks(conn, num_to_insert, coders_per_article = 1, filename = "docs/pdf-files/pmc_oa_files/oa_list_shuffled.csv" ):
     import os.path
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
     with open(filename) as csvfile:
@@ -154,7 +154,7 @@ def insert_pmc_tasks(conn, num_to_insert, filename = "docs/pdf-files/pmc_oa_file
                 if (os.path.exists(destination)):
                     write_to_index(row["Article Citation"],
                                    pmcid_to_insert)
-                    for task_num in range(0,2):
+                    for task_num in range(0,coders_per_article):
                         insert_task(conn, pmcid_to_insert)
                     inserted_count += 1
 
@@ -293,11 +293,10 @@ def get_xml_for_pdf():
     for filename in glob.iglob(path + "*.pdf"):
         matches = re.search("PMC(.*).pdf", filename)
         pmc_id = matches.group(1)
-        destination = "{}/{}.tgz".format(path, pmc_id)
-        if not os.path.exists(destination):
-            download_xml_for_pmc_id(pmc_id, destination)
-        xml_destination = "{}/{}.nxml".format(path, pmc_id)
+        tgz_destination = "{}/{}.tgz".format(path, pmc_id)
+        xml_destination = "{}/PMC{}.xml".format(path, pmc_id)
         if not os.path.exists(xml_destination):
+            download_xml_for_pmc_id(pmc_id, tgz_destination)
             extract_and_move_xml(path, pmc_id)
 
 def download_xml_for_pmc_id(pmc_id, destination):
@@ -329,18 +328,44 @@ def extract_and_move_xml(path, pmc_id):
     else:
         to_get = [m for m in t.getmembers() if reT.search(m.name)]
         t.extractall(path, members=to_get)
+        print("Getting: {}".format(to_get))
+
+    rename_xml_file(path, pmc_id)
 
 def rename_xml_file(path, pmc_id):
+    import shutil
     # get nxml filename
-    nxml_files = glob.iglob("{}/{}/*.nxml".format(
-                            path, pmc_id))
+    path_s = "{}PMC{}/*.nxml".format(path, pmc_id)
+    print(path_s)
+    nxml_files = glob.glob(path_s)
     if(len(nxml_files) != 1):
         print("Found more than one nxml file")
         pprint.pprint(nxml_files)
         exit()
     else:
         print("Found file:")
-        pprint.pprint(nxml_files)
+        pprint.pprint(nxml_files[0])
+        shutil.copy(nxml_files[0], path + "PMC" + pmc_id + ".xml")
+        shutil.rmtree(path + "PMC" + pmc_id)
+
+def export_assignment_csv(cursor):
+
+    sql_query = """
+        SELECT *
+        FROM assignments
+    """
+    cursor.execute(sql_query)
+    headers = ["id","pub_id","assigned","assigned_to","asssigned_timestamp"]
+    with open('softcite_assignments.csv', 'w') as csvfile:
+        myCsvWriter = csv.DictWriter(csvfile,
+                    fieldnames = headers)
+        myCsvWriter.writeheader()
+        for row in cursor:
+            # rather than 'for row in results'
+            myCsvWriter.writerow(row)
+
+
+
 
 if __name__ == '__main__':
 
@@ -359,8 +384,8 @@ if __name__ == '__main__':
     # create_database(cursor)
     # randomize_and_insert(cursor)
     # insert_pmc_tasks(cursor, int(sys.argv[1]))
-    get_xml_for_pdf()
-    rename_xml_file("docs/pdf-files/pmc_oa_files/", "5421183")
+    # get_xml_for_pdf()
+    # rename_xml_file("docs/pdf-files/pmc_oa_files/", "PMC5421183")
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
@@ -376,3 +401,12 @@ if __name__ == '__main__':
     # # username = "tester"
     # pub_id = get_new_task(cursor, username)
     # generate_template_file(pub_id, username)
+
+    export_assignment_csv(cursor)
+
+# """SELECT *
+# FROM softcite_assignments
+# INTO OUTFILE 'softcite_assignments.csv'
+# FIELDS TERMINATED BY ','
+# ENCLOSED BY '"'
+# LINES TERMINATED BY '\n'"""
