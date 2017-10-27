@@ -68,7 +68,6 @@ top_codes <- as.tibble(top_codes) %>%
 
 top_codes %>% group_by(article) %>% summarize(num_coder = n_distinct(coder)) %>% group_by(num_coder) %>% tally()
 # write_csv(top_codes, "top_codes.csv")
-# top_codes <- read_csv("top_codes.csv")
 ```
 
 
@@ -304,7 +303,16 @@ match_selection <- function(df, pdf_as_xstring) {
   arrange(desc(agree_percent)) %>% 
   write_csv("simple_agree_counts_by_article.csv") %>% 
   collect())
-  
+
+View(simple_agree_counts_by_article)
+
+simple_agree_counts_by_article %>% 
+  ggplot() +
+  geom_histogram(aes(x=agree_percent), bins=10) +
+  facet_wrap(~num_coders)
+```
+
+```{r}
 (simple_agree_counts_by_article %>% 
   ungroup() %>% 
   filter(num_coders > 1) %>% 
@@ -312,6 +320,7 @@ match_selection <- function(df, pdf_as_xstring) {
             total_match = sum(matched_number),
             overall_agree = (total_match / total_selections) %>% round(2)) %>% 
   collect())
+```
 
 # per coder is a little more problematic; and only relevant on articles with 2
 # coders.
