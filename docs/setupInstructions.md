@@ -160,7 +160,7 @@ When you need to save your changes, you will make a commit. The first step is to
 
 When you have finished coding one article and committed your work, you can request another article to work on.
 
-From the terminal, execute the following command followed by your github username:
+From the terminal, execute the following command:
 
   `$ python3 code/getNextContentAnalysisAssignment.py`
 
