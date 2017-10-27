@@ -11,8 +11,6 @@ Before you can get started working on the Softcite project, you'll need several 
 
 1. You have downloaded the Atom text editor. You can download it here: https://atom.io.
 
-1. You have Python 3 installed on your computer. If you don't have it already, I recommend installing Anaconda as it will also include a whole bunch of other packages that might be useful to you in the future. You can install Anaconda here: https://www.continuum.io/downloads.
-
 1. If you work on a PC, you will need to install PuTTY. If you don't have it already, you can download it here: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html.
 
 1. You have signed up for and downloaded the Chrome extension called Hypothesis. You can sign up and download the extension here: https://web.hypothes.is. You might need to check your email at some point during the sign up process to confirm your account.
@@ -30,7 +28,7 @@ You will also need an account to access the lab server. Dr. Howison will help yo
 *Note:* Students will need to be added to the allowed-users file for them to be able to access the repo on the lab server.
 
 ## Download Atom Packages
-You will need to set up Atom so that it has all of the add-on packages we will be using. We will install four packages. To install the packages, in Atom, click on **File** (for PC users) or **Atom** (for Mac users). Then click on **Settings** (for PC users) or **Preferences** (for Mac users). A new menu will appear:
+You will need to set up Atom so that it has all of the add-on packages we will be using. We will install two packages. To install the packages, in Atom, click on **File** (for PC users) or **Atom** (for Mac users). Then click on **Settings** (for PC users) or **Preferences** (for Mac users). A new menu will appear:
 
 ![Atom Preferences Menu](/images/atomPreferencesMenu.png)
 
@@ -38,7 +36,7 @@ In that menu, click on **Install**. On that page, search for "language-RDF," the
 
 ![Package Install Example](/images/languageRDFInstall.png)
 
-Repeat that process, searching for and installing three more packages: Date, Remote-FTP, and Open-In-Browser.
+Repeat that process, searching for and installing the Remote-FTP package.
 
 ## Customize Atom Preferences
 You will want to do a few things to make reading files in Atom easier on your eyes. You can adjust your preferences however you like, but we strongly suggest that you make the following changes to the editor. To make these changes, open your Preferences by clicking on **File** (for PC users) or **Atom** (for Mac users). Then click on **Settings** (for PC users) or **Preferences** (for Mac users). Then, in the menu that opens, click on **Editor**. Scroll down until you see the Scroll Sensitivity field and several check boxes below that. Adjust your settings to match these:
@@ -47,6 +45,8 @@ You will want to do a few things to make reading files in Atom easier on your ey
 
 ## Set up Your .ftpconfig File
 When working in the Howison Lab, you will be working on your own machine but editing files that are hosted on a lab server. As you make changes to those files you will use git to keep track of your edits, and then will push those edits to Github so that the rest of the lab can see your work as well. To access the files on the lab server, you will need to create an .ftpconfig file. You started this process when you downloaded the Remote-FTP package in the [Download Atom Packages](#download-atom-packages) section. If you have set up your [lab account](#make-a-lab-account) as well, continue by following these instructions:
+
+*First, if you are setting up your .ftpconfig file off campus* you will need to use the Cisco AnyConnect VPN to log in. If you are on campus, move on to the steps below. Instructions for setting up the VPN are available on [this University wiki page](https://wikis.utexas.edu/pages/viewpage.action?spaceKey=networking&title=Connecting+to+the+UT+VPN+Service). You will need to set up two-factor authentication using Duo as well—that wiki page includes instructions on how to do so. After you have downloaded the VPN you can follow [the instructions here](https://howisonlab.github.io/softcite-dataset/setupInstructions.html#access-from-off-campus) on how to use it.
 
 1. *If you are using a Mac:* Use Spotlight Search to search for "terminal." In the window that opens, enter the following command:
 
