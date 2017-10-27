@@ -151,28 +151,5 @@ Your snippets file requires a certain format so that Atom can understand what sh
 
 1. If your text appeared, you can close the mySnippet file. Right click on the file in the file tree and delete it.
 
-## Set up Keybinding
-There is one more keyboard shortcut you need to set up. Follow these instructions to enable the time/date keybinding:
-
-1. In your settings/preferences (respectively for PC vs Mac), click on **Packages** and then click on **Settings** in the box for the Date package.
-
-1. Update the Time Format field so that it reads: HH24:MI:SS
-
-1. Update the Date Time Format field so that it reads: YYYY-MM-DDTHH24:MI:SS-05:00
-
-1. Close your settings.
-
-1. Find and open your keymap file. On a Mac, you will find this under the "Atom" menu. On a PC this will be listed under "File."
-
-1. Paste the following content into the keymap.cson file, ensuring that the second line is indented within the first:
-
-      ```
-        'atom-text-editor':
-            'shift-cmd-t': 'date:datetime'
-      ```
-
-1. Test that it works by hitting shift+cmd+t at the same time (for PCs and Macs). A time/date signature should appear. Once you've seen it work, delete the test. Ask for help if it isn't working.
-
-1. Save and close keypmap.cson.
 
 [Return Home](index.md)
