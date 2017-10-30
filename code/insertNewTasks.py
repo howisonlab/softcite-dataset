@@ -383,7 +383,7 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    # insert_pmc_tasks(cursor, int(sys.argv[1]))
+    insert_pmc_tasks(cursor, int(sys.argv[1]))
     # get_xml_for_pdf()
     # rename_xml_file("docs/pdf-files/pmc_oa_files/", "PMC5421183")
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
@@ -402,7 +402,7 @@ if __name__ == '__main__':
     # pub_id = get_new_task(cursor, username)
     # generate_template_file(pub_id, username)
 
-    export_assignment_csv(cursor)
+    # export_assignment_csv(cursor)
 
 # """SELECT *
 # FROM softcite_assignments
