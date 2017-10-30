@@ -38,7 +38,7 @@ def generate_template_file(pub_id, username):
 @prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
+# https://howisonlab.github.io/softcite-pdf-files/pdf-files/pmc_oa_files/{}.pdf
 pmcid:{} rdf:type bioj:article ;
 
     citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
@@ -258,7 +258,7 @@ def get_username_from_github():
     # remotes_list = remotes_string.split()
     # remote = remotes_list[1]
     # print(remote)
-    matches = re.search('origin.*?github.com/(.*?)/softcite-dataset', remotes_string)
+    matches = re.search('origin.*?github.com/(.*?)/softcite-pdf-files', remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
