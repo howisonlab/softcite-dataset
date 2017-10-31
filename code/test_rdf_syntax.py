@@ -1,3 +1,4 @@
+from parseTurtle import check_selections_in_body
 import parseTurtle
 import pytest
 import rdflib
@@ -8,7 +9,8 @@ def test_individual_file_parse(file_to_check):
 
         try:
             g.parse(file_to_check, format="n3")
-        except rdflib.plugins.parsers.notation3.BadSyntax as bs:
+            check_selections_in_body(g)
+        except:
             pytest.fail("BadSyntax: Use python3 code/parseTurtle.py -f {}".format(file_to_check))
 
         assert len(g) > 0, "File should not be empty"
