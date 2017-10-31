@@ -1,6 +1,8 @@
 """Constructs data set."""
 
 import rdflib
+from rdflib import URIRef
+from rdflib.namespace import RDF
 import pprint
 import sys
 import glob
@@ -16,7 +18,7 @@ def find_all_turtle_files(dir_to_check = "data"):
     files.extend(glob.glob(dir_to_check + "/individuals-**/*.ttl"))
 
     # remove demo files
-    regex = re.compile(r'demo')
+    regex = re.compile(r'demo|practice|sample')
     files = [i for i in files if not regex.search(i)]
 
     return files
@@ -32,6 +34,46 @@ def parse_each_file(files):
     for file_to_check in files:
         parse_individual_file(file_to_check)
 
+"""A valid file passes these checks.
+
+1. Parses as RDF
+2. Selections URIs all match
+"""
+def validate_file(file_to_check):
+    file_graph = rdflib.Graph()
+    file_graph.parse(file_to_check, format="n3")
+
+    check_selections_in_body(file_graph)
+#    check_article_url(file_graph)
+    # s p o
+
+# def check_article_url(file_graph):
+#     article_url = URIRef(u'http://james.howison.name/ontologies/bio-journal-sample#article')
+#     print("Checking article URL")
+#     article_statements = file_graph.subjects(RDF.type,
+#                                           article_url)
+#
+#
+#     for art in article_statements:
+#         print(art)
+#
+#     return file_graph
+
+def check_selections_in_body(file_graph):
+    selections_in_header = file_graph.objects( predicate =  URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'))
+
+
+    for sel in selections_in_header:
+        if sel:
+            if ( sel,
+                RDF.type, URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention')
+                ) not in file_graph:
+                raise Exception("Did not find {}".format(sel))
+
+
+
+    return file_graph
+
 def build_parse_data_set(dir_to_check = "data"):
 
     files = find_all_turtle_files(dir_to_check)
@@ -39,22 +81,10 @@ def build_parse_data_set(dir_to_check = "data"):
     all_files = rdflib.Graph()
 
     for file_to_check in files:
+        print("Validating {}".format(file_to_check))
+        validate_file(file_to_check)
         print("Parsing {}".format(file_to_check))
         all_files.parse(file_to_check, format="n3")
-
-    return all_files
-
-def build_compiling_data_set(dir_to_check = "data"):
-
-    files = find_all_turtle_files(dir_to_check)
-
-    all_files = rdflib.Graph()
-
-    for file_to_check in files:
-        try:
-            all_files.parse(file_to_check, format="n3")
-        except:
-            continue
 
     return all_files
 
@@ -87,7 +117,7 @@ def main(argv):
             ).decode("utf8")
             print(reply)
         elif o == "-f":
-            parse_individual_file(a)
+            validate_file(a)
         else:
             assert False, "unhandled option"
 

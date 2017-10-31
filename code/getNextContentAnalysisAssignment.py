@@ -38,7 +38,7 @@ def generate_template_file(pub_id, username):
 @prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-dataset/pdf-files/pmc_oa_files/{}.pdf
+# https://howisonlab.github.io/softcite-pdf-files/pdf-files/pmc_oa_files/{}.pdf
 pmcid:{} rdf:type bioj:article ;
 
     ca:isTargetOf
