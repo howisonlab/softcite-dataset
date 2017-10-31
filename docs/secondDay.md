@@ -49,11 +49,13 @@ To make this happen, you first need to *fork* the Howison Lab's repo so that you
 
 1. In your terminal window, from your home directory (see the example image above in "But, first, sign in"), type the following command:
 
-    `$git clone <copied HTTPS URL>`
+    `$git clone --depth=1 <copied HTTPS URL>`
 
     Remember, you do not type the $ yourself. Do not put the angled brackets in your command. See this example:
 
     ![Git Clone Command](/images/gitClone.png)
+
+    *Note*: Most of the time when you clone a repo, you would not include --depth=1. Because we want to minimize the size of your folder on the lab server, we are excluding much of the past history of the repo from your clone (i.e. we are cloning at a shallow depth). If you clone repositories for other projects outside of the lab, you do not need to use --depth=1.
 
 1. In Atom, right click on your home directory. Then click **Refresh**. You should see a folder called softcite-dataset appear.
 
