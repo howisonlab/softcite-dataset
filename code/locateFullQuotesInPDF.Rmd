@@ -442,6 +442,7 @@ simple_agree_counts_by_article %>%
   collect())
 ```
 
+```{r}
 # per coder is a little more problematic; and only relevant on articles with 2
 # coders.
 (agree_counts_per_coder <- found_with_matches %>% 
@@ -564,84 +565,39 @@ top_codes_with_matches %>% group_by(matched) %>% tally()
 ```
 
 ```{r}
-library(IRanges)
-self <- tribble(
-  ~start, ~end,
-  1,   6,
-  6,   8
-)
+library(tidyverse)
+assignments <- read_csv("/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/data/softcite_assignments.csv")
 
-other <- tribble(
-  ~start, ~end,
-  1,   14,
-  7,   14
-)
+pmc_assignments <- assignments %>% 
+  filter(str_detect(pub_id, "PMC*")) %>% 
+  filter(assigned == 1) %>% 
+  mutate(assigned_to = str_to_lower(assigned_to))
 
-self_r <-  self %>% mutate(range = map2(start, end, IRanges))
-other_r <- other %>% mutate(range = map2(start, end, IRanges))
+pmc_assignees <- pmc_assignments %>% 
+  pull(assigned_to) %>% unique()
+  # ggplot(aes(x=asssigned_timestamp, y = assigned_to)) + 
+  # geom_jitter(alpha=0.1)
 
-run_match <- function(df, other_list) {
-  self_list <-  RangesList(df[[1, "range"]])
-  return(overlapsAny(self_list, other_list))
-}
+pmc_assignments %>% 
+  group_by(assigned_to) %>% 
+  tally() %>% 
+  arrange(n)
 
-dlply(self_r, .(start), run_match, RangesList(other_r$range))
+# work assigned.
+assigned <- pmc_assignments %>% 
+  select(article = pub_id, coder = assigned_to)
 
+# work actually done and gathered.
+completed <- match_counts %>% 
+  select(article, coder)
 
-# Hmmm, even using RangesLists it still just matches each pair
+# what was assigned but not completed? What is in pmc_assignments but not in match_counts.
+missing <- anti_join(assigned, completed)
+
+missing %>% 
+  group_by(coder) %>% 
+  summarize(num_missing = n(),
+             missing    = str_c(article, collapse = "; ")) %>% 
+  arrange(desc(num_missing))
 ```
-```{r}
-# take found and nest each coder into a column?
-nest_coders <- function(df) {
-  coders <- split(df, df$coder)
-  coders[1] <- coders[1] %>% select(-article)
-  coders[2] <- coders[2] %>% select(-article)
-  
-  tibble(coder1 = coders[1], coder2 = coders[2])
-}
 
-(found %>% group_by(article) %>% do(nest_coders(.)))[[1,"coder1"]]
-(found %>% group_by(article) %>% do(nest_coders(.)))[[10,"coder1"]]
-
-
-
-test_ranges <- tribble(
-  ~id, ~start, ~end,
-  1,  1,   6,
-  2,  7,   8,
-  3,  1,  14,
-  4,  7,  14
-)
-
-
-
-test_ranges <-  test_ranges %>% mutate(range = map2(start, end, IRanges))
-
-ranges_array <- test_ranges %>% pull(range)
-
-ranges_list <- as(ranges_array, "RangesList")
-
-as.matrix(findOverlaps(query=ranges_list, select = "all", type = "any"))
-
-range_match <- function(query, subject) {
-  # match defined as any overlap.
-  case_when(
-    query$start > subject$end ~ FALSE,
-    
-  )
-}
-
-vals <- Intervals(test_ranges %>% select(start, end) %>% as.matrix)
-
-test_ranges$matches <- interval_overlap(vals, vals)
-
-test_ranges %>% 
-  unnest() %>% 
-  filter(id != matches)
-
-```
-# ~id, ~overlapping
-# 1, 3
-# 2, 3; 4 
-# 3, 1; 2; 4
-# 4, 2; 3
