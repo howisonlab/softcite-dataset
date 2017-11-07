@@ -54,8 +54,7 @@ WHERE {
     ?selection ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
           ca:hasCoder ?coder ;
-          ca:appliesCode [ rdf:type citec:mention_type ;
-                           rdfs:label \"software\" ;]
+          ca:appliesCode [ rdf:type citec:mention_type ]
         ] .
     ?selection citec:full_quote ?full_quote ;
                citec:on_pdf_page ?on_pdf_page ;
@@ -120,7 +119,8 @@ top_codes %>% summarize(num_articles = n_distinct(article),
 
 top_codes %>% group_by(article, coder) %>% 
   summarize(num_selections = n_distinct(selection)) %>% 
-  arrange(desc(num_selections))
+  arrange(desc(num_selections)) %>% 
+  filter(article == "PMC4441238")
 
 ```
 
@@ -143,7 +143,7 @@ Try locating in XML files.
 library(xml2)
 library(glue)
 
-path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/docs/pdf-files/pmc_oa_files/"
+path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
 
 test_articles <- tribble(
   ~pmcid,
@@ -433,135 +433,35 @@ simple_agree_counts_by_article %>%
 ```
 
 ```{r}
-(simple_agree_counts_by_article %>% 
-  ungroup() %>% 
-  filter(num_coders > 1) %>% 
-  summarize(total_selections = sum(total_selections),
-            total_match = sum(matched_number),
-            overall_agree = (total_match / total_selections) %>% round(2)) %>% 
-  collect())
+# (simple_agree_counts_by_article %>% 
+#   ungroup() %>% 
+#   filter(num_coders > 1) %>% 
+#   summarize(total_selections = sum(total_selections),
+#             total_match = sum(matched_number),
+#             overall_agree = (total_match / total_selections) %>% round(2)) %>% 
+#   collect())
 ```
 
 ```{r}
 # per coder is a little more problematic; and only relevant on articles with 2
 # coders.
-(agree_counts_per_coder <- found_with_matches %>% 
-  group_by(article) %>% 
-  mutate(num_coders_for_article = n_distinct(coder)) %>% 
-  filter(num_coders_for_article > 1) %>% 
-  ungroup() %>% 
-  group_by(coder, matched) %>% 
-  summarize(sel_count  = n_distinct(selection),
-            num_coders = n_distinct(coder)) %>% 
-  spread(matched, sel_count, fill=0) %>% 
-  mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
-         total_selections = matched_number + unmatched,
-         agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
-  collect())
-
-View(agree_counts_per_coder)
+# (agree_counts_per_coder <- found_with_matches %>% 
+#   group_by(article) %>% 
+#   mutate(num_coders_for_article = n_distinct(coder)) %>% 
+#   filter(num_coders_for_article > 1) %>% 
+#   ungroup() %>% 
+#   group_by(coder, matched) %>% 
+#   summarize(sel_count  = n_distinct(selection),
+#             num_coders = n_distinct(coder)) %>% 
+#   spread(matched, sel_count, fill=0) %>% 
+#   mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
+#          total_selections = matched_number + unmatched,
+#          agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
+#   collect())
+# 
+# View(agree_counts_per_coder)
 
 # PMC2518490_MS01 matches PMC2518490_MD04
-```
-
-
-```{r}
-found %>% filter(coder == "mrcynds")
-```
-
-
-```{r}
-
-
-found
-
-View(found)
-
-found %>% 
-  group_by(article) %>%
-  mutate(matches = interval_overlap(interval, interval))
-
-# for each article, split by coder then findOverlaps 
-found %>% ungroup() %>% select(start, end) %>% as.matrix()
-
-# get_matches_in_article <- function(df_article) {
-#   # df_article <- found %>% ungroup()
-#   starts <- df_article %>% pull(start)
-#   ends <- df_article %>% pull(end)
-#   intervals <- Intervals(as.matrix(data.frame(starts, ends)))
-#   interval_overlap(intervals, intervals)
-# }
-
-get_matches_in_article <- function(s, e) {
-  intervals <- Intervals(as.matrix(data.frame(s, e)))
-  interval_overlap(intervals, intervals)
-}
-
-found %>% 
-  group_by(article) %>%
-  do(matches_for_article = get_matches_in_article(start_val, end_val))
-         
-# Probable issues in passing in found, which is grouped.
-get_possible_matches <- function(df, found) {
-  # filter the found dataframe to find possible matches
-  curr_article <- df[[1,"article"]]
-  curr_coder <- df[[1,"coder"]]
-  others <- found %>% 
-    filter(article == curr_article, coder != curr_coder ) %>% 
-    transmute(possible_match = selection, 
-              possible_range = range)
-  
-  df %>% rowwise() %>% mutate(poss_match = list(others))
-}
-
-# return_group <- function(df) {
-#   # head(df, 2)
-#   m = tibble(new_col = "hat")
-#   m$selection <- df$selection
-#   m
-# }
-# 
-# found %>% group_by(article) %>% do(return_group(.))
-
-poss_matches <- found %>%
-  select(article, coder, selection, range) %>% 
-  group_by(article, coder) %>%
-  do(get_possible_matches(., found)) %>% 
-  unnest(poss_match)
-
-# poss_matches %>% unnest(poss_match)
-
-# poss_matches[[300,"range"]]
-
-# Now have a row for every possible pair.
-# Must have found available
-does_overlap <- function(sel_range, poss_overlap_range) {
- # sel_range_list <- (found %>% filter(selection == sel))[[1, "range"]]
-#  sel_range <- sel_range_list[[1]] # unlist
-#  poss_overlap_range_list <- found %>% 
-#  filter(selection == poss_overlap) %>% pull(range)
- # poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
-  num_overlap = nrow(as.matrix(findOverlaps(sel_range, poss_overlap_range)))
-  return(num_overlap != 0)
-}
-
-# does_overlap("PMC2529246_BB02", "PMC2529246_MS02", found)
-
-poss_matches <- poss_matches %>% 
-  mutate(match = map2(range, possible_range, does_overlap))
-
-poss_matches %>% group_by(match) %>% tally()
-
-final_matches <- poss_matches %>% filter(match == T) %>% 
-  rename(matching_selection = poss_match) %>% 
-  select(selection, matching_selection)
-
-top_codes_with_matches <- left_join(top_codes, final_matches, by = "selection") %>% mutate(matched = !is.na(matching_selection))
-
-top_codes_with_matches %>% group_by(matched) %>% tally()
-
-# Should add in manual matches from list above.
-
 ```
 
 ```{r}
@@ -598,6 +498,7 @@ missing %>%
   group_by(coder) %>% 
   summarize(num_missing = n(),
              missing    = str_c(article, collapse = "; ")) %>% 
-  arrange(desc(num_missing))
+  arrange(desc(num_missing)) %>% 
+  filter(str_detect(coder, "carson"))
 ```
 
