@@ -61,13 +61,37 @@ WHERE {
                citec:spans_pages ?spans_pages
     }"
 ))
+
 top_codes <- data.world::query(top_code_query, softcite_ds)
 top_codes <- as.tibble(top_codes) %>% 
-  filter(str_detect(article, "PMC")) %>% 
-  filter(!str_detect(article, "_"))
+  filter(str_detect(article, "PMC"))
 
-top_codes %>% group_by(article) %>% summarize(num_coder = n_distinct(coder)) %>% group_by(num_coder) %>% tally()
-# write_csv(top_codes, "top_codes.csv")
+# top_codes %>%
+#   group_by(article) %>%
+#   summarize(num_coder = n_distinct(coder)) %>%
+#   group_by(num_coder) %>%
+#   tally()
+```
+
+```{r}
+no_selection_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder 
+       WHERE { ?article ca:isTargetOf
+               [ rdf:type ca:CodeApplication ;
+                 ca:hasCoder ?coder ;
+                 ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                                  citec:isPresent true ]
+               ]
+    }"
+))
+
+no_selection_articles <- data.world::query(no_selection_query, 
+                                           dataset = softcite_ds) %>% 
+  mutate(article = str_extract(article, "[#/]([^#/]+)$"),
+         article = str_sub(article,2),
+         matched = 0,
+         unmatched = 0) %>% 
+  collect()
 ```
 
 
@@ -80,7 +104,8 @@ SPARQL queries return everything as URLs, but we want just the localPart at the 
 
 ```{r}
 top_codes <- top_codes %>%
-       mutate_at(vars(article, selection), funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article, selection),
+                 funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
        mutate_at(vars(article,selection), funs(str_sub(.,2)))
 ```
 
@@ -94,7 +119,8 @@ top_codes %>% summarize(num_articles = n_distinct(article),
 
 top_codes %>% group_by(article, coder) %>% 
   summarize(num_selections = n_distinct(selection)) %>% 
-  arrange(desc(num_selections))
+  arrange(desc(num_selections)) %>% 
+  filter(article == "PMC4441238")
 
 ```
 
@@ -117,7 +143,7 @@ Try locating in XML files.
 library(xml2)
 library(glue)
 
-path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/docs/pdf-files/pmc_oa_files/"
+path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
 
 test_articles <- tribble(
   ~pmcid,
@@ -292,236 +318,187 @@ match_selection <- function(df, pdf_as_xstring) {
 
 
 # summarize situation.
-(simple_agree_counts_by_article <- found_with_matches %>%
-  group_by(article, matched) %>% 
-  summarize(sel_count  = n_distinct(selection),
-            num_coders = n_distinct(coder)) %>% 
-  spread(matched, sel_count, fill=0) %>% 
-  mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
-         total_selections = matched_number + unmatched,
-         agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
-  arrange(desc(agree_percent)) %>% 
-  write_csv("simple_agree_counts_by_article.csv") %>% 
+# (simple_agree_counts_by_article <- found_with_matches %>%
+#   group_by(article, matched) %>% 
+#   summarize(sel_count  = n_distinct(selection),
+#             num_coders = n_distinct(coder)) %>% 
+#   spread(matched, sel_count, fill=0) %>% 
+#   mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
+#          total_selections = matched_number + unmatched,
+#          agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
+#   arrange(desc(agree_percent)) %>% 
+#   write_csv("simple_agree_counts_by_article.csv") %>% 
+#   collect())
+
+
+(match_counts <- found_with_matches %>%
+  group_by(article, coder, matched) %>% 
+  summarize(sel_count  = n_distinct(selection)) %>% 
+  # obtain: article, coder, matched, unmatched
+  spread(matched, sel_count, fill=0) %>% # 323 rows
+  # add: zero counts for article/coder where no selections made.
+  ungroup() %>% bind_rows(no_selection_articles) %>% # 608 rows
   collect())
 
+match_counts %>%
+  summarize(article_count = n_distinct(article))
+
+match_counts %>%
+  group_by(article) %>%
+  summarize(num_coder = n_distinct(coder)) %>%
+  group_by(num_coder) %>%
+  tally()
+
+my_summarize <- function(df) {
+  matched = df[[1, "matched"]]
+  coder_a_name = df[[1, "coder"]]
+  coder_a_only = df[[1, "unmatched"]]
+
+  if (nrow(df) > 1) {
+    coder_b_name = df[[2, "coder"]]
+    coder_b_only = df[[2, "unmatched"]]
+    total_selections <- matched + coder_a_only + coder_b_only
+    if (total_selections == 0) {
+      percent_agree <- NA
+    } else {
+      percent_agree <- matched / total_selections %>% round(2)
+    }
+  } else {
+    coder_b_name <-  NA
+    coder_b_only <-  NA
+    total_selections <- matched + coder_a_only
+    percent_agree <- NA
+  }
+
+  tibble(percent_agree = percent_agree,
+         matched = matched,
+         coder_a_only = coder_a_only,
+         coder_a_name = coder_a_name,
+         coder_b_only = coder_b_only,
+         coder_b_name = coder_b_name)
+}
+
+# Now obtain:
+# article, matched, coder_a_only, coder_a_name, coder_b_only, coder_b_name 
+simple_agree_counts_by_article <- match_counts %>%
+  group_by(article) %>% 
+  do(my_summarize(.)) %>%
+  arrange(percent_agree)
+
+simple_agree_counts_by_article %>% 
+  ungroup() %>% 
+  filter(!is.na(percent_agree)) %>% # single coded articles
+  summarize(mean_percent_agree = mean(percent_agree))
+
+# how many with 100%?
+simple_agree_counts_by_article %>% 
+  filter(!is.na(percent_agree)) %>% 
+  mutate(ranking_group = case_when(
+    percent_agree == 0 ~ "none",
+    percent_agree <= 0.5 ~ "under_half",
+    percent_agree < 1 ~ "over_half",
+    percent_agree == 1 ~ "all"
+    
+  )) %>% 
+  group_by(ranking_group) %>% 
+  summarize(article_count = n(),
+            group_mean = mean(percent_agree))
+
+
+  
 View(simple_agree_counts_by_article)
+  
+  #  # Now summarize by article, collapsing across coders 
+  # group_by(article) %>% 
+  # summarize(num_coder = n_distinct(coder),
+  #           matched = sum(matched) / num_coder, # A match B, B match A
+  #           unmatched = sum(unmatched)) %>% 
+  # filter(num_coder > 1) %>% 
+  # # for each article, summarize across columns
+  # mutate(total_selections = matched + unmatched,
+  #      agree_percent = ifelse(total_selections == 0, 
+  #                             1.0, # neither found selections, full agree. 
+  #                             (matched / total_selections) %>% round(2))) %>% 
+  # arrange(desc(agree_percent)) %>% 
+  # write_csv("simple_agree_counts_by_article.csv") %>% 
+  # collect())
+
+
+
+simple_agree_counts_by_article %>% group_by(num_coder) %>% tally()
 
 simple_agree_counts_by_article %>% 
   ggplot() +
-  geom_histogram(aes(x=agree_percent), bins=10) +
-  facet_wrap(~num_coders)
+  geom_histogram(aes(x=percent_agree), bins=5)
 ```
 
 ```{r}
-(simple_agree_counts_by_article %>% 
-  ungroup() %>% 
-  filter(num_coders > 1) %>% 
-  summarize(total_selections = sum(total_selections),
-            total_match = sum(matched_number),
-            overall_agree = (total_match / total_selections) %>% round(2)) %>% 
-  collect())
+# (simple_agree_counts_by_article %>% 
+#   ungroup() %>% 
+#   filter(num_coders > 1) %>% 
+#   summarize(total_selections = sum(total_selections),
+#             total_match = sum(matched_number),
+#             overall_agree = (total_match / total_selections) %>% round(2)) %>% 
+#   collect())
 ```
 
+```{r}
 # per coder is a little more problematic; and only relevant on articles with 2
 # coders.
-(agree_counts_per_coder <- found_with_matches %>% 
-  group_by(article) %>% 
-  mutate(num_coders_for_article = n_distinct(coder)) %>% 
-  filter(num_coders_for_article > 1) %>% 
-  ungroup() %>% 
-  group_by(coder, matched) %>% 
-  summarize(sel_count  = n_distinct(selection),
-            num_coders = n_distinct(coder)) %>% 
-  spread(matched, sel_count, fill=0) %>% 
-  mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
-         total_selections = matched_number + unmatched,
-         agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
-  collect())
-
-View(agree_counts_per_coder)
+# (agree_counts_per_coder <- found_with_matches %>% 
+#   group_by(article) %>% 
+#   mutate(num_coders_for_article = n_distinct(coder)) %>% 
+#   filter(num_coders_for_article > 1) %>% 
+#   ungroup() %>% 
+#   group_by(coder, matched) %>% 
+#   summarize(sel_count  = n_distinct(selection),
+#             num_coders = n_distinct(coder)) %>% 
+#   spread(matched, sel_count, fill=0) %>% 
+#   mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
+#          total_selections = matched_number + unmatched,
+#          agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
+#   collect())
+# 
+# View(agree_counts_per_coder)
 
 # PMC2518490_MS01 matches PMC2518490_MD04
 ```
 
-
 ```{r}
-found %>% filter(coder == "mrcynds")
+library(tidyverse)
+assignments <- read_csv("/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/data/softcite_assignments.csv")
+
+pmc_assignments <- assignments %>% 
+  filter(str_detect(pub_id, "PMC*")) %>% 
+  filter(assigned == 1) %>% 
+  mutate(assigned_to = str_to_lower(assigned_to))
+
+pmc_assignees <- pmc_assignments %>% 
+  pull(assigned_to) %>% unique()
+  # ggplot(aes(x=asssigned_timestamp, y = assigned_to)) + 
+  # geom_jitter(alpha=0.1)
+
+pmc_assignments %>% 
+  group_by(assigned_to) %>% 
+  tally() %>% 
+  arrange(n)
+
+# work assigned.
+assigned <- pmc_assignments %>% 
+  select(article = pub_id, coder = assigned_to)
+
+# work actually done and gathered.
+completed <- match_counts %>% 
+  select(article, coder)
+
+# what was assigned but not completed? What is in pmc_assignments but not in match_counts.
+missing <- anti_join(assigned, completed)
+
+missing %>% 
+  group_by(coder) %>% 
+  summarize(num_missing = n(),
+             missing    = str_c(article, collapse = "; ")) %>% 
+  arrange(desc(num_missing)) %>% 
+  filter(str_detect(coder, "carson"))
 ```
 
-
-```{r}
-
-
-found
-
-View(found)
-
-found %>% 
-  group_by(article) %>%
-  mutate(matches = interval_overlap(interval, interval))
-
-# for each article, split by coder then findOverlaps 
-found %>% ungroup() %>% select(start, end) %>% as.matrix()
-
-# get_matches_in_article <- function(df_article) {
-#   # df_article <- found %>% ungroup()
-#   starts <- df_article %>% pull(start)
-#   ends <- df_article %>% pull(end)
-#   intervals <- Intervals(as.matrix(data.frame(starts, ends)))
-#   interval_overlap(intervals, intervals)
-# }
-
-get_matches_in_article <- function(s, e) {
-  intervals <- Intervals(as.matrix(data.frame(s, e)))
-  interval_overlap(intervals, intervals)
-}
-
-found %>% 
-  group_by(article) %>%
-  do(matches_for_article = get_matches_in_article(start_val, end_val))
-         
-# Probable issues in passing in found, which is grouped.
-get_possible_matches <- function(df, found) {
-  # filter the found dataframe to find possible matches
-  curr_article <- df[[1,"article"]]
-  curr_coder <- df[[1,"coder"]]
-  others <- found %>% 
-    filter(article == curr_article, coder != curr_coder ) %>% 
-    transmute(possible_match = selection, 
-              possible_range = range)
-  
-  df %>% rowwise() %>% mutate(poss_match = list(others))
-}
-
-# return_group <- function(df) {
-#   # head(df, 2)
-#   m = tibble(new_col = "hat")
-#   m$selection <- df$selection
-#   m
-# }
-# 
-# found %>% group_by(article) %>% do(return_group(.))
-
-poss_matches <- found %>%
-  select(article, coder, selection, range) %>% 
-  group_by(article, coder) %>%
-  do(get_possible_matches(., found)) %>% 
-  unnest(poss_match)
-
-# poss_matches %>% unnest(poss_match)
-
-# poss_matches[[300,"range"]]
-
-# Now have a row for every possible pair.
-# Must have found available
-does_overlap <- function(sel_range, poss_overlap_range) {
- # sel_range_list <- (found %>% filter(selection == sel))[[1, "range"]]
-#  sel_range <- sel_range_list[[1]] # unlist
-#  poss_overlap_range_list <- found %>% 
-#  filter(selection == poss_overlap) %>% pull(range)
- # poss_overlap_range <- poss_overlap_range_list[[1]] # unlist
-  num_overlap = nrow(as.matrix(findOverlaps(sel_range, poss_overlap_range)))
-  return(num_overlap != 0)
-}
-
-# does_overlap("PMC2529246_BB02", "PMC2529246_MS02", found)
-
-poss_matches <- poss_matches %>% 
-  mutate(match = map2(range, possible_range, does_overlap))
-
-poss_matches %>% group_by(match) %>% tally()
-
-final_matches <- poss_matches %>% filter(match == T) %>% 
-  rename(matching_selection = poss_match) %>% 
-  select(selection, matching_selection)
-
-top_codes_with_matches <- left_join(top_codes, final_matches, by = "selection") %>% mutate(matched = !is.na(matching_selection))
-
-top_codes_with_matches %>% group_by(matched) %>% tally()
-
-# Should add in manual matches from list above.
-
-```
-
-```{r}
-library(IRanges)
-self <- tribble(
-  ~start, ~end,
-  1,   6,
-  6,   8
-)
-
-other <- tribble(
-  ~start, ~end,
-  1,   14,
-  7,   14
-)
-
-self_r <-  self %>% mutate(range = map2(start, end, IRanges))
-other_r <- other %>% mutate(range = map2(start, end, IRanges))
-
-run_match <- function(df, other_list) {
-  self_list <-  RangesList(df[[1, "range"]])
-  return(overlapsAny(self_list, other_list))
-}
-
-dlply(self_r, .(start), run_match, RangesList(other_r$range))
-
-
-# Hmmm, even using RangesLists it still just matches each pair
-```
-```{r}
-# take found and nest each coder into a column?
-nest_coders <- function(df) {
-  coders <- split(df, df$coder)
-  coders[1] <- coders[1] %>% select(-article)
-  coders[2] <- coders[2] %>% select(-article)
-  
-  tibble(coder1 = coders[1], coder2 = coders[2])
-}
-
-(found %>% group_by(article) %>% do(nest_coders(.)))[[1,"coder1"]]
-(found %>% group_by(article) %>% do(nest_coders(.)))[[10,"coder1"]]
-
-
-
-test_ranges <- tribble(
-  ~id, ~start, ~end,
-  1,  1,   6,
-  2,  7,   8,
-  3,  1,  14,
-  4,  7,  14
-)
-
-
-
-test_ranges <-  test_ranges %>% mutate(range = map2(start, end, IRanges))
-
-ranges_array <- test_ranges %>% pull(range)
-
-ranges_list <- as(ranges_array, "RangesList")
-
-as.matrix(findOverlaps(query=ranges_list, select = "all", type = "any"))
-
-range_match <- function(query, subject) {
-  # match defined as any overlap.
-  case_when(
-    query$start > subject$end ~ FALSE,
-    
-  )
-}
-
-vals <- Intervals(test_ranges %>% select(start, end) %>% as.matrix)
-
-test_ranges$matches <- interval_overlap(vals, vals)
-
-test_ranges %>% 
-  unnest() %>% 
-  filter(id != matches)
-
-```
-# ~id, ~overlapping
-# 1, 3
-# 2, 3; 4 
-# 3, 1; 2; 4
-# 4, 2; 3
