@@ -74,7 +74,8 @@ def check_selections_in_body(file_graph):
 
     return file_graph
 
-def build_parse_data_set(dir_to_check = "data"):
+
+def build_parse_data_set(dir_to_check="data"):
 
     files = find_all_turtle_files(dir_to_check)
 
@@ -88,13 +89,44 @@ def build_parse_data_set(dir_to_check = "data"):
 
     return all_files
 
+
+def extract_assignments_csv():
+    import pymysql
+    import csv
+
+    print('Outputting assignments csv')
+    connection = pymysql.connect(host="localhost",
+                                 user="softcite_user",
+                                 passwd="work_spree34",
+                                 db="softcite_assignments",
+                                 autocommit=True,
+                                 cursorclass=pymysql.cursors.DictCursor)
+
+    cursor = connection.cursor()
+
+    sql_query = """
+        SELECT *
+        FROM assignments
+    """
+    cursor.execute(sql_query)
+    headers = ["id", "pub_id", "assigned",
+               "assigned_to", "asssigned_timestamp"]
+    with open('data/softcite_assignments.csv', 'w') as csvfile:
+        myCsvWriter = csv.DictWriter(csvfile, fieldnames=headers)
+        myCsvWriter.writeheader()
+        for row in cursor:
+            # rather than 'for row in results'
+            myCsvWriter.writerow(row)
+
+
 def usage():
     print("-a to parse all files, -f <filename> for just one file")
+
 
 def main(argv):
     grammar = "kant.xml"
     try:
-        opts, args = getopt.getopt(argv, "uaf:", ["help", "grammar="])
+        opts, args = getopt.getopt(argv, "ucaf:", ["help", "grammar="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -107,6 +139,9 @@ def main(argv):
               destination="data/full_dataset.ttl",
               format="turtle"
             )
+            extract_assignments_csv()
+        elif o == "-c":
+            extract_assignments_csv()
         elif o == "-u":
             reply = subprocess.check_output(
                     ["curl",   'https://api.data.world/v0/uploads/jameshowison/software-citations/files/full_dataset.ttl',
@@ -116,10 +151,19 @@ def main(argv):
                     ]
             ).decode("utf8")
             print(reply)
+            reply = subprocess.check_output(
+                    ["curl",   'https://api.data.world/v0/uploads/jameshowison/software-citations/files/softcite_assignments.csv',
+                    "--upload-file", "data/softcite_assignments.csv",
+                    "-H",
+                    "Authorization: Bearer {}".format(os.environ['DATA_WORLD_KEY'])
+                    ]
+            ).decode("utf8")
+            print(reply)
         elif o == "-f":
             validate_file(a)
         else:
             assert False, "unhandled option"
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
