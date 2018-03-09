@@ -49,7 +49,7 @@ pmcid:{} rdf:type bioj:article ;
                          ] ;
         ] ;
 
-    
+
     citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
 .
 """
@@ -80,7 +80,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY id ASC
+    ORDER BY id DESC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
