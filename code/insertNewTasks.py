@@ -129,8 +129,10 @@ tail -n +2 oa_file_list.csv | gshuf > oa_list_shuffled.csv
 This method checks how many PMC tasks are there and skips that many lines from the input, to avoid adding duplicates.
 md5sum = 1bd372f619fad53987ab83d2eafa68f0
 """
-def insert_pmc_tasks(conn, num_to_insert, coders_per_article = 1, filename = "docs/pdf-files/pmc_oa_files/oa_list_shuffled.csv" ):
+def insert_pmc_tasks(conn, num_to_insert, coders_per_article=1):
     import os.path
+    path = "../softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
+    filename = path + "oa_list_shuffled.csv"
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
     with open(filename) as csvfile:
         myCSVReader = csv.DictReader(csvfile,
@@ -144,7 +146,7 @@ def insert_pmc_tasks(conn, num_to_insert, coders_per_article = 1, filename = "do
                 break
             print(row)
             print(inserted_count)
-            destination = "docs/pdf-files/pmc_oa_files/{}.pdf".format(row["Accession ID"])
+            destination = "{}/{}.pdf".format(path, row["Accession ID"])
             if (os.path.exists(destination)):
                 continue
             else:
@@ -174,9 +176,10 @@ def get_via_ftp(destination, ftp_location):
         )
 
 def write_to_index(citation, pmcid):
-    path = "docs/pdf-files/pmc_oa_files/index.md"
+    path = "../softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
+    index_file = path + "index.md"
     template = "  1. [{pmcid}: {cite}]({pmcid}.pdf)\n"
-    with open(path, "a") as index_file:
+    with open(index_file, "a") as index_file:
         # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
         index_file.write(template.format(cite = citation, pmcid = pmcid))
 
@@ -288,7 +291,7 @@ def get_username_from_github():
     return username
 
 def get_xml_for_pdf():
-    path = "docs/pdf-files/pmc_oa_files/"
+    path = "../softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
 
     for filename in glob.iglob(path + "*.pdf"):
         matches = re.search("PMC(.*).pdf", filename)
@@ -356,16 +359,13 @@ def export_assignment_csv(cursor):
     """
     cursor.execute(sql_query)
     headers = ["id","pub_id","assigned","assigned_to","asssigned_timestamp"]
-    with open('softcite_assignments.csv', 'w') as csvfile:
+    with open('data/softcite_assignments.csv', 'w') as csvfile:
         myCsvWriter = csv.DictWriter(csvfile,
                     fieldnames = headers)
         myCsvWriter.writeheader()
         for row in cursor:
             # rather than 'for row in results'
             myCsvWriter.writerow(row)
-
-
-
 
 if __name__ == '__main__':
 
@@ -384,7 +384,8 @@ if __name__ == '__main__':
     # create_database(cursor)
     # randomize_and_insert(cursor)
     insert_pmc_tasks(cursor, int(sys.argv[1]))
-    # get_xml_for_pdf()
+    # export_assignment_csv(cursor)
+    get_xml_for_pdf()
     # rename_xml_file("docs/pdf-files/pmc_oa_files/", "PMC5421183")
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
