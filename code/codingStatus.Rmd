@@ -1,0 +1,159 @@
+---
+title: "Coding Status"
+output: html_notebook
+---
+
+```{r}
+# library(plyr)
+library(tidyverse)
+library(data.world) # loads saved config see quickstart vignette
+
+prefixes <- "
+PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+
+softcite_ds = "https://data.world/jameshowison/software-citations/"
+```
+
+This gets the codes from the top of the files.
+
+```{r}
+top_code_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder ?selection ?full_quote ?on_pdf_page ?spans_pages
+WHERE {
+    ?article citec:has_in_text_mention ?selection .
+    ?selection ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:mention_type ]
+        ] .
+    ?selection citec:full_quote ?full_quote ;
+               citec:on_pdf_page ?on_pdf_page ;
+               citec:spans_pages ?spans_pages
+    }"
+))
+
+top_codes <- data.world::query(top_code_query, softcite_ds) %>% 
+  as.tibble(top_codes) %>% 
+  filter(str_detect(article, "PMC")) %>% 
+  mutate_at(vars(article, selection),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article,selection), funs(str_sub(.,2)))
+
+found_selections <- top_codes %>% 
+  select(article, coder) %>% 
+  distinct() # go from selections to articles coded
+```
+
+```{r}
+no_selection_query <- data.world::qry_sparql(paste(prefixes,
+      "SELECT ?article ?coder 
+       WHERE { ?article ca:isTargetOf
+               [ rdf:type ca:CodeApplication ;
+                 ca:hasCoder ?coder ;
+                 ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                                  citec:isPresent true ]
+               ]
+    }"
+))
+
+no_selection_articles <- data.world::query(no_selection_query, 
+                                           dataset = softcite_ds) %>% 
+  mutate(article = str_extract(article, "[#/]([^#/]+)$"),
+         article = str_sub(article,2),
+         matched = 0,
+         unmatched = 0) %>% 
+  select(article, coder) %>% 
+  collect()
+
+all_coded_articles <- bind_rows(found_selections, no_selection_articles)
+
+
+all_coded_articles %>% 
+  group_by(article, coder) %>% 
+  summarise(num_assign = n()) %>% 
+  filter(num_assign > 1)
+
+had_two <- c("PMC3013677", "PMC4597539")
+
+# These had 2:
+# PMC3013677	carsonbrown19
+# PMC4597539	ctjoe
+no_selection_articles %>% filter(article %in% had_two)
+# PMC4597539	ctjoe is in no_selection_articles twice.
+
+
+found_selections %>% filter(article %in% had_two)
+# PMC3013677	carsonbrown19 is in found_selections and no_selection_articles
+```
+
+```{r}
+
+assign_qry <- data.world::qry_sql("SELECT * FROM softcite_assignments")
+assignments <- data.world::query(assign_qry, dataset = softcite_ds)
+
+# assignments <- read_csv("/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/data/softcite_assignments.csv")
+
+pmc_assignments <- assignments %>% 
+  filter(str_detect(pub_id, "PMC*")) %>% 
+  mutate(assigned_to = str_to_lower(assigned_to))
+
+```
+
+```{r}
+
+pmc_assignments %>% group_by(assigned) %>% tally()
+
+all_coded_articles %>%  distinct() %>% tally()
+# false 252
+# true 1472
+
+```
+
+```{r}
+
+
+pmc_assignees <- pmc_assignments %>% 
+  pull(assigned_to) %>% unique()
+  # ggplot(aes(x=asssigned_timestamp, y = assigned_to)) + 
+  # geom_jitter(alpha=0.1)
+
+pmc_assignments %>% 
+  group_by(assigned_to) %>% 
+  tally() %>% 
+  arrange(n)
+
+# work assigned.
+assigned <- pmc_assignments %>% 
+  select(article = pub_id, coder = assigned_to)
+
+# work actually done and gathered.
+completed <- all_coded_articles %>% 
+  select(article, coder)
+
+# what was assigned but not completed? What is in pmc_assignments but not in match_counts.
+missing <- anti_join(assigned, completed)
+
+missing %>% 
+  group_by(coder) %>% 
+  summarize(num_missing = n(),
+             missing    = str_c(article, collapse = "; ")) %>% 
+  arrange(desc(num_missing))
+```
+```{r}
+c_ass <- assigned %>% filter(coder == "courtneybroderick")
+c_comp <- completed %>% filter(coder == "courtneybroderick")
+
+to_unassign <- setdiff(c_ass, c_comp)
+```
