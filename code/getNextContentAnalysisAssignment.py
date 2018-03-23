@@ -20,7 +20,8 @@ individuals file, and checks it into github."""
 def generate_template_file(pub_id, username):
     # create appropriate file
     make_sure_path_exists("data/individuals-{}".format(username))
-    filename = "data/individuals-{}/{}-{}.ttl".format(username, username, pub_id)
+    pub_id_defanged = pub_id.replace("/", "--").replace("doi:", "")
+    filename = "data/individuals-{}/{}-{}.ttl".format(username, username, pub_id_defanged)
     header = """
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -36,10 +37,13 @@ def generate_template_file(pub_id, username):
 @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
 @prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/> .
 @prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
+@prefix doi: <http://doi.org/> .
+@prefix doi-cited: <http://james.howison.name/ontologies/doi-journal-sample-citation#> .
+
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-pdf-files/pdf-files/pmc_oa_files/{}.pdf
-pmcid:{} rdf:type bioj:article ;
+# https://doi.org/{}
+doi:{} rdf:type bioj:article ;
 
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
@@ -259,7 +263,8 @@ def get_username_from_github():
     # remotes_list = remotes_string.split()
     # remote = remotes_list[1]
     # print(remote)
-    matches = re.search('origin.*?github.com/(.*?)/softcite-dataset', remotes_string)
+    # origin	git@github.com:howisonlab/softcite-dataset.git (fetch)
+    matches = re.search('origin.*?github.com.(.*?)/softcite-dataset', remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
@@ -271,7 +276,7 @@ if __name__ == '__main__':
     connection = pymysql.connect(host="localhost",
                                  user="softcite_user",
                                  passwd="work_spree34",
-                                 db="softcite_assignments",
+                                 db="softcite_assignment_test",
                                  autocommit=True,
                                  cursorclass=pymysql.cursors.DictCursor)
 

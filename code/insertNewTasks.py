@@ -183,6 +183,66 @@ def write_to_index(citation, pmcid):
         # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
         index_file.write(template.format(cite = citation, pmcid = pmcid))
 
+"""Insert Unpaywall tasks.
+
+These are read from journal_articles_economics_random_5000_dois_with_pdf_links.csv which was randomized by ImpactStory.
+md5sum = 28c047fee1cbf0b31caaa6b8300b6f00
+"""
+def insert_unpaywall_tasks(conn, num_to_insert, coders_per_article=1, dataset="economics"):
+    print(num_to_insert)
+    import os.path
+    path = "../softcite-pdf-files/docs/pdf-files/{}_pdf_files".format(dataset)
+    filename = path + "/journal_articles_{}_random_5000_dois_with_pdf_links.csv".format(dataset)
+    # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
+    with open(filename) as csvfile:
+        myCSVReader = csv.DictReader(csvfile,
+                                    delimiter=",",
+                                    quotechar='"')
+        pubs_to_code = []
+        inserted_count = 0
+        for row in myCSVReader:
+            if (inserted_count >= num_to_insert):
+                break
+            print(row)
+            print(inserted_count)
+            destination = "{}/{}.pdf".format(path, row["id"])
+            if (os.path.exists(destination)):
+                continue
+            else:
+                get_doi_ftp(destination, row["pdf_url"])
+
+                if (os.path.exists(destination)):
+                    write_doi_to_index(path,
+                                       row["id"],
+                                       row["pdf_url"])
+                    for task_num in range(0, coders_per_article):
+                        insert_task(conn, row["id"])
+                    inserted_count += 1
+
+        # doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
+
+        # for task in doubled_list:
+        #     print("Inserting {}".format(task))
+        #     insert_task(conn, task)
+
+"""Get tar.gz, extract, then save to docs folder."""
+def get_doi_ftp(destination, ftp_location):
+    import subprocess
+
+    subprocess.run(
+        ["curl", "-L", "--create-dirs", "-o", destination, ftp_location]
+        )
+
+def write_doi_to_index(path, citation, doi):
+    index_file = path + "/index.md"
+    print(index_file)
+    template = "  1. [{doi}: {cite}]({doi}.pdf)\n"
+    with open(index_file, "a") as index_file:
+        # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
+        index_file.write(template.format(cite = citation, doi = doi))
+
+
+
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
     import rdflib
@@ -351,28 +411,12 @@ def rename_xml_file(path, pmc_id):
         shutil.copy(nxml_files[0], path + "PMC" + pmc_id + ".xml")
         shutil.rmtree(path + "PMC" + pmc_id)
 
-def export_assignment_csv(cursor):
-
-    sql_query = """
-        SELECT *
-        FROM assignments
-    """
-    cursor.execute(sql_query)
-    headers = ["id","pub_id","assigned","assigned_to","asssigned_timestamp"]
-    with open('data/softcite_assignments.csv', 'w') as csvfile:
-        myCsvWriter = csv.DictWriter(csvfile,
-                    fieldnames = headers)
-        myCsvWriter.writeheader()
-        for row in cursor:
-            # rather than 'for row in results'
-            myCsvWriter.writerow(row)
-
 if __name__ == '__main__':
 
     connection = pymysql.connect(host="localhost",
                                  user="softcite_user",
                                  passwd="work_spree34",
-                                 db="softcite_assignments",
+                                 db="softcite_assignment_test",
                                  autocommit=True,
                                  cursorclass=pymysql.cursors.DictCursor)
 
@@ -383,14 +427,14 @@ if __name__ == '__main__':
     # print(get_pubs_to_code())
     # create_database(cursor)
     # randomize_and_insert(cursor)
-    insert_pmc_tasks(cursor, int(sys.argv[1]))
+    # insert_pmc_tasks(cursor, int(sys.argv[1]), 10)
     # export_assignment_csv(cursor)
-    get_xml_for_pdf()
+    # get_xml_for_pdf()
     # rename_xml_file("docs/pdf-files/pmc_oa_files/", "PMC5421183")
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
-
+    insert_unpaywall_tasks(cursor, int(sys.argv[1]), 1)
     # Check that script is run from right location.
     # neededPath = "code/getNextContentAnalysisAssignment.py"
     # if (sys.argv[0] != neededPath):
