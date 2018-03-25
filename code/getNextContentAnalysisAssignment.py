@@ -46,6 +46,7 @@ def generate_template_file(pub_id, username):
 # https://github.com/howisonlab/softcite-pdf-files/blob/master/docs/pdf-files/economics_pdf_files/{doi_encoded}.pdf
 # also https://doi.org/{doi}
 doi:{doi} rdf:type bioj:article ;
+    rdf:type bioj:econ_article ;
 
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
