@@ -14,14 +14,14 @@ import pwd
 import re
 import csv
 import sys
+from urllib.parse import quote
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
 def generate_template_file(pub_id, username):
     # create appropriate file
     make_sure_path_exists("data/individuals-{}".format(username))
-    pub_id_defanged = pub_id.replace("/", "--").replace("doi:", "")
-    filename = "data/individuals-{}/{}-{}.ttl".format(username, username, pub_id_defanged)
+    filename = "data/individuals-{}/{}-econ-{}.ttl".format(username, username, pub_id)
     header = """
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -42,22 +42,29 @@ def generate_template_file(pub_id, username):
 
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://doi.org/{}
-doi:{} rdf:type bioj:article ;
+# https://howisonlab.github.io/softcite-pdf-files/pdf-files/economics_pdf_files/{doi_encoded}.pdf
+# https://github.com/howisonlab/softcite-pdf-files/blob/master/docs/pdf-files/economics_pdf_files/{doi_encoded}.pdf
+# also https://doi.org/{doi}
+doi:{doi} rdf:type bioj:article ;
 
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
-          ca:hasCoder "{}" ;
+          ca:hasCoder "{username}" ;
           ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
                            citec:isPresent FIXME; # true/false
                          ] ;
         ] ;
 
 
-    citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
+    citec:has_in_text_mention FIXME ;
+    # create name for in_text_mention like
+    # doi:{doi}_JH01
+
+    # citations like:
+    # doi-cited:{doi}_AuthorYear
 .
 """
-    content = header.format(pub_id, pub_id, username)
+    content = header.format(doi = pub_id, username = username, doi_encoded = quote(pub_id))
 
     ttl_file = open(filename, "x")
     ttl_file.write(content)

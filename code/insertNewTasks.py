@@ -183,6 +183,19 @@ def write_to_index(citation, pmcid):
         # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
         index_file.write(template.format(cite = citation, pmcid = pmcid))
 
+def test_valid_pdf(filename):
+    import PyPDF2
+    try:
+        PyPDF2.PdfFileReader(open(filename, "rb"))
+    except PyPDF2.utils.PdfReadError:
+        print("invalid PDF file: {}".format(filename))
+        return(False)
+    except FileNotFoundError:
+        print("File not found: {}".format(filename))
+    else:
+        return(True)
+
+
 """Insert Unpaywall tasks.
 
 These are read from journal_articles_economics_random_5000_dois_with_pdf_links.csv which was randomized by ImpactStory.
@@ -191,6 +204,8 @@ md5sum = 28c047fee1cbf0b31caaa6b8300b6f00
 def insert_unpaywall_tasks(conn, num_to_insert, coders_per_article=1, dataset="economics"):
     print(num_to_insert)
     import os.path
+    import contextlib
+    from urllib.parse import quote
     path = "../softcite-pdf-files/docs/pdf-files/{}_pdf_files".format(dataset)
     filename = path + "/journal_articles_{}_random_5000_dois_with_pdf_links.csv".format(dataset)
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
@@ -198,26 +213,36 @@ def insert_unpaywall_tasks(conn, num_to_insert, coders_per_article=1, dataset="e
         myCSVReader = csv.DictReader(csvfile,
                                     delimiter=",",
                                     quotechar='"')
-        pubs_to_code = []
+
         inserted_count = 0
         for row in myCSVReader:
+            # do urlencoding on DOIs to safely use in URLs
+            # I think these also become better filenames
+            row["id"] = quote(row["id"], safe = "")
             if (inserted_count >= num_to_insert):
                 break
             print(row)
             print(inserted_count)
             destination = "{}/{}.pdf".format(path, row["id"])
-            if (os.path.exists(destination)):
+            if (os.path.exists(destination) and test_valid_pdf(destination)):
                 continue
             else:
                 get_doi_ftp(destination, row["pdf_url"])
 
-                if (os.path.exists(destination)):
+                if (test_valid_pdf(destination)):
                     write_doi_to_index(path,
-                                       row["id"],
-                                       row["pdf_url"])
+                                       row["pdf_url"],
+                                       row["id"])
                     for task_num in range(0, coders_per_article):
                         insert_task(conn, row["id"])
                     inserted_count += 1
+                else: # invalid PDF.
+                # how to mark as skip in future?
+                    with open(path + "/rejected_pdf_urls", "a") as myfile:
+                        myfile.write(row["pdf_url"]+"\n")
+                    with contextlib.suppress(FileNotFoundError):
+                        os.remove(destination)
+
 
         # doubled_list = [x for item in pubs_to_code for x in repeat(item, 2)]
 
@@ -230,18 +255,17 @@ def get_doi_ftp(destination, ftp_location):
     import subprocess
 
     subprocess.run(
-        ["curl", "-L", "--create-dirs", "-o", destination, ftp_location]
+        ["curl", "-L", "--cookie", "cookies.txt", "--create-dirs", "-o", destination, ftp_location]
         )
+
 
 def write_doi_to_index(path, citation, doi):
     index_file = path + "/index.md"
     print(index_file)
-    template = "  1. [{doi}: {cite}]({doi}.pdf)\n"
+    template = "  1. {cite} [{doi}]({doi}.pdf)\n"
     with open(index_file, "a") as index_file:
         # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
         index_file.write(template.format(cite = citation, doi = doi))
-
-
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
