@@ -13,6 +13,7 @@ import csv
 import sys
 from random import shuffle
 from itertools import repeat
+from urllib.parse import quote
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
@@ -205,7 +206,7 @@ def insert_unpaywall_tasks(conn, num_to_insert, coders_per_article=1, dataset="e
     print(num_to_insert)
     import os.path
     import contextlib
-    from urllib.parse import quote
+
     path = "../softcite-pdf-files/docs/pdf-files/{}_pdf_files".format(dataset)
     filename = path + "/journal_articles_{}_random_5000_dois_with_pdf_links.csv".format(dataset)
     # File,Article Citation,Accession ID,Last Updated (YYYY-MM-DD HH:MM:SS),PMID,License
@@ -265,7 +266,7 @@ def write_doi_to_index(path, citation, doi):
     template = "  1. {cite} [{doi}]({doi}.pdf)\n"
     with open(index_file, "a") as index_file:
         # 1. [2000-09-CELL.pdf](pdf-files/2000-09-CELL.pdf)
-        index_file.write(template.format(cite = citation, doi = doi))
+        index_file.write(template.format(cite = citation, doi = quote(doi)))
 
 """Read all pub numbers from pubInfoDataSet.ttl."""
 def get_pubs_to_code():
