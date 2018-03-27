@@ -7,6 +7,7 @@
 4. and place in the right place.  Coders will git status, add, commit.
 """
 
+from getUsername import get_username_from_github
 import pymysql
 import pprint
 import os
@@ -49,7 +50,7 @@ pmcid:{} rdf:type bioj:article ;
                          ] ;
         ] ;
 
-    
+
     citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
 .
 """
@@ -248,7 +249,7 @@ def make_sure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 
-def get_username_from_github():
+"""def get_username_from_github():
     import subprocess
     import re
 
@@ -264,7 +265,7 @@ def get_username_from_github():
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username.lower()
+    return username.lower()"""
 
 if __name__ == '__main__':
 

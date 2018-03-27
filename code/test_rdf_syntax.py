@@ -1,5 +1,5 @@
 from parseTurtle import check_selections_in_body
-from getNextContentAnalysisAssignment import get_username_from_github
+from getUsername import get_username_from_github
 import parseTurtle
 import pytest
 import rdflib
