@@ -7,6 +7,7 @@
 4. and place in the right place.  Coders will git status, add, commit.
 """
 
+from getUsername import get_username_from_github
 import pymysql
 import pprint
 import os
@@ -248,7 +249,7 @@ def make_sure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 
-def get_username_from_github():
+"""def get_username_from_github():
     import subprocess
     import re
 
@@ -264,7 +265,7 @@ def get_username_from_github():
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username.lower()
+    return username.lower()"""
 
 if __name__ == '__main__':
 
