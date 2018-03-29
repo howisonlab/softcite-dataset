@@ -7,6 +7,7 @@
 4. and place in the right place.  Coders will git status, add, commit.
 """
 
+from getUsername import get_username_from_github
 import pymysql
 import pprint
 import os
@@ -14,13 +15,14 @@ import pwd
 import re
 import csv
 import sys
+from urllib.parse import quote
 
 """Given a pub_id and a username, creates appropriate
 individuals file, and checks it into github."""
 def generate_template_file(pub_id, username):
     # create appropriate file
     make_sure_path_exists("data/individuals-{}".format(username))
-    filename = "data/individuals-{}/{}-{}.ttl".format(username, username, pub_id)
+    filename = "data/individuals-{}/{}-econ-{}.ttl".format(username, username, pub_id)
     header = """
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -36,24 +38,35 @@ def generate_template_file(pub_id, username):
 @prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
 @prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/> .
 @prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
+@prefix doi: <http://doi.org/> .
+@prefix doi-cited: <http://james.howison.name/ontologies/doi-journal-sample-citation#> .
+
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-pdf-files/pdf-files/pmc_oa_files/{}.pdf
-pmcid:{} rdf:type bioj:article ;
+# https://howisonlab.github.io/softcite-pdf-files/pdf-files/economics_pdf_files/{doi_encoded}.pdf
+# https://github.com/howisonlab/softcite-pdf-files/blob/master/docs/pdf-files/economics_pdf_files/{doi_encoded}.pdf
+# also https://doi.org/{doi}
+doi:{doi} rdf:type bioj:article ;
+    rdf:type bioj:econ_article ;
 
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
-          ca:hasCoder "{}" ;
+          ca:hasCoder "{username}" ;
           ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
                            citec:isPresent FIXME; # true/false
                          ] ;
         ] ;
 
 
-    citec:has_in_text_mention FIXME ; # name in text mention like pmcid:PMC3028497_JC01, no quotes
+    citec:has_in_text_mention FIXME ;
+    # create name for in_text_mention like
+    # doi:{doi}_JH01
+
+    # citations like:
+    # doi-cited:{doi}_AuthorYear
 .
 """
-    content = header.format(pub_id, pub_id, username)
+    content = header.format(doi = pub_id, username = username, doi_encoded = quote(pub_id))
 
     ttl_file = open(filename, "x")
     ttl_file.write(content)
@@ -80,7 +93,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY id DESC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
@@ -248,7 +261,7 @@ def make_sure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 
-def get_username_from_github():
+"""def get_username_from_github():
     import subprocess
     import re
 
@@ -259,12 +272,13 @@ def get_username_from_github():
     # remotes_list = remotes_string.split()
     # remote = remotes_list[1]
     # print(remote)
-    matches = re.search('origin.*?github.com/(.*?)/softcite-dataset', remotes_string)
+    # origin	git@github.com:howisonlab/softcite-dataset.git (fetch)
+    matches = re.search('origin.*?github.com.(.*?)/softcite-dataset', remotes_string)
     username = matches.group(1)
     if (username == "howisonlab"):
         username = "jameshowison"
 
-    return username.lower()
+    return username.lower()"""
 
 if __name__ == '__main__':
 
