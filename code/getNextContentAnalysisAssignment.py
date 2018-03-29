@@ -285,7 +285,7 @@ if __name__ == '__main__':
     connection = pymysql.connect(host="localhost",
                                  user="softcite_user",
                                  passwd="work_spree34",
-                                 db="softcite_assignment_test",
+                                 db="softcite_assignments",
                                  autocommit=True,
                                  cursorclass=pymysql.cursors.DictCursor)
 
