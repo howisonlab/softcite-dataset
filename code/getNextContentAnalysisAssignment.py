@@ -93,7 +93,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY id DESC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
