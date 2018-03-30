@@ -43,11 +43,18 @@ def generate_template_file(pub_id, username):
 
 @prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
 
-# https://howisonlab.github.io/softcite-pdf-files/pdf-files/economics_pdf_files/{doi_encoded}.pdf
 # https://github.com/howisonlab/softcite-pdf-files/blob/master/docs/pdf-files/economics_pdf_files/{doi_encoded}.pdf
 # also https://doi.org/{doi}
 doi:{doi} rdf:type bioj:article ;
     rdf:type bioj:econ_article ;
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "{username}" ;
+          ca:appliesCode [ rdf:type citec:codable ;
+                           citec:isPresent FIXME; # true if can code
+                         ] ;
+        ] ;
 
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
