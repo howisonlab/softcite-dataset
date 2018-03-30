@@ -1,4 +1,5 @@
 from parseTurtle import check_selections_in_body
+from getUsername import get_username_from_github
 import parseTurtle
 import pytest
 import rdflib
@@ -17,7 +18,10 @@ def test_individual_file_parse(file_to_check):
 
 """Uses metafunc to create a list of arguments for test_individual_file_parse"""
 def pytest_generate_tests(metafunc):
-    files = parseTurtle.find_all_turtle_files("data")
+    #get coder's username to reduce number of files parsed
+    username = get_username_from_github()
+    files = parseTurtle.find_all_turtle_files("data/individuals-{}/".format(username))
+    #files = parseTurtle.find_all_turtle_files("data/")
     metafunc.parametrize("file_to_check",files)
 
 # @pytest.mark.parametrize("file_to_check", [
