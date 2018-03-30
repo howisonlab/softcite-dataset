@@ -72,19 +72,19 @@ if __name__ == '__main__':
       'in-text block':
          'prefix': 'itb'
          'body': \"\"\"
-                        pmcidFIXME: rdf:type citec:in_text_mention ; # use in text mention name
+                        doiFIXME: rdf:type citec:in_text_mention ; # use in text mention name
                             citec:full_quote FIXME ; # use triple quotes
 
                             citec:on_pdf_page FIXME  ; # integer
 
                             citec:spans_pages FIXME ; # true/false
                             {}
-                            citec:has_reference pmcid-citedFIXME: ; # name reference like pmcid-cited:a2004-40-NAT_GENET_Author-YYYY, no quotes
+                            citec:has_reference doi-citedFIXME: ; # name reference like doi-cited:a2004-40-NAT_GENET_Author-YYYY, no quotes
                         .\"\"\"
       'reference block':
          'prefix': 'refb'
          'body': \"\"\"
-                        pmcid-citedFIXME: rdf:type citec:reference ;
+                        doi-citedFIXME: rdf:type citec:reference ;
                             citec:full_quote FIXME ; # use triple quotes
 
                             citec:on_pdf_page FIXME  ; # integer
