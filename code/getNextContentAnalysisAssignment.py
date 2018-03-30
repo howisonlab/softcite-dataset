@@ -93,7 +93,7 @@ def get_new_task(conn, coder):
                             FROM assignments AS ass_read
                             WHERE ass_read.assigned_to = %(coder)s
       )
-    ORDER BY id DESC
+    ORDER BY id ASC
     LIMIT 1
     """
     conn.execute(get_assignment, {"coder": coder})
@@ -285,7 +285,7 @@ if __name__ == '__main__':
     connection = pymysql.connect(host="localhost",
                                  user="softcite_user",
                                  passwd="work_spree34",
-                                 db="softcite_assignment_test",
+                                 db="softcite_assignments",
                                  autocommit=True,
                                  cursorclass=pymysql.cursors.DictCursor)
 
