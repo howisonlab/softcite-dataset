@@ -52,8 +52,8 @@ doi:{doi} rdf:type bioj:article ;
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
           ca:hasCoder "{username}" ;
-          ca:appliesCode [ rdf:type citec:uncodable ;
-                           citec:isPresent FIXME; # true if can't code
+          ca:appliesCode [ rdf:type citec:codable ;
+                           citec:isPresent FIXME; # true if can code
                          ] ;
         ] ;
 
