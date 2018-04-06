@@ -5,6 +5,7 @@ import pytest
 import rdflib
 
 """Defines a test that takes file_to_check as an argument"""
+
 def test_individual_file_parse(file_to_check):
         g = rdflib.Graph()
 
@@ -24,9 +25,19 @@ def pytest_generate_tests(metafunc):
     #files = parseTurtle.find_all_turtle_files("data/")
     metafunc.parametrize("file_to_check",files)
 
-# @pytest.mark.parametrize("file_to_check", [
-#         ("data/coding-scheme.ttl"),
-#         ("data/individuals-Chriscuit/1047963.ttl")
-#     ])
-# def test_parse(file_to_check):
-#     assert test_individual_file_parse(file_to_check)
+"""Ensure only including files in the users folder"""
+def test_no_changes_outside_individuals_folder():
+    import subprocess
+    import re
+
+    range = "HEAD...HEAD~1"
+    range = "$TRAVIS_COMMIT_RANGE"
+
+    username = get_username_from_github()
+    files_changed = subprocess.check_output(
+            ["git", "diff", "--name-only", range]
+    ).decode("utf8")
+
+    for file_name in file_changed:
+        assert username in file_name,
+        "File outside of individuals folder included in commit"
