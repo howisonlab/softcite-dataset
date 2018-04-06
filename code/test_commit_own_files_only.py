@@ -18,5 +18,6 @@ def test_no_changes_outside_individuals_folder():
             ["git", "diff", "--name-only", range]
     ).decode("utf8")
 
-    for file_name in files_changed:
-        assert username in file_name, "File outside of individuals folder included in commit"
+    if username != "jameshowison":
+        for file_name in files_changed:
+            assert username in file_name, "File outside of individuals folder included in commit"
