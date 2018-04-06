@@ -23,21 +23,4 @@ def pytest_generate_tests(metafunc):
     username = get_username_from_github()
     files = parseTurtle.find_all_turtle_files("data/individuals-{}/".format(username))
     #files = parseTurtle.find_all_turtle_files("data/")
-    metafunc.parametrize("file_to_check",files)
-
-"""Ensure only including files in the users folder"""
-def test_no_changes_outside_individuals_folder():
-    import subprocess
-    import re
-
-    range = "HEAD...HEAD~1"
-    range = "$TRAVIS_COMMIT_RANGE"
-
-    username = get_username_from_github()
-    files_changed = subprocess.check_output(
-            ["git", "diff", "--name-only", range]
-    ).decode("utf8")
-
-    for file_name in file_changed:
-        assert username in file_name,
-        "File outside of individuals folder included in commit"
+    metafunc.parametrize("file_to_check", files)
