@@ -5,7 +5,11 @@ import re
 def get_username_from_github():
     if "TRAVIS_PULL_REQUEST_SLUG" in os.environ:
         if os.environ["TRAVIS_PULL_REQUEST_SLUG"] != "":
-            username, _ = os.environ["TRAVIS_PULL_REQUEST_SLUG"].split("/")
+            repo_string = os.environ["TRAVIS_PULL_REQUEST_SLUG"]
+        else:
+            repo_string = os.environ["TRAVIS_REPO_SLUG"]
+
+        username, _ = repo_string.split("/")
     else:
         remotes_string = subprocess.check_output(
               ["git", "remote", "-v"]
