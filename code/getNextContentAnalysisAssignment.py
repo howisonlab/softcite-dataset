@@ -59,6 +59,14 @@ doi:{doi} rdf:type bioj:article ;
     ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
           ca:hasCoder "{username}" ;
+          ca:appliesCode [ rdf:type citec:standard_type ;
+                           citec:isPresent FIXME ; # true if standard article
+                         ] ;
+        ] ;
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "{username}" ;
           ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
                            citec:isPresent FIXME; # true/false
                          ] ;
