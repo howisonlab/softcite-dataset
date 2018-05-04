@@ -19,41 +19,9 @@ title: "PDFs for softcite"
 
 [Asking for Help](askForHelp.md)
 
-# October re-fork
+[Admin Stuff](admin.md)
 
-1. Make a backup copy of your repo on howisonlab.
 
-```
-$ mv softcite-dataset softcite-dataset.bak
-```
-
-2. Delete your fork on Github.
-
-3. Re-fork, go to [howisonlab/softcite-dataset](github.com/howisonlab/softcite-dataset)
-
-4. Clone your fork to howisonlab
-
-5. Move files from your backup to your new clone.
-
-```
-diff -qr softcite-dataset.bak/data/individuals-jameshowison/ softcite-dataset/data/individuals-jameshowison/
-```
-
-6. Copy over files from .bak
-
-```
-$ cp softcite-dataset.bak/data/individuals-jameshowison/jameshowison-PMC....ttl softcite-dataset/data/individuals-jameshowison/
-```
-
-7. Check them into the clean softcite-dataset
-
-```
-$ git status
-$ git add <each file>
-$ git commit
-$ git push
-# --> go to your fork on github and make pull request
-```
 
 # Links to Practice Files
 
