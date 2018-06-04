@@ -24,9 +24,10 @@ def get_list(g):
               ca:codingRound ?round ;
               rdfs:comment ?comment ;
               ca:example ?example .
+
     }} ORDER BY ASC(?round) ASC(?order)
     """
-
+    # MAKING EXAMPLE OPTIONAL IS A PAIN; JUST ADD AN EXAMPLE TO ALL CODES
     #sparql_query = sparql_query.format(codingRound)
 
     # print(sparql_query)
