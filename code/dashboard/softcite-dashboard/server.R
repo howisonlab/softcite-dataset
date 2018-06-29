@@ -1,9 +1,11 @@
 #
-# This is the server logic of a Shiny web application. You can run the 
+# This is the server logic of a Shiny web application. You can run the
 # application by clicking 'Run App' above.
 #
 library(tidyverse)
 library(data.world)
+
+dwapi::configure(auth_token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50OnNvZnRjaXRlLXVzZXIiLCJpc3MiOiJhZ2VudDpzb2Z0Y2l0ZS11c2VyOjphNGExYmI1NS1lMGUwLTQ4YjQtYTE4YS1mOTU4OTcyNGI4YWIiLCJpYXQiOjE1MjgxNDkxNDgsInJvbGUiOlsidXNlcl9hcGlfcmVhZCIsInVzZXJfYXBpX3dyaXRlIl0sImdlbmVyYWwtcHVycG9zZSI6dHJ1ZX0.Dh4pCsfUaa9s_9sAtIIF-uPzue1BWkkH7Cuc5U7EjSvNcTtcO1lp-qKwdD6cSGOLnefXEc1tVz3idzvQAHpaZg')
 
   ## Database address
 softcite_ds = "https://data.world/jameshowison/software-citations/"
@@ -14,7 +16,7 @@ prefixes <- "
 PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
 PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
 PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
-PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#>
 PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
 PREFIX doap: <http://usefulinc.com/ns/doap#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -40,7 +42,7 @@ citec:spans_pages ?spans_pages
 }"
 ))
 no_selection_query <- data.world::qry_sparql(paste(prefixes,
-"SELECT ?article ?coder 
+"SELECT ?article ?coder
 WHERE { ?article ca:isTargetOf
 [ rdf:type ca:CodeApplication ;
 ca:hasCoder ?coder ;
@@ -99,38 +101,38 @@ ca:hasCoder ?coder ]
 
   ## data.world queries
 
-mentions <- data.world::query(mention_query, softcite_ds) %>% 
-  as.tibble(mentions) %>% 
-  filter(str_detect(article, "PMC")) %>% 
+mentions <- data.world::query(mention_query, softcite_ds) %>%
+  as.tibble(mentions) %>%
+  filter(str_detect(article, "PMC")) %>%
   mutate_at(vars(article, selection),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article,selection), funs(str_sub(.,2)))
 
-found_selections <- mentions %>% 
-  select(article, coder) %>% 
+found_selections <- mentions %>%
+  select(article, coder) %>%
   distinct()
 
-no_selection_articles <- data.world::query(no_selection_query, softcite_ds) %>% 
+no_selection_articles <- data.world::query(no_selection_query, softcite_ds) %>%
   mutate(article = str_extract(article, "[#/]([^#/]+)$"),
          article = str_sub(article,2),
          matched = 0,
-         unmatched = 0) %>% 
-  select(article, coder) %>% 
+         unmatched = 0) %>%
+  select(article, coder) %>%
   collect()
 
 all_coded_articles <- bind_rows(found_selections, no_selection_articles)
 
-software_names <- data.world::query(software_name_query, softcite_ds) %>% 
+software_names <- data.world::query(software_name_query, softcite_ds) %>%
   as.tibble()
 #software_names <- sapply(software_names, tolower)
 
-has_name <- data.world::query(has_name_query, softcite_ds) %>% 
+has_name <- data.world::query(has_name_query, softcite_ds) %>%
   table()
 
-has_version <- data.world::query(has_version_query, softcite_ds) %>% 
+has_version <- data.world::query(has_version_query, softcite_ds) %>%
   table()
 
-has_url <- data.world::query(has_url_query, softcite_ds) %>% 
+has_url <- data.world::query(has_url_query, softcite_ds) %>%
   table()
 
 
@@ -188,7 +190,7 @@ shinyServer(function(input, output) {
       color = "blue"
     )
   })
-  
+
   #Barplot descibing aspects of mentions
   #Would this look better as multiple pie plots??
   output$mention_compositions <- renderPlot({
@@ -198,7 +200,7 @@ shinyServer(function(input, output) {
             xlab = "Mention Characteristic",
             ylab = "Fraction of Total Mentions with Characteristic")
   })
-  
+
   #Barplot of 10 most common software names
   output$software_names_chart <- renderPlot({
     data <- getMostCommonSoftware()
@@ -208,5 +210,5 @@ shinyServer(function(input, output) {
             xlab = "Amount of References")
             #ylab = "Software Name")
   })
-  
+
 })
