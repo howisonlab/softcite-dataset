@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(SPARQL) # loads saved config see quickstart vignette
+library(SPARQL)
 library(here)
 
 softcite_ds <- "http://localhost:3030/softcite-dataset/"
@@ -23,7 +23,6 @@ article has_many code_application (for coded_no_in_text_mentions)
 selection has_many code_application
 reference has_many code_application
 
-
 Export as four tables:
 
 1. articles
@@ -36,6 +35,17 @@ coders(id, name)
 assignments(id, article_id, coder_id, when_coded, selections_found (true|false))
 selections(id, assignment_id, page, quote, in_text_or_reference, reference_in_selection)
 code_applications (id, selection_id, coder, code, code_was_present, label, memo)
+
+
+articles(id, literature_sample, doi, title etc.)
+
+assignments(article, coder, when_coded, selections_found (true|false))
+
+in_text_mentions(selection, assignment_id, page, quote)
+
+references(selection, page, quote, mention_type, from_in_text_selection)
+
+code_applications (selection, coder, code, code_was_present, label, memo)
 
 ```{r}
 prefixes <- "PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
@@ -69,6 +79,10 @@ WHERE {
 assignments <- SPARQL(url = softcite_ds, query = paste0(prefixes, articles), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
+    filter(str_detect(article, "PMC")) %>% 
+  mutate_at(vars(article),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_assignments.csv"))
 ```
 
@@ -91,6 +105,10 @@ WHERE {
 in_text_mentions <- SPARQL(url = softcite_ds, query = paste0(prefixes, in_text_mention_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
+  filter(str_detect(article, "PMC")) %>% 
+  mutate_at(vars(article, selection),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article,selection), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_in_text_mentions.csv"))
 
 ```
@@ -112,6 +130,10 @@ WHERE {
 references <- SPARQL(url = softcite_ds, query = paste0(prefixes, reference_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
+  filter(str_detect(article, "PMC")) %>% 
+  mutate_at(vars(article, reference, from_in_text_selection),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, reference, from_in_text_selection), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_references.csv"))
 ```
 
@@ -132,15 +154,9 @@ WHERE {
 codes <- SPARQL(url = softcite_ds, query = paste0(prefixes, all_codes_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
+  filter(str_detect(selection, "PMC")) %>% 
+  mutate_at(vars(selection, code),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(selection, code), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
-
-articles(id, literature_sample, doi, title etc.)
-
-assignments(article, coder, when_coded, selections_found (true|false))
-
-in_text_mentions(selection, assignment_id, page, quote)
-
-references(selection, page, quote, mention_type, from_in_text_selection)
-
-code_applications (selection, coder, code, code_was_present, label, memo)
