@@ -76,14 +76,14 @@ WHERE {
 }
 "
 
-assignments <- SPARQL(url = softcite_ds, query = paste0(prefixes, articles), 
+articles <- SPARQL(url = softcite_ds, query = paste0(prefixes, articles), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
     filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article), funs(str_sub(.,2))) %>% 
-  write_csv(here::here("data/csv_dataset/softcite_assignments.csv"))
+  write_csv(here::here("data/csv_dataset/softcite_articles.csv"))
 ```
 
 ```{r}
