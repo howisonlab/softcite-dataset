@@ -1,0 +1,237 @@
+
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+
+@prefix ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+
+@prefix bioj: <http://james.howison.name/ontologies/bio-journal-sample#> .
+@prefix citec: <http://james.howison.name/ontologies/software-citation-coding#> .
+@prefix bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#> .
+@prefix pmcid: <https://www.ncbi.nlm.nih.gov/pmc/articles/> .
+@prefix pmcid-cited: <http://james.howison.name/ontologies/pmcid-journal-sample-citation#> .
+@prefix doi: <http://doi.org/> .
+@prefix doi-cited: <http://james.howison.name/ontologies/doi-journal-sample-citation#> .
+
+@prefix dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/> .
+
+# https://github.com/howisonlab/softcite-pdf-files/blob/master/docs/pdf-files/economics_pdf_files/10.1111%252Fecin.12477.pdf
+# also https://doi.org/10.1111%2Fecin.12477
+doi:10.1111%2Fecin.12477 rdf:type bioj:article ;
+    rdf:type bioj:econ_article ;
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:codable ;
+                           citec:isPresent true; # true if can code
+                         ] ;
+        ] ;
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                           citec:isPresent false; # true/false
+                           ca:memo """They include a lot of their theoretical analysis details in a supplementary document but never explicitly name the program that was used to conduct calculations"""; # use triple  quotes
+                         ] ;
+        ] ;
+
+
+    citec:has_in_text_mention doi:10.1111%2Fecin.12477_MD01 ;
+    citec:has_in_text_mention doi:10.1111%2Fecin.12477_MD02 ;
+    # create name for in_text_mention like
+    # doi:10.1111%2Fecin.12477_JH01
+
+    # citations like:
+    # doi-cited:10.1111%2Fecin.12477_AuthorYear
+.
+doi:10.1111%2Fecin.12477_MD01 rdf:type citec:in_text_mention ; # use in text mention name
+    citec:full_quote """The exper-iment  was  programmed  inz-tree  (Fischbacher2007).  """ ; # use triple quotes
+
+    citec:on_pdf_page 8  ; # integer
+
+    citec:spans_pages false ; # true/false
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:mention_type ;
+                           rdfs:label  """software"""  ; # put one in triple quotes
+                           ca:certainty 8 ; # integer
+                           ca:memo """I looked it up and their website says "z-Tree software is implemented as a client-server application with a server application for the experimenter, called z-Tree, and a client application for the subjects, called z-Leaf." """ ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:software_was_used ;
+                           citec:isPresent true; # true/false
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:software_name ;
+                           citec:isPresent true ; # true/false
+                           rdfs:label """z-tree """ ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_number ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_date ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:url ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:creator ;
+                           citec:isPresent true ; # true/false
+                           rdfs:label """Fischbacher""" ; # use triple quotes
+                         ] ;
+        ] ;
+    citec:has_reference doi-cited:10.1111%2Fecin.12477_Fischbacher-2007 ; # name reference like pmcid-cited:a2004-40-NAT_GENET_Author-YYYY, no quotes
+.
+doi-cited:10.1111%2Fecin.12477_Fischbacher-2007 rdf:type citec:reference ;
+    citec:full_quote """Fischbacher,  U.  “z-Tree:  Zurich  Toolbox  for  Ready-madeEconomic Experiments.”Experimental Economics, 10,2007, 171 – 78.""" ; # use triple quotes
+
+    citec:on_pdf_page 15  ; # integer
+
+    citec:spans_pages false ; # true/false
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:reference_type ;
+                           rdfs:label """publication"""  ; # put one in triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:software_name ;
+                           citec:isPresent true ; # true/false
+                           rdfs:label """z-Tree""" ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_number ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_date ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label  ; # use triple quotes
+                           ca:memo """I was a little confused on this, I have been coding these as false because it is the date for the papers publication"""; # use triple  quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:url ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:creator ;
+                           citec:isPresent true ; # true/false
+                           rdfs:label """Fischbacher,  U.""" ; # use triple quotes
+                         ] ;
+        ] ;
+.
+doi:10.1111%2Fecin.12477_MD02 rdf:type citec:in_text_mention ; # use in text mention name
+    citec:full_quote """Allsubjects  were  recruited  from  the  University  of  Michiganexperimental lab’s subject  pool using  solicitation  messagesvia   ORSEE   (Online   Recruitment   System   for   EconomicExperiments).""" ; # use triple quotes
+
+    citec:on_pdf_page 8  ; # integer
+
+    citec:spans_pages false ; # true/false
+
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:mention_type ;
+                           rdfs:label  """software""" ; # put one in triple quotes
+                           ca:certainty 9 ; # integer
+                           ca:memo """I looked it up and it has a version and a wiki with detailed documentation on its features""" ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:software_was_used ;
+                           citec:isPresent true; # true/false
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:software_name ;
+                           citec:isPresent true ; # true/false
+                           rdfs:label """ORSEE"""; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_number ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:version_date ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:url ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder "mrcyndns" ;
+          ca:appliesCode [ rdf:type citec:creator ;
+                           citec:isPresent false ; # true/false
+                           #rdfs:label FIXME ; # use triple quotes
+                         ] ;
+        ] ;
+    #citec:has_reference doi-citedFIXME: ; # name reference like doi-cited:a2004-40-NAT_GENET_Author-YYYY, no quotes
+.
