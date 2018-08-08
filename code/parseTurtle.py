@@ -59,18 +59,28 @@ def validate_file(file_to_check):
 #
 #     return file_graph
 
+
 def check_selections_in_body(file_graph):
     selections_in_header = file_graph.objects( predicate =  URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'))
 
-
     for sel in selections_in_header:
         if sel:
-            if ( sel,
-                RDF.type, URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention')
-                ) not in file_graph:
+            if (sel,
+                RDF.type, URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention')) not in file_graph:
                 raise Exception("Did not find {}".format(sel))
 
+    # Now the other way around. Checking that all in_text_mentions are in header.
+    # finding pmcid:PMC5226643_JWC01 rdf:type citec:in_text_mention
+    # looking for citec:has_in_text_mention pmcid:PMC5226643_JWC01
+    selections_in_body = file_graph.subjects(object=URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention'))
 
+    for sel in selections_in_body:
+        if sel:
+            if ( None,
+                URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'),
+                sel
+                ) not in file_graph:
+                raise Exception("Did not find header for {}".format(sel))
 
     return file_graph
 
