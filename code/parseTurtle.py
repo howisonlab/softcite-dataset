@@ -156,7 +156,7 @@ def extract_assignments_csv():
 
 
 def usage():
-    print("-a to parse all files, -f <filename> for just one file")
+    print("-a <directory> to parse all files, -f <filename> for just one file")
 
 
 def main(argv):
