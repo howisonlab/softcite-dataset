@@ -10,6 +10,24 @@ import getopt
 import os
 import subprocess
 import re
+import logging
+
+# class Error(Exception):
+#     """Base class for exceptions in this module."""
+#     pass
+#
+# class FormatError(Error):
+#     """Exception raised for errors in the input.
+#
+#     Attributes:
+#         expression -- input expression in which the error occurred
+#         message -- explanation of the error
+#     """
+#
+#     def __init__(self, message):
+#     #    self.expression = expression
+#         self.message = message
+
 
 def find_all_turtle_files(dir_to_check = "data"):
     files = []
@@ -34,16 +52,22 @@ def parse_each_file(files):
     for file_to_check in files:
         parse_individual_file(file_to_check)
 
-"""A valid file passes these checks.
 
-1. Parses as RDF
-2. Selections URIs all match
-"""
 def validate_file(file_to_check):
+    """A valid file passes these checks.
+
+    1. Parses as RDF
+    2. Selections URIs all match
+    """
     file_graph = rdflib.Graph()
     file_graph.parse(file_to_check, format="n3")
 
-    check_selections_in_body(file_graph)
+    try:
+        check_selections_in_body(file_graph, file_to_check)
+    except Exception as err:
+        logging.warn("Formatting issue: {}".format(str(err)))
+        # raise
+
 #    check_article_url(file_graph)
     # s p o
 
@@ -59,18 +83,28 @@ def validate_file(file_to_check):
 #
 #     return file_graph
 
-def check_selections_in_body(file_graph):
-    selections_in_header = file_graph.objects( predicate =  URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'))
 
+def check_selections_in_body(file_graph, file_to_check):
+    selections_in_header = file_graph.objects( predicate =  URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'))
 
     for sel in selections_in_header:
         if sel:
-            if ( sel,
-                RDF.type, URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention')
+            if (sel,
+                RDF.type, URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention')) not in file_graph:
+                raise Exception("Parsing {} \nMissing Body: Did not find {}".format(file_to_check, sel))
+
+    # Now the other way around. Checking that all in_text_mentions are in header.
+    # finding pmcid:PMC5226643_JWC01 rdf:type citec:in_text_mention
+    # looking for citec:has_in_text_mention pmcid:PMC5226643_JWC01
+    selections_in_body = file_graph.subjects(object=URIRef(u'http://james.howison.name/ontologies/software-citation-coding#in_text_mention'))
+
+    for sel in selections_in_body:
+        if sel:
+            if ( None,
+                URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'),
+                sel
                 ) not in file_graph:
-                raise Exception("Did not find {}".format(sel))
-
-
+                raise Exception("Parsing {} \nMissing header: Did not find {}".format(file_to_check, sel))
 
     return file_graph
 
@@ -78,6 +112,8 @@ def check_selections_in_body(file_graph):
 def build_parse_data_set(dir_to_check="data"):
 
     files = find_all_turtle_files(dir_to_check)
+    while "data/full_dataset.ttl" in files:
+        files.remove("data/full_dataset.ttl")
 
     all_files = rdflib.Graph()
 
@@ -120,13 +156,13 @@ def extract_assignments_csv():
 
 
 def usage():
-    print("-a to parse all files, -f <filename> for just one file")
+    print("-a <directory> to parse all files, -f <filename> for just one file")
 
 
 def main(argv):
     grammar = "kant.xml"
     try:
-        opts, args = getopt.getopt(argv, "ucaf:", ["help", "grammar="])
+        opts, args = getopt.getopt(argv, "uca:f:", ["help", "grammar="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -134,7 +170,7 @@ def main(argv):
 
     for o, a in opts:
         if o == "-a":
-            full_dataset = build_parse_data_set()
+            full_dataset = build_parse_data_set(a)
             full_dataset.serialize(
               destination="data/full_dataset.ttl",
               format="turtle"
@@ -166,6 +202,11 @@ def main(argv):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='parseTurtle.log',
+                        filemode="w",
+                        level=logging.WARN)
+    logging.warn("Logging enabled")
+
     main(sys.argv[1:])
 
 
