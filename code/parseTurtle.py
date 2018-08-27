@@ -68,20 +68,7 @@ def validate_file(file_to_check):
     except Exception as err:
         logging.warning("Formatting issue: {}".format(str(err)))
         # raise
-    # output = subprocess.check_output([
-    # 'sh',
-    # 'shacl-1.1.0/bin/shaclvalidate.sh',
-    # '-shapesfile',
-    # 'data/softcite_shacl_constraints.ttl',
-    # '-datafile',
-    # file_to_check])
-    #
-    # output_graph = rdflib.Graph()
-    # output_graph.parse(data=output, format="n3")
-    # if (None,
-    #     URIRef(u'http://www.w3.org/ns/shacl#conforms'),
-    #     Literal(False)) in output_graph:
-    #     logging.warning("SHACL issue: {}".format(output))
+
 
 # def check_article_url(file_graph):
 #     article_url = URIRef(u'http://james.howison.name/ontologies/bio-journal-sample#article')
@@ -187,6 +174,20 @@ def main(argv):
               destination="data/full_dataset.ttl",
               format="turtle"
             )
+            output = subprocess.check_output([
+            'sh',
+            'shacl-1.1.0/bin/shaclvalidate.sh',
+            '-shapesfile',
+            'data/softcite_shacl_constraints.ttl',
+            '-datafile',
+            'data/full_dataset.ttl'])
+
+            output_graph = rdflib.Graph()
+            output_graph.parse(data=output, format="n3")
+            if (None,
+                URIRef(u'http://www.w3.org/ns/shacl#conforms'),
+                Literal(False)) in output_graph:
+                logging.warning("SHACL issue: {}".format(output))
             extract_assignments_csv()
         elif o == "-c":
             extract_assignments_csv()
