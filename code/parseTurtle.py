@@ -37,7 +37,7 @@ def find_all_turtle_files(dir_to_check = "data"):
     files.extend(glob.glob(dir_to_check + "/individuals-**/*.ttl"))
 
     # remove demo files
-    regex = re.compile(r'demo|practice|sample|test')
+    regex = re.compile(r'demo|practice|sample|test|jameshowison')
     files = [i for i in files if not regex.search(i)]
 
     return files
