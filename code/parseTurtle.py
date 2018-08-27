@@ -1,7 +1,7 @@
 """Constructs data set."""
 
 import rdflib
-from rdflib import URIRef
+from rdflib import URIRef, Literal
 from rdflib.namespace import RDF
 import pprint
 import sys
@@ -11,6 +11,7 @@ import os
 import subprocess
 import re
 import logging
+import progressbar
 
 # class Error(Exception):
 #     """Base class for exceptions in this module."""
@@ -36,7 +37,7 @@ def find_all_turtle_files(dir_to_check = "data"):
     files.extend(glob.glob(dir_to_check + "/individuals-**/*.ttl"))
 
     # remove demo files
-    regex = re.compile(r'demo|practice|sample')
+    regex = re.compile(r'demo|practice|sample|test')
     files = [i for i in files if not regex.search(i)]
 
     return files
@@ -65,11 +66,22 @@ def validate_file(file_to_check):
     try:
         check_selections_in_body(file_graph, file_to_check)
     except Exception as err:
-        logging.warn("Formatting issue: {}".format(str(err)))
+        logging.warning("Formatting issue: {}".format(str(err)))
         # raise
-
-#    check_article_url(file_graph)
-    # s p o
+    # output = subprocess.check_output([
+    # 'sh',
+    # 'shacl-1.1.0/bin/shaclvalidate.sh',
+    # '-shapesfile',
+    # 'data/softcite_shacl_constraints.ttl',
+    # '-datafile',
+    # file_to_check])
+    #
+    # output_graph = rdflib.Graph()
+    # output_graph.parse(data=output, format="n3")
+    # if (None,
+    #     URIRef(u'http://www.w3.org/ns/shacl#conforms'),
+    #     Literal(False)) in output_graph:
+    #     logging.warning("SHACL issue: {}".format(output))
 
 # def check_article_url(file_graph):
 #     article_url = URIRef(u'http://james.howison.name/ontologies/bio-journal-sample#article')
@@ -117,10 +129,10 @@ def build_parse_data_set(dir_to_check="data"):
 
     all_files = rdflib.Graph()
 
-    for file_to_check in files:
-        print("Validating {}".format(file_to_check))
-        validate_file(file_to_check)
-        print("Parsing {}".format(file_to_check))
+    for file_to_check in progressbar.progressbar(files):
+        # print("Validating {}".format(file_to_check))
+        # validate_file(file_to_check)
+        # print("Parsing {}".format(file_to_check))
         all_files.parse(file_to_check, format="n3")
 
     return all_files
@@ -202,10 +214,13 @@ def main(argv):
 
 
 if __name__ == '__main__':
+    progressbar.streams.wrap_stderr()
     logging.basicConfig(filename='parseTurtle.log',
                         filemode="w",
                         level=logging.WARN)
-    logging.warn("Logging enabled")
+    logging.warning("Logging enabled")
+
+
 
     main(sys.argv[1:])
 
