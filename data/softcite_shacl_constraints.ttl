@@ -45,31 +45,6 @@ citec:prefixes
     ]
 .
 
-
-# The SELECT query must return one row for every value of $this that is violating the constraint. If your SELECT query returns no results, then everything is OK, and no violation is produced.
-
-
-
-citec:ArticleShape a sh:NodeShape ;
-    sh:targetClass bioj:article ;
-    sh:sparql [
-        sh:message "Article without citec:coded_no_in_text_mentions" ;
-        sh:prefixes citec:prefixes ;
-        sh:select    """SELECT $this ?coder ?code
-            WHERE {
-                $this rdf:type bioj:article ;
-                ca:isTargetOf
-                         [ rdf:type ca:CodeApplication ;
-                           ca:hasCoder ?coder ;
-                           ca:appliesCode ?code ]
-                NOT EXISTS {
-                    ?code rdf:type citec:coded_no_in_text_mentions
-                }
-            }""" ;
- ]
-.
-
-
 ca:CodeApplicationShape a sh:NodeShape ;
     sh:targetClass ca:CodeApplication ;
     sh:property [
@@ -87,6 +62,25 @@ ca:CodeApplicationShape a sh:NodeShape ;
     ] ;
 .
 
+bioj:ArticleShape a sh:NodeShape ;
+    sh:targetClass bioj:article ;
+    sh:property [
+        sh:message "Article missing valid coded_no_in_text_mentions?" ;
+        sh:path ca:isTargetOf ;
+        sh:minCount 1;
+        sh:node citec:CA_no_mentions_shape ;
+    ]
+.
+
+citec:CA_no_mentions_shape a sh:NodeShape ;
+    sh:property [
+        sh:message "Article CA missing valid coded_no_in_text_mentions" ;
+        sh:path ca:appliesCode ;
+        sh:minCount 1;
+        sh:node citec:coded_no_in_text_mentionsShape
+    ]
+.
+
 citec:coded_no_in_text_mentionsShape a sh:NodeShape ;
     sh:targetClass citec:coded_no_in_text_mentions ;
     sh:property [
@@ -94,7 +88,7 @@ citec:coded_no_in_text_mentionsShape a sh:NodeShape ;
         sh:minCount 1;
         sh:maxCount 1;
         sh:datatype xsd:boolean ;
-        sh:message   "No in text mentions must be boolean."
+        sh:message   "No_in_text_mentions must be boolean."
     ]
 .
 
@@ -142,21 +136,21 @@ citec:MentionTypeApplicationShape a sh:NodeShape ;
 #                      ] ;
 #     ] ;
 
-citec:Shape a sh:NodeShape ;
-    sh:targetClass bioj:article ;
-    sh:sparql [
-        sh:message "Article without citec:coded_no_in_text_mentions" ;
-        sh:prefixes citec:prefixes ;
-        sh:select    """SELECT $this ?coder ?code
-            WHERE {
-                $this rdf:type bioj:article ;
-                ca:isTargetOf
-                         [ rdf:type ca:CodeApplication ;
-                           ca:hasCoder ?coder ;
-                           ca:appliesCode ?code ]
-                NOT EXISTS {
-                    ?code rdf:type citec:coded_no_in_text_mentions
-                }
-            }""" ;
- ]
-.
+# The SELECT query must return one row for every value of $this that is violating the constraint. If your SELECT query returns no results, then everything is OK, and no violation is produced.
+# citec:ArticleShape a sh:NodeShape ;
+#     sh:targetClass bioj:article ;
+#     sh:sparql [
+#         sh:message "Article without citec:coded_no_in_text_mentions" ;
+#         sh:prefixes citec:prefixes ;
+#         sh:select    """SELECT $this ?code
+#             WHERE {
+#                 $this rdf:type bioj:article ;
+#                 ca:isTargetOf
+#                          [ rdf:type ca:CodeApplication ;
+#                            ca:appliesCode ?code ]
+#                 NOT EXISTS {
+#                     ?code rdf:type citec:coded_no_in_text_mentions
+#                 }
+#             }""" ;
+#  ]
+# .
