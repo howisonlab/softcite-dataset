@@ -436,6 +436,55 @@ def rename_xml_file(path, pmc_id):
         shutil.copy(nxml_files[0], path + "PMC" + pmc_id + ".xml")
         shutil.rmtree(path + "PMC" + pmc_id)
 
+def assign_second_coder(cursor):
+    # find 200 most recently assigned articles
+    sql_query = "SELECT * FROM assignments WHERE assigned=1 ORDER BY asssigned_timestamp DESC LIMIT 200"
+
+    cursor.execute(sql_query)
+
+    results = cursor.fetchall()  # list of dicts
+
+    # make into a simple list of datetimes
+    just_pubids = []
+    for row in results:
+        just_pubids.append(row["pub_id"])
+
+    # Can't redistribute task assignment code.
+    # so going to shift existing jobs forward
+    # then use the id space for new tasks.
+
+    # shift_id_forward = """
+    # UPDATE assignments
+    # SET id = id + 10000
+    # WHERE assigned = 0
+    # """
+    # cursor.execute(shift_id_forward)
+
+    get_max_assigned = """
+    SELECT MAX(id) as maxid
+    FROM assignments
+    WHERE assigned = 1
+      AND id < 10000
+    """
+
+    cursor.execute(get_max_assigned)
+
+    max_result = cursor.fetchone()["maxid"]
+
+    for index, pubid in enumerate(just_pubids):
+        newid = max_result + 1 + index
+        print("Inserting {} with {}".format(pubid, newid))
+
+        insert_sql = """INSERT INTO assignments(id, pub_id)
+                     VALUE (%(new_id)s, %(task)s)
+             """
+        cursor.execute(insert_sql, {"task": pubid, "new_id": newid})
+        if cursor.rowcount == 1:
+            print("Inserted {}".format(pubid))
+        else:
+            print("Failed to insert")
+
+
 if __name__ == '__main__':
 
     connection = pymysql.connect(
@@ -448,6 +497,7 @@ if __name__ == '__main__':
 
     cursor = connection.cursor()
 
+    assign_second_coder(cursor)
     # cursor.execute("TRUNCATE assignments")
 
     # print(get_pubs_to_code())
@@ -460,7 +510,7 @@ if __name__ == '__main__':
     # extract_and_move_xml("docs/pdf-files/pmc_oa_files/", "5421183")
     # This will fail unless on linux, should be run on
     # howisonlab anyway.
-    insert_unpaywall_tasks(cursor, int(sys.argv[1]), 1)
+    # insert_unpaywall_tasks(cursor, int(sys.argv[1]), 1)
     # Check that script is run from right location.
     # neededPath = "code/getNextContentAnalysisAssignment.py"
     # if (sys.argv[0] != neededPath):
