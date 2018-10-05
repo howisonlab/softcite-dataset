@@ -31,11 +31,14 @@ def get_username_from_branch():
     return(username)
 
 def get_username():
-    username = get_username_from_branch()
-    if (username == "master"):
+    try:
+        username = get_username_from_branch()
+        if (username == "master"):
+            return(get_username_from_github_remote())
+        else:
+            return(username)
+    finally:
         return(get_username_from_github_remote())
-    else:
-        return(username)
 
 
 if __name__ == "__main__":
