@@ -7,14 +7,45 @@ output: html_document
 
 We suspect that the software mentions in a paper cluster together.  This would be useful to know because then we could do content analysis more quickly (because we wouldn't need to read as much of the paper in order to code mentions). We could use a "whitelist" of known package names to identify the "mention rich" parts of the papers, then code that.  But first we need to know what we might miss by making that change.
 
-Procedure:
+Procedure candidate:
+
+On unseen papers:
+1. Convert to fulltext
+2. Search for "Seeds" taken from a whitelist of package names
+3. Assign the text in a window around any seeds for content analysis (e.g., 500 words before and 500 words after, or 1 page before and 1 page after any seed found in the fulltext).
+
+Analysis to see how this might perform:
 
 1. Generate a whitelist of known package names as "seeds".
-2. Search the full text of the papers to find those names.
-3. Use a window around those seeds as "what we would have coded with this new technique"
-4. Ask: What proportion of mentions would have been included in the window? Call that recall.
-5. Repeat for many possible random samples of seeds (and take the average).
+2. For each paper:
+  - see if those seeds were mentioned, note PDF page where found.
+  - query dataset for other mentions in that paper within X pages of where the seed was found.
+  - recall = total found using seeds / total found in paper through manual coding (gives proportion of mentions that would have been included in the window.)
+  - average recall across papers (or use a scatterplot)
+3. Repeat for many possible random samples of seeds (and take the average as the expected recall value for each paper).
 
-Repeat that for varying window sizes.
+Repeat all that for varying window sizes (e.g., same page as seed, +/- 1 page, +/- 2 pages.)
 
 Eventually we should get a curve showing the relationship between window size and recall.
+
+
+get all package names as 'seeds'.
+select seeds
+get a dataframe with all papers in it.
+cross that with seeds so now we have a row for each paper/seed combination.
+search for those combinations.  could be in more than one spot in a paper.
+paper,seed,seed_mention,pdf_page
+
+(or start with full dataset, then filter out any that aren't our seeds)
+
+add window sizes (can add all here)
+paper,total_mention_count,seed,seed_mention,pdf_page,window_size,window_start,window_end
+
+query others than would have been found. from each paper's set of mentions, which have a pdf page value such that: paper == paper, and window_start <= seed_pdf_page <= window_end. 
+
+Then then have to merge the mentions found for each seed query.
+
+Calculate recall for each paper.
+
+Draw pretty pic.
+
