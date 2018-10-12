@@ -5,6 +5,12 @@ date: "10/12/2018"
 output: html_document
 ---
 
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
 We suspect that the software mentions in a paper cluster together.  This would be useful to know because then we could do content analysis more quickly (because we wouldn't need to read as much of the paper in order to code mentions). We could use a "whitelist" of known package names to identify the "mention rich" parts of the papers, then code that.  But first we need to know what we might miss by making that change.
 
 Procedure candidate:
@@ -28,8 +34,29 @@ Repeat all that for varying window sizes (e.g., same page as seed, +/- 1 page, +
 
 Eventually we should get a curve showing the relationship between window size and recall.
 
+load dataset.
+```{r load_dataset}
+articles <- read_csv(here("data/csv_dataset", "softcite_articles.csv"))
+in_text_mentions <- read_csv(here("data/csv_dataset", "softcite_in_text_mentions.csv"))
+codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv"))
+```
+
+Normalize package names
+```{r}
+codes_applied <- codes_applied %>% 
+  mutate(norm_code_label = code_label %>% str_to_lower())
+```
+
 
 get all package names as 'seeds'.
+Package names are in codes_applied
+```{r}
+codes_applied %>% 
+  filter(code == "software_name", was_code_present == "true") %>% 
+  select(norm_code_label) %>% 
+  unique
+```
+
 select seeds
 get a dataframe with all papers in it.
 cross that with seeds so now we have a row for each paper/seed combination.
@@ -48,4 +75,6 @@ Then then have to merge the mentions found for each seed query.
 Calculate recall for each paper.
 
 Draw pretty pic.
+
+
 
