@@ -85,7 +85,6 @@ WHERE {
 articles <- SPARQL(url = softcite_ds, query = paste0(prefixes, articles), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
- #   filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article, article_set),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article, article_set), funs(str_sub(.,2))) %>% 
@@ -111,7 +110,6 @@ WHERE {
 in_text_mentions <- SPARQL(url = softcite_ds, query = paste0(prefixes, in_text_mention_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-#  filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article, selection),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article,selection), funs(str_sub(.,2))) %>% 
@@ -136,7 +134,6 @@ WHERE {
 references <- SPARQL(url = softcite_ds, query = paste0(prefixes, reference_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-#  filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article, reference, from_in_text_selection),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article, reference, from_in_text_selection), funs(str_sub(.,2))) %>% 
@@ -160,7 +157,6 @@ WHERE {
 codes <- SPARQL(url = softcite_ds, query = paste0(prefixes, all_codes_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-  filter(str_detect(selection, "PMC")) %>% 
   mutate_at(vars(selection, code),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(selection, code), funs(str_sub(.,2))) %>% 
@@ -180,7 +176,8 @@ articles %>%
   group_by(article_set, article) %>% 
   summarize(coder_count = n_distinct(coder)) %>%
   filter(coder_count > 1) %>% 
-  ggplot(aes(article)) +
-  geom_histogram(stat="count")
+  ggplot(aes(coder_count)) +
+  geom_histogram(stat="count") +
+  facet_grid(article_set ~ ., scales = "free")
 ```
 
