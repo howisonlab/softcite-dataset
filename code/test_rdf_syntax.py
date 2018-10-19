@@ -1,5 +1,5 @@
 from parseTurtle import check_selections_in_body
-from getUsername import get_username_from_github
+from getUsername import get_username
 import parseTurtle
 import pytest
 import rdflib
@@ -11,16 +11,16 @@ def test_individual_file_parse(file_to_check):
 
         try:
             g.parse(file_to_check, format="n3")
-            check_selections_in_body(g)
+            check_selections_in_body(g, file_to_check)
         except:
             pytest.fail("BadSyntax: Use python3 code/parseTurtle.py -f {}".format(file_to_check))
 
-        assert len(g) > 0, "File should not be empty"
+        assert len(g) > 0, "File should not be empty. Use python3 code/parseTurtle.py -f {}".format(file_to_check)
 
 """Uses metafunc to create a list of arguments for test_individual_file_parse"""
 def pytest_generate_tests(metafunc):
     #get coder's username to reduce number of files parsed
-    username = get_username_from_github()
+    username = get_username()
     files = parseTurtle.find_all_turtle_files("data/individuals-{}/".format(username))
     # assert len(files) > 0, "Must be files to check"
     #files = parseTurtle.find_all_turtle_files("data/")

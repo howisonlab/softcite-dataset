@@ -6,13 +6,17 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(SPARQL)
 library(here)
+knitr::opts_chunk$set(echo = TRUE)
 
-softcite_ds <- "http://localhost:3030/softcite-dataset/"
+
+softcite_ds <- "http://localhost:3030/softcite/"
 ```
+
+docker run -p 3030:3030 -e ADMIN_PASSWORD=pw123 -it stain/jena-fuseki 
+
 
 Data model is:
 
@@ -64,25 +68,26 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 ```
 
 ```{r}
-articles <- "SELECT DISTINCT ?article ?coder ?no_selections_found
+articles <- "SELECT DISTINCT ?article ?article_set ?coder ?no_selections_found
 WHERE {
-  ?article ca:isTargetOf
+  ?article rdf:type ?article_set;
+           ca:isTargetOf
         [ rdf:type ca:CodeApplication ;
           ca:hasCoder ?coder ;
           ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
                            citec:isPresent ?no_selections_found; 
                          ] ;
         ] ;
+  FILTER(?article_set != bioj:article)
 }
 "
 
 articles <- SPARQL(url = softcite_ds, query = paste0(prefixes, articles), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-    filter(str_detect(article, "PMC")) %>% 
-  mutate_at(vars(article),
+  mutate_at(vars(article, article_set),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
-  mutate_at(vars(article), funs(str_sub(.,2))) %>% 
+  mutate_at(vars(article, article_set), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_articles.csv"))
 ```
 
@@ -105,7 +110,6 @@ WHERE {
 in_text_mentions <- SPARQL(url = softcite_ds, query = paste0(prefixes, in_text_mention_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-  filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article, selection),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article,selection), funs(str_sub(.,2))) %>% 
@@ -130,7 +134,6 @@ WHERE {
 references <- SPARQL(url = softcite_ds, query = paste0(prefixes, reference_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-  filter(str_detect(article, "PMC")) %>% 
   mutate_at(vars(article, reference, from_in_text_selection),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article, reference, from_in_text_selection), funs(str_sub(.,2))) %>% 
@@ -154,9 +157,27 @@ WHERE {
 codes <- SPARQL(url = softcite_ds, query = paste0(prefixes, all_codes_q), 
        format = "csv", extra=list(format="csv"))$results %>% 
   as.tibble %>% 
-  filter(str_detect(selection, "PMC")) %>% 
   mutate_at(vars(selection, code),
             funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(selection, code), funs(str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
+
+
+```{r}
+articles %>% 
+  ggplot(aes(x=article_set)) +
+  geom_histogram(stat= "count") + 
+  facet_grid(no_selections_found ~ .)
+```
+
+```{r}
+articles %>% 
+  group_by(article_set, article) %>% 
+  summarize(coder_count = n_distinct(coder)) %>%
+  filter(coder_count > 1) %>% 
+  ggplot(aes(coder_count)) +
+  geom_histogram(stat="count") +
+  facet_grid(article_set ~ ., scales = "free")
+```
+

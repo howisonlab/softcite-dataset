@@ -7,7 +7,7 @@
 4. and place in the right place.  Coders will git status, add, commit.
 """
 
-from getUsername import get_username_from_github
+from getUsername import get_username
 import pymysql
 import pprint
 import os
@@ -321,7 +321,7 @@ if __name__ == '__main__':
         raise Exception("Must run script from ~/transition")
 
     try:
-        username = get_username_from_github()
+        username = get_username()
         # username = sys.argv[1]
         print("Got username '{}'".format(username))
     except IndexError:
