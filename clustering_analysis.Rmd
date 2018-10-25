@@ -140,8 +140,8 @@ all_seeds <- all_software_found %>%
   distinct()
 
 # set up experiment.
-experiment <- crossing(expand_window = 0:1, seed_percent = seq(0.05, 0.10, by = 0.05)) %>%
-  crossing(replication = 1:2) %>% 
+experiment <- crossing(seed_percent = seq(0.05, 0.10, by = 0.05)) %>%
+  crossing(replication = 1:25) %>% 
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
   mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
@@ -154,7 +154,7 @@ plan(multiprocess)
 # 1400 odd because those are the only articles with mentions.
 full_experiment_results <- all_software_found %>% 
   # sample_n(10000) %>% 
-  sample_frac(0.10) %>% 
+  sample_frac(1) %>% 
   group_by(article, norm_code_label) %>% 
   summarize(page_for_label = list(page)) %>%
   # article, norm_code_label, pages
@@ -167,42 +167,45 @@ full_experiment_results <- all_software_found %>%
   crossing(experiment) %>% 
   # expand_window, seed_percent, replication, curr_seeds, article, article_label_pages
   # which seed mentions are found in that article.
-  # mutate(seed_mentions = future_map2(curr_seeds, article_label_pages, inner_join, by = "norm_code_label", .progress = T)) %>% 
-  mutate(seed_mentions = map2(article_label_pages, curr_seeds, inner_join, by = "norm_code_label")) %>% 
+  mutate(seed_mentions = future_map2(article_label_pages, curr_seeds, inner_join, by = "norm_code_label", .progress = T)) %>% 
+  # mutate(seed_mentions = map2(article_label_pages, curr_seeds, inner_join, by = "norm_code_label")) %>% 
   # expand_window, seed_percent, replication, curr_seeds, article, article_label_pages, seed_mentions
   # What unique pages were the seeds found on?
   mutate(seed_mentions_pages    = map(seed_mentions, pull, page_for_label),
          seed_mentions_pages    = map(seed_mentions_pages, unique)) %>%
   # drop unused columns
   select(-seed_mentions, -curr_seeds, -article_label_pages) %>% 
+  # set up with different expand_window sizes.
+  crossing(expand_window = seq(0, 20,length.out = 4) %>% floor) %>% 
   # custom function to see if page falls into interval implied by expand_window
   # pmap because each row has its own expand_window
-  # mutate(reachable_mentions = future_pmap_int(list(seed_mentions_pages, 
+  mutate(reachable_mentions = future_pmap(list(seed_mentions_pages,
+                                            article_mentions_pages,
+                                            expand_window),
+                                       safely_count_mentions_in_window, .progress=T),
+  # mutate(reachable_mentions       = pmap(list(seed_mentions_pages, 
   #                                           article_mentions_pages, 
   #                                           expand_window),
-  #                                      count_mentions_in_window, .progress=T),
-  mutate(reachable_mentions       = future_pmap(list(seed_mentions_pages, 
-                                            article_mentions_pages, 
-                                            expand_window),
-                                       safely_count_mentions_in_window),
+  #                                      safely_count_mentions_in_window),
          reachable_mentions_count = map_int(reachable_mentions, pluck, "result"),
          total_mentions           = map_int(article_mentions_pages, length),
          reached_proportion       = reachable_mentions_count / total_mentions)
+```
 
+```{r}
 summarized_results <- full_experiment_results %>% 
   mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
   # collapse replications
   group_by(expand_window, seed_percent) %>% 
   summarize(mean_proportion = mean(reached_proportion))
 
-```
-
-```{r}
 summarized_results %>% 
   ggplot(aes(x = seed_percent, y = mean_proportion, group = expand_window, color = expand_window)) +
-  scale_color_discrete() +
+  # scale_color_brewer(type="div", palette = "RdPu") 
   geom_point() +
-  geom_line()
+  geom_line() +
+  scale_color_viridis_d(option="C") +
+  guides(colour = guide_legend(reverse=T))
 ```
 
 ```{r}
