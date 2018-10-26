@@ -82,14 +82,27 @@ count_mentions_in_window <- function(.seed_mentions_pages, .all_mentions_pages, 
   # .seed_mentions_pages <- c(10,3,4,3)
   # .all_mentions_pages <- c(8,1,6,9,7,5,4,10,2,3)
   # .expand_window <- 1
-  # .seed_mentions_pages <- list(3)
-  # .all_mentions_pages <- list(3)
-  # .expand_window <- 1
+  .seed_mentions_pages <- list()
+  .all_mentions_pages <- list(3)
+  .expand_window <- list(0,5,10)
   if (length(.seed_mentions_pages) == 0 ||
       length(.all_mentions_pages) == 0) {
-    to_ret <- as.integer(0)
+    to_ret <- tibble(
+      expand_window = .expand_window,
+      mentions_in_window = rep_along(.expand_window, 0)
+    )
   } else {
-      to_ret <- generate_seed_interval(.seed_mentions_pages %>% unlist, .expand_window) %>% 
+      to_ret <- tibble(
+        seed_pages = .seed_mentions_pages %>% unlist,
+        expand_window = .expand_window %>% unlist
+      ) %>% 
+        mutate(expand_interval = map2(seed_pages, expand_window, generate_seed_interval)) %>% 
+        map2(.all_mentions_pages %>% unlist, interval_overlap) %>% 
+        map(unlist) %>% 
+        map(unique) %>% 
+        map(sum)
+      # to_ret <- pmap(seed_pagesxpand_window)
+      #   generate_seed_interval(, .expand_window %>% unlist) %>% 
       # compares windows to points, returning matching indices.
       interval_overlap(.all_mentions_pages %>% unlist) %>% # returns a list of lists
       # seed 1 matches all_mention 1, 4, 5 (indexes from .all_mentions_pages list)
@@ -105,12 +118,15 @@ count_mentions_in_window <- function(.seed_mentions_pages, .all_mentions_pages, 
 
 safely_count_mentions_in_window <- safely(count_mentions_in_window)
 
-# seed_pages <- .seed_mentions_pages
-# expand_window <- .expand_window
+seed_pages <- .seed_mentions_pages %>% unlist
+expand_window <- .expand_window %>% unlist
 
-generate_seed_interval <- function(seed_pages, expand_window) {
-  tibble(from = seed_pages - expand_window,
-           to = seed_pages + expand_window + 1) %>% 
+# this needs to run once per item sent in expand_window
+# receive list of expand window, return table with expand_window, count_mentions
+#                                                      5, 4
+generate_seed_interval <- function(seed_pages, expand_window_single) {
+  tibble(from = seed_pages - expand_window_single,
+           to = seed_pages + expand_window_single + 1) %>% 
       as.matrix %>% 
       # closed includes endpoints, open excludes.
       # This allows conseq pages to be merged during reduce.
@@ -118,7 +134,7 @@ generate_seed_interval <- function(seed_pages, expand_window) {
       intervals::reduce()
 }
 
-generate_seed_interval(list(3) %>% unlist,1)
+generate_seed_interval(list(3) %>% unlist, c(3,4,5))
 
 ```
 
@@ -145,16 +161,64 @@ experiment <- crossing(seed_percent = seq(0.05, 0.10, by = 0.05)) %>%
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
   mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
+
+# Need article, seed_pages, mention_pages.
+expand_window <- seq(0, 20,length.out = 4) %>% floor
+expand_window <- 1 * 1.7^(0:10) %>% 
+  ceiling %>% 
+  unique %>% 
+  discard(~ .x > max(all_software_found$page))
 ```  
 
 
 ```{r}
+# for each combination of seed and mention, calculate absolute value distance.
+# see if >= window size.
+
+
+window_size <-  list(0,1,2,10)
+mention_page <-  list(4,7,9,10)
+seed_page <-  list(10)
+
+count_reached_in_window <- function(seed_page, mention_page, expand_window) {
+  if (length(seed_page) == 0 ||
+      length(mention_page) == 0) {
+    return(tibble(
+      expand_window = expand_window,
+      reached_proportion = as.double(0)
+    ))
+  } else {
+    seed_page <- seed_page %>% unlist
+    mention_page <- mention_page %>% unlist
+    expand_window <- expand_window %>% unlist
+    
+    crossing(seed_page, mention_page) %>%
+      mutate(diff = abs(seed_page - mention_page)) %>%
+      crossing(expand_window) %>% 
+      mutate(in_window = expand_window >= diff) %>% 
+      group_by(expand_window) %>% 
+      summarize(reached_proportion = sum(in_window) / n())
+  }
+}
+
+safely_count_reached_in_window <- safely(count_reached_in_window)
+
+# if it's in a smaller window size, it's definitely in a larger one. Something to do with reduce.
+
+safely_count_reached_in_window(seed_page, mention_page, window_size)
+safely_count_reached_in_window(list(), mention_page, window_size)
+
+
+```
+
+```{r}
 options(future.globals.maxSize= 2048*1024^2)
 plan(multiprocess)
-# 1400 odd because those are the only articles with mentions.
+
+
 full_experiment_results <- all_software_found %>% 
   # sample_n(10000) %>% 
-  sample_frac(1) %>% 
+  sample_frac(0.20) %>% 
   group_by(article, norm_code_label) %>% 
   summarize(page_for_label = list(page)) %>%
   # article, norm_code_label, pages
@@ -165,31 +229,23 @@ full_experiment_results <- all_software_found %>%
          article_mentions_pages = map(article_mentions_pages, unique)) %>% 
   # set up experiments, each has its own set of seeds (inc. each replication)
   crossing(experiment) %>% 
+  mutate(expand_window = list(expand_window)) %>% 
   # expand_window, seed_percent, replication, curr_seeds, article, article_label_pages
   # which seed mentions are found in that article.
-  mutate(seed_mentions = future_map2(article_label_pages, curr_seeds, inner_join, by = "norm_code_label", .progress = T)) %>% 
-  # mutate(seed_mentions = map2(article_label_pages, curr_seeds, inner_join, by = "norm_code_label")) %>% 
-  # expand_window, seed_percent, replication, curr_seeds, article, article_label_pages, seed_mentions
+  mutate(seed_mentions = future_map2(article_label_pages, curr_seeds, inner_join, 
+                                     by = "norm_code_label", .progress = T)) %>% 
   # What unique pages were the seeds found on?
   mutate(seed_mentions_pages    = map(seed_mentions, pull, page_for_label),
          seed_mentions_pages    = map(seed_mentions_pages, unique)) %>%
   # drop unused columns
   select(-seed_mentions, -curr_seeds, -article_label_pages) %>% 
-  # set up with different expand_window sizes.
-  crossing(expand_window = seq(0, 20,length.out = 4) %>% floor) %>% 
-  # custom function to see if page falls into interval implied by expand_window
-  # pmap because each row has its own expand_window
-  mutate(reachable_mentions = future_pmap(list(seed_mentions_pages,
+  mutate(reached_call = future_pmap(list(seed_mentions_pages,
                                             article_mentions_pages,
                                             expand_window),
-                                       safely_count_mentions_in_window, .progress=T),
-  # mutate(reachable_mentions       = pmap(list(seed_mentions_pages, 
-  #                                           article_mentions_pages, 
-  #                                           expand_window),
-  #                                      safely_count_mentions_in_window),
-         reachable_mentions_count = map_int(reachable_mentions, pluck, "result"),
-         total_mentions           = map_int(article_mentions_pages, length),
-         reached_proportion       = reachable_mentions_count / total_mentions)
+                                       safely_count_reached_in_window, .progress=T),
+         reached_proportions = map(reached_call, pluck, "result")) %>% 
+  unnest(reached_proportions)
+
 ```
 
 ```{r}
@@ -206,21 +262,5 @@ summarized_results %>%
   geom_line() +
   scale_color_viridis_d(option="C") +
   guides(colour = guide_legend(reverse=T))
-```
-
-```{r}
-# test_seeds <- c(1, 5)
-# test_expand <- 1
-# test_all <- c(2)
-# 
-# tibble(from = test_seeds - test_expand,
-#            to = test_seeds + test_expand + 1) %>% 
-#       as.matrix %>% 
-#       # closed includes endpoints
-#       Intervals(closed = c(T,F)) %>% 
-#       intervals::reduce() %>% # minimize intervals
-#       print() %>% 
-#       # compares windows to points, returning matching indices.
-#       interval_overlap(test_all)
 ```
 
