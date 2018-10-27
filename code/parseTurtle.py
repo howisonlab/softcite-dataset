@@ -122,6 +122,34 @@ def build_parse_data_set(dir_to_check="data"):
         # print("Parsing {}".format(file_to_check))
         all_files.parse(file_to_check, format="n3")
 
+    pmc_articles = all_files.query("""
+    CONSTRUCT { ?article rdf:type bioj:pmc_article }
+    WHERE {
+      ?article rdf:type bioj:article .
+      FILTER regex(str(?article), "PMC")
+    }""")
+
+    pmc_articles.serialize(
+      destination="data/pmc_article_statements.ttl",
+      format="turtle"
+    )
+
+    all_files.parse("data/pmc_article_statements.ttl", format="turtle")
+
+    training_articles = all_files.query("""
+    CONSTRUCT { ?article rdf:type bioj:training_article }
+    WHERE {
+      ?article rdf:type bioj:article .
+      FILTER regex(str(?article), "bio-journal-sample.a")
+    }""")
+
+    training_articles.serialize(
+      destination="data/article_training_statements.ttl",
+      format="turtle"
+    )
+
+    all_files.parse("data/article_training_statements.ttl", format="turtle")
+
     return all_files
 
 
@@ -188,6 +216,7 @@ def main(argv):
                 URIRef(u'http://www.w3.org/ns/shacl#conforms'),
                 Literal(False)) in output_graph:
                 logging.warning("SHACL issue: {}".format(output))
+                print("Validation warning, check log file")
             extract_assignments_csv()
         elif o == "-c":
             extract_assignments_csv()
@@ -220,8 +249,6 @@ if __name__ == '__main__':
                         filemode="w",
                         level=logging.WARN)
     logging.warning("Logging enabled")
-
-
 
     main(sys.argv[1:])
 
