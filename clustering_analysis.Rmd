@@ -116,25 +116,25 @@ count_mentions_in_window <- function(.seed_mentions_pages, .all_mentions_pages, 
   return(to_ret)
 }
 
-safely_count_mentions_in_window <- safely(count_mentions_in_window)
-
-seed_pages <- .seed_mentions_pages %>% unlist
-expand_window <- .expand_window %>% unlist
-
-# this needs to run once per item sent in expand_window
-# receive list of expand window, return table with expand_window, count_mentions
-#                                                      5, 4
-generate_seed_interval <- function(seed_pages, expand_window_single) {
-  tibble(from = seed_pages - expand_window_single,
-           to = seed_pages + expand_window_single + 1) %>% 
-      as.matrix %>% 
-      # closed includes endpoints, open excludes.
-      # This allows conseq pages to be merged during reduce.
-      Intervals(closed = c(T,F)) %>% 
-      intervals::reduce()
-}
-
-generate_seed_interval(list(3) %>% unlist, c(3,4,5))
+# safely_count_mentions_in_window <- safely(count_mentions_in_window)
+# 
+# seed_pages <- .seed_mentions_pages %>% unlist
+# expand_window <- .expand_window %>% unlist
+# 
+# # this needs to run once per item sent in expand_window
+# # receive list of expand window, return table with expand_window, count_mentions
+# #                                                      5, 4
+# generate_seed_interval <- function(seed_pages, expand_window_single) {
+#   tibble(from = seed_pages - expand_window_single,
+#            to = seed_pages + expand_window_single + 1) %>% 
+#       as.matrix %>% 
+#       # closed includes endpoints, open excludes.
+#       # This allows conseq pages to be merged during reduce.
+#       Intervals(closed = c(T,F)) %>% 
+#       intervals::reduce()
+# }
+# 
+# generate_seed_interval(list(3) %>% unlist, c(3,4,5))
 
 ```
 
@@ -156,7 +156,7 @@ all_seeds <- all_software_found %>%
   distinct()
 
 # set up experiment.
-experiment <- crossing(seed_percent = seq(0.05, 0.10, by = 0.05)) %>%
+experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
   crossing(replication = 1:25) %>% 
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
@@ -168,6 +168,7 @@ expand_window <- 1 * 1.7^(0:10) %>%
   ceiling %>% 
   unique %>% 
   discard(~ .x > max(all_software_found$page))
+expand_window = 0:1
 ```  
 
 
@@ -212,21 +213,11 @@ safely_count_reached_in_window(list(), mention_page, window_size)
 ```
 
 ```{r}
-options(future.globals.maxSize= 2048*1024^2)
+options(future.globals.maxSize= 2048*4*1024^2)
 plan(multiprocess)
 
 
-full_experiment_results <- all_software_found %>% 
-  # sample_n(10000) %>% 
-  sample_frac(0.20) %>% 
-  group_by(article, norm_code_label) %>% 
-  summarize(page_for_label = list(page)) %>%
-  # article, norm_code_label, pages
-  # 1220303, hat, c(4,6,8)
-  nest(-article, .key = article_label_pages) %>%
-  # 1220303, tibble(norm_code_label = c("hat"), pages = c(4,6,8))
-  mutate(article_mentions_pages = map(article_label_pages, pull, page_for_label),
-         article_mentions_pages = map(article_mentions_pages, unique)) %>% 
+install.packages("sparklyr") %>% 
   # set up experiments, each has its own set of seeds (inc. each replication)
   crossing(experiment) %>% 
   mutate(expand_window = list(expand_window)) %>% 
@@ -249,6 +240,17 @@ full_experiment_results <- all_software_found %>%
 ```
 
 ```{r}
+software_by_page <- all_software_found %>% 
+  # sample_n(10000) %>% 
+  sample_frac(0.20) %>% 
+  group_by(article, norm_code_label) %>% 
+  summarize(page_for_label = list(page))
+
+```
+
+
+
+```{r}
 summarized_results <- full_experiment_results %>% 
   mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
   # collapse replications
@@ -260,6 +262,215 @@ summarized_results %>%
   # scale_color_brewer(type="div", palette = "RdPu") 
   geom_point() +
   geom_line() +
+  scale_color_viridis_d(option="C") +
+  guides(colour = guide_legend(reverse=T))
+```
+
+```{r}
+summarized_results <- full_experiment_results %>% 
+  mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
+  group_by(expand_window, seed_percent, replication) %>% 
+  summarize(mean_proportion = mean(reached_proportion))
+
+summarized_results %>% 
+  ggplot(aes(x = seed_percent, y = mean_proportion, group = expand_window, color = expand_window)) +
+  # scale_color_brewer(type="div", palette = "RdPu") 
+  geom_point(position = position_jitter(width=0.01), alpha=0.8) +
+  # geom_line() +
+  scale_color_viridis_d(option="C") +
+  guides(colour = guide_legend(reverse=T))
+```
+
+```{r}
+expand_window <- c(0,1,2,10)
+window_breaks <-  c(0,sort(expand_window))
+mention_page <-  c(4,7,9,10)
+seed_page <-  c(10, 4)
+
+tibble(windows = expand_window,
+       counts = crossing(seed_page, mention_page) %>%
+                  mutate(diff = abs(seed_page - mention_page)) %>%
+                  pull(diff) %>% 
+                  hist(window_size, plot = FALSE) %>% 
+                  pluck("counts") %>% 
+                  cumsum() # things in lower windows are in higher windows.
+)
+
+```
+
+use the seeds and the expand_windows to create breaks.
+
+```{r}
+expand_window <- c(0,1,2,10)
+window_breaks <-  c(0,sort(expand_window))
+mention_page <-  c(4,7,9,10)
+seed_page <-  c(10, 4)
+
+crossing(expand_window, seed_page)
+```
+
+0: (4,4) (10,10)
+1: (3,5) (9,11)
+2: (2,6), (8,12)
+
+Create a table per article of mention to mention distances.
+
+from_selection_id, from_selection_norm_code_label, from_selection_page, to_selection_id, to_selection_norm_code_label, to_selection_page, distance
+
+Filter that to find reachable mentions, given a starting norm_code_label, and a set of window sizes.
+
+```{r}
+library(cluster)
+library(janitor)
+library(furrr)
+
+options(future.globals.maxSize= 2048*4*1024^2)
+plan(multiprocess)
+
+quietly_daisy <- quietly(daisy)
+quietly_tidy_daisy <- quietly(tidy_daisy)
+
+# test_frame <- test_frame[[1]]
+
+# my_tibl <- test_frame
+
+tidy_daisy <- function(my_tibl) {
+  sel_names <- my_tibl %>% pull(sel_name)
+  df <- as.data.frame(my_tibl %>% select(page))
+  row.names(df) <- sel_names
+  # have to return Differences object in a list or dplyr/purrr screws with it
+  # something to do with column name hate.
+  list(daisy(df, metric = "euclidean")) # %>% as.matrix %>% as.data.frame %>% rownames_to_column()
+}
+
+
+dist_matrices <- all_software_found %>%
+  mutate(norm_code_label = norm_code_label %>% str_replace_all("\\s", "---")) %>% 
+  unite(sel_name, selection, norm_code_label, sep = "~~") %>% 
+  select(-code_label) %>%
+  distinct() %>% 
+  nest(-article, .key = software_found) %>% 
+ # slice(4:4) %>% 
+  # pull(software_found)
+  transmute(article     = article,
+            dist_result = map(software_found, tidy_daisy))
+  # mutate(dist_result = future_map(software_found, quietly_tidy_daisy, .progress = T))
+
+```
+
+```{r}
+
+
+make_long <- function(dist_list) {
+  simm = dist_list[[1]]
+  simm %>% 
+    as.matrix %>% 
+    as.data.frame %>% 
+    rownames_to_column() %>% 
+    gather(key = "to_selection", "page_diff", -rowname) %>% 
+    separate(to_selection, into = c("to_selection", "to_norm_code_label"), sep = "~~") %>% 
+    separate(rowname, into = c("selection", "norm_code_label"), sep = "~~") %>%
+    mutate(norm_code_label = str_replace_all(norm_code_label, "---", " "),
+           to_norm_code_label = str_replace_all(to_norm_code_label, "---", " ")) %>% 
+    filter(selection != to_selection) %>% 
+    as.tibble
+}
+
+long_result <- dist_matrices %>% 
+  transmute(article = article,
+            long_result = map(dist_result, make_long))
+
+long_result %>% slice(2:2) %>% pull(long_result) %>% pluck(1)
+```
+
+
+
+```{r}
+expand_window <- seq(0, 20,length.out = 4) %>% floor
+expand_window <- 1 * 1.7^(0:10) %>% 
+  ceiling %>% 
+  unique %>% 
+  discard(~ .x > max(all_software_found$page))
+expand_window <- 0:1
+
+# set up experiment.
+experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
+  crossing(replication = 1:1) %>% 
+  # add seeds, resampling per experiment
+  # needs tbl named as tbl is first argument to sample_frac
+  mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
+
+
+
+
+```
+
+Using these long tables.  For each seed, for each expand_window, which others are within page_dist <= expand_window
+
+To do all at once it's an inequality join.
+
+```{r}
+options(future.globals.maxSize= 2048*4*1024^2)
+plan(multiprocess)
+
+experiment_with_data <- long_result %>% 
+  crossing(experiment)
+
+curr_long_result <- experiment_with_data %>% slice(1:1) %>% pull(long_result) %>% pluck(1)
+curr_seeds <- experiment_with_data %>% slice(1:1) %>% pull(curr_seeds) %>% pluck(1)
+
+filter_seeds <- function(single_window, seed_starts) {
+  seed_starts %>% 
+    filter(page_diff <= single_window) %>% 
+    nrow()
+}
+
+# expand_window is a list outside the dataframe
+find_reached <- function(curr_long_result, curr_seeds) {
+  seed_starts <- inner_join(curr_seeds, curr_long_result, by = "norm_code_label")
+  # find seed rows.
+  
+  # do mention counts by cutting distribution of page_diff on expand_window
+  # c(0) ensures that the first window is from diff 0 to greater
+  counts <- hist(seed_starts$page_diff, c(0,expand_window), plot = FALSE) %>% 
+                  pluck("counts") %>% 
+                  cumsum() # things in lower windows are in higher windows.  
+  as.tibble(list(expand_window = expand_window,
+                 reached_in_window = counts))
+    # as.tibble(list(expand_window = expand_window)) %>%
+    #   # single parameter map call, seed_starts passed over each time as parameter
+    #   mutate(reached_in_window = map_int(expand_window, filter_seeds, seed_starts))
+    #   
+}
+
+
+find_reached(experiment_with_data %>% slice(1:1) %>% pull(long_result) %>% pluck(1), 
+             experiment_with_data %>% slice(1:1) %>% pull(curr_seeds) %>% pluck(1))
+
+results_of_experiment <- experiment_with_data %>% 
+  mutate(
+    reached_count  = future_pmap(list(long_result, curr_seeds), find_reached, .progress = T),
+         total_mentions = map_int(long_result, nrow)) %>% 
+  unnest(reached_count) %>% 
+  # if_else to avoid division of 0 / 0
+  mutate(reached_proportion = if_else(total_mentions == 0, 0, reached_in_window / total_mentions))
+```
+
+```{r}
+# results_of_experiment %>% summary
+# 
+# results_of_experiment %>% filter(reached_proportion %>% is.na)
+
+summarized_results <- results_of_experiment %>% 
+  mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
+  group_by(expand_window, seed_percent, replication) %>% 
+  summarize(mean_proportion = mean(reached_proportion))
+
+summarized_results %>% 
+  ggplot(aes(x = seed_percent, y = mean_proportion, group = expand_window, color = expand_window)) +
+  # scale_color_brewer(type="div", palette = "RdPu") 
+  geom_point(position = position_jitter(width=0.01), alpha=0.8) +
+  # geom_line() +
   scale_color_viridis_d(option="C") +
   guides(colour = guide_legend(reverse=T))
 ```
