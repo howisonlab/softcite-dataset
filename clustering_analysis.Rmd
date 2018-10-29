@@ -327,9 +327,6 @@ library(furrr)
 options(future.globals.maxSize= 2048*4*1024^2)
 plan(multiprocess)
 
-quietly_daisy <- quietly(daisy)
-quietly_tidy_daisy <- quietly(tidy_daisy)
-
 # test_frame <- test_frame[[1]]
 
 # my_tibl <- test_frame
@@ -380,7 +377,7 @@ long_result <- dist_matrices %>%
   transmute(article = article,
             long_result = map(dist_result, make_long))
 
-long_result %>% slice(2:2) %>% pull(long_result) %>% pluck(1)
+# long_result %>% slice(2:2) %>% pull(long_result) %>% pluck(1)
 ```
 
 
@@ -395,7 +392,7 @@ expand_window <- 0:1
 
 # set up experiment.
 experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
-  crossing(replication = 1:1) %>% 
+  crossing(replication = 1:5) %>% 
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
   mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
@@ -405,9 +402,7 @@ experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
 
 ```
 
-Using these long tables.  For each seed, for each expand_window, which others are within page_dist <= expand_window
-
-To do all at once it's an inequality join.
+Using these long tables.  For each seed, find starts then divide distribution of page_diff into expand_windows
 
 ```{r}
 options(future.globals.maxSize= 2048*4*1024^2)
@@ -419,45 +414,52 @@ experiment_with_data <- long_result %>%
 curr_long_result <- experiment_with_data %>% slice(1:1) %>% pull(long_result) %>% pluck(1)
 curr_seeds <- experiment_with_data %>% slice(1:1) %>% pull(curr_seeds) %>% pluck(1)
 
-filter_seeds <- function(single_window, seed_starts) {
-  seed_starts %>% 
-    filter(page_diff <= single_window) %>% 
-    nrow()
-}
+# filter_seeds <- function(single_window, seed_starts) {
+#   seed_starts %>% 
+#     filter(page_diff <= single_window) %>% 
+#     nrow()
+# }
 
 # expand_window is a list outside the dataframe
 find_reached <- function(curr_long_result, curr_seeds) {
+  # seed_starts <- curr_long_result %>% 
+    # filter(norm_code_label %in% curr_seeds$curr_seeds)
+  
   seed_starts <- inner_join(curr_seeds, curr_long_result, by = "norm_code_label")
   # find seed rows.
   
   # do mention counts by cutting distribution of page_diff on expand_window
   # c(0) ensures that the first window is from diff 0 to greater
-  counts <- hist(seed_starts$page_diff, c(0,expand_window), plot = FALSE) %>% 
+  
+  
+  counts <- hist(seed_starts$page_diff, c(0, expand_window, max(seed_starts$page_diff)), plot = FALSE, include.lowest = T) %>% 
                   pluck("counts") %>% 
-                  cumsum() # things in lower windows are in higher windows.  
+                  cumsum() %>% # things in lower windows are in higher windows. 
+                  head(-1) # drop max   
+  
   as.tibble(list(expand_window = expand_window,
                  reached_in_window = counts))
-    # as.tibble(list(expand_window = expand_window)) %>%
-    #   # single parameter map call, seed_starts passed over each time as parameter
-    #   mutate(reached_in_window = map_int(expand_window, filter_seeds, seed_starts))
-    #   
 }
 
 
 find_reached(experiment_with_data %>% slice(1:1) %>% pull(long_result) %>% pluck(1), 
-             experiment_with_data %>% slice(1:1) %>% pull(curr_seeds) %>% pluck(1))
+              experiment_with_data %>% slice(1:1) %>% pull(curr_seeds) %>% pluck(1))
 
 results_of_experiment <- experiment_with_data %>% 
+  mutate(total_mentions = map_int(long_result, nrow)) %>% 
+  filter(total_mentions > 0) %>% 
+  sample_frac(0.2) %>% 
   mutate(
-    reached_count  = future_pmap(list(long_result, curr_seeds), find_reached, .progress = T),
-         total_mentions = map_int(long_result, nrow)) %>% 
+    reached_count  = future_pmap(list(long_result, curr_seeds), find_reached, .progress = T)
+  ) %>% 
   unnest(reached_count) %>% 
   # if_else to avoid division of 0 / 0
-  mutate(reached_proportion = if_else(total_mentions == 0, 0, reached_in_window / total_mentions))
+  mutate(reached_proportion = reached_in_window / total_mentions)
 ```
 
 ```{r}
-# results_of_experiment %>% summary
+results_of_experiment <- results_of_experiment %>%
+  mutate(reached_proportion = if_else(total_mentions == 0, 1, reached_in_window / total_mentions))
 # 
 # results_of_experiment %>% filter(reached_proportion %>% is.na)
 
@@ -473,5 +475,10 @@ summarized_results %>%
   # geom_line() +
   scale_color_viridis_d(option="C") +
   guides(colour = guide_legend(reverse=T))
+
+library(readr)
+
+write_csv(results_of_experiment, path=here("data", "clustering_results.csv"))
+
 ```
 
