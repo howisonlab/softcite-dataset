@@ -42,6 +42,22 @@ in_text_mentions <- read_csv(here("data/csv_dataset", "softcite_in_text_mentions
 codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv"))
 ```
 
+```{r wikidata}
+library(WikidataQueryServiceR)
+
+software_wikipedia <- query_wikidata('SELECT 
+  ?item ?itemLabel 
+WHERE {
+  ?item wdt:P31 wd:Q7397.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}') %>% 
+  as.tibble() %>% 
+  mutate(norm_code_label = itemLabel %>% str_to_lower())
+
+# software_wikipedia %>% 
+#   filter(norm_code_label %>% str_detect("clustal"))
+```
+
 
 cross that with seeds so now we have a row for each paper/seed combination.  
 
@@ -104,11 +120,16 @@ coder_most_found <- all_software_found_all_coders %>%
 all_software_found <- coder_most_found %>% 
   inner_join(all_software_found_all_coders)
 
-
-all_seeds <- all_software_found %>% 
+# seeds from wikipedia
+all_seeds <- software_wikipedia %>% 
   ungroup() %>% 
   select(norm_code_label) %>% 
-  distinct()
+  distinct()  
+# 
+# all_seeds <- all_software_found %>% 
+#   ungroup() %>% 
+#   select(norm_code_label) %>% 
+#   distinct()
 
 # all_seeds %>% sample_frac(0.5)
 
@@ -123,7 +144,7 @@ from_selection_id, from_selection_norm_code_label, from_selection_page, to_selec
 
 Filter that to find reachable mentions, given a starting norm_code_label, and a set of window sizes.
 
-```{r, eval=F}
+```{r, eval=T}
 library(cluster)
 library(janitor)
 library(furrr)
@@ -166,7 +187,7 @@ dist_matrices <- all_software_found %>%
 
 ```
 
-```{r, eval=F}
+```{r, eval=T}
 make_long <- function(dist_list) {
   simm = dist_list[[1]]
   simm %>% 
@@ -188,7 +209,7 @@ long_result <- dist_matrices %>%
 
 
 
-```{r, eval=F}
+```{r, eval=T}
 expand_window <- seq(0, 20,length.out = 4) %>% floor
 expand_window <- 0:1
 expand_window <- c(0, 1 * 1.7^(0:10) %>% 
@@ -197,17 +218,24 @@ expand_window <- c(0, 1 * 1.7^(0:10) %>%
   discard(~ .x > max(all_software_found$page / 2)))
 
 
+
 # set up experiment.
 experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
-  crossing(replication = 1:50) %>% 
+  crossing(replication = 1:25) %>% 
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
-  mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
+  mutate(
+    num_seeds_used = floor((all_seeds %>% nrow) * seed_percent),
+    curr_seeds = map(num_seeds_used, sample_n, tbl = all_seeds))
+
+experiment %>% slice(1) %>% pull(curr_seeds) %>% pluck(1) %>% nrow
+
+summary(experiment)
 ```
 
 Rest of analysis does not need to be per article (because we never report per article).  We can unnest from article, filter to starting seeds, then count what was in what window (across all articles).
 
-```{r, eval=F}
+```{r, eval=T}
 
 
 # results_of_experiment %>% slice(3:3) %>% pull(seed_starts)
@@ -247,7 +275,9 @@ find_reached <- function(seed_starts) {
 
 ```
 
-```{r, eval=F}
+```{r, eval=T}
+# experiment %>% summary
+
 unnested_mentions <- long_result %>%
   sample_frac(1) %>% 
   unnest()
@@ -265,9 +295,9 @@ experiment_with_seed_starts <- experiment %>%
   # for each experiment, a single join per experiment (ie set of seeds)
   # to find starting seeds across all articles
   mutate(seed_starts = map(curr_seeds, inner_join, unnested_mentions, by = "norm_code_label")) %>% 
-  mutate(num_seeds = map_int(seed_starts, count_seeds))
+  mutate(num_seeds_found = map_int(seed_starts, count_seeds))
 
-#  experiment_with_seed_starts %>% pull(seed_starts) %>% pluck(1)
+# experiment_with_seed_starts %>% pull(seed_starts) %>% pluck(1)
 
 results_of_experiment <- experiment_with_seed_starts %>%   
   # don't need to nest by article, because diffs are already within article
@@ -275,7 +305,8 @@ results_of_experiment <- experiment_with_seed_starts %>%
   # mutate(seed_starts_by_article = map(seed_starts, nest, article))
   transmute(seed_percent, 
             replication,
-            num_seeds,
+            num_seeds_used,
+            num_seeds_found,
             reached_count = future_map(seed_starts, find_reached, .progress = T)) %>% 
   unnest(reached_count) %>%  # expand_window + reached_in_window
   # divide by count of full set of mentions
@@ -283,7 +314,7 @@ results_of_experiment <- experiment_with_seed_starts %>%
 
 ```
 
-```{r, eval=F}
+```{r, eval=T}
 library(readr)
 
 write_csv(results_of_experiment, path=here("data", "clustering_results.csv"))
@@ -291,70 +322,60 @@ write_csv(results_of_experiment, path=here("data", "clustering_results.csv"))
 
 ```
 
-```{r, fig.height=8}
+```{r, eval = F, fig.height=8}
 results_of_experiment <- read_csv(here::here("data", "clustering_results.csv"))
+```
 
-# results_of_experiment %>% summary
-
+```{r}
+# collapse across replications
 summarized_results <- results_of_experiment %>% 
   mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
-  group_by(expand_window, seed_percent, replication) %>% 
-  summarize(mean_proportion = mean(reached_proportion))
-
-summarized_results %>% 
-  ggplot(aes(x = seed_percent, y = mean_proportion, color = expand_window)) +
-  # scale_color_brewer(type="div", palette = "RdPu") 
-  geom_point(position = position_jitter(width=0.01), alpha=0.8) +
-  # geom_line() +
-  scale_color_viridis_d(option="C") +
-  guides(colour = guide_legend(reverse=T)) +
-  facet_grid(expand_window ~ .)
-
-
-
-```
-```{r}
-
-# adding in seed_only numbers
+  group_by(expand_window, num_seeds_used, replication) %>% 
+  summarize(
+    mean_seeds_found = mean(num_seeds_found),
+    mean_proportion = mean(reached_proportion))
 
 summarized_results <- results_of_experiment %>% 
   mutate(pages_read = (expand_window * 2) + 1) %>% 
-  group_by(pages_read, seed_percent) %>% 
+  # convert expand_window to pages_read
+  group_by(pages_read, num_seeds_used) %>%
+  # collapse across num_seeds_used (was seed_percent)
   summarize(mean_proportion = mean(reached_proportion),
-            mean_seeds = mean(num_seeds),
+            mean_seeds_found = mean(num_seeds_found),
             mean_reached = mean(reached_in_window)) %>% 
   ungroup()
 
-# want to have mean_seeds be mean_reached for pages_read = 0.
-num_seeds <- summarized_results %>% 
-  select(seed_percent, mean_seeds) %>% 
-  distinct() %>% 
-  rename(mean_reached = mean_seeds) %>% 
+# want to have mean_seeds_found be mean_reached for pages_read = 0.
+num_seeds_found <- summarized_results %>%
+  select(num_seeds_used, mean_seeds_found) %>% 
+  distinct() %>%  # because num_seeds_used doesn't depend on pages_read.
+  rename(mean_reached = mean_seeds_found) %>% # reached just through text search
   mutate(pages_read = as.double(0),
          mean_proportion = mean_reached / total_mentions)
 
 summarized_results_with_seed_counts <- summarized_results %>% 
-  select(-mean_seeds) %>% 
-  bind_rows(num_seeds)
+  select(-mean_seeds_found) %>% 
+  bind_rows(num_seeds_found)
   # mutate(pages_read = parse_factor(pages_read, levels=NULL))
+```
 
-summarized_results_with_seed_counts %>% summary
-
+```{r}
 pages_read_vals = sort(summarized_results_with_seed_counts %>% pull(pages_read) %>% unique)
 
 summarized_results_with_seed_counts %>% 
-  ggplot(aes(x = seed_percent, y = mean_proportion, group = pages_read, color = pages_read)) +
+  ggplot(aes(x = num_seeds_used, y = mean_proportion, group = pages_read, color = pages_read)) +
   # scale_color_brewer(type="div", palette = "RdPu") + 
   geom_point() +
   geom_line() +
   scale_color_continuous(breaks = pages_read_vals) +
+  scale_y_continuous(limits = c(0,1)) +
   # scale_color_viridis_d(option="C") +
   guides(colour = guide_legend(reverse=T))
 ```
 
 ```{r}
 summarized_results_with_seed_counts %>% 
-  ggplot(aes(x = pages_read, y = mean_proportion, group = seed_percent, color = seed_percent)) +
+  ggplot(aes(x = pages_read, y = mean_proportion, group = num_seeds_used, color = num_seeds_used)) +
   # scale_color_brewer(type="div", palette = "RdPu") + 
   geom_point() +
   geom_line() +
