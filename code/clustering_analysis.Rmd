@@ -42,7 +42,7 @@ in_text_mentions <- read_csv(here("data/csv_dataset", "softcite_in_text_mentions
 codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv"))
 ```
 
-```{r wikidata}
+```{r wikidata, eval=F}
 library(WikidataQueryServiceR)
 
 software_wikipedia <- query_wikidata('SELECT 
@@ -56,6 +56,25 @@ WHERE {
 
 # software_wikipedia %>% 
 #   filter(norm_code_label %>% str_detect("clustal"))
+```
+
+
+```{r libraries.io, eval=F}
+
+libraries.io <- here::here("Libraries-io","Libraries.io-open-data-1.2.0", "projects-1.2.0-2018-03-12.csv") %>% 
+  read_csv %>% 
+  janitor::clean_names()
+
+libraries_io_seeds <- libraries.io %>% 
+  select(name) %>% 
+  distinct() %>% 
+  mutate(norm_code_label = name %>% str_to_lower()) %>% 
+  write_csv(here::here("Libraries-io","libraries_io_names_only.csv"))
+
+glimpse(libraries_io_seeds)
+
+
+libraries_io_seeds %>% pull(norm_code_label) %>% length %>% scales::comma()
 ```
 
 
@@ -121,10 +140,24 @@ all_software_found <- coder_most_found %>%
   inner_join(all_software_found_all_coders)
 
 # seeds from wikipedia
-all_seeds <- software_wikipedia %>% 
-  ungroup() %>% 
+# all_seeds <- software_wikipedia %>% 
+#   ungroup() %>% 
+#   select(norm_code_label) %>% 
+#   distinct()  
+
+all_seeds <- read_csv(here::here("Libraries-io","libraries_io_names_only.csv")) %>% 
   select(norm_code_label) %>% 
-  distinct()  
+  # split all components on either / a colon or a period.
+  separate_rows(norm_code_label, sep = "[/:.]") %>% 
+  distinct()
+  
+# tribble(
+#   ~norm_code_label,
+#   "com.github.jeluard",
+#   "split/me/up:god.damnit"
+# ) %>% 
+#   separate_rows(norm_code_label, sep = "[/:.]")
+
 # 
 # all_seeds <- all_software_found %>% 
 #   ungroup() %>% 
@@ -225,12 +258,12 @@ experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
   # add seeds, resampling per experiment
   # needs tbl named as tbl is first argument to sample_frac
   mutate(
-    num_seeds_used = floor((all_seeds %>% nrow) * seed_percent),
+    num_seeds_used = (floor((all_software_found %>% nrow) * seed_percent)) * 100,
     curr_seeds = map(num_seeds_used, sample_n, tbl = all_seeds))
 
-experiment %>% slice(1) %>% pull(curr_seeds) %>% pluck(1) %>% nrow
-
-summary(experiment)
+# experiment %>% slice(1) %>% pull(curr_seeds) %>% pluck(1) %>% nrow
+# 
+# summary(experiment)
 ```
 
 Rest of analysis does not need to be per article (because we never report per article).  We can unnest from article, filter to starting seeds, then count what was in what window (across all articles).
@@ -369,6 +402,7 @@ summarized_results_with_seed_counts %>%
   geom_line() +
   scale_color_continuous(breaks = pages_read_vals) +
   scale_y_continuous(limits = c(0,1)) +
+  scale_x_continuous(labels = scales::number) +
   # scale_color_viridis_d(option="C") +
   guides(colour = guide_legend(reverse=T))
 ```
