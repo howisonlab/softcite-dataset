@@ -216,7 +216,7 @@ def main(argv):
                 URIRef(u'http://www.w3.org/ns/shacl#conforms'),
                 Literal(False)) in output_graph:
                 logging.warning("SHACL issue: {}".format(output))
-                print("Validation warning, check log file")
+                print("Validation warning, check log file (./parseTurtle.log)")
             extract_assignments_csv()
         elif o == "-c":
             extract_assignments_csv()
