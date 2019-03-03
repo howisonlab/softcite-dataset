@@ -16,7 +16,7 @@ But, even after you've finished packing everything into the ship—you've commit
 
 Your boat lands at a dock you own named `Origin` and your people can unload it. This is akin to your commits being available in your fork on Github.
 
-All of that is great, and some people would stop there and call it a day. But you have you want your goods to be distributed to other people, so you need to have a store start stocking your goods. Everyone knows to go to a particular store to buy things, so you will ask that store to stock your products. If your dock is akin to your fork, the store is the Howison Lab repo. The Howison Lab repo is where the other students can get (buy) your data files (products).
+All of that is great, and some people would stop there and call it a day. But you want your goods to be distributed to other people, so you need to have a store start stocking your goods. Everyone knows to go to a particular store to buy things, so you will ask that store to stock your products. If your dock is akin to your fork, the store is the Howison Lab repo. The Howison Lab repo is where the other students can get (buy) your data files (products).
 
 So, you pack up your ship with your goods and leave the dock, moving `upstream` to the store. You can't just start putting things on the shelf yourself though, so you have to ask permission. With git, we would make a `pull` request of the Howison Lab, asking it to please incorporate our files into its repo.
 
@@ -24,6 +24,6 @@ The store inspects your goods, thinks they're great and puts them on the shelves
 
 Sometimes the store comes out with a new product you have to have. In our case, that might be an update to the coding scheme. You order that product from the store and it shows up on your island along with all of the other new products from other island merchants. In git terms, to get those updates, we would `pull` the files from `upstream`—that would give us anything from the Howison Lab that we didn't already have—the new coding scheme and other students' data files.
 
-None of this works properly if you do it out of order or skip a step. You can't commit to work if you haven't already staged it. Pushing to Origin won't do anything worthwhile if the if you haven't committed to any work. If you don't make a pull request, then Howison Lab will never have your changes. And, if there aren't any updated files in the Howison Lab repo, your pull upstream command will just come up empty.
+None of this works properly if you do it out of order or skip a step. You can't commit to work if you haven't already staged it. Pushing to Origin won't do anything worthwhile if you haven't committed to any work. If you don't make a pull request, then Howison Lab will never have your changes. And, if there aren't any updated files in the Howison Lab repo, your pull upstream command will just come up empty.
 
 [Return Home](index.md)
