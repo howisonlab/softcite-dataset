@@ -1,0 +1,191 @@
+---
+title: "export_dataset"
+author: "James Howison"
+date: "3/29/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(SPARQL)
+library(here)
+library(data.world)
+knitr::opts_chunk$set(echo = TRUE)
+
+softcite_ds <- "https://data.world/jameshowison/software-citations/"
+```
+
+softcite_ds <- "http://192.168.99.100:3030/softcite-dataset/"
+docker run -p 3030:3030 -e ADMIN_PASSWORD=pw123 -it stain/jena-fuseki 
+
+
+Data model is:
+
+article has_many selection
+selection has_many reference
+
+article has_many code_application (for coded_no_in_text_mentions)
+selection has_many code_application
+reference has_many code_application
+
+Export as four tables:
+
+1. articles
+2. in_text_selection
+3. references
+4. code_applications (coder, target_id (article|in_text_mention|reference))
+
+articles(id, literature_sample, doi, title etc.)
+coders(id, name)
+assignments(id, article_id, coder_id, when_coded, selections_found (true|false))
+selections(id, assignment_id, page, quote, in_text_or_reference, reference_in_selection)
+code_applications (id, selection_id, coder, code, code_was_present, label, memo)
+
+
+articles(id, literature_sample, doi, title etc.)
+
+assignments(article, coder, when_coded, selections_found (true|false))
+
+in_text_mentions(selection, assignment_id, page, quote)
+
+references(selection, page, quote, mention_type, from_in_text_selection)
+
+code_applications (selection, coder, code, code_was_present, label, memo)
+
+```{r}
+prefixes <- "PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+```
+
+```{r}
+articles_string <- "SELECT DISTINCT ?article ?article_set ?coder ?no_selections_found
+WHERE {
+  ?article rdf:type ?article_set;
+           ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                           citec:isPresent ?no_selections_found; 
+                         ] ;
+        ] ;
+  FILTER(?article_set != bioj:article)
+}
+"
+
+articles <- data.world::qry_sparql(paste0(prefixes, articles_string)) %>%
+  data.world::query(softcite_ds) %>% 
+  # query_sparql(url = softcite_ds, query = paste0(prefixes, articles), 
+  #     format = "csv", extra=list(format="csv"))$results %>% 
+  as_tibble() %>% 
+  mutate_at(vars(article, article_set),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, article_set), funs(str_sub(.,2))) %>% 
+  write_csv(here::here("data/csv_dataset/softcite_articles.csv"))
+```
+
+```{r}
+in_text_mention_q <- "SELECT DISTINCT ?selection ?coder ?article ?quote ?page ?mention_type ?certainty ?memo
+WHERE {
+	?article citec:has_in_text_mention ?selection .
+	?selection citec:full_quote ?quote ;
+	           citec:on_pdf_page ?page ;
+	           ca:isTargetOf [ ca:hasCoder ?coder ;
+                             ca:appliesCode [ rdf:type citec:mention_type ;
+                                              rdfs:label ?mention_type ;
+                                              ca:certainty ?certainty ;
+                                              ca:memo ?memo ]
+                            ]
+}
+"
+
+in_text_mentions <- data.world::qry_sparql(paste0(prefixes, in_text_mention_q)) %>%
+  data.world::query(softcite_ds) %>% 
+#  SPARQL(url = softcite_ds, query = paste0(prefixes, in_text_mention_q), 
+#       format = "csv", extra=list(format="csv"))$results %>% 
+  as_tibble() %>% 
+  mutate_at(vars(article, selection),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article,selection), funs(str_sub(.,2))) %>% 
+  write_csv(here::here("data/csv_dataset/softcite_in_text_mentions.csv"))
+
+```
+
+```{r}
+reference_q <- "SELECT DISTINCT ?reference ?from_in_text_selection ?article ?quote ?coder ?page ?reference_type
+WHERE {
+  ?article citec:has_in_text_mention ?from_in_text_selection .
+  ?from_in_text_selection citec:has_reference ?reference .
+	?reference citec:full_quote ?quote ;
+	           citec:on_pdf_page ?page ;
+	           ca:isTargetOf [ ca:hasCoder ?coder ;
+                             ca:appliesCode [ rdf:type citec:reference_type ;
+                                              rdfs:label ?reference_type ]
+                            ]
+}
+"
+
+references <- data.world::qry_sparql(paste0(prefixes, reference_q)) %>%
+  data.world::query(softcite_ds) %>%
+#  SPARQL(url = softcite_ds, query = paste0(prefixes, reference_q), 
+#       format = "csv", extra=list(format="csv"))$results %>% 
+  as_tibble() %>% 
+  mutate_at(vars(article, reference, from_in_text_selection),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, reference, from_in_text_selection), funs(str_sub(.,2))) %>% 
+  write_csv(here::here("data/csv_dataset/softcite_references.csv"))
+```
+
+code_applications (selection_id, coder, code, code_was_present, label, memo)
+
+```{r}
+all_codes_q <- "
+SELECT DISTINCT ?selection ?coder ?code ?was_code_present ?code_label
+WHERE {
+  ?selection ca:isTargetOf [  ca:appliesCode ?ca ;
+                              ca:hasCoder ?coder ] .
+  ?ca rdf:type ?code ;
+      citec:isPresent ?was_code_present .
+
+  OPTIONAL { ?ca rdfs:label ?code_label }
+}"
+
+codes <- data.world::qry_sparql(paste0(prefixes, all_codes_q)) %>%
+  data.world::query(softcite_ds) %>%
+#  SPARQL(url = softcite_ds, query = paste0(prefixes, all_codes_q), 
+#      format = "csv", extra=list(format="csv"))$results %>% 
+  as_tibble() %>% 
+  mutate_at(vars(selection, code),
+            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(selection, code), funs(str_sub(.,2))) %>% 
+  write_csv(here::here("data/csv_dataset/softcite_codes_applied.csv"))
+```
+
+
+```{r}
+articles %>% 
+  ggplot(aes(x=article_set)) +
+  geom_histogram(stat= "count") + 
+  facet_grid(no_selections_found ~ .)
+```
+
+```{r}
+articles %>% 
+  group_by(article_set, article) %>% 
+  summarize(coder_count = n_distinct(coder)) %>%
+  filter(coder_count > 1) %>% 
+  ggplot(aes(coder_count)) +
+  geom_histogram(stat="count") +
+  facet_grid(article_set ~ ., scales = "free")
+```
+

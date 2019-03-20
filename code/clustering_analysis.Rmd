@@ -1,0 +1,393 @@
+---
+title: "Cluster analysis of software mentions"
+author: "James Howison and Caifan Du"
+date: "10/12/2018"
+output: html_document
+---
+
+```{r}
+library(furrr)
+library(tidyverse)
+library(here) # note that this works even after moving the source file because it finds the .git root.
+```
+
+
+We suspect that the software mentions in a paper cluster together.  This would be useful to know because then we could do content analysis more quickly (because we wouldn't need to read as much of the paper in order to code mentions). We could use a "whitelist" of known package names to identify the "mention rich" parts of the papers, then code that.  But first we need to know what we might miss by making that change.
+
+Procedure candidate:
+
+On unseen papers:
+1. Convert to fulltext
+2. Search for "Seeds" taken from a whitelist of package names
+3. Assign the text in a window around any seeds for content analysis (e.g., 500 words before and 500 words after, or 1 page before and 1 page after any seed found in the fulltext).
+
+Analysis to see how this might perform:
+
+1. Generate a whitelist of known package names as "seeds".
+2. For each paper:
+  - see if those seeds were mentioned, note PDF page where found.
+  - query dataset for other mentions in that paper within X pages of where the seed was found.
+  - recall = total found using seeds / total found in paper through manual coding (gives proportion of mentions that would have been included in the window.)
+  - average recall across papers (or use a scatterplot)
+3. Repeat for many possible random samples of seeds (and take the average as the expected recall value for each paper).
+
+Repeat all that for varying window sizes (e.g., same page as seed, +/- 1 page, +/- 2 pages.)
+
+Eventually we should get a curve showing the relationship between window size and recall.
+
+load dataset.
+```{r load_dataset}
+articles <- read_csv(here("data/csv_dataset", "softcite_articles.csv"))
+in_text_mentions <- read_csv(here("data/csv_dataset", "softcite_in_text_mentions.csv"))
+codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv"))
+```
+
+
+cross that with seeds so now we have a row for each paper/seed combination.  
+
+search for those combinations.  could be in more than one spot in a paper.
+paper,seed,seed_mention,pdf_page
+
+(or start with full dataset, then filter out any that aren't our seeds)
+
+add window sizes (can add all here)
+paper,total_mention_count,seed,seed_mention,pdf_page,window_size,window_start,window_end
+
+query others than would have been found. from each paper's set of mentions, which have a pdf page value such that: paper == paper, and window_start <= seed_pdf_page <= window_end. 
+
+Then then have to merge the mentions found for each seed query.
+
+Calculate recall for each paper.
+
+Draw pretty pic.
+-----------
+
+Replanning at lunch.
+Group by article
+Nest mentions by article
+turn into page list for mentions per article
+add column which is page list for seeds, uniqued, in that article.
+Expand seed page list to range using window size.
+use interval overlap function across seed interval list and mention page list.
+
+```{r}
+all_software_found_all_coders <- codes_applied %>%
+  drop_na(code_label) %>% 
+  mutate(norm_code_label = code_label %>% str_to_lower()) %>%
+  filter(code == "software_name", 
+         was_code_present == "true") %>%
+  # select(-coder) %>%
+  left_join(in_text_mentions, by = "selection") %>%
+  select(coder = coder.x, article, selection, page, code_label, norm_code_label) %>% 
+  drop_na(page)
+  # extract(selection, into = c("coder"), remove = F, regex = ".*_(\\D+)\\d")
+
+coder_most_found <- all_software_found_all_coders %>% 
+  #  filter(article == "a2001-40-MOL_ECOL") %>% 
+  # Remove double coding
+  group_by(article, coder) %>%
+  summarize(coder_selections_found = n()) %>% 
+  ungroup() %>% 
+  group_by(article) %>% 
+  top_n(1, wt = coder_selections_found) %>% 
+  slice(1) %>% # cope with possible ties 
+  # get coder with highest number of selections, choosing randomly
+  # filter(rank(desc(coder_selections_found), ties.method = "first") == 1) %>% 
+  # regroup by article to test number of coders
+  # ungroup() %>% 
+  # group_by(article) %>% 
+  # mutate(article_num_coders = n_distinct(coder)) %>% 
+  # arrange(desc(article_num_coders)) %>% 
+  select(article, coder)
+
+# keep only codes from the single coder
+all_software_found <- coder_most_found %>% 
+  inner_join(all_software_found_all_coders)
+
+
+all_seeds <- all_software_found %>% 
+  ungroup() %>% 
+  select(norm_code_label) %>% 
+  distinct()
+
+# all_seeds %>% sample_frac(0.5)
+
+# overall total mentions
+total_mentions <- all_software_found %>% nrow
+```  
+
+
+Create a table per article of mention to mention distances.
+
+from_selection_id, from_selection_norm_code_label, from_selection_page, to_selection_id, to_selection_norm_code_label, to_selection_page, distance
+
+Filter that to find reachable mentions, given a starting norm_code_label, and a set of window sizes.
+
+```{r, eval=F}
+library(cluster)
+library(janitor)
+library(furrr)
+library(broom)
+
+options(future.globals.maxSize= 2048*4*1024^2)
+plan(multiprocess)
+
+# test_frame <- test_frame[[1]]
+
+# my_tibl <- test_frame
+
+tidy_daisy <- function(my_tibl) {
+  sel_names <- my_tibl %>% pull(sel_name)
+  df <- as.data.frame(my_tibl %>% select(page))
+  row.names(df) <- sel_names
+  # have to return Differences object in a list or dplyr/purrr screws with it
+  # something to do with column name hate.
+  list(daisy(df, metric = "euclidean")) # %>% as.matrix %>% as.data.frame %>% rownames_to_column()
+}
+
+
+dist_matrices <- all_software_found %>%
+  mutate(norm_code_label = norm_code_label %>% str_replace_all("\\s", "---")) %>% 
+  unite(sel_name, selection, norm_code_label, sep = "~~") %>% 
+  select(-code_label) %>%
+  distinct() %>% 
+  nest(-article, .key = software_found) %>% 
+  # slice(7:7) %>% 
+  # pull(software_found)
+  transmute(article,
+            dist_result = map(software_found, tidy_daisy)) 
+  # mutate(dist_result = future_map(software_found, quietly_tidy_daisy, .progress = T))
+
+# my_dist <- dist_matrices %>% slice(7) %>% pull(dist_result) %>% pluck(1, 1)
+
+# broom::tidy(as.dist(my_dist), upper = T, diagonal = T)
+
+
+
+```
+
+```{r, eval=F}
+make_long <- function(dist_list) {
+  simm = dist_list[[1]]
+  simm %>% 
+    as.dist %>% 
+    tidy(upper = T, diagonal = T) %>% 
+    separate(item2, into = c("to_selection", "to_norm_code_label"), sep = "~~") %>% 
+    separate(item1, into = c("selection", "norm_code_label"), sep = "~~") %>%
+    mutate(norm_code_label = str_replace_all(norm_code_label, "---", " "),
+           to_norm_code_label = str_replace_all(to_norm_code_label, "---", " ")) %>% 
+    rename(page_diff = distance)
+}
+
+long_result <- dist_matrices %>% 
+  transmute(article = article,
+            long_result = map(dist_result, make_long))
+
+# long_result %>% slice(7) %>% pull(long_result) %>% pluck(1) %>% View()
+```
+
+
+
+```{r, eval=F}
+expand_window <- seq(0, 20,length.out = 4) %>% floor
+expand_window <- 0:1
+expand_window <- c(0, 1 * 1.7^(0:10) %>% 
+  ceiling %>% 
+  unique %>% 
+  discard(~ .x > max(all_software_found$page / 2)))
+
+
+# set up experiment.
+experiment <- crossing(seed_percent = seq(0.05, 1, by = 0.05)) %>%
+  crossing(replication = 1:50) %>% 
+  # add seeds, resampling per experiment
+  # needs tbl named as tbl is first argument to sample_frac
+  mutate(curr_seeds = map(seed_percent, sample_frac, tbl = all_seeds))
+```
+
+Rest of analysis does not need to be per article (because we never report per article).  We can unnest from article, filter to starting seeds, then count what was in what window (across all articles).
+
+```{r, eval=F}
+
+
+# results_of_experiment %>% slice(3:3) %>% pull(seed_starts)
+
+# seed_starts <- experiment_with_seed_starts %>% slice(1:1) %>% pull(seed_starts) %>% pluck(1)
+
+# find_reached(results_of_experiment %>% slice(2:2) %>% pull(seed_starts) %>% pluck(1))
+
+# expand_window is a list outside the dataframe
+find_reached <- function(seed_starts) {
+  # seed starts has a row for each selection from each seed.  But need to reduce
+  # that so we only find each selection once.  Going to keep the distance to the closest seed.
+  closest_seeds <- seed_starts %>% 
+    group_by(to_selection) %>% 
+    # top_n(1, page_diff)
+    filter(rank(page_diff, ties.method = "first") == 1) # top_n returns ties.
+  
+  diff_vector <- closest_seeds %>% pull(page_diff)
+  # add a zero at the start to ensure count left of first break is included
+  # add the largest page size to the right, for mentions outside the window
+  # that is dropped but there to avoid an error.
+  expand_window_breaks <- c(0, expand_window, max(diff_vector))
+  counts <- hist(diff_vector, 
+                 expand_window_breaks, 
+                 plot = FALSE, include.lowest = T) %>%
+    pluck("counts") %>% 
+    cumsum() %>% # things in lower windows are in higher windows. 
+    head(-1) # drop max   
+  
+  # return in format suitable for unnest.
+  as.tibble(list(expand_window = expand_window,
+                 reached_in_window = counts))
+}
+
+
+# find_reached(experiment_with_data %>% slice(1:1) %>% pull(seed_starts) %>% pluck(1))
+
+```
+
+```{r, eval=F}
+unnested_mentions <- long_result %>%
+  sample_frac(1) %>% 
+  unnest()
+  
+
+# seed_starts <- experiment_with_seed_starts %>% pull(seed_starts) %>% pluck(1)
+
+count_seeds <- function(seed_starts) {
+  seed_starts %>% 
+    pull(selection) %>% 
+    n_distinct()
+}
+
+experiment_with_seed_starts <- experiment %>% 
+  # for each experiment, a single join per experiment (ie set of seeds)
+  # to find starting seeds across all articles
+  mutate(seed_starts = map(curr_seeds, inner_join, unnested_mentions, by = "norm_code_label")) %>% 
+  mutate(num_seeds = map_int(seed_starts, count_seeds))
+
+#  experiment_with_seed_starts %>% pull(seed_starts) %>% pluck(1)
+
+results_of_experiment <- experiment_with_seed_starts %>%   
+  # don't need to nest by article, because diffs are already within article
+  # and never report article stats.
+  # mutate(seed_starts_by_article = map(seed_starts, nest, article))
+  transmute(seed_percent, 
+            replication,
+            num_seeds,
+            reached_count = future_map(seed_starts, find_reached, .progress = T)) %>% 
+  unnest(reached_count) %>%  # expand_window + reached_in_window
+  # divide by count of full set of mentions
+  mutate(reached_proportion = reached_in_window / total_mentions)
+
+```
+
+```{r, eval=F}
+library(readr)
+
+write_csv(results_of_experiment, path=here("data", "clustering_results.csv"))
+
+
+```
+
+```{r, fig.height=8}
+results_of_experiment <- read_csv(here::here("data", "clustering_results.csv"))
+
+# results_of_experiment %>% summary
+
+summarized_results <- results_of_experiment %>% 
+  mutate(expand_window = parse_factor(expand_window, levels=NULL)) %>% 
+  group_by(expand_window, seed_percent, replication) %>% 
+  summarize(mean_proportion = mean(reached_proportion))
+
+summarized_results %>% 
+  ggplot(aes(x = seed_percent, y = mean_proportion, color = expand_window)) +
+  # scale_color_brewer(type="div", palette = "RdPu") 
+  geom_point(position = position_jitter(width=0.01), alpha=0.8) +
+  # geom_line() +
+  scale_color_viridis_d(option="C") +
+  guides(colour = guide_legend(reverse=T)) +
+  facet_grid(expand_window ~ .)
+
+
+
+```
+```{r}
+
+# adding in seed_only numbers
+
+summarized_results <- results_of_experiment %>% 
+  mutate(pages_read = (expand_window * 2) + 1) %>% 
+  group_by(pages_read, seed_percent) %>% 
+  summarize(mean_proportion = mean(reached_proportion),
+            mean_seeds = mean(num_seeds),
+            mean_reached = mean(reached_in_window)) %>% 
+  ungroup()
+
+# want to have mean_seeds be mean_reached for pages_read = 0.
+num_seeds <- summarized_results %>% 
+  select(seed_percent, mean_seeds) %>% 
+  distinct() %>% 
+  rename(mean_reached = mean_seeds) %>% 
+  mutate(pages_read = as.double(0),
+         mean_proportion = mean_reached / total_mentions)
+
+summarized_results_with_seed_counts <- summarized_results %>% 
+  select(-mean_seeds) %>% 
+  bind_rows(num_seeds)
+  # mutate(pages_read = parse_factor(pages_read, levels=NULL))
+
+summarized_results_with_seed_counts %>% summary
+
+pages_read_vals = sort(summarized_results_with_seed_counts %>% pull(pages_read) %>% unique)
+
+summarized_results_with_seed_counts %>% 
+  ggplot(aes(x = seed_percent, y = mean_proportion, group = pages_read, color = pages_read)) +
+  # scale_color_brewer(type="div", palette = "RdPu") + 
+  geom_point() +
+  geom_line() +
+  scale_color_continuous(breaks = pages_read_vals) +
+  # scale_color_viridis_d(option="C") +
+  guides(colour = guide_legend(reverse=T))
+```
+
+```{r}
+summarized_results_with_seed_counts %>% 
+  ggplot(aes(x = pages_read, y = mean_proportion, group = seed_percent, color = seed_percent)) +
+  # scale_color_brewer(type="div", palette = "RdPu") + 
+  geom_point() +
+  geom_line() +
+  scale_x_log10() +
+  scale_color_viridis_c(option="C") +
+  guides(colour = guide_legend(reverse=T))
+```
+```{r}
+# summarized_results_with_seed_counts %>% 
+#   filter(mean_seeds > mean_reached)
+
+summarized_results_with_seed_counts %>% 
+  ggplot(aes(x = seed_percent, y = mean_reached, group = pages_read, color = pages_read)) +
+  # scale_color_brewer(type="div", palette = "RdPu") + 
+  geom_point() +
+  geom_line() +
+ #  geom_hline(aes(yintercept = mean_seeds, color = pages_read)) +
+  # scale_y_log10() +
+  scale_color_viridis_c(option="C", breaks = pages_read_vals) +
+  guides(colour = guide_legend(reverse=T))
+```
+
+```{r, fig.height = 16, fig.width = 3}
+# waterfall style.  Need to add start, end for each pages_read.
+summarized_results_with_seed_counts %>% 
+  arrange(seed_percent, pages_read) %>% 
+  group_by(seed_percent) %>% 
+  mutate(start_mentions = lag(mean_reached, default = 0.0),
+         end_mentions = mean_reached) %>% 
+  ggplot(aes(x= pages_read, y = mean_reached, 
+             ymin = start_mentions, ymax = end_mentions,
+             xmin = pages_read - 0.5, xmax = pages_read + 0.5)) +
+  geom_rect() + 
+  facet_grid(seed_percent ~ .)
+```
+
