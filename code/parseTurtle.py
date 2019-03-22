@@ -53,7 +53,6 @@ def parse_each_file(files):
     for file_to_check in files:
         parse_individual_file(file_to_check)
 
-
 def validate_file(file_to_check):
     """A valid file passes these checks.
 
@@ -68,20 +67,6 @@ def validate_file(file_to_check):
     except Exception as err:
         logging.warning("Formatting issue: {}".format(str(err)))
         # raise
-
-
-# def check_article_url(file_graph):
-#     article_url = URIRef(u'http://james.howison.name/ontologies/bio-journal-sample#article')
-#     print("Checking article URL")
-#     article_statements = file_graph.subjects(RDF.type,
-#                                           article_url)
-#
-#
-#     for art in article_statements:
-#         print(art)
-#
-#     return file_graph
-
 
 def check_selections_in_body(file_graph, file_to_check):
     selections_in_header = file_graph.objects( predicate =  URIRef(u'http://james.howison.name/ontologies/software-citation-coding#has_in_text_mention'))
@@ -152,6 +137,42 @@ def build_parse_data_set(dir_to_check="data"):
 
     return all_files
 
+def shacl_validate():
+    output = subprocess.check_output([
+    'sh',
+    'shacl-1.1.0/bin/shaclvalidate.sh',
+    '-shapesfile',
+    'data/softcite_shacl_constraints.ttl',
+    '-datafile',
+    'data/full_dataset.ttl'])
+
+    output_graph = rdflib.Graph()
+    output_graph.parse(data=output, format="n3")
+    output_graph.serialize(destination='shacl_validate.ttl', format='turtle')
+    shacl_report()
+
+
+def shacl_report():
+    output_graph = rdflib.Graph()
+    output_graph.parse('shacl_validate.ttl', format="turtle")
+    shacl_error_query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?error_node ?error_message
+        WHERE {
+            ?res a sh:ValidationResult .
+            ?res sh:focusNode ?error_node .
+            ?res sh:resultMessage ?error_message .
+        }
+        """
+    qres = output_graph.query(shacl_error_query)
+    # qres.serialize('validation_results.csv', format = "csv")
+    for row in qres:
+        print("Shacl validation issues (./parseTurtle.log)")
+        node = row.error_node.n3(output_graph.namespace_manager)
+        message = row.error_message.n3(output_graph.namespace_manager)
+#pprint.pprint(rowDict)
+        logging.warning("{},{}".format(node, message))
+
 
 def extract_assignments_csv():
     import pymysql
@@ -183,13 +204,13 @@ def extract_assignments_csv():
 
 
 def usage():
-    print("-a <directory> to parse all files, -f <filename> for just one file")
+    print("-a <directory> to parse all files, -f <filename> for just one file, -s shacl_validate")
 
 
 def main(argv):
     grammar = "kant.xml"
     try:
-        opts, args = getopt.getopt(argv, "uca:f:", ["help", "grammar="])
+        opts, args = getopt.getopt(argv, "ucsa:f:", ["help", "grammar="])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -202,22 +223,14 @@ def main(argv):
               destination="data/full_dataset.ttl",
               format="turtle"
             )
-            output = subprocess.check_output([
-            'sh',
-            'shacl-1.1.0/bin/shaclvalidate.sh',
-            '-shapesfile',
-            'data/softcite_shacl_constraints.ttl',
-            '-datafile',
-            'data/full_dataset.ttl'])
+            shacl_validate()
 
-            output_graph = rdflib.Graph()
-            output_graph.parse(data=output, format="n3")
-            if (None,
-                URIRef(u'http://www.w3.org/ns/shacl#conforms'),
-                Literal(False)) in output_graph:
-                logging.warning("SHACL issue: {}".format(output))
-                print("Validation warning, check log file")
-            extract_assignments_csv()
+            # if (None,
+            #     URIRef(u'http://www.w3.org/ns/shacl#conforms'),
+            #     Literal(False)) in output_graph:
+            #     logging.warning("SHACL issue: {}".format(output))
+            #     print("Validation warning, check log file (./parseTurtle.log)")
+            # extract_assignments_csv()
         elif o == "-c":
             extract_assignments_csv()
         elif o == "-u":
@@ -239,6 +252,9 @@ def main(argv):
             print(reply)
         elif o == "-f":
             validate_file(a)
+        elif o == "-s":
+            # shacl_report()
+            shacl_validate()
         else:
             assert False, "unhandled option"
 
@@ -247,7 +263,8 @@ if __name__ == '__main__':
     progressbar.streams.wrap_stderr()
     logging.basicConfig(filename='parseTurtle.log',
                         filemode="w",
-                        level=logging.WARN)
+                        level=logging.WARN,
+                        format='%(message)s')
     logging.warning("Logging enabled")
 
     main(sys.argv[1:])
