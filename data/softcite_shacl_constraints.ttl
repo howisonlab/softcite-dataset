@@ -126,6 +126,62 @@ citec:MentionTypeApplicationShape a sh:NodeShape ;
     ]
 .
 
+citec:software_nameShape a sh:NodeShape ;
+    sh:targetClass citec:in_text_mention ;
+    # sh:property [
+    #     sh:path citec:isPresent ;
+    #     sh:datatype xsd:boolean ;
+    #     sh:message   "isPresent must be true or false"
+    # ] ;
+    sh:sparql [
+		a sh:SPARQLConstraint ;   # This triple is optional
+		sh:message "If software_name isPresent must be xsd:boolean" ;
+		sh:prefixes citec:prefixes ;
+		sh:select """
+			SELECT ?this ?path ?value
+            WHERE {
+                ?this ca:isTargetOf ?ca .
+                ?ca ca:appliesCode ?path .
+                ?path citec:isPresent ?value .
+                FILTER(datatype(?value) != xsd:boolean)
+            }
+			""" ;
+    ] ;
+.
+
+citec:software_nameShape a sh:NodeShape ;
+    sh:targetClass citec:reference  ;
+    # sh:property [
+    #     sh:path citec:isPresent ;
+    #     sh:datatype xsd:boolean ;
+    #     sh:message   "isPresent must be true or false"
+    # ] ;
+    sh:sparql [
+		a sh:SPARQLConstraint ;   # This triple is optional
+		sh:message "isPresent must be xsd:boolean (reference)" ;
+		sh:prefixes citec:prefixes ;
+		sh:select """
+			SELECT ?this ?path ?value
+            WHERE {
+                ?this ca:isTargetOf ?ca .
+                ?ca ca:appliesCode ?path .
+                ?path citec:isPresent ?value .
+                FILTER(datatype(?value) != xsd:boolean)
+            }
+			""" ;
+    ] ;
+.
+
+    #
+    # ca:isTargetOf
+    #     [ rdf:type ca:CodeApplication ;
+    #       ca:hasCoder "skkk9705" ;
+    #       ca:appliesCode [ rdf:type                citec:software_name ;
+    #                        citec:isPresent true ;
+    #                        rdfs:label """Modeltest""" ;
+    #                      ] ;
+    #     ] ;
+
 # ca:isTargetOf
 #     [ rdf:type ca:CodeApplication ;
 #       ca:hasCoder "jlcohoon" ;
