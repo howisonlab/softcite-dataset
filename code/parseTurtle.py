@@ -101,10 +101,10 @@ def build_parse_data_set(dir_to_check="data"):
 
     all_files = rdflib.Graph()
 
-    for file_to_check in progressbar.progressbar(files):
-        # print("Validating {}".format(file_to_check))
-        # validate_file(file_to_check)
-        # print("Parsing {}".format(file_to_check))
+    for file_to_check in files:
+        print("Validating {}".format(file_to_check))
+        validate_file(file_to_check)
+        print("Parsing {}".format(file_to_check))
         all_files.parse(file_to_check, format="n3")
 
     pmc_articles = all_files.query("""
