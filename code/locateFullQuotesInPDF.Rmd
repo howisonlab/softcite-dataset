@@ -7,8 +7,10 @@ output: html_notebook
 # library(plyr)
 library(tidyverse)
 library(data.world) # loads saved config see quickstart vignette
+# vignette("quickstart", package = "data.world")
 
 prefixes <- "
+
 PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
 PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
 PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
@@ -62,9 +64,11 @@ WHERE {
     }"
 ))
 
-top_codes <- data.world::query(top_code_query, softcite_ds)
-top_codes <- as.tibble(top_codes) %>% 
+top_codes <- data.world::query(top_code_query, softcite_ds) 
+# get 7,026 selections
+top_codes <- as_tibble(top_codes) %>% 
   filter(str_detect(article, "PMC"))
+# get 5,782 selections only from PMC articles
 
 # top_codes %>%
 #   group_by(article) %>%
@@ -92,6 +96,7 @@ no_selection_articles <- data.world::query(no_selection_query,
          matched = 0,
          unmatched = 0) %>% 
   collect()
+# 3,732 coding without selections. 3,432 distinct coded article without selections, some were multi-coded.
 ```
 
 
@@ -115,7 +120,8 @@ top_codes <- top_codes %>%
 
 top_codes %>% summarize(num_articles = n_distinct(article),
                         num_coders = n_distinct(coder),
-                        num_selections = n_distinct(selection))
+                        num_selections = n_distinct(selection)) %>% View()
+# 1,354 articles coded; 37 coders; 5779 selections
 
 top_codes %>% group_by(article, coder) %>% 
   summarize(num_selections = n_distinct(selection)) %>% 
@@ -123,11 +129,12 @@ top_codes %>% group_by(article, coder) %>%
   filter(article == "PMC4441238")
 
 ```
+Normalize text by removing whitespaces, lowering cases, and removing all the quoted url.
 
 ```{r}
 norm_text <- function(text_to_norm){
   text_to_norm %>% 
-    str_replace_all("[\\r\\n\\s]" , "") %>% 
+    str_replace_all("[\\r\\n\\s]" , "") %>% # removing white spaces & line breaks & carriage returns
     str_replace_all("\\(http.*?\\)" , "") %>% 
     str_to_lower()
 }
@@ -143,8 +150,9 @@ Try locating in XML files.
 library(xml2)
 library(glue)
 
-path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
-
+# path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
+path = "C:/Users/D/Documents/Academics/2-Projects/HowisonLab/softcite-pdf-files/docs/pdf-files/pmc_oa_files"
+  
 test_articles <- tribble(
   ~pmcid,
   "PMC5381613", 
@@ -154,7 +162,7 @@ test_articles <- tribble(
 articles <- top_codes %>% select(article) %>% distinct()
 
 articles <- articles %>% 
-  mutate(xml_path       = glue_data(., "{path}{article}.xml"),
+  mutate(xml_path       = glue_data(., "{path}/{article}.xml"),
          article_as_xml = map(xml_path, read_xml),
          pdf_as_string  = map_chr(article_as_xml, xml_text),
          pdf_as_string  = norm_text(pdf_as_string))
@@ -162,18 +170,22 @@ articles <- articles %>%
 ```
 
 Now load the pdf for each article
+(Fan @Jan 29, 2020: looks like this section extracts text from pdf. Do we need it now?)
 
 ```{r, eval=F}
 # library(extractr)
-# 
+# Fan @Jan 29, 2020: package abandoned and archived
+# library(pdftools)
+
 # # locate PDFs
 # folder <-  "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-dataset/docs/pdf-files/pmc_oa_files/"
-# 
-# articles <- top_codes %>% 
-#   select(article) %>% 
-#   distinct() %>% 
+# folder <-  "C:/Users/D/Documents/Academics/2-Projects/HowisonLab/softcite-pdf-files/docs/pdf-files/pmc_oa_files"
+
+# articles <- top_codes %>%
+#   select(article) %>%
+#   distinct() %>%
 #   mutate(path = str_c(folder, article, ".pdf", sep=""))
-# 
+
 # # load pdfs.
 # my_extract <- function(p) {
 #   pdf_t <- extract(p)
@@ -181,12 +193,17 @@ Now load the pdf for each article
 #   no_linebreaks <- str_replace_all(as_text, "[\\r\\n\\s]" , "")
 #   return(no_linebreaks)
 # }
-# 
-# # with an unvectorized function use map (or use rowwise())
-# articles <- articles %>% 
-#   mutate(pdf_as_string = map_chr(path, my_extract)) 
+# my_extract <- function(p) {
+#   pdf_t <- pdf_text(p)
+#   no_linebreaks <- str_replace_all(pdf_t, "[\\r\\n\\s]", "")
+#   return(no_linebreaks)
+# }
 
-# articles %>% filter(article == "PMC1747177")
+# with an unvectorized function use map (or use rowwise())
+# articles <- articles %>%
+#     mutate(pdf_as_string = map_chr(path, my_extract))
+  
+  # articles %>% filter(article == "PMC1747177")
 
 # known_problematic = c("PMC5039120_SK02", "PMC5039120_BB02",
 #                       # interspersed columns
@@ -221,6 +238,8 @@ top_codes <- top_codes %>%
   mutate(norm_full_quote = norm_text(full_quote))
 
 # for each article, run a function
+# do the selection matching for all the selections that an article has
+# this function wraps the match_selection()
 match_in_article <- function(df) {
   #df <- top_codes[36, ]
   art <- df[[1, "article"]] # grouping variable
@@ -229,17 +248,21 @@ match_in_article <- function(df) {
   df %>% group_by(selection) %>% do(match_selection(., BString(pdf_as_string)))
 }
 
+# match a manually extracted full quote from the input with a single whole article string and calculate some matching statistics at the article level
 match_selection <- function(df, pdf_as_xstring) {
   norm_full_quote <- df[[1, "norm_full_quote"]]
-  # Attempt exact match (without indels)
+  # Attempt exact match (without indels) first
   results <- matchPattern(norm_full_quote, pdf_as_xstring)
   if (length(results) == 0) {
-      mismatch_allow <- floor(str_length(norm_full_quote) / 10)
+      mismatch_allow <- floor(str_length(norm_full_quote) / 10) 
       # mismatch_allow <- 10
+      #(Fan @Jan 29, 2020: Why picking this threshold value?)
       results <- matchPattern(norm_full_quote, pdf_as_xstring,
                           with.indels = T, max.mismatch = mismatch_allow)
+      #(Fan @Jan 29, 2020: only the "best local matches" are returned by matchPattern. i.e., with the shortest edit distance)
   }
   
+  #(Fan @Jan 29, 2020: pdf_as_xstring = BString(pdf_as_string). Using the XString object class in BioString)
   if (length(results) == 0) {
     # warning(paste0("Not found: ", df[[1, "selection"]], "\n"))
     df %>% mutate(found = F, num_found = 0, start_val = NA, end_val = NA)
@@ -257,13 +280,15 @@ match_selection <- function(df, pdf_as_xstring) {
   # filter(article == "PMC5390613") %>%  # some misses 
   # filter(article == "PMC2518490") %>% # | article == "PMC2978351") %>% 
   group_by(article) %>% 
-  do(match_in_article(.)) %>% # adds the num_found, start_val, end_val
+  do(match_in_article(.)))
+  found %>% # adds the num_found, start_val, end_val
   filter(num_found == 1) %>% 
-  unnest() %>% # unlists the start_val and end_val columns
+  unnest(cols = c(start_val,end_val)) %>% # unlists the start_val and end_val columns # Fan @Jan 29, 2020: unfold the group results for each observation in the group
   ungroup() %>% 
   select(-norm_full_quote, -num_found, -found, -spans_pages) %>% 
-  collect())
-
+  collect() %>% View()
+# Fan @Feb 5, 2020: matched the full quote in each selection with the pdf with their offsets
+  
 # Now need to figure out which overlap with which.
 
 # Selections can only match selections in the same article. 
@@ -282,6 +307,7 @@ match_selection <- function(df, pdf_as_xstring) {
   # ( start1 <= end2 and start2 <= end1 )
   filter(start_val.x <= end_val.y, 
           start_val.y <= end_val.x) %>% 
+    # Fan @Feb 5, 2020: cannot compare between 2 lists
   # used as a check
   # select(full_quote.x, full_quote.y) %>% 
   # unite(matched_selections, selection.x, selection.y, sep="---") %>% 
