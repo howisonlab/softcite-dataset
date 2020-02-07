@@ -62,8 +62,8 @@ WHERE {
     }"
 ))
 
-top_codes <- data.world::query(top_code_query, softcite_ds)
-top_codes <- as.tibble(top_codes) %>% 
+top_codes <- data.world::query(top_code_query, softcite_ds) %>% 
+  as_tibble() %>% 
   filter(str_detect(article, "PMC"))
 
 # top_codes %>%
@@ -105,8 +105,8 @@ SPARQL queries return everything as URLs, but we want just the localPart at the 
 ```{r}
 top_codes <- top_codes %>%
        mutate_at(vars(article, selection),
-                 funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
-       mutate_at(vars(article,selection), funs(str_sub(.,2)))
+                 list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article,selection), list(~ str_sub(.,2)))
 ```
 
 
@@ -143,7 +143,7 @@ Try locating in XML files.
 library(xml2)
 library(glue)
 
-path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
+path <-  here::here("../softcite-pdf-files/docs/pdf-files/pmc_oa_files/")
 
 test_articles <- tribble(
   ~pmcid,
@@ -407,6 +407,8 @@ simple_agree_counts_by_article %>%
 
   
 View(simple_agree_counts_by_article)
+
+simple_agree_counts_by_article <- read_csv("simple_agree_counts_by_article.csv")
   
   #  # Now summarize by article, collapsing across coders 
   # group_by(article) %>% 
@@ -425,11 +427,18 @@ View(simple_agree_counts_by_article)
 
 
 
-simple_agree_counts_by_article %>% group_by(num_coder) %>% tally()
+simple_agree_counts_by_article %>% 
+  filter(num_coders > 1) %>% 
+  group_by(agree_percent) %>% tally()
 
 simple_agree_counts_by_article %>% 
   ggplot() +
-  geom_histogram(aes(x=percent_agree), bins=5)
+  geom_histogram(aes(x=agree_percent), bins=5)
+
+simple_agree_counts_by_article %>% 
+  filter(num_coders > 1) %>% 
+  ggplot() +
+  geom_histogram(aes(x=agree_percent), bins=5)
 ```
 
 ```{r}
