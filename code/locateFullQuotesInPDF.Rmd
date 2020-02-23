@@ -14,7 +14,7 @@ prefixes <- "
 PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
 PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
 PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
-PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#>
 PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
 PREFIX doap: <http://usefulinc.com/ns/doap#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -64,9 +64,8 @@ WHERE {
     }"
 ))
 
-top_codes <- data.world::query(top_code_query, softcite_ds) 
-# get 7,026 selections
-top_codes <- as_tibble(top_codes) %>% 
+top_codes <- data.world::query(top_code_query, softcite_ds) %>%
+  as_tibble() %>%
   filter(str_detect(article, "PMC"))
 # get 5,782 selections only from PMC articles
 
@@ -79,7 +78,7 @@ top_codes <- as_tibble(top_codes) %>%
 
 ```{r}
 no_selection_query <- data.world::qry_sparql(paste(prefixes,
-      "SELECT ?article ?coder 
+      "SELECT ?article ?coder
        WHERE { ?article ca:isTargetOf
                [ rdf:type ca:CodeApplication ;
                  ca:hasCoder ?coder ;
@@ -89,12 +88,12 @@ no_selection_query <- data.world::qry_sparql(paste(prefixes,
     }"
 ))
 
-no_selection_articles <- data.world::query(no_selection_query, 
-                                           dataset = softcite_ds) %>% 
+no_selection_articles <- data.world::query(no_selection_query,
+                                           dataset = softcite_ds) %>%
   mutate(article = str_extract(article, "[#/]([^#/]+)$"),
          article = str_sub(article,2),
          matched = 0,
-         unmatched = 0) %>% 
+         unmatched = 0) %>%
   collect()
 # 3,732 coding without selections. 3,432 distinct coded article without selections, some were multi-coded.
 ```
@@ -107,11 +106,20 @@ no_selection_articles <- data.world::query(no_selection_query,
 
 SPARQL queries return everything as URLs, but we want just the localPart at the end.
 
+Regex means :Find the last # or / from the end of the string, then get everything.  Thus
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1538888
+
+becomes
+
+PMC1538888
+
+
 ```{r}
 top_codes <- top_codes %>%
        mutate_at(vars(article, selection),
-                 funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
-       mutate_at(vars(article,selection), funs(str_sub(.,2)))
+                 list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+       mutate_at(vars(article, selection), list(~ str_sub(.,2)))
 ```
 
 
@@ -123,9 +131,9 @@ top_codes %>% summarize(num_articles = n_distinct(article),
                         num_selections = n_distinct(selection)) %>% View()
 # 1,354 articles coded; 37 coders; 5779 selections
 
-top_codes %>% group_by(article, coder) %>% 
-  summarize(num_selections = n_distinct(selection)) %>% 
-  arrange(desc(num_selections)) %>% 
+top_codes %>% group_by(article, coder) %>%
+  summarize(num_selections = n_distinct(selection)) %>%
+  arrange(desc(num_selections)) %>%
   filter(article == "PMC4441238")
 
 ```
@@ -133,9 +141,9 @@ Normalize text by removing whitespaces, lowering cases, and removing all the quo
 
 ```{r}
 norm_text <- function(text_to_norm){
-  text_to_norm %>% 
+  text_to_norm %>%
     str_replace_all("[\\r\\n\\s]" , "") %>% # removing white spaces & line breaks & carriage returns
-    str_replace_all("\\(http.*?\\)" , "") %>% 
+    str_replace_all("\\(http.*?\\)" , "") %>%
     str_to_lower()
 }
 
@@ -150,31 +158,28 @@ Try locating in XML files.
 library(xml2)
 library(glue)
 
-# path = "/Users/howison/Documents/UTexas/Projects/SloanSoftCite/softcite-pdf-files/docs/pdf-files/pmc_oa_files/"
-path = "C:/Users/D/Documents/Academics/2-Projects/HowisonLab/softcite-pdf-files/docs/pdf-files/pmc_oa_files"
-  
+path <-  here::here("../softcite-pdf-files/docs/pdf-files/pmc_oa_files/")
+
 test_articles <- tribble(
   ~pmcid,
-  "PMC5381613", 
-  "PMC5421183" 
+  "PMC5381613",
+  "PMC5421183"
 )
 
 articles <- top_codes %>% select(article) %>% distinct()
 
-articles <- articles %>% 
+articles <- articles %>%
   mutate(xml_path       = glue_data(., "{path}/{article}.xml"),
          article_as_xml = map(xml_path, read_xml),
          pdf_as_string  = map_chr(article_as_xml, xml_text),
          pdf_as_string  = norm_text(pdf_as_string))
-                        
+
 ```
 
 Now load the pdf for each article
-(Fan @Jan 29, 2020: looks like this section extracts text from pdf. Do we need it now?)
 
 ```{r, eval=F}
 # library(extractr)
-# Fan @Jan 29, 2020: package abandoned and archived
 # library(pdftools)
 
 # # locate PDFs
@@ -202,12 +207,12 @@ Now load the pdf for each article
 # with an unvectorized function use map (or use rowwise())
 # articles <- articles %>%
 #     mutate(pdf_as_string = map_chr(path, my_extract))
-  
+
   # articles %>% filter(article == "PMC1747177")
 
 # known_problematic = c("PMC5039120_SK02", "PMC5039120_BB02",
 #                       # interspersed columns
-#                       "PMC3198286_MD03", 
+#                       "PMC3198286_MD03",
 #                       # interspersed headers
 #                       "PMC4926940_MS01", "PMC4926940_SK01",
 #                       # interspersed columns
@@ -234,7 +239,7 @@ library(Biostrings)
 library(tidyverse)
 library(clipr)
 
-top_codes <- top_codes %>% 
+top_codes <- top_codes %>%
   mutate(norm_full_quote = norm_text(full_quote))
 
 # for each article, run a function
@@ -243,7 +248,7 @@ top_codes <- top_codes %>%
 match_in_article <- function(df) {
   #df <- top_codes[36, ]
   art <- df[[1, "article"]] # grouping variable
-  pdf_as_string = (articles %>% filter(article == art))$pdf_as_string[[1]] 
+  pdf_as_string = (articles %>% filter(article == art))$pdf_as_string[[1]]
   # ddply(df, .(selection), match_selection, BString(pdf_as_string))
   df %>% group_by(selection) %>% do(match_selection(., BString(pdf_as_string)))
 }
@@ -254,15 +259,12 @@ match_selection <- function(df, pdf_as_xstring) {
   # Attempt exact match (without indels) first
   results <- matchPattern(norm_full_quote, pdf_as_xstring)
   if (length(results) == 0) {
-      mismatch_allow <- floor(str_length(norm_full_quote) / 10) 
-      # mismatch_allow <- 10
-      #(Fan @Jan 29, 2020: Why picking this threshold value?)
+      mismatch_allow <- floor(str_length(norm_full_quote) / 10)
+      # mismatch_allow <- 10 I tried lots of different values here
       results <- matchPattern(norm_full_quote, pdf_as_xstring,
                           with.indels = T, max.mismatch = mismatch_allow)
-      #(Fan @Jan 29, 2020: only the "best local matches" are returned by matchPattern. i.e., with the shortest edit distance)
   }
-  
-  #(Fan @Jan 29, 2020: pdf_as_xstring = BString(pdf_as_string). Using the XString object class in BioString)
+
   if (length(results) == 0) {
     # warning(paste0("Not found: ", df[[1, "selection"]], "\n"))
     df %>% mutate(found = F, num_found = 0, start_val = NA, end_val = NA)
@@ -275,51 +277,51 @@ match_selection <- function(df, pdf_as_xstring) {
 }
 
 # the dot here is a pronoun for the group, ie the split up dataframe.
-(found <- top_codes %>% 
+(found <- top_codes %>%
   # filter(article == "PMC5042035") %>% # all match
-  # filter(article == "PMC5390613") %>%  # some misses 
-  # filter(article == "PMC2518490") %>% # | article == "PMC2978351") %>% 
-  group_by(article) %>% 
-  do(match_in_article(.)))
-  found %>% # adds the num_found, start_val, end_val
-  filter(num_found == 1) %>% 
-  unnest(cols = c(start_val,end_val)) %>% # unlists the start_val and end_val columns # Fan @Jan 29, 2020: unfold the group results for each observation in the group
-  ungroup() %>% 
-  select(-norm_full_quote, -num_found, -found, -spans_pages) %>% 
+  # filter(article == "PMC5390613") %>%  # some misses
+  # filter(article == "PMC2518490") %>% # | article == "PMC2978351") %>%
+  group_by(article) %>%
+  do(match_in_article(.)) %>% # adds the num_found, start_val, end_val
+  # avoid dealing with ambiguous selections
+  # (those found more than once in the one article)
+filter(num_found == 1) %>%
+  unnest(cols = c(start_val,end_val)) %>% # unlists the start_val and end_val columns
+  ungroup() %>%
+  select(-norm_full_quote, -num_found, -found, -spans_pages) %>%
   collect() %>% View()
-# Fan @Feb 5, 2020: matched the full quote in each selection with the pdf with their offsets
-  
+
 # Now need to figure out which overlap with which.
 
-# Selections can only match selections in the same article. 
+# Selections can only match selections in the same article.
 # Can only match selections by another coder as well.
 # Can identify matches then drop those by self (which would include matching own range)
 
 # chain broken to allow joining back after matching
 
-(matching <- found %>% 
+(matching <- found %>%
   # dots below mean "data frame as passed in" it's a self join.
-  inner_join(x = ., y = ., by = "article") %>% 
+  inner_join(x = ., y = ., by = "article") %>%
   # can't match own selections
   filter(coder.x != coder.y) %>%
   # overlap definition
   # from http://wiki.c2.com/?TestIfDateRangesOverlap
   # ( start1 <= end2 and start2 <= end1 )
-  filter(start_val.x <= end_val.y, 
-          start_val.y <= end_val.x) %>% 
+  filter(start_val.x <= end_val.y,
+          start_val.y <= end_val.x) %>%
     # Fan @Feb 5, 2020: cannot compare between 2 lists
   # used as a check
-  # select(full_quote.x, full_quote.y) %>% 
-  # unite(matched_selections, selection.x, selection.y, sep="---") %>% 
-  # mutate(matched_selections = ( matched_selections %>% 
-  #                                str_split("---") %>% 
-  #                                str_sort() %>% 
+  # select(full_quote.x, full_quote.y) %>%
+  # unite(matched_selections, selection.x, selection.y, sep="---") %>%
+  # mutate(matched_selections = ( matched_selections %>%
+  #                                str_split("---") %>%
+  #                                str_sort() %>%
   #                                str_join() ) ) %>%  
-  select(selection = selection.x, 
+  select(selection = selection.x,
          matching_selection = selection.y) %>%
- #  distinct(selection, matching_selection, keep_all=T) %>% 
-  # rowid_to_column() %>% 
-  # unite(matched_id, article, rowid) %>% 
+ #  distinct(selection, matching_selection, keep_all=T) %>%
+  # rowid_to_column() %>%
+  # unite(matched_id, article, rowid) %>%
   collect())
 
 # Note that matching is doubled each way. Probably an issue.
@@ -328,13 +330,13 @@ match_selection <- function(df, pdf_as_xstring) {
 # could match many by the others.  Oh well, can't deal with everything.
 
 # left join back to found to leave NAs for those that didn't match  
-(found_with_matches <- found %>% 
-  left_join(matching, by = "selection") %>% 
-  mutate(matched = if_else(is.na(matching_selection), "unmatched", "matched")) %>% 
+(found_with_matches <- found %>%
+  left_join(matching, by = "selection") %>%
+  mutate(matched = if_else(is.na(matching_selection), "unmatched", "matched")) %>%
   collect()) # dummy op to allow commenting out steps.
 
-# found %>% group_by(coder) %>% 
-#   summarize(num_selections = n_distinct(selection)) %>% 
+# found %>% group_by(coder) %>%
+#   summarize(num_selections = n_distinct(selection)) %>%
 #   arrange(desc(num_selections))
 ```
 
@@ -345,21 +347,21 @@ match_selection <- function(df, pdf_as_xstring) {
 
 # summarize situation.
 # (simple_agree_counts_by_article <- found_with_matches %>%
-#   group_by(article, matched) %>% 
+#   group_by(article, matched) %>%
 #   summarize(sel_count  = n_distinct(selection),
-#             num_coders = n_distinct(coder)) %>% 
-#   spread(matched, sel_count, fill=0) %>% 
+#             num_coders = n_distinct(coder)) %>%
+#   spread(matched, sel_count, fill=0) %>%
 #   mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
 #          total_selections = matched_number + unmatched,
-#          agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
-#   arrange(desc(agree_percent)) %>% 
-#   write_csv("simple_agree_counts_by_article.csv") %>% 
+#          agree_percent = (matched_number / total_selections) %>% round(2)) %>%
+#   arrange(desc(agree_percent)) %>%
+#   write_csv("simple_agree_counts_by_article.csv") %>%
 #   collect())
 
 
 (match_counts <- found_with_matches %>%
-  group_by(article, coder, matched) %>% 
-  summarize(sel_count  = n_distinct(selection)) %>% 
+  group_by(article, coder, matched) %>%
+  summarize(sel_count  = n_distinct(selection)) %>%
   # obtain: article, coder, matched, unmatched
   spread(matched, sel_count, fill=0) %>% # 323 rows
   # add: zero counts for article/coder where no selections made.
@@ -405,86 +407,102 @@ my_summarize <- function(df) {
 }
 
 # Now obtain:
-# article, matched, coder_a_only, coder_a_name, coder_b_only, coder_b_name 
+# article, matched, coder_a_only, coder_a_name, coder_b_only, coder_b_name
 simple_agree_counts_by_article <- match_counts %>%
-  group_by(article) %>% 
-  do(my_summarize(.)) %>%
+  group_by(article) %>%
+  do(my_summarize(.)) %>% # runs my_summarize for each grouped chunk of the df
   arrange(percent_agree)
 
-simple_agree_counts_by_article %>% 
-  ungroup() %>% 
+simple_agree_counts_by_article <- simple_agree_counts_by_article %>%
+  mutate(valid_agreement = case_when(
+    is.na(percent_agree) ~ FALSE,
+    TRUE ~ TRUE
+  )
+  )
+
+simple_agree_counts_by_article %>%
+  group_by(valid_agreement) %>%
+  tally()
+
+simple_agree_counts_by_article %>%
+  ungroup() %>%
   filter(!is.na(percent_agree)) %>% # single coded articles
   summarize(mean_percent_agree = mean(percent_agree))
 
 # how many with 100%?
-simple_agree_counts_by_article %>% 
-  filter(!is.na(percent_agree)) %>% 
+simple_agree_counts_by_article %>%
+  filter(!is.na(percent_agree)) %>%
   mutate(ranking_group = case_when(
     percent_agree == 0 ~ "none",
     percent_agree <= 0.5 ~ "under_half",
     percent_agree < 1 ~ "over_half",
     percent_agree == 1 ~ "all"
-    
-  )) %>% 
-  group_by(ranking_group) %>% 
+
+  )) %>%
+  group_by(ranking_group) %>%
   summarize(article_count = n(),
             group_mean = mean(percent_agree))
 
 
-  
-View(simple_agree_counts_by_article)
-  
-  #  # Now summarize by article, collapsing across coders 
-  # group_by(article) %>% 
+
+# View(simple_agree_counts_by_article)
+#
+# simple_agree_counts_by_article <- read_csv("simple_agree_counts_by_article.csv")
+
+  #  # Now summarize by article, collapsing across coders
+  # group_by(article) %>%
   # summarize(num_coder = n_distinct(coder),
   #           matched = sum(matched) / num_coder, # A match B, B match A
-  #           unmatched = sum(unmatched)) %>% 
-  # filter(num_coder > 1) %>% 
+  #           unmatched = sum(unmatched)) %>%
+  # filter(num_coder > 1) %>%
   # # for each article, summarize across columns
   # mutate(total_selections = matched + unmatched,
-  #      agree_percent = ifelse(total_selections == 0, 
-  #                             1.0, # neither found selections, full agree. 
-  #                             (matched / total_selections) %>% round(2))) %>% 
-  # arrange(desc(agree_percent)) %>% 
-  # write_csv("simple_agree_counts_by_article.csv") %>% 
+  #      agree_percent = ifelse(total_selections == 0,
+  #                             1.0, # neither found selections, full agree.
+  #                             (matched / total_selections) %>% round(2))) %>%
+  # arrange(desc(agree_percent)) %>%
+  # write_csv("simple_agree_counts_by_article.csv") %>%
   # collect())
-
-
-
-simple_agree_counts_by_article %>% group_by(num_coder) %>% tally()
-
-simple_agree_counts_by_article %>% 
-  ggplot() +
-  geom_histogram(aes(x=percent_agree), bins=5)
 ```
 
 ```{r}
-# (simple_agree_counts_by_article %>% 
-#   ungroup() %>% 
-#   filter(num_coders > 1) %>% 
+simple_agree_counts_by_article %>%
+  filter(valid_agreement == T) %>% # single coder articles or none found.
+  ggplot() +
+  geom_histogram(aes(x=percent_agree), bins=5)
+
+simple_agree_counts_by_article %>%
+  ungroup() %>%
+  summarize(overall_mean_agreement = mean(percent_agree, na.rm = T))
+```
+
+```{r}
+# (simple_agree_counts_by_article %>%
+#   ungroup() %>%
+#   filter(num_coders > 1) %>%
 #   summarize(total_selections = sum(total_selections),
 #             total_match = sum(matched_number),
-#             overall_agree = (total_match / total_selections) %>% round(2)) %>% 
+#             overall_agree = (total_match / total_selections) %>% round(2)) %>%
 #   collect())
 ```
 
 ```{r}
 # per coder is a little more problematic; and only relevant on articles with 2
 # coders.
-# (agree_counts_per_coder <- found_with_matches %>% 
-#   group_by(article) %>% 
-#   mutate(num_coders_for_article = n_distinct(coder)) %>% 
-#   filter(num_coders_for_article > 1) %>% 
-#   ungroup() %>% 
-#   group_by(coder, matched) %>% 
+# (agree_counts_per_coder <- found_with_matches %>%
+#   group_by(article) %>%
+#   mutate(num_coders_for_article = n_distinct(coder)) %>%
+#   filter(num_coders_for_article > 1) %>%
+#   ungroup() %>%
+#   group_by(coder, matched) %>%
 #   summarize(sel_count  = n_distinct(selection),
-#             num_coders = n_distinct(coder)) %>% 
-#   spread(matched, sel_count, fill=0) %>% 
+#             num_coders = n_distinct(coder)) %>%
+#   spread(matched, sel_count, fill=0) %>%
 #   mutate(matched_number   = (matched / 2), # adjust for A match B, B match A
 #          total_selections = matched_number + unmatched,
-#          agree_percent = (matched_number / total_selections) %>% round(2)) %>% 
+#          agree_percent = (matched_number / total_selections) %>% round(2)) %>%
 #   collect())
-# 
+#
 # View(agree_counts_per_coder)
 
 # PMC2518490_MS01 matches PMC2518490_MD04
