@@ -2,6 +2,7 @@
 title: "Find quotes in PDF text"
 output: html_notebook
 ---
+Only working on all the PMC articles.
 
 ```{r}
 # library(plyr)
@@ -65,7 +66,7 @@ WHERE {
 ))
 
 top_codes <- data.world::query(top_code_query, softcite_ds) %>%
-  as_tibble() %>%
+  as_tibble() %>% 
   filter(str_detect(article, "PMC"))
 # get 5,782 selections only from PMC articles
 
@@ -94,15 +95,10 @@ no_selection_articles <- data.world::query(no_selection_query,
          article = str_sub(article,2),
          matched = 0,
          unmatched = 0) %>%
-  collect()
-# 3,732 coding without selections. 3,432 distinct coded article without selections, some were multi-coded.
+  collect() %>% 
+  filter(str_detect(article, "PMC"))
+# 1,363 coding without selections. 1,197 distinct coded article without selections, some were multi-coded.
 ```
-
-
-```{r}
-# top_codes <- read_csv("top_codes.csv")
-```
-
 
 SPARQL queries return everything as URLs, but we want just the localPart at the end.
 
@@ -129,12 +125,13 @@ top_codes <- top_codes %>%
 top_codes %>% summarize(num_articles = n_distinct(article),
                         num_coders = n_distinct(coder),
                         num_selections = n_distinct(selection)) %>% View()
-# 1,354 articles coded; 37 coders; 5779 selections
+# 1,354 articles coded; 37 coders; 5,779 selections
 
 top_codes %>% group_by(article, coder) %>%
   summarize(num_selections = n_distinct(selection)) %>%
   arrange(desc(num_selections)) %>%
-  filter(article == "PMC4441238")
+  filter(article == "PMC1636350")
+# coded article with the most selections
 
 ```
 Normalize text by removing whitespaces, lowering cases, and removing all the quoted url.
@@ -285,11 +282,11 @@ match_selection <- function(df, pdf_as_xstring) {
   do(match_in_article(.)) %>% # adds the num_found, start_val, end_val
   # avoid dealing with ambiguous selections
   # (those found more than once in the one article)
-filter(num_found == 1) %>%
+  filter(num_found == 1) %>%
   unnest(cols = c(start_val,end_val)) %>% # unlists the start_val and end_val columns
   ungroup() %>%
   select(-norm_full_quote, -num_found, -found, -spans_pages) %>%
-  collect() %>% View()
+  collect())
 
 # Now need to figure out which overlap with which.
 
@@ -309,7 +306,6 @@ filter(num_found == 1) %>%
   # ( start1 <= end2 and start2 <= end1 )
   filter(start_val.x <= end_val.y,
           start_val.y <= end_val.x) %>%
-    # Fan @Feb 5, 2020: cannot compare between 2 lists
   # used as a check
   # select(full_quote.x, full_quote.y) %>%
   # unite(matched_selections, selection.x, selection.y, sep="---") %>%
@@ -358,14 +354,13 @@ filter(num_found == 1) %>%
 #   write_csv("simple_agree_counts_by_article.csv") %>%
 #   collect())
 
-
 (match_counts <- found_with_matches %>%
   group_by(article, coder, matched) %>%
   summarize(sel_count  = n_distinct(selection)) %>%
   # obtain: article, coder, matched, unmatched
-  spread(matched, sel_count, fill=0) %>% # 323 rows
+  spread(matched, sel_count, fill=0) %>% # 1,576 rows
   # add: zero counts for article/coder where no selections made.
-  ungroup() %>% bind_rows(no_selection_articles) %>% # 608 rows
+  ungroup() %>% bind_rows(no_selection_articles) %>% # 1,363 rows
   collect())
 
 match_counts %>%
@@ -376,6 +371,7 @@ match_counts %>%
   summarize(num_coder = n_distinct(coder)) %>%
   group_by(num_coder) %>%
   tally()
+# over 2,506 articles, 2,086 single coded, 420 multiply coded.
 
 my_summarize <- function(df) {
   matched = df[[1, "matched"]]
@@ -414,6 +410,7 @@ simple_agree_counts_by_article <- match_counts %>%
   arrange(percent_agree)
 
 simple_agree_counts_by_article <- simple_agree_counts_by_article %>%
+  ungroup() %>% 
   mutate(valid_agreement = case_when(
     is.na(percent_agree) ~ FALSE,
     TRUE ~ TRUE
@@ -437,7 +434,6 @@ simple_agree_counts_by_article %>%
     percent_agree <= 0.5 ~ "under_half",
     percent_agree < 1 ~ "over_half",
     percent_agree == 1 ~ "all"
-
   )) %>%
   group_by(ranking_group) %>%
   summarize(article_count = n(),
@@ -472,7 +468,6 @@ simple_agree_counts_by_article %>%
   geom_histogram(aes(x=percent_agree), bins=5)
 
 simple_agree_counts_by_article %>%
-  ungroup() %>%
   summarize(overall_mean_agreement = mean(percent_agree, na.rm = T))
 ```
 
