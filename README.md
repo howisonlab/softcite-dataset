@@ -1,6 +1,7 @@
 # softcite-dataset
 
-A repository to build a dataset of software mentions in publications to be used as a training set for machine learning.
+We are building a dataset of software mentions in research publications. We have annotated thousands of mentions of software, mostly informal, in published academic papers at the same order of magnitude. The effort has led to an annotated corpus that is suitable for training entity recognition algorithms. We expect this effort can fuel more development in text mining utilities leveraging machine learning techniques, either for further analysis of software use and development in science, or for improving the visibility of software entities in existing scientific literature. Visibility is important to the unacknowledged software work in science, which is critical to the increasingly digitized science. We hope our effort can help software work achieve its due credit on the honor wall of science, and thus facilitate more investment in quality software work for achieving better scientific progress.
+
+![softcite-dataset: from PDF annotation to output](https://raw.githubusercontent.com/caifand/softcite-dataset/f20811c3ddc565441228e37c60e4e8205538512b/docs/images/pdf-tei-annotated-example.jpg)
 
 [Documentation](https://howisonlab.github.io/softcite-dataset/)
-
