@@ -45,8 +45,9 @@ valid_codes = c("has_supplement",
 "reference_type")
 
 ```
+Run dwapi::configure()
 
-Get positive coding results on the PMC article set.
+Get positive selections in the PMC article set.
 
 ```{r}
 positive_query <- data.world::qry_sparql(paste(prefixes,
@@ -64,7 +65,7 @@ WHERE {
     }"
 ))
 
-positive_results <- data.world::query(positive_query, softcite_ds) %>%
+pmc_selections <- data.world::query(positive_query, softcite_ds) %>%
   as_tibble() %>% 
   mutate_at(vars(article, selection),
             list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
@@ -72,13 +73,13 @@ positive_results <- data.world::query(positive_query, softcite_ds) %>%
   filter(str_detect(article, "PMC"))
 # 5,782 (distinct) quotes from 1,354 PMC articles with positive coding results
 
-positive_results %>% group_by(article) %>% 
+pmc_selections %>% group_by(article) %>% 
   summarise(n_coder = n_distinct(coder)) %>% 
   group_by(n_coder) %>% tally()
 # among all the positively coded articles, 1,133 single coded. 221 multiply coded.
 ```
 
-Get PMC articles with negative coding results.
+Get PMC articles coded as negative.
 
 ```{r}
 no_selection_query <- data.world::qry_sparql(paste(prefixes,
@@ -92,7 +93,7 @@ no_selection_query <- data.world::qry_sparql(paste(prefixes,
     }"
 ))  
 
-no_selection_results <- data.world::query(no_selection_query,
+no_selection_articles <- data.world::query(no_selection_query,
                                            dataset = softcite_ds) %>%
   mutate(article = str_extract(article, "[#/]([^#/]+)$"),
          article = str_sub(article,2)) %>%
@@ -100,7 +101,7 @@ no_selection_results <- data.world::query(no_selection_query,
   filter(str_detect(article, "PMC"))
 # 1,197 PMC articles coded as no selection
 
-no_selection_results %>% group_by(article) %>% 
+no_selection_articles %>% group_by(article) %>% 
   summarise(n_coder = n_distinct(coder)) %>% 
   group_by(n_coder) %>% tally()
 # 1,031 articles single coded. 166 multiply coded.
@@ -341,4 +342,146 @@ simple_agree_counts_by_article %>%
 pmc_articles_valid_agreement <- simple_agree_counts_by_article %>% 
   filter(valid_agreement == T) %>% 
   distinct(article)
+```
+
+
+March 4, 2020. Wed
+
+Another way around. Same as we constructed the csv dataset.
+
+```{r}
+library(tidyverse)
+library(SPARQL)
+library(here)
+library(data.world)
+
+softcite_ds = "https://data.world/jameshowison/software-citations/"
+```
+
+```{r}
+prefixes <- "PREFIX bioj: <http://james.howison.name/ontologies/bio-journal-sample#>
+PREFIX bioj-cited: <http://james.howison.name/ontologies/bio-journal-sample-citation#>
+PREFIX ca: <http://floss.syr.edu/ontologies/2008/4/contentAnalysis.owl#>
+PREFIX citec: <http://james.howison.name/ontologies/software-citation-coding#> 
+PREFIX dc: <http://dublincore.org/documents/2012/06/14/dcmi-terms/>
+PREFIX doap: <http://usefulinc.com/ns/doap#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+"
+```
+
+Get article-level article, article_set, coder, no_selections_found
+
+```{r}
+articles_string <- "SELECT DISTINCT ?article ?article_set ?coder ?no_selections_found
+WHERE {
+  ?article rdf:type ?article_set;
+           ca:isTargetOf
+        [ rdf:type ca:CodeApplication ;
+          ca:hasCoder ?coder ;
+          ca:appliesCode [ rdf:type citec:coded_no_in_text_mentions ;
+                           citec:isPresent ?no_selections_found; 
+                         ] ;
+        ] ;
+  FILTER(?article_set != bioj:article)
+}
+"
+
+articles <- data.world::qry_sparql(paste0(prefixes, articles_string)) %>%
+  data.world::query(softcite_ds) %>% 
+  as_tibble() %>% 
+  mutate_at(vars(article, article_set),
+            list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, article_set), list(~ str_sub(.,2))) 
+```
+
+article-level stats
+
+```{r}
+articles %>% group_by(article_set) %>% 
+  summarise(set_n = n_distinct(article)) %>% 
+  summarise(sum(set_n))
+# 2 training articles. 2,521 PMC articles, 2,450 econ articles, 1 bio article.
+# 4,974 articles coded in total
+
+articles %>% group_by(no_selections_found) %>% 
+  tally()
+# 1,832 articles coded as no mention; 3,731 coded with selections
+
+articles %>% select(article_set) %>% distinct()
+articles %>% filter(article_set == "bio_article")
+```
+
+selection, coder, article, quote, tei_quote, page, mention_type, certainty, memo
+
+```{r}
+in_text_mention_query <- "SELECT DISTINCT ?selection ?coder ?article ?quote ?tei_quote ?page ?mention_type ?certainty ?memo
+WHERE {
+	?article citec:has_in_text_mention ?selection .
+	?selection citec:full_quote ?quote ;
+	           citec:on_pdf_page ?page ;
+	           ca:isTargetOf [ ca:hasCoder ?coder ;
+                             ca:appliesCode [ rdf:type citec:mention_type ;
+                                              rdfs:label ?mention_type ;
+                                              ca:certainty ?certainty ;
+                                              ca:memo ?memo ]
+                            ]
+  OPTIONAL { ?selection citec:tei_full_quote ?tei_quote }
+}
+"
+
+in_text_mentions <- data.world::qry_sparql(paste0(prefixes, in_text_mention_query)) %>%
+  data.world::query(softcite_ds) %>% 
+  as_tibble() %>% 
+  mutate_at(vars(article, selection),
+            list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, selection), list(~ str_sub(.,2)))
+```
+
+selection statistics
+
+```{r}
+# 7,027 in-text selection entries
+in_text_mentions %>% filter(!is.na(tei_quote))
+# 547 tei_quote
+
+in_text_mentions %>% group_by(mention_type) %>% tally()
+# 6,440 annotated software mentions, 597 non-software annotations
+# non-software categories: 140 web_platform, 170 other, 128 hardware, 39 database, 110 algorithm (How valid are they? Possible to review again?)
+
+in_text_mentions %>% 
+  group_by(article, selection) %>% 
+  summarise(coder_n = n_distinct(coder)) %>% 
+  arrange(desc(coder_n)) %>% 
+  group_by(coder_n) %>% 
+  mutate(num_article = n_distinct(article)) %>%
+  select(coder_n, num_article) %>%
+  distinct() 
+  # ggplot() +
+  # geom_bar(aes(coder_n)) + xlab("# of coders")
+
+```
+
+Check article-level agreement
+
+```{r}
+# look at only positively coded articles
+articles %>% filter(no_selections_found == FALSE) %>% 
+  group_by(article, article_set) %>% 
+  summarise(n_coder = n_distinct(coder)) %>%
+  filter(n_coder > 1, article_set %in% c("pmc_article", "econ_article"))
+# more than 1 coder agrees on that this article has mentions: 218 PMC articles; 1 training article; 12 econ articles; 1 bio article; 1 training article.
+
+# look at all the coded articles
+articles %>% 
+  group_by(article, article_set) %>% 
+  summarise(n_coder = n_distinct(coder)) %>% 
+  filter(article_set == "econ_article") %>% 
+  distinct() %>% filter(n_coder > 1)
+# 2,450 econ articles; 225 articles have codings; among them 12 are multiply coded
+# 153 econ articles are multiply coded (still, only 12 have positive results)
 ```
