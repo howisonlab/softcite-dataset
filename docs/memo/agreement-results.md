@@ -1,6 +1,6 @@
 # Agreement Results and Where to Find them
-_by Caifan Du_
-_April 2, 2020_
+_by Caifan Du_ 
+_on April 2, 2020_ 
 
 ## Data Sources
 
@@ -8,7 +8,7 @@ _April 2, 2020_
 - Second round annotation-level agreement (after alignment improvement): See the [linked email copy on Mar 11](https://github.com/howisonlab/softcite-dataset/blob/master/docs/memo/agreement-after-alignment-improvements_2020-03-11.pdf)
 - Selection-level agreement over the PMC article set: See [James's scripts](https://github.com/howisonlab/softcite-dataset/blob/master/code/locateFullQuotesInPDF.Rmd)
 
-## Comparison before & after agreement alignments
+## Comparison before & after alignment improvements
 1st round agreement over PMC & Econ articles | 2nd round agreement over PMC articles
 :--------------------------------------------|:--------------------------------------------:
 ![](https://raw.githubusercontent.com/caifand/softcite-dataset/master/docs/memo/agreement1_all.png)|![](https://raw.githubusercontent.com/caifand/softcite-dataset/master/docs/memo/agreement2_PMC.png)
