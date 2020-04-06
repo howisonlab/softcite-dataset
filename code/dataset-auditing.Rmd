@@ -137,10 +137,10 @@ test_articles <- tribble(
   "PMC5421183"
 )
 
-articles <- positive_results %>% select(article) %>% distinct()
+articles <- pmc_selections %>% select(article) %>% distinct()
 
 articles <- articles %>%
-  mutate(xml_path = glue_data(., "{path}{article}.xml"),
+  mutate(xml_path = glue_data(., "{path}/{article}.xml"),
          article_as_xml = map(xml_path, read_xml),
          pdf_as_string  = map_chr(article_as_xml, xml_text),
          pdf_as_string  = norm_text(pdf_as_string))
@@ -154,7 +154,7 @@ library(Biostrings)
 library(clipr)
 
 # normalize full_quote
-positive_results <- positive_results %>%
+pmc_selections <- pmc_selections %>%
   mutate(norm_full_quote = norm_text(full_quote))
 
 # align every selection with the source article
@@ -187,7 +187,7 @@ match_selection <- function(df, pdf_as_xstring) {
   }
 }
 
-(found <- positive_results %>%
+(found <- pmc_selections %>%
   group_by(article) %>%
   do(match_in_article(.)) %>% # adds the num_found, start_val, end_val
   # avoid dealing with ambiguous selections
@@ -233,7 +233,7 @@ find agreements and disagreements between selections by different coders.
   collect()) 
 # each selection with all its matched selections
 
-no_selection_results <- no_selection_results %>% 
+no_selection_articles <- no_selection_articles %>% 
   mutate(matched = 0,
          unmatched = 0)
   
@@ -243,7 +243,7 @@ no_selection_results <- no_selection_results %>%
   # obtain: article, coder, matched, unmatched
   spread(matched, sel_count, fill=0) %>% # 1,576 rows
   # add: zero counts for article/coder where no selections made.
-  ungroup() %>% bind_rows(no_selection_results) %>% # 1,363 rows
+  ungroup() %>% bind_rows(no_selection_articles) %>% # 1,363 rows
   collect())
 # counts of matched/unmatched selections by coder each article
 
@@ -251,6 +251,9 @@ match_counts %>%
   summarize(article_count = n_distinct(article))
 # 2,506 coded articles with successfully aligned selections
 
+match_counts %>% 
+  group_by(article) %>% 
+  summarize(matched = sum(matched), unmatched = sum(unmatched))
 match_counts %>%
   group_by(article) %>%
   summarize(num_coder = n_distinct(coder)) %>%
@@ -316,10 +319,11 @@ simple_agree_counts_by_article %>%
 
 simple_agree_counts_by_article %>% 
   filter(valid_agreement == T) %>% 
-  summarize(mean_percent_agree = mean(percent_agree))
+  group_by(percent_agree) %>% 
+  summarize(n_article = n_distinct(article))
 
 # how many with 100%?
-simple_agree_counts_by_article %>%
+(article_dist <- simple_agree_counts_by_article %>%
   filter(!is.na(percent_agree)) %>%
   mutate(ranking_group = case_when(
     percent_agree == 0 ~ "none",
@@ -329,12 +333,18 @@ simple_agree_counts_by_article %>%
   )) %>%
   group_by(ranking_group) %>%
   summarize(article_count = n(),
-            group_mean = mean(percent_agree))
+            group_mean = mean(percent_agree)))
 
 simple_agree_counts_by_article %>%
   filter(valid_agreement == T) %>% # single coder articles or none found.
-  ggplot() +
-  geom_histogram(aes(x=percent_agree), bins=5)
+  ggplot(aes(x=percent_agree)) +
+  geom_histogram(bins=4) + 
+  labs(x="percentage agreement", y="article count", 
+       title="Distribution of article count over percentage agreement level")
+
+article_dist %>% 
+  ggplot(aes(x=ranking_group, y=article_count)) +
+  geom_col()
 
 simple_agree_counts_by_article %>%
   summarize(overall_mean_agreement = mean(percent_agree, na.rm = T))
@@ -342,6 +352,7 @@ simple_agree_counts_by_article %>%
 pmc_articles_valid_agreement <- simple_agree_counts_by_article %>% 
   filter(valid_agreement == T) %>% 
   distinct(article)
+pmc_articles_valid_agreement
 ```
 
 
@@ -354,6 +365,7 @@ library(tidyverse)
 library(SPARQL)
 library(here)
 library(data.world)
+library(ggplot2)
 
 softcite_ds = "https://data.world/jameshowison/software-citations/"
 ```
@@ -464,6 +476,13 @@ in_text_mentions %>%
   # ggplot() +
   # geom_bar(aes(coder_n)) + xlab("# of coders")
 
+# Check the certainty score of mention_type=="software"
+in_text_mentions %>% 
+  filter(mention_type == "software") %>% 
+  select(certainty, quote) %>% 
+  group_by(certainty) %>% 
+  summarize(n_mention = n_distinct(quote))
+
 ```
 
 Check article-level agreement
@@ -488,4 +507,44 @@ articles %>%
 articles %>% filter(article_set == "econ_article") %>% group_by(article) %>% 
   summarise(n_coder = n_distinct(coder)) %>% 
   filter(n_coder > 1)
+```
+
+April 4, 2020.
+
+Build Venn diagram for article-level percentage agreement from simple_agree_counts_by_article.
+
+Run line 1 to 313.
+
+```{r}
+# sample an article instance
+one_article_sample <- simple_agree_counts_by_article %>% 
+  filter(valid_agreement == T) %>% 
+  arrange(desc(matched)) %>% head(1)
+
+library(VennDiagram)
+ven_plot <- venn.diagram(
+  x = list(
+    "annotator A" = 1:146, 
+    "annotator B" = 14:154),
+  filename = "PMC_sample_agree_venn.png",
+  width = 5000,
+  lwd = 4,
+  fontfamily = "sans",
+	ext.text = TRUE,
+	ext.line.lwd = 1.5,
+	ext.dist = -0.15,
+	ext.length = 0.9,
+	ext.pos = -4,
+	cex = 2,
+	cat.cex = 2,
+  cat.dist = 0.045,
+  cat.fontface = "bold",
+  cat.fontfamily = "sans",
+  main = "Counts of full_quotes in agreement between 2 annotators",
+	sub = "Annotation results of article PMC1636350.pdf",
+	main.cex = 2,
+	sub.cex = 1.5,
+  main.fontface = "bold",
+  main.fontfamily = "sans",
+  sub.fontfamily = "sans")
 ```
