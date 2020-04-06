@@ -5,7 +5,7 @@ _on April 2, 2020_
 ## Data Sources
 
 - First round agreement results (before alignment improvement): See [issue #538](https://github.com/howisonlab/softcite-dataset/issues/538)
-- Second round annotation-level agreement (after alignment improvement): See the [linked email copy on Mar 11, 2020](https://github.com/howisonlab/softcite-dataset/blob/master/docs/memo/agreement-after-alignment-improvements_2020-03-11.pdf)
+- Second round field-level agreement (after alignment improvement): See the [linked email copy on Mar 11, 2020](https://github.com/howisonlab/softcite-dataset/blob/master/docs/memo/agreement-after-alignment-improvements_2020-03-11.pdf)
 - Selection agreement in PMC article set: See [James's scripts](https://github.com/howisonlab/softcite-dataset/blob/master/code/locateFullQuotesInPDF.Rmd)
 
 ## Comparison before & after alignment improvements
@@ -17,6 +17,6 @@ _on April 2, 2020_
 :--------------------------------------|:--------------------------------------:
 ![](https://raw.githubusercontent.com/caifand/softcite-dataset/master/docs/memo/agreement1_econ.png)|![](https://raw.githubusercontent.com/caifand/softcite-dataset/master/docs/memo/agreement2_econ.png)
 
-## Agreement of text selection in PMC particles
+## Agreement of text selections in PMC particles
 Calculate the percentage agreement of full_quote in each article, then average the agreement per article out over all the multiply annotated PMC articles.
-Overall percentage agreement: 65.42% 
+Overall percentage agreement: 65.42%
