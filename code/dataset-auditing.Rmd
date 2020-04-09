@@ -161,7 +161,7 @@ pmc_selections <- pmc_selections %>%
 match_in_article <- function(df) {
   art <- df[[1, "article"]] # grouping variable
   pdf_as_string = (articles %>% filter(article == art))$pdf_as_string[[1]]
-    df %>% group_by(selection) %>% do(match_selection(., BString(pdf_as_string)))
+  df %>% group_by(selection) %>% do(match_selection(., BString(pdf_as_string)))
 }
 
 
@@ -338,7 +338,7 @@ simple_agree_counts_by_article %>%
 simple_agree_counts_by_article %>%
   filter(valid_agreement == T) %>% # single coder articles or none found.
   ggplot(aes(x=percent_agree)) +
-  geom_histogram(bins=4) + 
+  geom_histogram(bins=5) + 
   labs(x="percentage agreement", y="article count", 
        title="Distribution of article count over percentage agreement level")
 
@@ -517,17 +517,17 @@ Run line 1 to 313.
 
 ```{r}
 # sample an article instance
-one_article_sample <- simple_agree_counts_by_article %>% 
-  filter(valid_agreement == T) %>% 
-  arrange(desc(matched)) %>% head(1)
+all_but_zero <- simple_agree_counts_by_article %>% 
+  filter(valid_agreement == T, matched > 0, coder_a_only > 0, coder_b_only > 0) 
+one_article_sample <- all_but_zero[nrow(all_but_zero), ]
 
 library(VennDiagram)
 ven_plot <- venn.diagram(
   x = list(
-    "annotator A" = 1:146, 
-    "annotator B" = 14:154),
+    "annotator A" = 1:14, 
+    "annotator B" = 2:15),
   filename = "PMC_sample_agree_venn.png",
-  width = 5000,
+  width = 3800,
   lwd = 4,
   fontfamily = "sans",
 	ext.text = TRUE,
@@ -535,15 +535,15 @@ ven_plot <- venn.diagram(
 	ext.dist = -0.15,
 	ext.length = 0.9,
 	ext.pos = -4,
-	cex = 2,
-	cat.cex = 2,
+	cex = 1.5,
+	cat.cex = 1.5,
   cat.dist = 0.045,
   cat.fontface = "bold",
   cat.fontfamily = "sans",
   main = "Counts of full_quotes in agreement between 2 annotators",
-	sub = "Annotation results of article PMC1636350.pdf",
-	main.cex = 2,
-	sub.cex = 1.5,
+	sub = "Annotation results of article PMC3281721.pdf",
+	main.cex = 1.5,
+	sub.cex = 1.2,
   main.fontface = "bold",
   main.fontfamily = "sans",
   sub.fontfamily = "sans")
