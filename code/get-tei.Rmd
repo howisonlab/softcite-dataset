@@ -1,0 +1,44 @@
+---
+title: "tei_summary"
+author: "Fan Du"
+date: "4/8/2020"
+output: html_document
+---
+
+```{r}
+library(XML)
+library(xml2)
+library(tidyverse)
+
+setwd("C:/Users/D/Documents/Academics/2-Projects/HowisonLab/software-mentions/resources/dataset/software/corpus")
+
+tei_corpus <- read_xml("all_clean_post_processed.tei.xml")
+
+rs_software <- xpathApply(tei_corpus,"//*[@xml:id and @type='software']")
+toString.XMLNode(rs_software[[1]])
+
+map2(c(tei_corpus), "//*[@xml:id and @type='software']", xpathApply)
+
+software_id <- xpathSApply(tei_corpus, "//*[@xml:id and @type='software']/@xml:id")
+for (rs in rs_software){
+  str_extract_all(toString.XMLNode(rs), '\\"[A-Za-z0-9.#-]*\\')
+  }
+  
+}
+```
+
+```{r}
+rs_version = xpathApply(tei_corpus, "//*[@corresp and @type='version']")
+rs_version[[1]]
+```
+
+```{r}
+rs_publisher = xpathApply(tei_corpus, "//*[@corresp and @type='publisher']")
+rs_publisher[[1]]
+```
+
+```{r}
+rs_url = xpathApply(tei_corpus, "//*[@corresp and @type='url']")
+rs_url[[1]]
+```
+
