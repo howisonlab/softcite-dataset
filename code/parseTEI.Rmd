@@ -18,9 +18,48 @@ parsing <- tibble(filename=here::here("data/all_clean_post_processed.tei.xml")) 
 parsing %>% 
   mutate(articles = map("//tei:TEI", xml_find_all, ns = c("http://www.tei-c.org/ns/1.0"))
 
+rs_tags <- xml_find_all(xml_doc, 
+                        ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+                        xpath = "//tei:rs") 
 
+rs_tags_test <- rs_tags %>% head(10)
+
+rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
   
 
+rs_tibble %>% 
+  separate(id, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
+  select(-drop1, -drop2)
+
+rs_tags <- xml_find_all(xml_doc, 
+                        ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+                        xpath = "//tei:rs"))
+
+xml_find_all(xml_doc, 
+                        ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+                        xpath = "//tei:rs[@xml:id='PMC4750616-software-0']")
+
+rs_tibble <- rs_tags %>% 
+             # see https://stackoverflow.com/questions/40036207/
+            # tidyverse-prefered-way-to-turn-a-named-vector-into-a-data-frame-tibble
+             map(xml_attrs) %>% 
+             map_df(bind_rows) %>% 
+             extract(id, into = c("article"), regex = "(.*?)-", remove = F) %>% 
+             filter(! is.na(id)) %>% 
+             mutate(xpath_string = str_glue("//tei:rs[@xml:id='{id}']")) %>% 
+             mutate(row_node = map(xpath_string, xml_find_all, x = xml_doc, 
+                                   ns = c("tei" = "http://www.tei-c.org/ns/1.0"))) 
+
+rs_tags %>% head(1) %>% map(my_xml_extract) 
+
+
+my_xml_extract <- function(rs_tag) {
+  # rs_tag <- rs_tags %>% head(1)
+  rs_tag %>% 
+    map(xml_attrs) %>% 
+    map_df(bind_rows) %>% 
+    mutate(text = xml_text(rs_tag))
+}
 
 ```
 
