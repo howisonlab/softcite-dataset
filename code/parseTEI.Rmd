@@ -12,51 +12,82 @@ library(here)
 
 xml_doc = read_xml(here::here("data/all_clean_post_processed.tei.xml"))
 
-parsing <- tibble(filename=here::here("data/all_clean_post_processed.tei.xml")) %>% 
-  mutate(xml_content = map(filename, read_xml)) 
+# parsing <- tibble(filename=here::here("data/all_clean_post_processed.tei.xml")) %>% mutate(xml_content = map(filename, read_xml)) 
+# tried to start with a tibble with xml_doc but xml_doc is an intermediate format thus hard to decompose it in the way we want
 
+# start with rs tags
 rs_tags <- xml_find_all(xml_doc, 
                         ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
                         xpath = "//tei:rs") 
 
-rs_tags_test <- rs_tags %>% head(10)
+# rs_tags_test <- rs_tags %>% head(10)
+# rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
 
-rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
-  
+# getting tag value
+# xml_find_chr(xml_doc, ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+#              xpath = "string(//tei:rs[@xml:id='PMC4750616-software-0']/text())")
 
-rs_tibble %>% 
-  separate(id, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
-  select(-drop1, -drop2)
-
-rs_tags <- xml_find_all(xml_doc, 
-                        ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
-                        xpath = "//tei:rs")
-
-xml_find_chr(xml_doc, 
-                        ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
-                        xpath = "string(//tei:rs[@xml:id='PMC4750616-software-0']/text())")
-
-rs_tibble <- rs_tags %>% 
-             # see https://stackoverflow.com/questions/40036207/
-            # tidyverse-prefered-way-to-turn-a-named-vector-into-a-data-frame-tibble
-             map(xml_attrs) %>% 
-             map_df(bind_rows) %>% 
-             extract(id, into = c("article"), regex = "(.*?)-", remove = F) %>% 
-             filter(! is.na(id)) %>% 
-             mutate(xpath_string = str_glue("string(//tei:rs[@xml:id='{id}']/text())")) %>% 
-             mutate(text = map_chr(xpath_string, xml_find_chr, x = xml_doc, 
-                                   ns = c("tei" = "http://www.tei-c.org/ns/1.0"))) 
-
-rs_tags %>% head(1) %>% map(my_xml_extract) 
+# tried separate as alternative to extract
+# rs_tibble %>% 
+#   separate(id, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
+#   select(-drop1, -drop2)
 
 
-my_xml_extract <- function(rs_tag) {
-  # rs_tag <- rs_tags %>% head(1)
-  rs_tag %>% 
-    map(xml_attrs) %>% 
-    map_df(bind_rows) %>% 
-    mutate(text = xml_text(rs_tag))
-}
+rs_tibble <- rs_tags %>%
+          # see https://stackoverflow.com/questions/40036207/
+          # tidyverse-prefered-way-to-turn-a-named-vector-into-a-data-frame-tibble
+             map(xml_attrs) %>%
+             map_df(bind_rows) %>%
+             extract(id, into = c("article"), regex = "(.*?)-", remove = F) %>%
+             filter(! is.na(id)) %>%
+             mutate(xpath_string = str_glue("string(//tei:rs[@xml:id='{id}']/text())")) %>%
+             mutate(software = map_chr(xpath_string, xml_find_chr, x = xml_doc,
+                             ns = c("tei" = "http://www.tei-c.org/ns/1.0"))) %>%
+             select(-corresp)
+# 4,131 software mentions
+
+
+rs_details <- rs_tags %>% 
+  map(xml_attrs) %>% 
+  map_df(bind_rows) %>% 
+  filter(is.na(id)) %>% 
+  select(-subtype, -id, -cert) %>% 
+  mutate(id = str_sub(corresp, 2, -1),
+         property = type,
+         property_resp = resp) %>% 
+  select(-type, -resp, -corresp) %>% 
+  mutate(xpath_string_2 = str_glue("string(//tei:rs[@type='{property}']/text())")) %>%
+  mutate(property_text = map_chr(xpath_string_2, xml_find_chr, x = xml_doc,
+                             ns = c("tei" = "http://www.tei-c.org/ns/1.0")))
+
+rs_details %>% 
+  select(-xpath_string_2) %>% 
+  pivot_wider(names_from = property, values_from = property_text)
+# interestingly pivot_wider does not work well with glued data
+# seems some clues here: https://github.com/tidyverse/tidyr/issues/676
+# running out of time at the moment
+
+# tibbling tags
+# rs_tibble <- rs_tags %>% head(10) %>% map(my_xml_extract) %>% map_df(bind_rows)
+# 
+# my_xml_extract <- function(rs_tag) {
+#   # rs_tag <- rs_tags %>% head(1)
+#   rs_tag %>% 
+#     map(xml_attrs) %>% 
+#     map_df(bind_rows) %>% 
+#     mutate(text = xml_text(rs_tag))
+# }
+# love this approach but it does not work well at the moment. maybe something inherently missing in map(). teary comment-out.
+
+# my_xml_extract <- function(xml_doc) {
+#   xml_doc %>%
+#     map(xml_find_all, ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+#                         xpath = "//tei:rs") %>%
+#     map(xml_attrs) %>%
+#     map_df(bind_rows) %>%
+#     mutate(text = xml_text(rs_tag))
+# }
+# start with xml_doc but still does not work. seems map() cannot parse intermediate formats as normal functions
 
 ```
 
