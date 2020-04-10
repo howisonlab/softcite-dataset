@@ -55,6 +55,7 @@ rs_details <- rs_tags %>%
   mutate(id = str_sub(corresp, 2, -1),
          property = type,
          property_resp = resp) %>% 
+  # changing column name in prep for joining with another table
   select(-type, -resp, -corresp) %>% 
   mutate(xpath_string_2 = str_glue("string(//tei:rs[@type='{property}']/text())")) %>%
   mutate(property_text = map_chr(xpath_string_2, xml_find_chr, x = xml_doc,
