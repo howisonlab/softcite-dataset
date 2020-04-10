@@ -20,6 +20,25 @@ rs_tags <- xml_find_all(xml_doc,
                         ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
                         xpath = "//tei:rs") 
 
+# extract the text
+xml_text_col <- rs_tags %>% 
+  map(xml_text)
+
+# extract the xml_attrs (comes as named vector)
+xml_attr_col <- rs_tags %>% 
+  map(xml_attrs)
+         
+extracted <- tibble(xml_text_col,
+                    xml_attr_col) %>% # named vector becomes a tibble.
+  # groovy tidyr function to unnest that tibble column
+  unnest_wider(xml_attr_col)
+
+# See issue https://github.com/howisonlab/softcite-dataset/issues/657 for why
+# we get the `id...1` and `id...4` columns.
+extracted %>% pull(id...4) %>% unique
+```
+
+```{r}
 # rs_tags_test <- rs_tags %>% head(10)
 # rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
 
@@ -92,3 +111,43 @@ rs_details %>%
 
 ```
 
+```{r}
+
+txt <- c('<node attrA="1A" attrB="1B">text1</node>',
+         '<node attrA="2A" attrB="2B">text2</node>')
+
+txt %>% 
+  map(read_xml) %>% 
+  map(xml_find_all, xpath = "//node") %>% 
+  tibble(text = map_chr(., xml_text),
+         # attr as a tibble column, pluck needed to unpack one
+         # level of list.
+         xml_attr_col = map(., xml_attrs) %>% map(pluck,1)) %>% 
+   # drop original node column somehow created by tibble
+  select(-1) %>%
+  # groovy function to unnest that tibble column
+  unnest_wider(xml_attr_col) %>% 
+  View()
+
+  map(as_list) %>% 
+  tibble(text = map(.,pluck,1,1,1),
+         values = map(., pluck, 1, attributes, 1),
+         attr_names = map(., pluck, 1, attributes, names)) %>% View
+
+as_lists <- txt %>% 
+  map(read_xml) %>% 
+  map(xml_find_all, xpath = "//node") %>% 
+  map(as_list)
+
+text <- as_lists %>% 
+  map(pluck,1,1,1)
+
+  
+as_lists %>% 
+  map(pluck, 1, attributes, 2)
+
+attr_names <- as_lists %>% 
+  map(pluck, 1, attributes, names)
+
+rm(names)
+```
