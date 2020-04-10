@@ -6,15 +6,17 @@ output: html_document
 ---
 
 ```{r}
-setwd("C:/Users/D/Documents/Academics/2-Projects/HowisonLab/software-mentions/resources/dataset/software/corpus")
-
 library(xml2)
 library(tidyverse)
+library(here)
 
-parsing <- tibble(filename="all_clean_post_processed.tei.xml") %>% 
+xml_doc = read_xml(here::here("softcite-dataset/data/all_clean_post_processed.tei.xml"))
+
+parsing <- tibble(filename=here::here("data/all_clean_post_processed.tei.xml")) %>% 
   mutate(xml_content = map(filename, read_xml)) 
 
-parsing %>% unnest(as.data.frame(xml_content))
+parsing %>% 
+  mutate(articles = map("//tei:TEI", xml_find_all, ns = c("http://www.tei-c.org/ns/1.0"))
 
 
   
