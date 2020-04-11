@@ -1,6 +1,6 @@
 ---
 title: "parse-tei"
-author: "Fan Du"
+author: "Fan Du and James Howison"
 date: "4/9/2020"
 output: html_document
 ---
@@ -8,12 +8,8 @@ output: html_document
 ```{r}
 library(xml2)
 library(tidyverse)
-library(here)
 
-xml_doc = read_xml(here::here("data/all_clean_post_processed.tei.xml"))
-
-# parsing <- tibble(filename=here::here("data/all_clean_post_processed.tei.xml")) %>% mutate(xml_content = map(filename, read_xml)) 
-# tried to start with a tibble with xml_doc but xml_doc is an intermediate format thus hard to decompose it in the way we want
+xml_doc = read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed.tei.xml")
 
 # start with rs tags
 rs_tags <- xml_find_all(xml_doc, 
@@ -31,14 +27,80 @@ xml_attr_col <- rs_tags %>%
 extracted <- tibble(xml_text_col,
                     xml_attr_col) %>% # named vector becomes a tibble.
   # groovy tidyr function to unnest that tibble column
-  unnest_wider(xml_attr_col)
+  unnest_wider(xml_attr_col) %>% unnest(cols = c(xml_text_col)) %>% 
+  mutate(corresp = str_sub(corresp, 2, -1)) %>% 
+  mutate(id = if_else(is.na(id), corresp, id)) %>% 
+  select(-corresp)
 
-# See issue https://github.com/howisonlab/softcite-dataset/issues/657 for why
-# we get the `id...1` and `id...4` columns.
-extracted %>% pull(id...4) %>% unique
+# temporary imputation before TEI corpus is fixed
+extracted <- extracted %>% 
+  mutate(type = case_when(
+    type == "software" ~ "software",
+    type == "publisher" ~ "publisher",
+    type == "url" ~ "url",
+    type == "version" ~ "version",
+    type == "creator" ~ "publisher"))
+
+
+extracted <- extracted %>% 
+  group_by(id) %>%
+  mutate(row = row_number()) %>% ungroup() %>% 
+  # assign a unique identifier within each type as pivot_wider does not take duplicated observations
+  pivot_wider(names_from = "type", values_from = "xml_text_col") %>% 
+  # lost 2 rows -> what happened?
+  select(-row) %>% 
+  separate(id, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
+  select(-drop1, -drop2)
+
+```
+Descriptive statistics
+```{r}
+# 6,695 annotations
+extracted %>% filter(!is.na(software)) %>% 
+  group_by(software) %>% 
+  summarise(n_mention = n()) %>% 
+  arrange(desc(n_mention))
+  
+# 4,131 software mentions
+# 1,506 distinct pieces of software
+
+extracted %>% filter(!is.na(version)) %>% 
+# 1,274 version tags
+  distinct(id)
+# 1,259 software mentions with version
+
+extracted %>% filter(!is.na(publisher)) %>%
+  group_by(id) %>% 
+  summarise(n_publisher = n()) %>% 
+  arrange(desc(n_publisher))
+
+  group_by(publisher) %>% 
+  summarise(n_publisher = n()) %>% 
+  arrange(desc(n_publisher))
+# 1,119 publisher tags
+# 451 distinct publishers
+
+extracted %>% filter(!is.na(url)) %>% 
+# 171 url tags
+  group_by(id) %>% 
+  summarise(n_url = n()) %>% 
+  arrange(desc(n_url))
+
+extracted %>% filter(id == "PMC3886109-software-0")
+
+extracted %>% filter(resp == "#curator")
+# 1,217 curated tags
+
+extracted %>% group_by(article) %>% 
+  summarise(n_mention = n()) %>% 
+  arrange(desc(n_mention))
 ```
 
-```{r}
+April 10, 2020
+
+Tried routes:
+
+Route 1:
 # rs_tags_test <- rs_tags %>% head(10)
 # rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
 
@@ -85,8 +147,8 @@ rs_details %>%
   pivot_wider(names_from = property, values_from = property_text)
 # interestingly pivot_wider does not work well with glued data
 # seems some clues here: https://github.com/tidyverse/tidyr/issues/676
-# running out of time at the moment
 
+Route 2:
 # tibbling tags
 # rs_tibble <- rs_tags %>% head(10) %>% map(my_xml_extract) %>% map_df(bind_rows)
 # 
@@ -97,7 +159,6 @@ rs_details %>%
 #     map_df(bind_rows) %>% 
 #     mutate(text = xml_text(rs_tag))
 # }
-# love this approach but it does not work well at the moment. maybe something inherently missing in map(). teary comment-out.
 
 # my_xml_extract <- function(xml_doc) {
 #   xml_doc %>%
@@ -107,9 +168,8 @@ rs_details %>%
 #     map_df(bind_rows) %>%
 #     mutate(text = xml_text(rs_tag))
 # }
-# start with xml_doc but still does not work. seems map() cannot parse intermediate formats as normal functions
+# map() does not work on non-lists/-vectors
 
-```
 
 ```{r}
 
