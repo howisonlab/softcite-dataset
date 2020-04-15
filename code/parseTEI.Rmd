@@ -148,10 +148,30 @@ extracted %>% group_by(article) %>%
 Getting statistics of articles and paragraphs 
 
 ```{r}
-all_article <-xml_find_all(xml_doc, 
-                           ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
-                           xpath = "//tei:fileDesc/@xml:id") %>% xml_text
+library(xml2)
 
+read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed.tei.xml") %>% 
+  xml_find_all(ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
+               xpath = "//tei:fileDesc/@xml:id") %>% 
+  xml_text %>% 
+  length()
+```
+
+
+```{r}
+articles <- read_csv("~/softcite-dataset/data/csv_dataset/softcite_articles.csv")
+
+articles %>% 
+  select(-coder) %>% 
+  distinct() %>% 
+  group_by(article_set, no_selections_found) %>% 
+  tally()
+
+```
+
+
+
+```{r}
 para <- xml_find_all(xml_doc, 
                            ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
                            xpath = "//tei:body/tei:p") %>% xml_text
@@ -304,3 +324,10 @@ attr_names <- as_lists %>%
 
 rm(names)
 ```
+
+```{r}
+library(holepunch)
+write_compendium_description(package = "Softcite Dataset", 
+                             description = "Summary of Softcite Dataset")
+```
+
