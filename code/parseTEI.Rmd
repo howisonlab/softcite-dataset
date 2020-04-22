@@ -32,9 +32,9 @@ extracted <- tibble(xml_text_col,
   mutate(id = if_else(is.na(id), corresp, id)) %>% 
   select(-corresp)
 
-extracted %>% select(id, type, xml_text_col) %>% 
-  group_by(id) %>% 
-  summarise(n_field = n_distinct(type)) %>% 
+extracted %>% select(id, type, xml_text_col) %>%
+  group_by(id) %>%
+  summarise(n_field = n_distinct(type)) %>%
   filter(n_field == 4)
 # only 11 software mentions come along with publisher, version, and url all 3 fields
 
@@ -44,16 +44,15 @@ extracted <- extracted %>%
   # assign a unique identifier within each mention cluster as pivot_wider does not take duplicated observations
   pivot_wider(names_from = "type", values_from = "xml_text_col") %>% 
   select(-row) %>% 
-  separate(id, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
-  select(-drop1, -drop2)
-# need to check here again later
+  extract(id, into = "article", "^(.+)(?=-software)" , remove = F)
+
+# check if any failed extraction
+extracted %>% filter(is.na(article)) %>% select(id)
 ```
 
 Descriptive statistics of rs tags
 
 ```{r}
-library(here)
-
 # 6,695 annotations
 top10 <- extracted %>% filter(!is.na(software)) %>% 
   # 4,131 software mentions
@@ -65,25 +64,28 @@ top10
   # write_csv(here::here("output/top10-software-mentions.csv"))
   
 extracted %>% right_join(top10, by="software") %>% 
-  select(id) %>% left_join(extracted, by="id") %>% 
-  filter(!is.na(url)) %>% distinct(id)
-# 842 top 10 software mentions:
-# 355 with publisher, 498 with version, 17 with url
+  select(id) %>% distinct(id) %>% 
+  inner_join(extracted, by="id") %>% 
+  filter(!is.na(url))
+# 736 top 10 software mentions:
+# 358 with publisher, 501 with version, 17 with url
 
 extracted %>% filter(!is.na(version)) %>% 
 # 1,274 version tags
   distinct(id)
 # 1,259 software mentions with version
 
-extracted %>% filter(!is.na(publisher)) %>%
+extracted %>% filter(!is.na(url)) %>%
   group_by(id) %>% 
-  summarise(n_publisher = n()) %>% 
-  arrange(desc(n_publisher))
+  summarise(n_url = n()) %>% 
+  arrange(desc(n_url))
+# check software mention with more than 1 publisher/version/url
+extracted %>% filter(id == "PMC3886109-software-0")
 
-extracted %>% filter(!is.na(publisher)) %>%
+extracted %>% filter(!is.na(publisher)) %>%  # %>% distinct(id)
   group_by(publisher) %>% 
   summarise(n_publisher = n()) %>% 
-  arrange(desc(n_publisher))
+  arrange(desc(n_publisher)) 
 # 1,119 publisher tags
 # 1,115 software mentioned with publisher
 # 451 distinct publishers
@@ -93,8 +95,6 @@ extracted %>% filter(!is.na(url)) %>%
   group_by(id) %>% 
   summarise(n_url = n()) %>% 
   arrange(desc(n_url))
-
-extracted %>% filter(id == "PMC3886109-software-0")
 
 extracted %>% filter(resp == "#curator")
 # 1,217 curated tags
@@ -106,15 +106,24 @@ extracted %>%
   group_by(resp) %>% 
   summarise(n_annotation = n_distinct(annotation_id)) %>% 
   arrange(desc(n_annotation))
+# individually produced annotations range from 1 to 939 
 
 extracted %>%  
-  filter(!is.na(software)) %>% 
+  #filter(!is.na(software)) %>% 
   group_by(article) %>%
   summarise(n_annotation = n_distinct(annotation_id)) %>%
+  # 1,233 articles with software mentions
+  arrange(desc(n_annotation)) %>% 
+  # software mentions per article range from 1 to 32
+  # annotations per article range from 1 to 137
   summarise(avg_annotation = mean(n_annotation)) 
-# 5.5 annotations per article
-# 3.4 software mentions per article
+# 3.35 software mentions per article
+# 5.43 annotations per article
+```
 
+Viz annotation stats
+
+```{r}
 annotation_per_article <- extracted %>% 
   group_by(article) %>% 
   summarise(n_annotation = n_distinct(annotation_id)) %>% 
@@ -155,18 +164,21 @@ read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master
                xpath = "//tei:fileDesc/@xml:id") %>% 
   xml_text %>% 
   length()
+
+# 1,247 articles with mentions found
 ```
 
 
 ```{r}
-articles <- read_csv("~/softcite-dataset/data/csv_dataset/softcite_articles.csv")
+library(here)
+articles <- read_csv(here("data/csv_dataset/softcite_articles.csv"))
 
 articles %>% 
   select(-coder) %>% 
   distinct() %>% 
   group_by(article_set, no_selections_found) %>% 
   tally()
-
+# 3,431 articles without mentions found
 ```
 
 
