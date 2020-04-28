@@ -58,8 +58,13 @@ First we are founding a community project to further increase the size and scope
 
 Second we are using the dataset to perform machine learning at scale and prototying three systems that use the resulting dataset of mentions. Our prototype scaled system will be used to develop "Software Impact Story" a companion to the alt-metrics enabled "Impact Story" providing suggested mentions of software developed by individuals. Softcite suggest is a prototype citation recommendation system, analyzing submitted manuscript text to highlight uncited mentions and to suggest unmentioned software that similar articles have used. Finally, discovered mentions will be deployed in the CiteAs.org system. CiteAs is a specialized search engine that takes the name or identifier of software, and returns a suggested citation. Currently CiteAs uses web crawling and conventions such as CITATION files in repositories to discover author's preferred citations. Software mentions in publications will provide additional sources. We expect that the diversity of mention forms for software—which causes trouble for impact assessment—will encourage software contributors to make clearer requests for citation.
 
+# How the dataset was created
 
-2. Provenance Presentation
+In this section we describe the process of creating the SoftCite dataset in greater detail. The provenance of datasets is crucial to their appropriate use, as machine learning models trained in one context will return errors if applied to another [@gebru_datasheets_2020], including reproducing social biases. Additionally we hope that relatively rich detail in our account will offer methodological guidance to those researchers undertaking the creation of datasets.
+
+
+
+Recent literature
     - Starts with process figure (consider a little more timeline?)
     - includes abandoned work/recoveries.
 
