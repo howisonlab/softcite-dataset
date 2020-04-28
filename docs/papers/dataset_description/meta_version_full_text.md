@@ -58,15 +58,73 @@ First we are founding a community project to further increase the size and scope
 
 Second we are using the dataset to perform machine learning at scale and prototying three systems that use the resulting dataset of mentions. Our prototype scaled system will be used to develop "Software Impact Story" a companion to the alt-metrics enabled "Impact Story" providing suggested mentions of software developed by individuals. Softcite suggest is a prototype citation recommendation system, analyzing submitted manuscript text to highlight uncited mentions and to suggest unmentioned software that similar articles have used. Finally, discovered mentions will be deployed in the CiteAs.org system. CiteAs is a specialized search engine that takes the name or identifier of software, and returns a suggested citation. Currently CiteAs uses web crawling and conventions such as CITATION files in repositories to discover author's preferred citations. Software mentions in publications will provide additional sources. We expect that the diversity of mention forms for software—which causes trouble for impact assessment—will encourage software contributors to make clearer requests for citation.
 
-# How the dataset was created
+# Creation of the dataset
 
-In this section we describe the process of creating the SoftCite dataset in greater detail. The provenance of datasets is crucial to their appropriate use, as machine learning models trained in one context will return errors if applied to another [@gebru_datasheets_2020], including reproducing social biases. Additionally we hope that relatively rich detail in our account will offer methodological guidance to those researchers undertaking the creation of datasets.
+In this section we describe the process of creating the SoftCite dataset in greater detail. The provenance of datasets is crucial to their appropriate use, as machine learning models trained in one context will return errors if applied to another [@gebru_datasheets_2020], including reproducing, or even exacerbating, social bias. Additionally we hope that relatively rich detail in our account will offer methodological guidance to those researchers undertaking the creation of datasets.
+
+As one reads this section some details may seem irrelevant or extraneous. Be assured that, as authors, we were often unsure what details to include. More, as you read, you may find details that undermine the impression of quality hopefully conveyed by the bare-bones presentation above. In the final section of this paper we reflect on the process, and emotions, of documenting our process and writing this section.
+
+## Genesis of the project
+
+The creation of this dataset followed the publication of Howison and Bullard [@howisonandbullard], which examined 90 articles from the literature, documenting low rates of formal citation suggested by earlier interviews with researchers who build software, where the interviews had been focused on incentives for software work and maintenance. The software mentions found in those articles formed the initial training examples. Two elements of the coding scheme are clearly linked to these origins, and might not be present in dataset creation processes for named entity extraction.
+
+The first was the `software_used` tag, which indicating whether it seemed that the authors actually used the mentioned software in their work. The second was effort to connect in-text mentions with nearby citations, and to code the type of article cited in the linked reference.
+
+## Selection of papers
+
+It was key to the motivations for the project that any system ultimately be able to process PDFs, because we wanted to be able to process historical publications and publications yet to adopt any improved software citation policies. However, at the origins of the project we did not know about the `GROBID` tool for converting academic PDFs. We experimented with `pdf2text` (and the rOpenSci package, `fulltext`) [XXXXcite] but found the output too inconsistent to be readable as an article, undermining annotators engagement and contextual understanding.
+
+We also wanted to be able to release a dataset that others could work with. This explains our choice to annotate open access articles, avoiding creating a dataset that annotates proprietary article collections from publishers. While not all articles could be republished in converted fulltext form, we reasoned that future users would be able to obtain the fulltext via the DOI.
+
+Accordingly we started with PubMed Open Access, particularly because it provided XML versions of the article. However, given our ultimate intent to work with converted PDF fulltext, we did not provide the XML versions of the articles to annotators (since we would not be able to do that later). We did, as discussed below, use the available XML text for our first round of agreement coding. Having students select quotes directly from PDF articles was a risky decision; team-members disagreed about how hard it would be to later alignment these quotes with converted fulltext. Indeed alignment was difficult, causing long-running difficulties, although the discovery of GROBID helped immensely.
+
+## Collaboration infrastructure
+
+Our annotators used text editors to enter details into text files, formatted as RDF in Turtle format (cite). These files were generated by an article assignment process driven by a command line script, talking to a `mysql` database which kept track of which articles had been assigned to which annotators. Annotators edited these files, using keyboard shortcuts to insert "snippets" which were text templates for each step of the annotation.
+
+These files were then checked into github, using the commandline git client and creating pull requests, which were accepted by doctoral student members of the research team. Each annotator worked in a folder named for their user, to avoid file editing conflicts. A python script (XXXXURL) was used to read all the RDF into a single RDF graph (full_dataset.ttl). Typos, unfilled fields, and RDF Turtle syntax errors were a frequent issue. Later we implemented continuous integration using TravisCI on github pull requests to check syntax and validate responses; we hoped that annotators would fix these when alerted by the pull request, but they almost always required help to both resolve the identified issues and to manage confusion over what work was "in" a pull request. When analyses began, we used SPARQL queries (citeXXXX) to export the dataset in CSV format.
+
+The majority of annotation was done on a department Linux server with annotators provided command line user accounts and thus home directories. Annotators used the Atom editor running on their laptop to edit files on the server, mounted via SFTP provided by Atom.
+
+We used this rather idiosyncratic infrastructure for three reasons. First, we intended to annotate the in-text mention and linked references as units, following the Howison and Bullard publication. This made existing content analysis tools, such as Atlas.TI (cite) harder to use. Second, we knew the project would take considerable time and we did not want to rely on hosted commercial annotation tools that might change in ways that undermined the project (and believed that github, at least in basic functions, was relatively stable.) Third, we chose to use git-based aggregation approach rather than building a custom web-UI because we reasoned the effort to train the student annotators would be valuable to them as students and us as educators, while the effort to build and maintain a web-UI would be equally large but of benefit only to those building it (as well as likely being fragile). We used SFTP mounted files because we wanted all work, even that in progress, to be in a file-space owned by the project and thus able to be backed up even prior to students submitting via git. Indeed, after the main phase of annotation, while checking our assignment database against work completed, we found some un-submitted work in annotator home folders (which we, as admins, submitted via git).
+
+Annotators were recruited by advertising a research project in university venues. They were paid $15 an hour but restricted to 10 hours a week. Some wanted to work more, but we felt it was important to prevent fatigue and maintain some balance between annotator contribution level. Students were largely from a large public university (XXXXblinded) but we recruited a small number from a local historically black  university, with a large hispanic population. Unexpected issues with work authorization documentation (required of those not students at our institution, but not those already students) meant those HBCU students were not able to contribute many annotations.
+
+Students were trained in classrooms, with materials prepared by a doctoral student and published on our github site (where they remain, blindedXXXX). These materials addressed both our collaboration infrastructure and our annotation scheme. We first used the articles coded in the Howison and Bullard paper. We coded a number of files all together, including allowing and encouraging open questions, before breaking into groups. In later weeks, we conducted training for newly recruited annotators, with previously trained annotators working in pairs on assigned articles on one side of the large room. All were encouraged to get involved in discussions, or bring questions to the group. The PI was deferred to as the authority or oracle, with doctoral students writing down reasoning and testing it in open conversation. Despite efforts, new examples often lead to referring to the PI but the PIs responses were sometimes inconsistent over time. It was challenging to managing training, assignment logistics, payroll, and reason about specific examples. It was also challenging to encourage annotators to disagree in public. As these discussions were face to face, there are no records other than those ultimately encoded in the annotation scheme as examples and justifications. Evolution of the annotation scheme could be somewhat recovered by examining the git log history of the scheme and the training pages.
+
+After initial training on articles assigned to all, annotators were assigned articles in pairs, such that each article was annotated by two annotators, managed by updates in the `mysql` database. After our first round of agreement assessment each article was assigned to only a single annotator. This explains patterns of multiple annotation that can be found in the csv version of the dataset, where some articles are coded by over 20 annotators, a group by 2, and many by a single annotator. In the final TEI XML version, however, multiple annotations are not present. The final annotations were derived from whichever annotation found the most mentions in an article, then processed through iterative refinement (as described tersely above and, with comment, below).
+
+About half-way through the annotation process students within the group were invited to create a "dashboard" of annotation progress, showing graphs of articles annotated, broken down by annotator. While useful for identifying assigned but not completed work, the dashboard when shown to the group revealed differences in numbers of articles annotated, raising questions of productivity (even after adjusting for page lengths). Judging this potentially problematic, the dashboard was kept in the source code, but not further used.
+
+## Assessing agreement
+
+After the bulk of annotator training and a period of annotators dual coding articles we sought to assess annotator agreement. That required aligning the `full_quote` fields being produced by annotators with the PMC XML. That process was more difficult than expected, taking the PI around three weeks. During that time annotators continued to work, as they were "contracted" (as it were) for 10 hours a week.
+
+More on XML full quote matching?
+
+Show stats.
+
+These stats were presented to the group (although not all annotators were present) and discussed. This brought a number of questions that annotators had to the fore, resulting in a small number of clarifications to the coding scheme, as well as identifying a number of "misses" that reflecting annotators ascribed to fatigue rather than conceptual confusion.
+
+At this point, the PI and team had to decide how to proceed. Literature and industry press was discussing the "image-net" moment, highlighting the surprising importance of large datasets. Agreement levels were at arguably acceptable levels for content analysis, and confidence was high that the discussion had resolved remaining issues (and that fatigue issues were somewhat unavoidable, even with double annotation). Costs were mounting and some trained student annotators were approaching graduation. These reasons combined to inform the decision to switch to single annotators, going forward.
+
+Around this time annotators, in face to face and email discussion, identified two patterns in the work they were doing. The first was that some papers were "monsters" with over 100 mentions. They questioned the value of such repetition and identified those papers as very tiring to work on. The PI and team decided that while packages might be repeated, each provided slightly different context and might be useful. Ultimately we assured the annotators that these had value.
+
+The second pattern identified by annotators discussing their work was the tendency of mentions to "cluster" within a paper, occurring more densely in some parts, and less densely in others. Some students, seemingly with natural science backgrounds, suggested these were the "methods and materials" sections, but inspection suggested multiple clusters in different parts of papers. We created an analysis to document this, displaying the clustering to the group. We may follow this up in future research.
+
+We mention these two events because they credibly might have affected annotators work. For example, it is possible that discussing and displaying cluster gave annotators reason to concentrate in some sections but skim others. Similarly, we mention the "monster" papers because annotation patterns may be different in those, particularly towards the end of the fatiguing and repetitious articles. We have not investigated whether annotations differ in these "monster" articles, or before and after group discussion of clustering (although we hope a community might be inspired to do so).
+
+- Connection with GROBID creator and ML expert.
+    - Alignment via GROBID
+    - Prototype machine learning
+    - Annotation consistency work
+        - undermining the "software_used" category.
+        - not applied to articles with no initial mentions.
+        - point to github issues, although discussion frequently reverted to email.
+    - Agreement round 2.
+    - Binding TEI XML back to provenance, interdisciplinary shear there.
 
 
-
-Recent literature
-    - Starts with process figure (consider a little more timeline?)
-    - includes abandoned work/recoveries.
 
 3. Tensions and Reflections about creation
     - Reliability vs speed/size

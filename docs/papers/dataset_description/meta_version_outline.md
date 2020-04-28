@@ -44,6 +44,10 @@ The goal of this paper is thus two-fold: to present a labeled dataset, and to re
         - Agreement round 2.
         - Binding TEI XML back to provenance, interdisciplinary shear there.
 
+Lessons learned
+    - involving non-students for pay is complicated, perhaps better to offer transfer credit.
+    - Documenting the work of annotators, including their frustrations and practices, seems a crucial source of provenance.
+
 3. Tensions and Reflections about creation
     - Reliability vs speed/size
         - Unclear where saturation in training/location of issues to train about, thus post-annotation curation is key.
