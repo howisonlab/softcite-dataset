@@ -20,7 +20,33 @@ The goal of this paper is thus two-fold: to present a labeled dataset, and to re
 
 2. Provenance Presentation
     - Starts with process figure (consider a little more timeline?)
-    - includes abandoned work/recoveries.
+    - Genesis of the project (from Howison and Bullard), includes origin of the "software used" category and connection with formalized citation (explains some choices?)
+    - Choice of papers to code. PubMed Open access Driven by availability of XML, and open access for eventual open publication.
+    - Collaboration infrastructure.
+        - Why github?
+        - Format of the annotations (RDF).
+    - Recruitment and training of students.  Using the papers from the Howison and Bullard dataset. Training materials on github.
+    - Paper provision, limiting number.  Still ended up with quite high imbalance.
+        - Creation of "dashboard"
+    - Agreement assessment, round 1.
+        - Alignment, pre-GROBID.
+        - Identification of mention "clustering"
+    - Choice to switch to single coding
+        - influenced by belief in size of data, frustration at slowness.
+        - How many coded in this period?
+    - Connection with GROBID creator and ML expert.
+        - Alignment via GROBID
+        - Prototype machine learning
+        - Annotation consistency work
+            - undermining the "software_used" category.
+            - not applied to articles with no initial mentions.
+            - point to github issues, although discussion frequently reverted to email.
+        - Agreement round 2.
+        - Binding TEI XML back to provenance, interdisciplinary shear there.
+
+Lessons learned
+    - involving non-students for pay is complicated, perhaps better to offer transfer credit.
+    - Documenting the work of annotators, including their frustrations and practices, seems a crucial source of provenance.
 
 3. Tensions and Reflections about creation
     - Reliability vs speed/size
@@ -28,7 +54,8 @@ The goal of this paper is thus two-fold: to present a labeled dataset, and to re
         - Limited guidance on "consistency" phase. What is acceptable/problematic (and why?)
     - Provenance vs usefulness
         - very hard to predict??
-        - opens up criticism??
+        - opens up criticism??  For example, while writing section 2, we wrestled with whether and how to discuss missed double coded articles. Simple typo, or issue that others would need to know?  Same with "dashboard" and "clustering" analyses, unclear whether these are worth presenting, hard to reason about whether/how they might have mattered.
+        - Some interdisciplinary friction here, as well.
     - Presenting dataset as artifact vs process
         - genre expectations
         - hard to know how much to describe (cite Ribes article, but also cite data sharing literature)
