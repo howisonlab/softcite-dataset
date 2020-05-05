@@ -6,7 +6,7 @@ Annotators tagged software mentions by articles. For each article they documente
 
 RDF file schema:
 	For each article annotators document
-		`codable`: if the article is in English and human-readable
+		`codable`: if the article is in English and human-readable 
 		`standard_type`: if the article is a regular academic article with reference
 		`coded_no_in_text_mentions`: if the article does not contain software mentions in its body text 
 		Each software mention is an `in_text_mention` with the following annotation fields:  
