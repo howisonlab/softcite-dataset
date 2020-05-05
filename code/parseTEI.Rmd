@@ -68,12 +68,12 @@ extracted %>% right_join(top10, by="software") %>%
   inner_join(extracted, by="id") %>% 
   filter(!is.na(url))
 # 736 top 10 software mentions:
-# 358 with publisher, 501 with version, 17 with url
+# 357 with publisher, 501 with version, 17 with url
 
 extracted %>% filter(!is.na(version)) %>% 
-# 1,274 version tags
+# 1,273 version tags
   distinct(id)
-# 1,259 software mentions with version
+# 1,260 software mentions with version
 
 extracted %>% filter(!is.na(url)) %>%
   group_by(id) %>% 
@@ -82,16 +82,16 @@ extracted %>% filter(!is.na(url)) %>%
 # check software mention with more than 1 publisher/version/url
 extracted %>% filter(id == "PMC3886109-software-0")
 
-extracted %>% filter(!is.na(publisher)) %>%  # %>% distinct(id)
+extracted %>% filter(!is.na(publisher)) %>% #distinct(id)
   group_by(publisher) %>% 
   summarise(n_publisher = n()) %>% 
   arrange(desc(n_publisher)) 
 # 1,119 publisher tags
-# 1,115 software mentioned with publisher
+# 1,117 software mentioned with publisher
 # 451 distinct publishers
 
 extracted %>% filter(!is.na(url)) %>% 
-# 171 url tags
+# 172 url tags
   group_by(id) %>% 
   summarise(n_url = n()) %>% 
   arrange(desc(n_url))
@@ -114,8 +114,8 @@ extracted %>%
   summarise(n_annotation = n_distinct(annotation_id)) %>%
   # 1,233 articles with software mentions
   arrange(desc(n_annotation)) %>% 
-  # software mentions per article range from 1 to 32
-  # annotations per article range from 1 to 137
+  # software mentions per article range from 1 to 137
+  # annotations per article range from 1 to 144
   summarise(avg_annotation = mean(n_annotation)) 
 # 3.35 software mentions per article
 # 5.43 annotations per article
@@ -147,7 +147,7 @@ bind_rows(mention_per_article, annotation_per_article) %>%
 extracted %>% filter(is.na(resp))
 
 extracted %>% group_by(article) %>% 
-# 1,216 articles in the corpus contain rs tags
+# 1,233 articles in the corpus contain rs tags
   summarise(n_mention = n()) %>% 
   arrange(n_mention)
 # article counts may not be accurate to be counted from rs tags
