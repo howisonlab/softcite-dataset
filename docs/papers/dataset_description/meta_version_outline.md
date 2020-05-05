@@ -44,9 +44,7 @@ The goal of this paper is thus two-fold: to present a labeled dataset, and to re
         - Agreement round 2.
         - Binding TEI XML back to provenance, interdisciplinary shear there.
 
-Lessons learned
-    - involving non-students for pay is complicated, perhaps better to offer transfer credit.
-    - Documenting the work of annotators, including their frustrations and practices, seems a crucial source of provenance.
+
 
 3. Tensions and Reflections about creation
     - Reliability vs speed/size
@@ -59,4 +57,6 @@ Lessons learned
     - Presenting dataset as artifact vs process
         - genre expectations
         - hard to know how much to describe (cite Ribes article, but also cite data sharing literature)
+        - Documenting the work of annotators, including their frustrations and practices, seems a crucial source of provenance, but quite outside the usual expectations.
     - Openness vs fear of being scooped
+    - involving non-students for pay is complicated, perhaps better to offer transfer credit.

@@ -46,6 +46,26 @@ We demonstrate the usefulness of this dataset by using it for training/testing a
 
 As expected a relatively simple supervised model (CRF) shows good performance, when compared to bootstrapping. This is particularly true for recall.
 
+We report traditional precision, recall, and f-score of the CRF model performance. We divided the TEI XML corpus randomly with 90\% of the corpus for training and the rest 10\% for evaluation. All the performance measures were averaged with 10-fold cross-validation with the 90/10 segmentation of the whole corpus. Among all the fields, we have achieved a precision of .83, recall of .74, and f-score of .78. The performance metrics of each annotation label are detailed in table \ref{table:result2}. To our knowledge, the most similar effort recently to ours achieved a f-score of .74 with a precision of .63, leveraging a CRF model \cite{duck_2015}.
+
+\begin{table}[h!]
+\begin{center}
+ \begin{tabular}{cccl}
+ \toprule
+ Labels & Precison & Recall & f-score  \\
+ \midrule
+ \emph{software} & 86.5 & 72.24 & 78.67 \\
+ \emph{publisher} & 85.45 & 74.84 & 79.72 \\
+ \emph{version} & 89.65 & 84.99 & 87.14 \\
+ \emph{url} & 69.19 & 63.35 & 65.03 \\
+ micro-average & 82.7 & 73.85 & 77.64 \\
+ \bottomrule
+\end{tabular}
+\end{center}
+\label{table:result2}
+\caption{Recent Results for prototype machine learning training and evaluation by using a linear CRF approach}
+\end{table}
+
 It is a goal of our work to generate community interest and collaboration. We hope that the community will use this dataset for further improvement, including using computationally expensive algorithms such as BlistXXXX. We anticipate that the larger dataset should enable training systems of equivalent or better performance to that of Kruger (cite), but more robust to novel data and domains. To encourage others we do not report results from more computationally complex models, leaving "low hanging fruit" to encourage collaboration (cite Raymond.)
 
 ## Future work
@@ -88,7 +108,7 @@ The majority of annotation was done on a department Linux server with annotators
 
 We used this rather idiosyncratic infrastructure for three reasons. First, we intended to annotate the in-text mention and linked references as units, following the Howison and Bullard publication. This made existing content analysis tools, such as Atlas.TI (cite) harder to use. Second, we knew the project would take considerable time and we did not want to rely on hosted commercial annotation tools that might change in ways that undermined the project (and believed that github, at least in basic functions, was relatively stable.) Third, we chose to use git-based aggregation approach rather than building a custom web-UI because we reasoned the effort to train the student annotators would be valuable to them as students and us as educators, while the effort to build and maintain a web-UI would be equally large but of benefit only to those building it (as well as likely being fragile). We used SFTP mounted files because we wanted all work, even that in progress, to be in a file-space owned by the project and thus able to be backed up even prior to students submitting via git. Indeed, after the main phase of annotation, while checking our assignment database against work completed, we found some un-submitted work in annotator home folders (which we, as admins, submitted via git).
 
-Annotators were recruited by advertising a research project in university venues. They were paid $15 an hour but restricted to 10 hours a week. Some wanted to work more, but we felt it was important to prevent fatigue and maintain some balance between annotator contribution level. Students were largely from a large public university (XXXXblinded) but we recruited a small number from a local historically black  university, with a large hispanic population. Unexpected issues with work authorization documentation (required of those not students at our institution, but not those already students) meant those HBCU students were not able to contribute many annotations.
+Annotators were recruited by advertising a research project in university venues. They were paid $15 an hour but restricted to 10 hours a week. Some wanted to work more, but we felt it was important to prevent fatigue and maintain some balance between annotator contribution level. Students were largely from a large public university (XXXXblinded) but we recruited a small number from a local historically black  university, with a large hispanic population. Unexpected issues with work authorization documentation (required of those not enrolled as students at our institution) meant those HBCU students were not able to contribute many annotations.
 
 Students were trained in classrooms, with materials prepared by a doctoral student and published on our github site (where they remain, blindedXXXX). These materials addressed both our collaboration infrastructure and our annotation scheme. We first used the articles coded in the Howison and Bullard paper. We coded a number of files all together, including allowing and encouraging open questions, before breaking into groups. In later weeks, we conducted training for newly recruited annotators, with previously trained annotators working in pairs on assigned articles on one side of the large room. All were encouraged to get involved in discussions, or bring questions to the group. The PI was deferred to as the authority or oracle, with doctoral students writing down reasoning and testing it in open conversation. Despite efforts, new examples often lead to referring to the PI but the PIs responses were sometimes inconsistent over time. It was challenging to managing training, assignment logistics, payroll, and reason about specific examples. It was also challenging to encourage annotators to disagree in public. As these discussions were face to face, there are no records other than those ultimately encoded in the annotation scheme as examples and justifications. Evolution of the annotation scheme could be somewhat recovered by examining the git log history of the scheme and the training pages.
 
@@ -114,15 +134,55 @@ The second pattern identified by annotators discussing their work was the tenden
 
 We mention these two events because they credibly might have affected annotators work. For example, it is possible that discussing and displaying cluster gave annotators reason to concentrate in some sections but skim others. Similarly, we mention the "monster" papers because annotation patterns may be different in those, particularly towards the end of the fatiguing and repetitious articles. We have not investigated whether annotations differ in these "monster" articles, or before and after group discussion of clustering (although we hope a community might be inspired to do so).
 
-- Connection with GROBID creator and ML expert.
-    - Alignment via GROBID
-    - Prototype machine learning
-    - Annotation consistency work
-        - undermining the "software_used" category.
-        - not applied to articles with no initial mentions.
-        - point to github issues, although discussion frequently reverted to email.
-    - Agreement round 2.
-    - Binding TEI XML back to provenance, interdisciplinary shear there.
+Student annotators then worked individually on articles, working towards completing all XXXX articles.
+
+# Connecting with GROBID for full-text alignment
+
+A core goal of this project was to enable entity extraction from full-text articles published in the default format, PDF. GROBID (GeneRation Of Bibliographic Data) is a text mining library utilizing machine learning techniques trained on the format of academic PDFs to extract, parse, and restructure PDF into TEI XML encoded documents \cite{grobid:2019}. The structured TEI XML representation explicitly marks up common structural attributes in a document such as paragraphs, section headers, formulas, figures, bibliographical references, also storing the original location on pages. GROBID can therefore display annotations on top of the source PDF, as shown in Figure \ref{fig:annotation1}, providing a visual, easy to apprehend, and contextual display for the annotations. GROBID can also scale; recently GROBID processed 915,000 publishers' PDF per day (around 20M pages per day) with a single server with 16 CPUs.
+
+## Iterative refinement
+
+With annotations complete and an appropriate PDF to XML conversion, we began to work with an entity extraction expert to complete alignment, and assess corpus usefulness through prototype machine learning. This process was iterative, with corpus wide summaries identifying issues resulting in consistency improvement. To track the changes to the corpus we identified XXXX processing steps, recorded against each article.
+
+### Alignment
+
+We transformed all the manual annotation data from RDF into CSV. We then normalized the text from both RDF and TEI XML sources by discarding all forms of whitespace, converting all the characters to lower case, and removing all non-ASCII characters. Next, we implemented a relatively straightforward string matching algorithm with these normalized strings. All the occurrences of the normalized software mention string for a given page are then identified within the TEI XML text. For each identified mention string, we also tried to match its left and right contexts with the contextual string present in the RDF annotations (\emph{full\textunderscore quote}). If the full context could be matched, we consider that successful alignment. Finally, we matched the version, software creator, and the URL associated with the software mention in the identified contextual string.
+
+Even with the high-quality TEI XML output of GROBID, the alignment process was not effortless. Because misalignment emerged from the discrepancy between dual conversions of the PDF originals, first by annotators, second by the PDF-to-text conversion using GROBID. Annotators completed one conversion when copying all the required annotation string from the PDF document into the RDF templates. The copied text can vary and is not necessarily WYSIWYG (\textit{i.e.}, "what you see is what you get" in computing terms) due to the diverse PDF formats, operating systems, and the PDF readers/plugins used by annotators. Meanwhile the second conversion is performed by GROBID as it extracts usable text from the PDF in a consistent way. As a result, the inconsistencies between manual inputs and machine inputs include the misalignment of non-character glyphs (\textit{i.e.}, effectively in-line images in the PDF), inconsistent conversion of whitespace characters (often whitespace visible in the PDF were not included in the copied text), inconsistent non-ASCII character conversions, inconsistencies in resolved character codes (usually due to embedded fonts in original PDF files), inconsistent treatment of line and page breaks, remaining inclusion of PDF formatting artifacts (\textit{e.g.}, running headers) and different ordering of elements between PDF viewers used by annotators (\textit{e.g.}, macOS Preview and GROBID handle the ordering of PDF document elements in different ways: macOS Preview follows PDF object stream order while GROBID takes heuristics-based reading order). Human errors also engendered some alignment failure, including typos, disarranged character orders, or differing string content in the text input. For example, when the label \emph{software\textunderscore name} was filled up with the full name of software (\textit{e.g.}, "Statistical Package for Social Sciences") whereas the \emph{full\textunderscore quote} just contained an acronym (\textit{e.g.}, "SPSS").
+
+After efforts of string normalization removing whitespace, line breaks, structural mark-ups, etc., we still had 547 cases of annotated software mentions where the inconsistencies between the two sources of inputs (\textit{i.e.}, RDF inputs from annotators and TEI XML inputs converted by GROBID from PDF originals) prevented automatic alignment. We then resolved these alignment failures through inspection of the two sources of converted text, manually fixing the typo in manual annotation results, and directly copying the corresponding context string from the TEI XML source into the initial RDF input (note that originally the contextual strings were copied from the PDF sources), in a newly added \emph{tei\textunderscore full\textunderscore quote} field. Following the manual improvement of RDF inputs, we reran the same alignment script, and achieved and validated more successful string matching. Alignment edits to the RDF files do change the provenance chain, but were recorded in git version control and could thus be recovered, if needed. For the final published dataset, we dropped the mention annotations that cannot be aligned with their PDF context even after all alignment efforts (XXXX how many?).
+
+### Post-alignment agreement calculation
+
+Our alignment work enabled us to identify and fix typos or copy/paste issues from different PDF readers that had lead to seeming disagreements during earlier agreement calculations. In other words, two annotators successfully identified the same entity as software but typos in annotation texts deflate the agreement. As of the release of our TEI XML corpus, among 260 PMC articles that are annotated by more than one annotator, a percentage agreement of 70.7\% is achieved in the field of \emph{software\textunderscore name}. \emph{Version\textunderscore number} has the highest agreement of 80.8\%, in contrast are an agreement of 42.7\% in the field of \emph{version\textunderscore date} and an agreement of 42.2\% in \emph{creator}; the field \emph{url} has an agreement of 66.8\%. Among all these fields, the inter-annotator agreement is 61.9\%.
+
+In the economic article set, we have 26 articles that are annotated by more than one annotator. Despite the relatively small number of annotated articles, we have not spotted agreement level that is drastically different from that in the PMC article set. The overall agreement counting in all the fields is 66.3\%. The agreement in the \emph{software\textunderscore name} field is 72.1\%. \emph{Version\textunderscore number} still has the highest agreement of 76.7\%; while \emph{version\textunderscore date} has the least agreement of 43.4\%. The agreement is 59.2\% in the field of \emph{creator} and 71.3\% in the field of \emph{url}. In Table ?? we present the number of annotations and the corresponding agreement achieved by field in these two article sets.
+
+### Consistency review
+
+Alignment and prototype use of the corpus, together with manual inspection, revealed noticeable inconsistencies in application of annotation rules, semantic and syntactic. Through a series of review and manual curation, with discussions recorded in Github Issues we have resolved these inconsistencies and made consequent improvements in our annotation scheme. The published dataset notes which annotations were changed as a result of this process.
+
+Semantically, we reduced the inconsistencies in the view of what should be counted as software. Some of these issues had been addressed during training, but others were novel, only becoming visible as the scale of annotation moved towards saturating the phenomena and practices. Issues included abstract discussions of software, web platforms, and annotation of other infrastructure. In improving consistency, we designed rules with reference to our overall goal: to increase the visibility of software related to the scientific reputation system. This meant that we excluded abstract discussions, requiring the presence of a specific piece of software distributed in some fashion. We excluded general web platforms, such as Github or Google, but included scientific tools, even if accessed via a web portal. Finally, our annotators had used `mention_type` to describe things that they had thought might be software, but had ultimately decided were not (and thus not coded further). Examples included "databases", "algorithms", and "instruments". We had not worked to achieve semantic agreement on these detailed categories, and therefore resolved these to a binary. The mentions annotated as non-software categories are excluded from our TEI XML dataset (but are available in our provenance data).
+
+XXXX need to describe the use of `mention_type` earlier. Did we make this binary?
+
+We made two changes to the names of annotations to make the annotation scheme more semantically coherent to users. We changed the label \emph{software\textunderscore name} to \emph{software} since there exist non-named software entities annotated in our dataset. We changed the label \emph{creator} to \emph{publisher} as most of the entities annotated as creator in the dataset are actually publishers of the software mentioned, rather than original creators.
+
+One label, `software_used`, indicating whether or not the annotator thought the mentioned piece of software was, in fact, used in the research was not included in our consistency review, due to communication issues. XXXX what is the status of this label? Should it be dropped completely, just available in provenance?
+
+In parallel, we improved the syntactic consistency of annotations at the level of each single field. For example, we removed the prefixes of \emph{version\textunderscore number} such as "ver.", "v.", or "version"; and we decided that the full and abbreviated name of the software should be annotated as a single string as \emph{software\textunderscore name}(\textit{e.g.}, "Statistical Package for Social Sciences (SPSS)"). In much of the annotation of software \emph{creator}, especially those commercial organizations usually mentioned with an address (\textit{e.g.}, "IBM Corp, Armonk, NY"), we decided to separate the geo-location away from the annotated string. These syntactic consistency improvements lessened the ambiguity of annotation data in the same field, and thus lower the chance of overfitting when the data is utilized as a training dataset.
+
+We had initially annotated `version` and `version_date` separately, but found that `version_date` had not been used often. In the published dataset these are combined into a single `version` field.
+
+The published dataset indicates whether an article was multiply coded, but does not directly record differences of opinion between annotators, nor the annotators certainty in their annotations. For multiply coded articles, we picked the annotation generated by the most productive annotator among all those who worked on the same article, intending to maximize the number of software examples available for training.
+
+We excluded all the manual annotations of in-text citations and annotation of reference types from the final published TEI XML corpus. Our initial intention was to link these in-text citations with their corresponding entry in the reference list of an article, in order to identify creators and the type of referenced article (e.g., "software paper") But afterward we found that to annotate the in-text citation and their reference entry increased the complexity of tasks for annotators, and they performed inconsistently. Further GROBID automatically identifies all the in-text citations in PDF documents and links them to references, and those are included in the TEI XML dataset, albeit not specifically annotated as software related information. Future users of the dataset could extract and separate them if interested, as well as tie back to original annotation via the provenance identifier in the TEI XML.
+
+These consistency decisions were made through intensive discussion within a group of curators, largely recorded through Github issues (although with some phone discussions). The consistency improvements were subsequently implemented in the TEI XML dataset by both scripting and manual edits. Those edited during this process are marked XXXX.
+
+We then expanded the dataset by a string search using all the identified software names across XXXX all the picked paragraphs, seeking situations where a string in one context was identified as software but the same string in other contexts was not identified. Such a situation is a likely false negative for software mention, caused either by training issues or by annotator fatigue. We manually reviewed all the automatically retrieved cases, and when they were judged to be referencing software also applied the additional detail annotations (`publisher`, `version`, etc.). However, this scripted semantic expansion was not conducted across the full-text of all articles inthe corpus, but only those that had initially been identified as having annotations. XXXX (or was it just the paragraphs that had annotations?)
+
+
 
 
 
@@ -130,6 +190,7 @@ We mention these two events because they credibly might have affected annotators
     - Reliability vs speed/size
         - Unclear where saturation in training/location of issues to train about, thus post-annotation curation is key.
         - Limited guidance on "consistency" phase. What is acceptable/problematic (and why?)
+        - interdisciplinary shear about provenance importance, those qualitatively trained more concerned about tracability, those trained in ML more concerned about clarity in the final artifact. Played out in serialization decisions that removed ability to trace provenance, considerable work needed to recover those connections.
     - Provenance vs usefulness
         - very hard to predict??
         - opens up criticism??
