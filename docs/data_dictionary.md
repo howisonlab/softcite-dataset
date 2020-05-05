@@ -8,10 +8,9 @@ RDF file schema:
 	For each article annotators document
 		`codable`: if the article is in English and human-readable
 		`standard_type`: if the article is a regular academic article with reference
-		`coded_no_in_text_mentions`: if the article does not contain software mentions in its body text
-
-		Each software mention is an `in_text_mention` with the following annotation fields:
-			`full_quote`: the text span where the software mention is identified
+		`coded_no_in_text_mentions`: if the article does not contain software mentions in its body text 
+		Each software mention is an `in_text_mention` with the following annotation fields:  
+			`full_quote`: the text span where the software mention is identified 
 		`tei_full_quote`: added during post-processing for text aligning purpose. Counterpart of `full_quote` in TEI XML text 		conversion of original PDF articles.
 			`on_pdf_page`: location indicator for text aligning consideration
 			`spans_pages`: if the software mention goes across the page break
@@ -25,7 +24,6 @@ RDF file schema:
 			`url`
 			`creator`
 			`has_reference`: if the software mention has a reference entry.
-
 		The `reference` linked to `in_text_mention` contains the following annotation fields:
 			`full_quote`: the full reference entry corresponding to the software mention in body text.
 			`on_pdf_page`
