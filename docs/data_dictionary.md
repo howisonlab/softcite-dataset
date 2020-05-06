@@ -50,4 +50,5 @@ All the individual RDF input are parsed into a rectangular dataset in CSV format
 ### TEI XML data schema
 
 After expert review, we have an aggregated dataset in TEI XML format, each software mention only has one final adjudicated annotation and is presented in its context paragraph. The TEI XML dataset includes article level metadata for identifying annotated academic articles. Each annotated software mention is associated with an `xml:id` as its unique identifier linking to the corresponding article. The annotations of software mention in TEI XML corpus also include annotator id and entity type(software/version/publisher/url). Note that `version_date` and `version_number` have been merged into `version`; `creator` has changed to `publisher` (just a field title change). All the annotations that has been modified during expert review have a `curator` identifier associated.
+
 Current aggregated dataset is here: https://github.com/ourresearch/software-mentions/blob/master/resources/dataset/software/corpus/all_clean_post_processed.tei.xml 
