@@ -9,7 +9,7 @@ output: html_document
 library(xml2)
 library(tidyverse)
 
-xml_doc = read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed.tei.xml")
+xml_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed.tei.xml")
 
 # start with rs tags
 rs_tags <- xml_find_all(xml_doc, 
@@ -197,8 +197,6 @@ str(para)
 # currently cannot extract the article-paragraph-rs tags hierarchy
 # so cannot uniquely identify negatively annotated paragraphs
 
-
-# if use xml_ns_strip can avoiding repeated adding namespace arg?
 full_excerpts <- xml_find_all(xml_doc, 
                            ns = c("tei" = "http://www.tei-c.org/ns/1.0"),
                            xpath = "//tei:TEI") %>% xml_text
@@ -221,11 +219,12 @@ all_article_attributes %>% head(2)
   unnest_wider(xml_attr_col) %>% 
   View()
 ```
+
 April 10, 2020.
 
-Tried routes:
+# Tried routes:
 
-Route 1:
+# Route 1:
 # rs_tags_test <- rs_tags %>% head(10)
 # rs_tibble <- rs_tags_test %>% map(xml_attrs) %>% map_df(bind_rows)
 
@@ -239,41 +238,41 @@ Route 1:
 #   select(-drop1, -drop2)
 
 
-rs_tibble <- rs_tags %>%
-          # see https://stackoverflow.com/questions/40036207/
-          # tidyverse-prefered-way-to-turn-a-named-vector-into-a-data-frame-tibble
-             map(xml_attrs) %>%
-             map_df(bind_rows) %>%
-             extract(id, into = c("article"), regex = "(.*?)-", remove = F) %>%
-             filter(! is.na(id)) %>%
-             mutate(xpath_string = str_glue("string(//tei:rs[@xml:id='{id}']/text())")) %>%
-             mutate(software = map_chr(xpath_string, xml_find_chr, x = xml_doc,
-                             ns = c("tei" = "http://www.tei-c.org/ns/1.0"))) %>%
-             select(-corresp)
-# 4,131 software mentions
+# rs_tibble <- rs_tags %>%
+#           # see https://stackoverflow.com/questions/40036207/
+#           # tidyverse-prefered-way-to-turn-a-named-vector-into-a-data-frame-tibble
+#              map(xml_attrs) %>%
+#              map_df(bind_rows) %>%
+#              extract(id, into = c("article"), regex = "(.*?)-", remove = F) %>%
+#              filter(! is.na(id)) %>%
+#              mutate(xpath_string = str_glue("string(//tei:rs[@xml:id='{id}']/text())")) %>%
+#              mutate(software = map_chr(xpath_string, xml_find_chr, x = xml_doc,
+#                              ns = c("tei" = "http://www.tei-c.org/ns/1.0"))) %>%
+#              select(-corresp)
+# # 4,131 software mentions
 
 
-rs_details <- rs_tags %>%
-  map(xml_attrs) %>%
-  map_df(bind_rows) %>%
-  filter(is.na(id)) %>%
-  select(-subtype, -id, -cert) %>%
-  mutate(id = str_sub(corresp, 2, -1),
-         property = type,
-         property_resp = resp) %>%
-  # changing column name in prep for joining with another table
-  select(-type, -resp, -corresp) %>%
-  mutate(xpath_string_2 = str_glue("string(//tei:rs[@type='{property}']/text())")) %>%
-  mutate(property_text = map_chr(xpath_string_2, xml_find_chr, x = xml_doc,
-                             ns = c("tei" = "http://www.tei-c.org/ns/1.0")))
-
-rs_details %>%
-  select(-xpath_string_2) %>%
-  pivot_wider(names_from = property, values_from = property_text)
-# interestingly pivot_wider does not work well with glued data
-# seems some clues here: https://github.com/tidyverse/tidyr/issues/676
-
-Route 2:
+# rs_details <- rs_tags %>%
+#   map(xml_attrs) %>%
+#   map_df(bind_rows) %>%
+#   filter(is.na(id)) %>%
+#   select(-subtype, -id, -cert) %>%
+#   mutate(id = str_sub(corresp, 2, -1),
+#          property = type,
+#          property_resp = resp) %>%
+#   # changing column name in prep for joining with another table
+#   select(-type, -resp, -corresp) %>%
+#   mutate(xpath_string_2 = str_glue("string(//tei:rs[@type='{property}']/text())")) %>%
+#   mutate(property_text = map_chr(xpath_string_2, xml_find_chr, x = xml_doc,
+#                              ns = c("tei" = "http://www.tei-c.org/ns/1.0")))
+# 
+# rs_details %>%
+#   select(-xpath_string_2) %>%
+#   pivot_wider(names_from = property, values_from = property_text)
+# # interestingly pivot_wider does not work well with glued data
+# # seems some clues here: https://github.com/tidyverse/tidyr/issues/676
+# 
+# Route 2:
 # tibbling tags
 # rs_tibble <- rs_tags %>% head(10) %>% map(my_xml_extract) %>% map_df(bind_rows)
 # 
@@ -304,7 +303,7 @@ txt <- c('<node attrA="1A" attrB="1B">text1</node>',
 txt %>% 
   map(read_xml) %>% 
   map(xml_find_all, xpath = "//node") %>% 
-  tibble(text = map_chr(., xml_text),
+    tibble(text = map_chr(., xml_text),
          # attr as a tibble column, pluck needed to unpack one
          # level of list.
          xml_attr_col = map(., xml_attrs) %>% map(pluck,1)) %>% 
@@ -313,6 +312,7 @@ txt %>%
   # groovy function to unnest that tibble column
   unnest_wider(xml_attr_col) %>% 
   View()
+# work for parallel nodesets with consistent structures
 
   map(as_list) %>% 
   tibble(text = map(.,pluck,1,1,1),
@@ -326,7 +326,6 @@ as_lists <- txt %>%
 
 text <- as_lists %>% 
   map(pluck,1,1,1)
-
   
 as_lists %>% 
   map(pluck, 1, attributes, 2)
@@ -343,3 +342,51 @@ write_compendium_description(package = "Softcite Dataset",
                              description = "Summary of Softcite Dataset")
 ```
 
+May 7, 2020.
+
+Now with the updated TEI XML corpus containing articles analyzed with no mentions.
+
+```{r}
+library(xml2)
+library(tidyverse)
+
+xml_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed_with_no_mention.tei.xml") %>% xml_ns_strip()
+
+pdf_title <- xml_find_all(xml_doc, xpath = "//title") %>% map(xml_text) 
+title_length <- pdf_title %>% map(str_length) %>% unlist 
+
+# check articles missing titles in TEI XML
+empty_title_location <- which(title_length == 0)
+```
+
+Document-level:
+(Have to be grouped by xml_text?)
+- table 1: <fileDesc>. article id and title.
+- table 2: <profileDesc>. post-processing annotation.
+(All positive and negative articles have these two fields.)
+- table 3: paragraphs
+
+Instance-level:
+- table 4: software annotations
+
+```{r}
+library(xml2)
+library(tidyverse)
+
+xml_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed_with_no_mention.tei.xml") %>% xml_ns_strip()
+
+fileDesc <- xml_doc %>% xml_find_all(xpath="//fileDesc") 
+fileDesc <- fileDesc[-1]
+
+title <- fileDesc %>% xml_text
+article_id <- fileDesc %>% xml_attrs %>% map(pluck,1) %>% unlist()
+
+fileDesc <- tibble(article_id, title)
+
+fileDesc %>%   
+  tibble(title = map(., xml_text), 
+         attrs = map(., xml_attrs) %>% map(pluck,1) %>% unlist())
+
+```
+Seems that the dot pronoun does not work with xml nodeset well.
+Have to work with the "least parsable unit" one by one?
