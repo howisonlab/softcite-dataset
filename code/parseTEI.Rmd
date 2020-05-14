@@ -357,6 +357,7 @@ title_length <- pdf_title %>% map(str_length) %>% unlist
 
 # check articles missing titles in TEI XML
 empty_title_location <- which(title_length == 0)
+# 123 missing titles
 ```
 
 Document-level:
@@ -376,7 +377,7 @@ library(tidyverse)
 xml_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed_with_no_mention.tei.xml") %>% xml_ns_strip()
 
 fileDesc <- xml_doc %>% xml_find_all(xpath="//fileDesc") 
-fileDesc <- fileDesc[-1]
+fileDesc <- fileDesc[-1] # remove the header
 
 title <- fileDesc %>% xml_text
 article_id <- fileDesc %>% xml_attrs %>% map(pluck,1) %>% unlist()
@@ -388,5 +389,7 @@ fileDesc %>%
          attrs = map(., xml_attrs) %>% map(pluck,1) %>% unlist())
 
 ```
+
 Seems that the dot pronoun does not work with xml nodeset well.
 Have to work with the "least parsable unit" one by one?
+Can Xquery to get several field values at the same time? (if cannot pluck to them at the same level)
