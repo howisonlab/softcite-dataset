@@ -3,18 +3,20 @@ All notable changes to this project will be documented in this file, since 2020-
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 2020-05-27
+
+### Changed
+- Incorporated `citec:codable` and `citec:standard_type` from `full_dataset.ttl` into `data/csv_dataset/software_articles.csv`.
+
+## 2020-05-21
+
+### Added
+- Manually imputed 102 missing articles titles as a csv table `data/csv_dataset/imputation-tei-article-missing-title.csv`.
+
 ## 2020-01-07
 
 ### Changed
 - Changed 6 values in "certainty" in .ttl and .csv data.
-
-## yyyy-mm-dd
-
-### Added
-
-
-### Changed
-
 
 ### Removed
 
