@@ -1,0 +1,153 @@
+---
+title: "Softcite Dataset Summary"
+author: "Fan Du"
+date: "5/29/2020"
+output: html_document
+---
+**Summary statistics are generated from CSV datasets.**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(xml2)
+library(janitor)
+library(kableExtra)
+library(wesanderson)
+
+# load csv data
+csv_articles <- read_csv(here("data/csv_dataset/softcite_articles.csv"))
+csv_mentions <- read_csv(here("data/csv_dataset/softcite_in_text_mentions.csv"))
+csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
+```
+**1. The frequency of PMC and econ article sets:**
+
+```{r csv_articles}
+csv_articles %>%
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>%
+  distinct(article, article_set) %>% 
+  # 4,971 PMC/econ articles annotated
+  tabyl(article_set) %>% 
+  adorn_totals("row") %>%
+  adorn_pct_formatting() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_articles %>%
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>%
+  distinct(article, article_set) %>% 
+  ggplot(aes(x=article_set, fill=article_set)) + 
+  geom_bar(stat = "count") + 
+  labs(title="Number of annotated articles", x="Article set") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**2. The frequency of single- and multiple-annotated articles in PMC & econ article sets:**
+
+```{r n_annotator}
+csv_articles %>% 
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  group_by(article, article_set) %>% 
+  # filter(!is.na(coder))
+  summarise(n_coder = n_distinct(coder)) %>% 
+  mutate(n_annotator = if_else(n_coder>1, "multiple", "single")) %>% 
+  tabyl(n_annotator, article_set) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages("all") %>% 
+  adorn_pct_formatting(digits=1) %>% 
+  adorn_title("combined") %>% 
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_articles %>% 
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  group_by(article, article_set) %>% 
+  # filter(!is.na(coder))
+  summarise(n_coder = n_distinct(coder)) %>% 
+  mutate(n_annotator = if_else(n_coder>1, "multiple", "single")) %>% 
+  ggplot(aes(x=article_set, fill=n_annotator)) +
+  geom_bar(position="dodge") +
+  labs(title="Number of multiply annotated articles across article sets", x="Article set") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**3. Among all 7,027 in text selections:**
+
+```{r csv_mentions}
+csv_mentions %>%
+  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
+  tabyl(entity_type) %>% 
+  adorn_totals("row") %>% 
+  adorn_pct_formatting() %>% 
+  knitr::kable() %>% kable_styling()
+  
+csv_mentions %>%
+  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
+  ggplot(aes(x=entity_type, fill=entity_type)) +
+  geom_bar(stat="count") +
+  labs(title="Number of software vs. non-software entity mentions annotated", x="Entity type") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**4. Number for mentions in articles:**
+
+```{r mention_in_article}
+csv_mentions %>%
+  group_by(article) %>% 
+  summarise(n_mention = n_distinct(selection)) %>% 
+  group_by(n_mention) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  mutate(mention_count=case_when(
+    n_mention <= 10 ~ "(0, 10]",
+    n_mention > 10 & n_mention <= 25 ~ "(10, 25]",
+    n_mention > 25 & n_mention <= 50 ~ "(25, 50]",
+    n_mention > 50 & n_mention <= 75 ~ "(50, 75]",
+    n_mention > 75  ~ "(75, 300)")) %>% 
+  group_by(mention_count) %>% 
+  summarise(article_count = sum(n_article)) %>% 
+  adorn_totals("row") %>% 
+  knitr::kable() %>% 
+  kable_styling(full_width = F)
+  
+
+csv_mentions %>%
+  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>%
+  group_by(article, entity_type) %>% 
+  summarise(n_mention = n_distinct(selection)) %>% 
+  #group_by(n_mention, entity_type) %>% 
+  #summarise(n_article = n_distinct(article)) %>% 
+  ggplot(aes(x=entity_type, y=n_mention, fill=entity_type)) +
+  geom_violin(scale="area") +
+  labs(title="Distribution of mention counts in articles", x="Number of articles", y="Number of mentions") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**5. Among 25,746 annotations in total, we have produced software-related annotations (software_name, software_was_used, version_number, version_date, creator, url).**
+
+```{r}
+csv_codes %>% 
+  filter(was_code_present == T) %>% 
+  distinct() %>% 
+  # 25,746 annotations made
+  filter(code %in% c("software_name", "software_was_used", "version_number", "version_date", "creator", "url")) %>% 
+  tabyl(code) %>% 
+  adorn_totals("row") %>% 
+  adorn_pct_formatting() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_codes %>% 
+  filter(was_code_present == T) %>% 
+  distinct() %>% 
+  # 25,746 annotations made
+  filter(code %in% c("software_name", "software_was_used", "version_number", "version_date", "creator", "url")) %>%
+  ggplot(aes(x=code, fill=code)) +
+  geom_bar(stat = "count") +
+  labs(title = "Number of annotations in each field", x="Field label") +
+  scale_fill_manual(values=wes_palette("IsleofDogs1"))
+```
+

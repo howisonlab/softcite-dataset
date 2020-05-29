@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 2020-01-07
 
 ### Changed
-- Changed 6 values in "certainty" in .ttl and .csv data.
+- Fixed 6 abnormal values in `certainty` in `data/*.ttl` and `data/csv_dataset/softcite_in_text_mentions.csv`.
 
 ### Removed
 
