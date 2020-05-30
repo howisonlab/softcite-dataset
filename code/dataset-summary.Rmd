@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(ggplot2)
 library(here)
-library(xml2)
 library(janitor)
 library(kableExtra)
 library(wesanderson)
@@ -22,7 +21,8 @@ csv_articles <- read_csv(here("data/csv_dataset/softcite_articles.csv"))
 csv_mentions <- read_csv(here("data/csv_dataset/softcite_in_text_mentions.csv"))
 csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
-**1. The frequency of PMC and econ article sets:**
+
+**1. Number of PMC and econ article annotated:**
 
 ```{r csv_articles}
 csv_articles %>%
@@ -100,7 +100,7 @@ csv_mentions %>%
   scale_fill_manual(values=wes_palette("Royal1"))
 ```
 
-**4. Number for mentions in articles:**
+**4. Range of mention counts in articles:**
 
 ```{r mention_in_article}
 csv_mentions %>%
@@ -131,29 +131,5 @@ csv_mentions %>%
   geom_violin(scale="area") +
   labs(title="Distribution of mention counts in articles", x="Number of articles", y="Number of mentions") +
   scale_fill_manual(values=wes_palette("Royal1"))
-```
-
-**5. Among 25,746 annotations in total, we have produced software-related annotations (software_name, software_was_used, version_number, version_date, creator, url).**
-
-```{r}
-csv_codes %>% 
-  filter(was_code_present == T) %>% 
-  distinct() %>% 
-  # 25,746 annotations made
-  filter(code %in% c("software_name", "software_was_used", "version_number", "version_date", "creator", "url")) %>% 
-  tabyl(code) %>% 
-  adorn_totals("row") %>% 
-  adorn_pct_formatting() %>% 
-  knitr::kable() %>% kable_styling()
-
-csv_codes %>% 
-  filter(was_code_present == T) %>% 
-  distinct() %>% 
-  # 25,746 annotations made
-  filter(code %in% c("software_name", "software_was_used", "version_number", "version_date", "creator", "url")) %>%
-  ggplot(aes(x=code, fill=code)) +
-  geom_bar(stat = "count") +
-  labs(title = "Number of annotations in each field", x="Field label") +
-  scale_fill_manual(values=wes_palette("IsleofDogs1"))
 ```
 
