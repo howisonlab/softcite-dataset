@@ -27,19 +27,21 @@ csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
 ```{r csv_articles}
 csv_articles %>%
   filter(!is.na(no_selections_found)) %>% 
-  filter(article_set %in% c("pmc_article", "econ_article")) %>%
-  distinct(article, article_set) %>% 
-  # 4,971 PMC/econ articles annotated
-  tabyl(article_set) %>% 
-  adorn_totals("row") %>%
+  filter(article_set == "pmc_article"|article_set == "econ_article") %>%
+  group_by(article, article_set) %>% 
+  # 5,553 articles
+  tabyl(no_selections_found, article_set) %>% 
+  adorn_totals(c("row", "col")) %>%
+  adorn_percentages() %>% 
   adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
   knitr::kable() %>% kable_styling()
 
 csv_articles %>%
   filter(!is.na(no_selections_found)) %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>%
-  distinct(article, article_set) %>% 
-  ggplot(aes(x=article_set, fill=article_set)) + 
+  group_by(article, article_set) %>% 
+  ggplot(aes(x=article_set, fill=no_selections_found, position = "identity")) + 
   geom_bar(stat = "count") + 
   labs(title="Number of annotated articles", x="Article set") +
   scale_fill_manual(values=wes_palette("Royal1"))
