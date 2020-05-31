@@ -1,6 +1,6 @@
 ---
 title: "export_dataset"
-author: "James Howison"
+author: "James Howison and Fan Du"
 date: "3/29/2018"
 output: html_document
 ---
@@ -128,8 +128,8 @@ in_text_mentions <- data.world::qry_sparql(paste0(prefixes, in_text_mention_q)) 
 #       format = "csv", extra=list(format="csv"))$results %>% 
   as_tibble() %>% 
   mutate_at(vars(article, selection),
-            fun(str_extract(.,"[#/]([^#/]+)$"))) %>%
-  mutate_at(vars(article,selection), funs(str_sub(.,2))) %>% 
+            list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article,selection), list(~ str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_in_text_mentions.csv"))
 
 ```
@@ -154,8 +154,8 @@ references <- data.world::qry_sparql(paste0(prefixes, reference_q)) %>%
 #       format = "csv", extra=list(format="csv"))$results %>% 
   as_tibble() %>% 
   mutate_at(vars(article, reference, from_in_text_selection),
-            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
-  mutate_at(vars(article, reference, from_in_text_selection), funs(str_sub(.,2))) %>% 
+            list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(article, reference, from_in_text_selection), list(~ str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_references.csv"))
 ```
 
@@ -179,8 +179,8 @@ codes <- data.world::qry_sparql(paste0(prefixes, all_codes_q)) %>%
 #      format = "csv", extra=list(format="csv"))$results %>% 
   as_tibble() %>% 
   mutate_at(vars(selection, code),
-            funs(str_extract(.,"[#/]([^#/]+)$"))) %>%
-  mutate_at(vars(selection, code), funs(str_sub(.,2))) %>% 
+            list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
+  mutate_at(vars(selection, code), list(~ str_sub(.,2))) %>% 
   write_csv(here::here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
 
