@@ -12,25 +12,23 @@ https://github.com/ourresearch/software-mentions/blob/master/doc/corpus-counts.m
 knitr::opts_chunk$set(echo = FALSE)
 
 library(tidyverse)
-library(ggplot2)
 library(here)
 library(xml2)
 library(janitor)
 library(knitr)
 library(kableExtra)
-library(wesanderson)
 
 # load csv data
-csv_articles <- read_csv("C:/Users/D/Documents/Academics/1-Projects/HowisonLab/softcite/softcite-dataset/data/csv_dataset/softcite_articles.csv")
-csv_mentions <- read_csv("C:/Users/D/Documents/Academics/1-Projects/HowisonLab/softcite/softcite-dataset/data/csv_dataset/softcite_in_text_mentions.csv")
-csv_codes <- read_csv("C:/Users/D/Documents/Academics/1-Projects/HowisonLab/softcite/softcite-dataset/data/csv_dataset/softcite_codes_applied.csv")
+csv_articles <- read_csv(here("data/csv_dataset/softcite_articles.csv"))
+csv_mentions <- read_csv(here("data/csv_dataset/softcite_in_text_mentions.csv"))
+csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
 
 ```{r, include=FALSE}
 csv_articles %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>% 
   group_by(article) %>% 
-  # 4,971 articles annotated
+  # 5,553 articles annotated
   tabyl(no_selections_found) %>% 
   adorn_totals("row") %>% 
   adorn_pct_formatting() %>% 
@@ -45,6 +43,7 @@ raw_software_annotations <- csv_articles %>%
   filter(mention_type == "software") %>% 
   select(-codable, -standard_article, -quote, -tei_quote, -memo, -certainty, -page) %>% 
   # TODO: there might be duplicated values in the fields dropped
+  # make sure that every record is uniquely identified
   distinct()
   # 6,206 annotations of software entities
 
@@ -107,13 +106,13 @@ xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
 # 1,217 annotations edited by curator in total
 ```
 
-Process summary statistics break down by steps:
+**Process summary statistics break down by steps (as of May 30, 2020):**
 
 |steps|software_annotation_count|annotation_total_count|articles_with_annotations|articles_with_zero_annotations|article_total_count|
 |-----|----------------------|----------------------|-------------------------|------------------------------|-------------------|
 |Raw annotation runs|6208|15718|1823|3730|5553|
 |Raw annotation largest run|5658|14426|1823|3730|5553|
-|Annotations located in PDFs|-|-|1247|-|-|
+|Annotations located in PDFs|-|-|-|-|-|
 |Annotations reviewed by curator|5210|8398|1432|3544|4976|
 |Annotations edited by curator|773|1217|1432|3544|4976|
 
@@ -123,7 +122,5 @@ Notes:
 1. Statistics in the first 2 rows are calculated from CSV data. 
 It should be noted that the definition of the largest run has not been clarified yet. Here I use the annotator at one particular article who produced the most annotations of software entity and attributes.
 
-2. The third row is waiting for the update of TEI corpus after the recent update of CSV data.
-
-3. Statistics in the 4th and 5th row are queried from the current version of softcite TEI corpus.
+2. Statistics in the 4th and 5th row are queried from the current version of softcite TEI corpus.
 
