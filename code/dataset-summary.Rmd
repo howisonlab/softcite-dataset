@@ -1,10 +1,14 @@
 ---
 title: "Softcite Dataset Summary"
 author: "Fan Du"
-date: "5/29/2020"
+date: "6/1/2020"
 output: html_document
 ---
+
 **Summary statistics are generated from CSV datasets.**
+
+Note that the CSV data records the raw input from all the annotators. All the annotated software mentions in this dataset have not been disambiguated. So the CSV data can offer useful article-level (or annotator-level) insights, but mention-level statistics drawn from the CSV dataset are less accurate.
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -27,10 +31,11 @@ csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
 ```{r csv_articles}
 csv_articles %>%
   filter(!is.na(no_selections_found)) %>% 
+  mutate(has_software_mentions=if_else(no_selections_found == T, "No mentions", "Has mentions")) %>% 
   filter(article_set == "pmc_article"|article_set == "econ_article") %>%
   group_by(article, article_set) %>% 
   # 5,553 articles
-  tabyl(no_selections_found, article_set) %>% 
+  tabyl(has_software_mentions, article_set) %>% 
   adorn_totals(c("row", "col")) %>%
   adorn_percentages() %>% 
   adorn_pct_formatting() %>% 
@@ -39,9 +44,10 @@ csv_articles %>%
 
 csv_articles %>%
   filter(!is.na(no_selections_found)) %>% 
+  mutate(has_software_mentions=if_else(no_selections_found == T, "No mentions", "Has mentions")) %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>%
   group_by(article, article_set) %>% 
-  ggplot(aes(x=article_set, fill=no_selections_found, position = "identity")) + 
+  ggplot(aes(x=article_set, fill=has_software_mentions, position = "identity")) + 
   geom_bar(stat = "count") + 
   labs(title="Number of annotated articles", x="Article set") +
   scale_fill_manual(values=wes_palette("Royal1"))
@@ -59,7 +65,7 @@ csv_articles %>%
   mutate(n_annotator = if_else(n_coder>1, "multiple", "single")) %>% 
   tabyl(n_annotator, article_set) %>% 
   adorn_totals(c("row", "col")) %>% 
-  adorn_percentages("all") %>% 
+  adorn_percentages("col") %>% 
   adorn_pct_formatting(digits=1) %>% 
   adorn_title("combined") %>% 
   adorn_ns() %>% 
@@ -78,61 +84,45 @@ csv_articles %>%
   scale_fill_manual(values=wes_palette("Royal1"))
 ```
 
-**3. Among all 7,027 in text selections:**
+**3. Among all 7,027 in-text selections:**
+
+Note that this is a rough comparison: entities are not evenly annotated for a same number of times. So the numbers below are not the absolute amount of entities mentioned in the text, but just give a sense of the entity mention distribution across article sets.
 
 ```{r csv_mentions}
 csv_mentions %>%
   mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
-  tabyl(entity_type) %>% 
-  adorn_totals("row") %>% 
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>% 
+  tabyl(entity_type, article_set) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
   adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
   knitr::kable() %>% kable_styling()
 
-# csv_mentions %>%
-#   tabyl(mention_type) %>% 
-#   adorn_totals("row") %>% 
-#   adorn_pct_formatting() %>% 
-#   knitr::kable() %>% kable_styling()
-  
 csv_mentions %>%
   mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
-  ggplot(aes(x=entity_type, fill=entity_type)) +
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>%
+  ggplot(aes(x=article_set, fill=entity_type)) +
   geom_bar(stat="count") +
   labs(title="Number of software vs. non-software entity mentions annotated", x="Entity type") +
   scale_fill_manual(values=wes_palette("Royal1"))
 ```
 
+For the breakdown of non-software mention types:
 
-
-```{r mention_in_article, include=FALSE}
-#**4. Range of mention counts in articles:**
+```{r mention_type}
 csv_mentions %>%
-  group_by(article) %>% 
-  summarise(n_mention = n_distinct(selection)) %>% 
-  group_by(n_mention) %>% 
-  summarise(n_article = n_distinct(article)) %>% 
-  mutate(mention_count=case_when(
-    n_mention <= 10 ~ "(0, 10]",
-    n_mention > 10 & n_mention <= 25 ~ "(10, 25]",
-    n_mention > 25 & n_mention <= 50 ~ "(25, 50]",
-    n_mention > 50 & n_mention <= 75 ~ "(50, 75]",
-    n_mention > 75  ~ "(75, 300)")) %>% 
-  group_by(mention_count) %>% 
-  summarise(article_count = sum(n_article)) %>% 
-  adorn_totals("row") %>% 
-  knitr::kable() %>% 
-  kable_styling(full_width = F)
-  
-
-csv_mentions %>%
-  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>%
-  group_by(article, entity_type) %>% 
-  summarise(n_mention = n_distinct(selection)) %>% 
-  #group_by(n_mention, entity_type) %>% 
-  #summarise(n_article = n_distinct(article)) %>% 
-  ggplot(aes(x=entity_type, y=n_mention, fill=entity_type)) +
-  geom_violin(scale="area") +
-  labs(title="Distribution of mention counts in articles", x="Number of articles", y="Number of mentions") +
-  scale_fill_manual(values=wes_palette("Royal1"))
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>% 
+  tabyl(mention_type, article_set) %>%
+  adorn_totals(c("row","col")) %>%
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>%
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
 ```
-
