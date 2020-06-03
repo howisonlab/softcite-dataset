@@ -68,6 +68,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 "
 ```
 
+
 ```{r}
 articles_string <- "SELECT DISTINCT ?article ?article_set ?coder ?no_selections_found ?codable ?standard_article
 WHERE {
@@ -119,7 +120,7 @@ WHERE {
                                               ca:memo ?memo ]
                             ]
   OPTIONAL { ?selection citec:tei_full_quote ?tei_quote }
-}
+  }
 "
 
 in_text_mentions <- data.world::qry_sparql(paste0(prefixes, in_text_mention_q)) %>%
@@ -130,6 +131,7 @@ in_text_mentions <- data.world::qry_sparql(paste0(prefixes, in_text_mention_q)) 
   mutate_at(vars(article, selection),
             list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article,selection), list(~ str_sub(.,2))) %>% 
+  filter(!str_detect(article,"^a")) %>% 
   write_csv(here::here("data/csv_dataset/softcite_in_text_mentions.csv"))
 
 ```
@@ -156,6 +158,7 @@ references <- data.world::qry_sparql(paste0(prefixes, reference_q)) %>%
   mutate_at(vars(article, reference, from_in_text_selection),
             list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(article, reference, from_in_text_selection), list(~ str_sub(.,2))) %>% 
+  filter(!str_detect(article,"^a")) %>% 
   write_csv(here::here("data/csv_dataset/softcite_references.csv"))
 ```
 
@@ -181,6 +184,7 @@ codes <- data.world::qry_sparql(paste0(prefixes, all_codes_q)) %>%
   mutate_at(vars(selection, code),
             list(~ str_extract(.,"[#/]([^#/]+)$"))) %>%
   mutate_at(vars(selection, code), list(~ str_sub(.,2))) %>% 
+  filter(!str_detect(selection, "^a")) %>% 
   write_csv(here::here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
 

@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file, since 2020-
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 2020-06-03
+
+### Removed
+- Removed selections, codes, and references from training articles ("^a") in csv dataset. Nothing changed in RDF.
 
 ## 2020-05-29
 
@@ -12,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 2020-05-27
 
 ### Changed
-- Incorporated `citec:codable` and `citec:standard_type` from `full_dataset.ttl` into `data/csv_dataset/software_articles.csv`.
+- Incorporated `citec:codable` and `citec:standard_type` from `full_dataset.ttl` into `data/csv_dataset/softcite_articles.csv`.
 
 ## 2020-05-21
 
@@ -23,8 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Fixed 6 abnormal values in `certainty` in `data/*.ttl` and `data/csv_dataset/softcite_in_text_mentions.csv`.
-
-### Removed
 
 
 [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
