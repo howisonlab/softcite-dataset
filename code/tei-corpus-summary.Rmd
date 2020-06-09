@@ -15,54 +15,55 @@ library(janitor)
 library(kableExtra)
 library(wesanderson)
 
-tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed_with_no_mention.tei.xml") %>% xml_ns_strip()
+tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/softcite_corpus.tei.xml") %>% xml_ns_strip()
 ```
 
-As of May 30, 2020, the softcite TEI corpus contains: 
+As of June 8, 2020, the softcite TEI corpus contains: 
 
-* 4,976 articles, 2,318 paragraphs, and 1,079 non-matched quotes
-* 3,544 articles with zero mentions, and 1,432 articles with one or more software mentions
-  * Among 1,432 articles with mentions, 1,245 have annotated paragraphs matched with PDF; 484 articles have non-matched quotes.
-  * All the 1,245 articles with annotated paragraphs are reviewed by curators during the consistency improvement.
+* 4,971 articles, 2,300 paragraphs, and 1,078 non-matched quotes
+* 3,544 articles with zero mentions, and 1,427 articles with one or more software mentions
+  * Among 1,427 articles with mentions, 1,240 have annotated paragraphs matched with PDF; 483 articles have non-matched quotes; 297 have both matched annotations and non-matched quotes.
+  * All the 1,240 articles with annotated paragraphs are reviewed by curators during the consistency improvement.
 * 2,521 PMC articles and 2,450 econ articles
-* 5,210 software entities and 3,188 software attributes annotated. 8,398 annotations in total.
-* 1,217 annotations manually edited during the consistency check
+* 4,400 articles are annotated once. 571 articles are annotated by multiple annotators. 
+* 1,242 articles are reviewed by curators and passed the scripted consistency check.
+* 5,169 software entities and 3,166 software attributes annotated. 8,335 annotations in total.
+* 1,171 annotations manually edited during the consistency check
 
 
 ```{r, eval=F}
 # xml_find_num(tei_doc, xpath="count(//fileDesc[@xml:id])")
-# 4,976 articles in tei_doc
+# 4,971 articles in tei_doc
 # xml_find_num(tei_doc, xpath="count(//TEI[@subtype='pmc'])")
 # 2,521 PMC articles in tei_doc
 # xml_find_num(tei_doc, xpath="count(//TEI[@subtype='econ'])")
 # 2,450 econ articles in tei_doc
-# missing 5 articles with correct subtype
 
 # xml_find_num(tei_doc, xpath="count(//p)")
-# 2,318 paragraphs in tei_doc
+# 2,300 paragraphs in tei_doc
 # xml_find_num(tei_doc, xpath="count(//ab)")
-# 1,079 non-matched quotes in tei_doc
+# 1,078 non-matched quotes in tei_doc
 # xml_find_num(tei_doc, xpath="count(//body[not(node())])")
 # 3,544 articles with zero mentions
 # xml_find_num(tei_doc, xpath="count(//body[.//text()])")
-# 1,432 articles with mentions
+# 1,427 articles with mentions
 # xml_find_num(tei_doc, xpath="count(//body[./p/text()])")
-# 1,245 articles with annotated paragraphs
+# 1,240 articles with annotated paragraphs
 # xml_find_num(tei_doc, xpath="count(//body[./ab/text()])")
-# 484 articles with non-matched annotated quotes
+# 483 articles with non-matched annotated quotes
 # xml_find_num(tei_doc, xpath="count(//body[./ab/text() and ./p/text()])")
 # 297 articles with both annotated paragraphs and non-matched quotes
 
 # xml_find_num(tei_doc, xpath="count(//rs[@type='software'])")
-# 5,210 annotations of software entity
+# 5,169 annotations of software entity
 # xml_find_num(tei_doc, xpath="count(//rs)")
-# 8,398 annotations in total
-# which means 3,188 annotations of software attributes
+# 8,335 annotations in total
+# which means 3,166 annotations of software attributes
 
 # xml_find_num(tei_doc, xpath="count(//rs[@type='software' and @resp='#curator'])")
-# 773 annotations of software entity edited by curator
+# 740 annotations of software entity edited by curator
 # xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
-# 1,217 annotations edited by curator in total
+# 1,171 annotations edited by curator in total
 
 ```
 
@@ -74,20 +75,18 @@ As of May 30, 2020, the softcite TEI corpus contains:
 
 ```{r, include==F}
 # xml_find_num(tei_doc, xpath="count(//textClass)")
-# 4,974 articles have </textClass> -> TODO: still 2 missing
+# 4,971 articles have </textClass> 
 
 # xml_find_all(tei_doc, xpath="//TEI[not(.//profileDesc)]")
-# a2008-39-NAT_BIOTECHNOL
-# a2007-48-UNDERSEA_HYPERBAR_M
 
 # xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#unique_annotator'])")
-# 4,402 single annotated articles
+# 4,400 single annotated articles
 # xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#multiple_annotator'])")
-# 572 multiple annotated articles
+# 571 multiple annotated articles
 # xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#with_reconciliation'])")
 # so actually no one in this class
 # xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#with_reconciliation_and_scripts'])")
-# 1,245 articles with reconciliation and scripts (all the articles with software mentions)
+# 1,242 articles with reconciliation and scripts (all the articles with software mentions)
 
 ```
 
@@ -114,6 +113,7 @@ annotations <- tibble(rs_txt = xml_text(rs), rs_attrs = xml_attrs(rs)) %>%
   select(-corresp) %>% 
   mutate(article = replace_na(str_extract(id, "^(.+)(?=-software)")))
 
+#annotations %>% pull(id...4) %>% unique
 ```
 
 **1. Manually edited annotations during consistency check:**
