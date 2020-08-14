@@ -1,0 +1,1569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">One-step extrapolation of the prediction performance of a gene signature derived from a small study</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>BMJ</publisher>
+				<availability status="unknown"><p>Copyright BMJ</p>
+				</availability>
+				<date type="published" when="2015-04-17">2015-04-17</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L-Y</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W-C</forename><surname>Lee</surname></persName>
+						</author>
+						<title level="a" type="main">One-step extrapolation of the prediction performance of a gene signature derived from a small study</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">BMJ Open</title>
+						<title level="j" type="abbrev">BMJ Open</title>
+						<idno type="ISSN">2044-6055</idno>
+						<imprint>
+							<publisher>BMJ</publisher>
+							<biblScope unit="volume">5</biblScope>
+							<biblScope unit="issue">4</biblScope>
+							<biblScope unit="page" from="e007170" to="e007170"/>
+							<date type="published" when="2015-04-17" />
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1136/bmjopen-2014-007170</idno>
+					<idno type="PMID">25888476</idno>
+					<idno type="PMCID">PMC4401865</idno>
+					<ptr type="open-access" target="https://bmjopen.bmj.com/content/5/4/e007170.full.pdf" />
+					<note type="submission">Received 14 November 2014 Revised 4 March 2015 Accepted 20 March 2015</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2-SNAPSHOT" ident="GROBID" when="2020-08-14T00:37+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Wang L-Y, Lee W-C</term>
+					<term>One-step extrapolation of the prediction performance of a gene signature derived from a small study</term>
+					<term>BMJ Open 2015;5:e007170</term>
+				</keywords>
+			</textClass>
+			<abstract>
+				<p>Objective: Microarray-related studies often involve a very large number of genes and small sample size. Cross-validating or bootstrapping is therefore imperative to obtain a fair assessment of the prediction/classification performance of a gene signature. A deficiency of these methods is the reduced training sample size because of the partition process in cross-validation and sampling with replacement in bootstrapping. To address this problem, we aim to obtain a prediction performance estimate that strikes a good balance between bias and variance and has a small root mean squared error. Methods: We propose to make a one-step extrapolation from the fitted learning curve to estimate the prediction/classification performance of the model trained by all the samples. Results: Simulation studies show that the method strikes a good balance between bias and variance and has a small root mean squared error. Three microarray data sets are used for demonstration. Conclusions: Our method is advocated to estimate the prediction performance of a gene signature derived from a small study. Open Access Research Contributors L-YW designed the simulation study and drafted the manuscript. W-CL conceived the study and participated in its design and coordination.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p>With the advances in microarray technology, hundreds of thousands of genes with expression information on an individual can be obtained in a single experiment. This high throughput technology enables us to make diagnostic and prognostic predictions based on a participant's gene signature. <ref type="bibr" target="#b0">[1]</ref><ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref><ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref><ref type="bibr" target="#b13">[14]</ref> There are four key steps in microarray-based studies: (1) data processing (eg, data normalisation), (2) gene selection, (3) prediction model construction and (4) prediction performance evaluation. <ref type="bibr" target="#b14">15</ref> This paper focuses on the last step, the evaluation of prediction performances.</p><p>Microarray-based studies often involve a very large number of genes and a relatively small sample size. The same small data set being used for constructing the prediction model and subsequently evaluating the prediction performance tends to give over-optimistic estimates. This is why cross-validating or bootstrapping is imperative if a fair assessment of the prediction/classification performance of a gene signature is to be made. Popular crossvalidation (CV) methods are k-fold CV, Monte Carlo CV and leave-one-out CV (LOOCV, also known as jackknifing). <ref type="bibr" target="#b15">16</ref> These methods partition the original data into a training set and a testing set. The training sample size, therefore, is reduced. The bootstrap method is an alternative to CV that operates by sampling with replacement of the original data. <ref type="bibr">17 18</ref> Even though the bootstrap sample has the same sample size as the original one, the overlapping of subjects between the bootstrap sample and the original data still reduces the effective (non-overlapping) training sample size. The reduced training sample size will curtail the prediction/classification performance of a gene signature, especially when the sample size of a study is already small. <ref type="bibr" target="#b18">19</ref> Estimating the performance of a prediction model built from a small study is a vexing task. For CV purposes, the already small sample size still needs to be partitioned further into a training set and a testing one. If we make the training size as large as possible (such as LOOCV), it would be nearly unbiased, but the effective sample size left for validation is one subject and we would get a variance that is unduly large, that is, the notorious bias-variance dilemma. <ref type="bibr">20 21</ref> Strengths and limitations of this study ▪ The proposed method estimates the prediction performance of a gene signature derived from a small study. ▪ The proposed method strikes a good balance between bias and variance and has a small root mean squared error. ▪ The proposed method can be applied to linear and non-linear prediction models. ▪ The proposed method may not work well for studies with an extremely small sample size (eg, n&lt;10).</p><p>The accuracy rate, the error rate and the area under the receiver operating characteristic curve (AUC) are commonly used performance indicators of a prediction model for a binary outcome. <ref type="bibr">15 22</ref> In this paper, we focus on the AUC index because it evaluates the global performance of a prediction model, not just at a particular cut-off point, but for each and every possible cut-off point. In a small data set, each and every subject is indispensable. We propose to make a one-step extrapolation from the fitted learning curve for AUC to estimate the prediction/classification performance of the model trained by all the samples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Monte Carlo CVs</head><p>Suppose that a given prediction model is to be evaluated based on a data set with a total of N 1 cases (or individuals with adverse events) and N 0 controls (or individuals without adverse events). First, we use CVs with five different folds (LOOCV, 10-fold, 5-fold, 3-fold and 2-fold CV, respectively) to evaluate the performances of the prediction model. (LOOCV is the largest training size possible and the 2-fold CV is the smallest. Between these two extremes, we add three additional fold numbers. More folds can also be tried, but the results are similar.) To be more precise, we use the Monte Carlo random partition to partition the data set into two parts: the training set and the testing set. The random partitions are operated separately for the case group and the control group to ensure that the number of cases and controls is as balanced as possible; <ref type="bibr">23 24</ref> the training set has a total of n 1 ¼ N 1 À ðN 1 =kÞ cases and n 0 ¼ N 0 À ðN 0 =kÞ controls (both to the nearest integers), where k ¼ N 1 ðN 0 Þ; 10; 5; 3; 2 for LOOCV, 10-fold, 5-fold, 3-fold and 2-fold CVs, respectively.</p><p>To be representative of all possible partitions, we suggest running at least 100 Monte Carlo random partitions for all folds, although this may be superfluous for some situations. (For example, there are only 8 Â 8 ¼ 64 distinctive partitions for LOOCV with N 1 ¼ N 0 ¼ 8. Note that in a random partition, we leave out 'one pair' of a case and a control, instead of 'one subject'. <ref type="bibr" target="#b23">24</ref> ) For each Monte Carlo partition, a prediction model will be built from the training set, and the testing set used to evaluate the performance of this model. The AUCs under the same fold are to be averaged (denoted as AUC), which leaves us with a total of five AUCs.</p><p>Learning curve for AUC A learning curve is an assumed functional relation between prediction performance and training sample size. <ref type="bibr" target="#b24">25</ref> In this study, we take y ¼ a þ bx as our learning curve, where y ¼ Z À2</p><p>AUC and x ¼ n À1 1 þ n À1 0 . Essentially, this learning curve is a straight line in a double-inverse coordinate. For the ordinate, the AUC values are first transformed to quantiles of standard normal distribution, then squared and finally inversed. This expands the range of 0.5-1.0 in an AUC to a range of 0 À 1 in the ordinate. For the abscissa, the range of the sample size is also between 0 and ∞. Such a sample size in inverse should be more sensitive to changes when the original sample size is small. The online supplementary appendix 1 shows that this learning curve is the exact functional relation between prediction performance and training sample size when normality and independence of the data are assumed.</p><p>One-step extrapolation from the learning curve We calculate y ¼ Z À2</p><p>AUC and x ¼ n À1 1 þ n À1 0 for each fold. On the basis of the five coordinate points, (x, y)s, we draw a linear regression line, that is, y ¼ a þ bx: To extrapolate the performance (denoted as AUC T ) of the prediction model when all the subjects</p><formula xml:id="formula_0">N T ¼ N 1 þ N 0 (N T ¼ N 1 þ N 0 ) are used as training samples, we enter N 1 ; N 0 into the equation to get Z À2 AUC T ¼ a þ b Â ðN À1 1 þ N À1 0 Þ. Withŷ ¼ Z À2 AUC T calculated, we then obtain d AUC T ¼ F ffiffiffiffiffiffif y À1 p À Á ,</formula><p>where FðÁÞ is the cumulative distribution for the standard normal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SIMULATION STUDIES Data and prediction models</head><p>We consider four different sample sizes: N T ¼ 10 (cases) +10 (controls), 15+15, 20+20 and 25+25, respectively. A total of 10 genes are considered. The gene expression levels are generated from a normal distribution with a variance of 1. For the cases, the means of the gene expressions are distributed as uniform (−0.8, 0.8); for the controls, the means are set to 0.</p><p>Four different data structures are considered. The first three are normally distributed with a correlation coefficient of 0 (independence), 0.2 and 0.5 (dependency). The last data structure is more complicated. For the cases, the expression level of each gene is distributed as a mixture of three normal distributions with variances of 1. The three means are generated from a uniform (−1.5, 1.5) distribution with a probability of 0.6, a uniform (−1.2, 1.2) distribution with a probability of 0.3 and a uniform (−1, 1) distribution with a probability of 0.1, respectively (see online supplementary appendix 2 for this non-normal distribution). The gene expression level for the controls follows the standard normal distribution. The correlation coefficient between any two genes is set at 0.5 in these complex data.</p><p>There are many methods to build prediction models. In this paper, we use the naïve multiple regression and the support vector machine (SVM), as detailed below, to build prediction models. Another machine learning method, the random forest (RF), is detailed in online supplementary materials.</p><p>The naïve multiple regression is a simple prediction method. First, the β-coefficients ( b b i ; i ¼ 1; :::; p where p is the number of genes in the gene signature) are calculated as the mean expression difference for each gene between the case and the control groups in the training set. The prediction score of the naïve multiple regression for the jth subject in the testing set is then S p i¼1 b b i x ij , where χ ij is the observed gene expression level of the ith gene for this jth subject. (The naïve multiple regression used in this study is similar to a previously proposed compound covariate method <ref type="bibr" target="#b25">26</ref> where the prediction score for the jth subject in the testing set is S p i¼1 t i x ij with the two-sample t-statistic of each gene serving its own weight in the prediction model).</p><p>SVM is a more sophisticated method; it is a very efficient learning algorithm for high-dimensional data in classification, regression and pattern recognition. The basis of SVM is to implicitly map data to a higher dimensional space via a kernel function in order to identify an optimal hyperplane that maximises the margin between the two groups. <ref type="bibr" target="#b26">27</ref> There are many software packages available to implement SVM. In this study, we use the e1071-package of R with a default radial basis function kernel to obtain the prediction scores. <ref type="bibr" target="#b27">28</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CVs of the prediction models</head><p>In our simulation study, we perform a total of 5000 simulations. In each simulation, a total of 100 random partitions are performed for each fold CV (LOOCV, 10-fold, 5-fold, 3-fold and 2-fold CVs, respectively). From these, we use the previously described learning curve to make a one-step extrapolation to the cross-validated AUC when all the samples are utilised to train the model. For a comparison, we also calculate the internally validated AUCs of the LOO bootstrap in each simulation. This is a modified bootstrap procedure of the ordinary bootstrap. We draw a total of 100 resamplings. At each draw, the observations left out serve as the testing set. The effective (non-overlapping) training sample size of the LOO bootstrap is around 63.2% of the total sample size. <ref type="bibr">17 18</ref> (Out-of-bag (OOB) <ref type="bibr" target="#b28">29</ref> estimation employs a majority vote on the multiple prediction made for observation i based on the bootstrap samples at each draw, while the LOO bootstrap takes an average on error of these predictions. Therefore, OOB estimation may have larger variability than the LOO bootstrap when the sample size is small. <ref type="bibr" target="#b29">30</ref> ) In the simulation, we additionally create a large data set of 1000 cases and 1000 controls for external validation. For a prediction model, an externally validated AUC against this data set is considered as its true AUC value (one true AUC for each round of simulation). It should be pointed out that in real practice, one rarely has the luxury to conduct such a large-scale external validation, but will often have to settle for a satisfactory internal validation method which is precisely the focal point of this paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bias, variance and root mean squared error</head><p>In each round of the simulation, we calculate an estimated AUC, an error (the difference between the estimated AUC and the true AUC) and an error square for each performance evaluation method. On the basis of the 5000 simulations, the bias is calculated as the sample mean of the errors; the variance is the sample variance of the estimated AUCs; and the mean squared error (MSE) is the sample mean of the error squares. Finally, the root mean squared error (RMSE) is calculated from the square root of MSE. (RMSE simultaneously considers bias and variance. This value represents the 'average' (root-meansquare average, to be precise) difference between the estimated AUC and the true AUC).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation results</head><p>In <ref type="figure" target="#fig_0">figure 1, we present the bias ( panels A-D)</ref>, the variance ( panels E-H) and the RMSE ( panels I-L), respectively, using naïve multiple regression under different sample sizes. When the variables are independently distributed ( panels A, E and I), the bias becomes smaller as the sample size becomes larger (closer to zero; panel A). All the fold-based CV methods underestimate the true AUC value because the training sample sizes they use are smaller than the total sample size given. The training sample size of LOOCV is closest to the total sample size (total sample size minus one pair); hence, it is the least biased (blue line) among all the fold-based CV methods. The training sample size of the LOO bootstrap is about 63% of the total sample size, <ref type="bibr">17 18</ref> which makes its bias (black dashed line) comparable to that of the twofold CV (with 50% of the total sample size; green line). As for the bias of our extrapolation method (red line), it is comparable to that of LOOCV.</p><p>In <ref type="figure" target="#fig_0">figure 1E</ref>, we see that the variance reveals a different story; the LOOCV now has the largest variance, and the twofold CV has the smallest variance among the fold-based CV methods. In terms of variance, the extrapolation method is now comparable to the twofold CV. From the RMSE index ( <ref type="figure" target="#fig_0">figure 1I)</ref>, we see that the proposed extrapolation method strikes a good balance between the bias and variance.</p><p>Similar results can be found when the variables are correlated ( panels B, F and J, with a correlation coefficient of 0.2; panels C, G and K, with a correlation coefficient of 0.5) and when they are not normally distributed ( panels D, H and L), or when SVM (figure 2) is used for constructing prediction models.</p><p>We simulated a more substantially non-normal data set (see online supplementary appendix 3). We found that the proposed extrapolation method can still strike a good balance between bias and variance (see online supplementary appendix 4). In addition, we examined the performances of the 0.632 bootstrap 17 and the 0.632+ bootstrap, <ref type="bibr" target="#b30">31</ref> both of which are weighted averages between the LOO bootstrap estimate and the resubstitution estimate. (The 0.632+ bootstrap is an improved version of the 0.632 bootstrap.) We found that the 0.632 bootstrap produces very large upward biases while the 0.632+ bootstrap is quite comparable to our method (see online supplementary appendix 5). We also see that the proposed extrapolation method can outperform the 0.632+ bootstrap in terms of RMSE when sample size , ð10 cases þ 10 controlsÞ (online supplementary appendix 6).</p><p>We also tried extrapolation based on different learning curves (a linear equation y ¼ a þ bx with y ¼ AUC and</p><p>x ¼ n 1 þ n 0 , and a quadratic equation y ¼ a þ bx þ cx 2 with y ¼ Z À2</p><p>AUC and x ¼ n À1 1 þ n À1 0 ), but we found the results to be no better than using the learning curve in this paper (see online supplementary appendices 7 and 8). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>REAL DATA DEMONSTRATION</head><p>We take three microarray data sets to demonstrate how the extrapolation method can be applied step by step. <ref type="bibr" target="#b31">[32]</ref><ref type="bibr" target="#b32">[33]</ref><ref type="bibr" target="#b33">[34]</ref> As this paper focuses on prediction model evaluation, and not on gene selection, we conveniently construct a 10-gene signature based on the top 10 genes with the smallest Mann-Whitney U test p values for the first two data sets, respectively. In the last example, we directly take the 76-gene signature identified by the original study as the prediction model. Both naïve multiple regression and SVM are used to build the prediction model for each data set. Monte Carlo random partition (a total of 1000 partitions for each fold) is performed to obtain the cross-validated AUCs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Example 1</head><p>The first data set is colon cancer data. <ref type="bibr" target="#b31">32</ref> The data consist of 2000 gene expressions in 62 tissue samples (40 tumour and 22 normal colon tissue samples). The data are available at http://genomics-pubs.princeton.edu/oncology/. The gene expression level is presented in intensity value, and is otherwise unprocessed. Hence, we first normalise the data by the mean and SD of each gene. The data are then randomly divided into two parts, one for gene selection (28 tumour tissue samples and 10 normal colon tissue samples) and the other for model building and CV (12 tumour tissue samples and 12 normal colon tissue samples). In the gene selection data set, we use the Mann-Whitney U test to identify the top 10 genes with the smallest p value from among the 2000 genes. These are Hsa.627_M26383, Hsa.6814_H08393, Hsa.37937_R87126, Hsa.692_M76378-3, Hsa.3016_T47377, Hsa.31630_R64115, Hsa.831_M22382, Hsa.36689_Z50753, Hsa.3331_T86473 and Hsa.43279_H64489. In the remaining data set, we build and cross-validate a prediction model for this 10-gene signature.</p><p>For naïve multiple regression, the AUCs (averaged from 1000 Monte Carlo partitions) are 0.936 (LOOCV), 0.929 (10-fold CV), 0.928 (5-fold CV), 0.925 (3-fold CV) and 0.921 (2-fold CV), respectively. The (x, y)s are then calculated as: (11 À1 þ 11 À1 ; Z À2 0:936 )=(0.182, 0.432) for LOOCV, (0.200, 0.465) for 10-fold CV, (0.220, 0.466) for 5-fold CV, (0.250, 0.483) for 3-fold CV and (0.330, 0.503) for 2-fold CV, respectively. These results are plotted in <ref type="figure">figure 3A</ref>. We then draw a linear regression based on the five (x, y) points: y ¼ 0:373 þ 0:409x (the red line in <ref type="figure">figure 3A)</ref>. To predict the performance with a sample size of 24 (all samples in the model building and CV data set are used as the training set, ie, 12 tumour and 12 normal tissue samples), we enter x ¼ 12 À1 þ 12 À1 into the regression equation to getŷ ¼ 0:441 (* in <ref type="figure">figure 3A)</ref>. The extrapolated performance is therefore d AUC T ¼ F ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi 0:441 À1 p ¼ 0:930. We next perform a total of 100 bootstrapping for this example and the bootstrapped SE for d AUC T is calculated as 0.080. The results for this example when SVM is used for constructing the prediction model are shown in <ref type="figure">figure 3B</ref>. The d AUC T (± bootstrapped SE) is calculated as 0.940 (±0.079).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Example 2</head><p>The second example is a breast cancer data set, <ref type="bibr" target="#b32">33</ref> which is available at the Gene Expression Omnibus database (http://www.ncbi.nlm.nih.gov/geo), with accession code GSE2990. These data consist of 22 215 genes for 189 patients with breast cancer (120 patients without relapse and 67 with relapse; 2 patients with unknown relapse status are omitted from our demonstration). The provided data set has already been processed (with background correction, quantile normalisation and log transformation). The data set details and patient profile can be found in the corresponding reference and aforementioned GEO website. We choose those 'extreme' patients to be in the gene selection data set, that is, those 43 patients who developed relapse within 5 years and those 91 patients who were free of relapse for at least 5 years. The remaining data set (for model building and CV) now consists of 67−43=24 patients who developed relapses after 5 years and 120−91=29 patients free of relapses during their less than 5-year follow-up periods.</p><p>In the gene selection data set, we again pick the top 10 genes from among the 22 215 genes with the smallest p value after Mann-Whitney U test. These 10 genes are 203213_at, 210222_s_at, 205898_at, 218883_s_at, 203485_at, 201890_at, 214710_s_at, 202779_s_at, 202503_s_at and 201291_s_at. The remaining data set is used to build and cross-validate the prediction model for this 10-gene signature.</p><p>The results for naïve multiple regression are presented in <ref type="figure">figure 3A (blue line)</ref>. The one-step extrapolated AUC (± bootstrappedSE) is calculated as 0.803 (±0.082). The results for SVM are presented in <ref type="figure">figure 3B (blue line)</ref>. The one-step extrapolated AUC (± bootstrappedSE) is calculated as 0.781 (±0.063).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Example 3</head><p>The third example is a different breast cancer data set. The data set <ref type="bibr" target="#b33">34</ref> and its patient profile are available at the GEO database (http://www.ncbi.nlm.nih.gov/geo) with accession code GSE2034. The data consisting of 107 patients with breast cancer with distant relapse and 197 without distant relapse) was divided into training (115 patients) and testing (171 patients) by concentration of the oestrogen receptor and a 76-gene signature was identified by previous researchers. <ref type="bibr" target="#b33">34</ref> We use our method to estimate the prediction performance of this 76-gene signature.</p><p>The results for naïve multiple regression are presented in <ref type="figure">figure 3A (green line)</ref>. The one-step extrapolated AUC (± bootstrappedSE) is calculated as 0.726 (±0.005). The results for SVM are presented in <ref type="figure">figure 3B (green  line)</ref>. The one-step extrapolated AUC (± bootstrapped SE is calculated as 0.716 (±0.010).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head><p>When estimating the performance of a model derived from a small study, there seems to be no reason to settle for a sample size of N T À 1 (or N T À 2, in a leaveone-pair-out CV), since what we are looking for is the performance at sample size N T . In this study, we extrapolate the performance to N T by exploiting the linear relation between Z À2 AUC and n À1 1 þ n À1 0 . The extrapolation is based on five CV methods (LOOCV, 10-fold, 5-fold, 3-fold and 2-fold CV) and is carried out only one-step ahead. The resulting estimate thus inherits the lack of bias in LOOCV and strikes a satisfying variance among the five CV methods. A computer simulation shows that our method performs the best in terms of RMSE when sample sizes are small. The learning curve for AUC used in this study is based on a linear prediction model (online supplementary appendix 1). However, our simulation study shows that the learning curve is equally suited for non-linear prediction models, such as SVM (figure 2) and RF (online supplementary appendix 9). When making the extrapolation, we may sometimes encounter a slope (b in y ¼ a þ bx) that is near zero (eg, the colon cancer example demonstrated in <ref type="figure">figure 3)</ref>. This may occur when the model performance has reached its plateau; thus, varying the training size (as in different CV methods) has little effect on AUC estimates. This can also occur at the other extreme when the prediction/ classification problem at hand is more complex and requires a much larger training size than is currently available, to significantly enhance the model performance. In either case, our method amounts to taking the average of the five CV estimates, thereby stabilising the variances.</p><p>Two previous studies <ref type="bibr">30 35</ref> also exploited the extrapolation concept. Both used an inverse power-law model as the empirical learning curve. In this paper, we are only interested in how the performance will result if all the samples we have are utilised to train the model. We do need an equation (a learning curve) for extrapolation, but this requires extrapolating a mere one step ahead. Our results should therefore be less dependent on what learning curves are being used. <ref type="figure">Figure 3</ref> Demonstration of the three microarray data using the proposed extrapolation method. In this double-inverse coordinate system, the ordinate is the inverse of the (transformed) AUC value, and the abscissa is the inverse of the training sample size. The red, blue and green lines represent the colon cancer data (example 1), the GSE2990 breast cancer data (example 2) and the GSE2034 breast cancer data (example 3), respectively. The five dots along each line are the estimates of the five different fold CV and the * is the extrapolated AUC (AUC, area under the receiver operating characteristic curve; CV, cross-validation).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Bias, variance and root mean squared error (RMSE) of the various methods under different sample sizes when the naïve multiple regression is used to build the gene signature leave-one-out cross-validation (blue line), fivefold cross-validation (yellow line), twofold cross-validation (green line), leave-one-out bootstrap (black dashed line) and the proposed method (red line). The leftmost column of panels is for normally distributed data with a correlation coefficient of 0, the second column from left with a correlation coefficient of 0.2, and the third column from left with a correlation coefficient of 0.5. The rightmost column of panels is for complex data (mixture of normal distributions). The horizontal thin lines indicate a position of no bias.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2</head><label>2</label><figDesc>Bias, variance and root mean squared error (RMSE) of the various methods under different sample sizes when the support vector machine is used to build the gene signature leave-one-out cross-validation (blue line), fivefold cross-validation (yellow line), twofold cross-validation (green line), leave-one-out bootstrap (black dashed line) and the proposed method (red line). The leftmost column of panels is for normally distributed data with a correlation coefficient of 0, the second column from left with a correlation coefficient of 0.2, and the third column from left with a correlation coefficient of 0.5. The rightmost column of panels is for complex data (mixture of normal distributions). The horizontal thin lines indicate a position of no bias.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Open Access</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Acknowledgements The authors would like to thank Dr Yung-Hsiang Huang and Mr Po-Chang Hsiao for technical supports.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A Unified 35-Gene Signature for both Subtype Classification and Survival Prediction in Diffuse Large B-Cell Lymphomas</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu-Dong</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai-Yan</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lele</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lu</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0012726</idno>
+		<idno type="PMID">20856936</idno>
+		<idno type="PMCID">PMC2938343</idno>
+		<ptr type="open-access" target="https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0012726&amp;type=printable" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<title level="j" type="abbrev">PLoS ONE</title>
+		<idno type="ISSNe">1932-6203</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">e12726</biblScope>
+			<date type="published" when="2010-09-13" />
+			<publisher>Public Library of Science (PLoS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Validated prediction of clinical outcome in sarcomas and multiple types of cancer on the basis of a gene expression signature related to genome complexity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Frédéric</forename><surname>Chibon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pauline</forename><surname>Lagarde</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sébastien</forename><surname>Salas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gaëlle</forename><surname>Pérot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Véronique</forename><surname>Brouste</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Franck</forename><surname>Tirode</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carlo</forename><surname>Lucchesi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aurélien</forename><surname>De Reynies</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Audrey</forename><surname>Kauffmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Binh</forename><surname>Bui</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philippe</forename><surname>Terrier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sylvie</forename><surname>Bonvalot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Axel</forename><surname>Le Cesne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dominique</forename><surname>Vince-Ranchère</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean-Yves</forename><surname>Blay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Françoise</forename><surname>Collin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Louis</forename><surname>Guillou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Agnès</forename><surname>Leroux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean-Michel</forename><surname>Coindre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alain</forename><surname>Aurias</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nm.2174</idno>
+		<idno type="PMID">20581836</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Medicine</title>
+		<title level="j" type="abbrev">Nat Med</title>
+		<idno type="ISSN">1078-8956</idno>
+		<idno type="ISSNe">1546-170X</idno>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="781" to="787" />
+			<date type="published" when="2010-06-27" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Identification of a Gene Expression Signature for Survival Prediction in Type I Endometrial Carcinoma</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kristina</forename><surname>Levan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karolina</forename><surname>Partheen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lovisa</forename><surname>Österberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Björn</forename><surname>Olsson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ulla</forename><surname>Delle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Saskia</forename><surname>Eklind</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">And</forename><forename type="middle">György</forename><surname>Horvath</surname></persName>
+		</author>
+		<idno type="DOI">10.3727/105221610x12735213181242</idno>
+		<idno type="PMID">20635577</idno>
+		<idno type="PMCID">PMC6042025</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Gene Expression</title>
+		<title level="j" type="abbrev">gene expr</title>
+		<idno type="ISSN">1052-2166</idno>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="361" to="370" />
+			<date type="published" when="2010-06-01" />
+			<publisher>Cognizant, LLC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Unique Metastasis Gene Signature Enables Prediction of Tumor Relapse in Early-Stage Hepatocellular Carcinoma Patients</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Roessler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H-L</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Budhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Forgues</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q-H</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J-S</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">S</forename><surname>Thorgeirsson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z-Y</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L-X</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><forename type="middle">W</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1158/0008-5472.can-10-2607</idno>
+		<idno type="PMID">21159642</idno>
+		<idno type="PMCID">PMC3064515</idno>
+		<ptr type="open-access" target="http://cancerres.aacrjournals.org/content/70/24/10202.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Research</title>
+		<title level="j" type="abbrev">Cancer Research</title>
+		<idno type="ISSN">0008-5472</idno>
+		<idno type="ISSNe">1538-7445</idno>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">24</biblScope>
+			<biblScope unit="page" from="10202" to="10212" />
+			<date type="published" when="2010-12-14" />
+			<publisher>American Association for Cancer Research (AACR)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Hybrid Models Identified a 12-Gene Signature for Lung Cancer Prognosis and Chemoresponse Prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ying-Wooi</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ebrahim</forename><surname>Sabbagh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rebecca</forename><surname>Raese</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yong</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dajie</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Denvir</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Val</forename><surname>Vallyathan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Castranova</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nancy</forename><forename type="middle">Lan</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0012222</idno>
+		<idno type="PMID">20808922</idno>
+		<idno type="PMCID">PMC2923187</idno>
+		<ptr type="open-access" target="https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0012222&amp;type=printable" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<title level="j" type="abbrev">PLoS ONE</title>
+		<idno type="ISSNe">1932-6203</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page">e12222</biblScope>
+			<date type="published" when="2010-08-17" />
+			<publisher>Public Library of Science (PLoS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Prognostic and Predictive Gene Signature for Adjuvant Chemotherapy in Resected Non–Small-Cell Lung Cancer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chang-Qi</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Keyue</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dan</forename><surname>Strumpf</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Barbara</forename><forename type="middle">A</forename><surname>Weir</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Meyerson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nathan</forename><surname>Pennell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roman</forename><forename type="middle">K</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katsuhiko</forename><surname>Naoki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christine</forename><surname>Ladd-Acosta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ni</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Melania</forename><surname>Pintilie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sandy</forename><surname>Der</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lesley</forename><surname>Seymour</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Igor</forename><surname>Jurisica</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Frances</forename><forename type="middle">A</forename><surname>Shepherd</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ming-Sound</forename><surname>Tsao</surname></persName>
+		</author>
+		<idno type="DOI">10.1200/jco.2009.26.4325</idno>
+		<idno type="PMID">20823422</idno>
+		<idno type="PMCID">PMC2988634</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc2988634?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Clinical Oncology</title>
+		<title level="j" type="abbrev">JCO</title>
+		<idno type="ISSN">0732-183X</idno>
+		<idno type="ISSNe">1527-7755</idno>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">29</biblScope>
+			<biblScope unit="page" from="4417" to="4424" />
+			<date type="published" when="2010-10-10" />
+			<publisher>American Society of Clinical Oncology (ASCO)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Prognostic and Predictive Value of a Malignancy-Risk Gene Signature in Early-Stage Non–Small Cell Lung Cancer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dung-Tsa</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ying-Lin</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><forename type="middle">J</forename><surname>Fulp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Domenico</forename><surname>Coppola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">B</forename><surname>Haura</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timothy</forename><forename type="middle">J</forename><surname>Yeatman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">Douglas</forename><surname>Cress</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/jnci/djr420</idno>
+		<idno type="PMID">22157961</idno>
+		<idno type="PMCID">PMC3243673</idno>
+		<ptr type="open-access" target="https://academic.oup.com/jnci/article-pdf/103/24/1859/17311299/djr420.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">JNCI: Journal of the National Cancer Institute</title>
+		<idno type="ISSN">0027-8874</idno>
+		<idno type="ISSNe">1460-2105</idno>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="issue">24</biblScope>
+			<biblScope unit="page" from="1859" to="1870" />
+			<date type="published" when="2011-12-08" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">An eight-gene expression signature for the prediction of survival and time to treatment in chronic lymphocytic leukemia</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Herold</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Jurinovic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">H</forename><surname>Metzeler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A-L</forename><surname>Boulesteix</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Bergmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Seiler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mulaw</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Thoene</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Dufour</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Pasalic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Schmidberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Schneider</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">M</forename><surname>Kakadia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Feuring-Buske</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Braess</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Spiekermann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><surname>Mansmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Hiddemann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Buske</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">K</forename><surname>Bohlander</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/leu.2011.125</idno>
+		<idno type="PMID">21625232</idno>
+		<ptr type="open-access" target="https://www.nature.com/articles/leu2011125.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Leukemia</title>
+		<title level="j" type="abbrev">Leukemia</title>
+		<idno type="ISSN">0887-6924</idno>
+		<idno type="ISSNe">1476-5551</idno>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1639" to="1645" />
+			<date type="published" when="2011-05-31" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Gene-expression signature of vascular invasion in hepatocellular carcinoma</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Beatriz</forename><surname>Mínguez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yujin</forename><surname>Hoshida</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Augusto</forename><surname>Villanueva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sara</forename><surname>Toffanin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laia</forename><surname>Cabellos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Swan</forename><surname>Thung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Mandeli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniela</forename><surname>Sia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Craig</forename><surname>April</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian-Bing</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anja</forename><surname>Lachenmayer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Radoslav</forename><surname>Savic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sasan</forename><surname>Roayaie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincenzo</forename><surname>Mazzaferro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jordi</forename><surname>Bruix</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Myron</forename><surname>Schwartz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><forename type="middle">L</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josep</forename><forename type="middle">M</forename><surname>Llovet</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jhep.2011.02.034</idno>
+		<idno type="PMID">21703203</idno>
+		<idno type="PMCID">PMC3624094</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc3624094?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Hepatology</title>
+		<title level="j" type="abbrev">Journal of Hepatology</title>
+		<idno type="ISSN">0168-8278</idno>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1325" to="1331" />
+			<date type="published" when="2011-12" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Gene Expression Signature to Improve Prognosis Prediction of Stage II and III Colorectal Cancer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ramon</forename><surname>Salazar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Roepman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gabriel</forename><surname>Capella</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Victor</forename><surname>Moreno</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Iris</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christa</forename><surname>Dreezen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adriana</forename><surname>Lopez-Doriga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cristina</forename><surname>Santos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Corrie</forename><surname>Marijnen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Johan</forename><surname>Westerga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sjoerd</forename><surname>Bruin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Kerr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Kuppen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cornelis</forename><surname>Van De Velde</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hans</forename><surname>Morreau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Loes</forename><surname>Van Velthuysen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Annuska</forename><forename type="middle">M</forename><surname>Glas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laura</forename><forename type="middle">J</forename><surname>Van't Veer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rob</forename><surname>Tollenaar</surname></persName>
+		</author>
+		<idno type="DOI">10.1200/jco.2010.30.1077</idno>
+		<idno type="PMID">21098318</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/a0c9/b6f68ec57503868cad8034d63c32102b5129.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Clinical Oncology</title>
+		<title level="j" type="abbrev">JCO</title>
+		<idno type="ISSN">0732-183X</idno>
+		<idno type="ISSNe">1527-7755</idno>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="17" to="24" />
+			<date type="published" when="2011-01" />
+			<publisher>American Society of Clinical Oncology (ASCO)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A new gene expression signature, the ClinicoMolecular Triad Classification, may improve prediction and prognostication of breast cancer at the time of diagnosis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dong-Yu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Susan</forename><forename type="middle">J</forename><surname>Done</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">R</forename><surname>Mccready</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><surname>Boerner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Supriya</forename><surname>Kulkarni</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wey</forename><forename type="middle">Liang</forename><surname>Leong</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/bcr3017</idno>
+		<idno type="PMID">21939527</idno>
+		<idno type="PMCID">PMC3262204</idno>
+		<ptr type="open-access" target="https://breast-cancer-research.biomedcentral.com/track/pdf/10.1186/bcr3017" />
+	</analytic>
+	<monogr>
+		<title level="j">Breast Cancer Research</title>
+		<title level="j" type="abbrev">Breast Cancer Res</title>
+		<idno type="ISSNe">1465-542X</idno>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">92</biblScope>
+			<date type="published" when="2011-09-22" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Robust Gene Expression Signature from Formalin-Fixed Paraffin-Embedded Samples Predicts Prognosis of Non-Small-Cell Lung Cancer Patients</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">R</forename><surname>Coombes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Behrens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">M</forename><surname>Solis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Raso</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Girard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">S</forename><surname>Erickson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">V</forename><surname>Heymach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Moran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Danenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Minna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">I</forename><surname>Wistuba</surname></persName>
+		</author>
+		<idno type="DOI">10.1158/1078-0432.ccr-11-0196</idno>
+		<idno type="PMID">21742808</idno>
+		<idno type="PMCID">PMC3166982</idno>
+		<ptr type="open-access" target="http://clincancerres.aacrjournals.org/content/17/17/5705.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Clinical Cancer Research</title>
+		<title level="j" type="abbrev">Clinical Cancer Research</title>
+		<idno type="ISSN">1078-0432</idno>
+		<idno type="ISSNe">1557-3265</idno>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page" from="5705" to="5714" />
+			<date type="published" when="2011-07-08" />
+			<publisher>American Association for Cancer Research (AACR)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Combination of a Novel Gene Expression Signature with a Clinical Nomogram Improves the Prediction of Survival in High-Risk Bladder Cancer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Markus</forename><surname>Riester</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennifer</forename><forename type="middle">M</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Feifer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Theresa</forename><surname>Koppie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><forename type="middle">E</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">J</forename><surname>Downey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bernard</forename><forename type="middle">H</forename><surname>Bochner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Franziska</forename><surname>Michor</surname></persName>
+		</author>
+		<idno type="DOI">10.1158/1078-0432.ccr-11-2271</idno>
+		<idno type="PMID">22228636</idno>
+		<idno type="PMCID">PMC3569085</idno>
+		<ptr type="open-access" target="https://clincancerres.aacrjournals.org/content/clincanres/18/5/1323.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Clinical Cancer Research</title>
+		<title level="j" type="abbrev">Clin Cancer Res</title>
+		<idno type="ISSN">1078-0432</idno>
+		<idno type="ISSNe">1557-3265</idno>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1323" to="1333" />
+			<date type="published" when="2012-01-06" />
+			<publisher>American Association for Cancer Research (AACR)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Review and Cross-Validation of Gene Expression Signatures and Melanoma Prognosis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah-Jane</forename><surname>Schramm</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><forename type="middle">E</forename><surname>Campain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ricenterd</forename><forename type="middle">A</forename><surname>Scolyer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yee</forename><forename type="middle">Hwa</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Graham</forename><forename type="middle">J</forename><surname>Mann</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/jid.2011.305</idno>
+		<idno type="PMID">21956122</idno>
+		<ptr type="open-access" target="http://www.jidonline.org/article/S0022202X15355639/pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Investigative Dermatology</title>
+		<title level="j" type="abbrev">Journal of Investigative Dermatology</title>
+		<idno type="ISSN">0022-202X</idno>
+		<imprint>
+			<biblScope unit="volume">132</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="274" to="283" />
+			<date type="published" when="2012-02" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Diagnostic and prognostic prediction using gene expression profiles in high-dimensional microarray data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Simon</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/sj.bjc.6601326</idno>
+		<idno type="PMID">14583755</idno>
+		<idno type="PMCID">PMC2394420</idno>
+		<ptr type="open-access" target="https://www.nature.com/articles/6601326.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">British Journal of Cancer</title>
+		<title level="j" type="abbrev">Br J Cancer</title>
+		<idno type="ISSN">0007-0920</idno>
+		<idno type="ISSNe">1532-1827</idno>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1599" to="1604" />
+			<date type="published" when="2003-10-28" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Prediction error estimation: a comparison of resampling methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Molinaro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">M</forename><surname>Pfeiffer</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/bti499</idno>
+		<idno type="PMID">15905277</idno>
+		<idno type="ark">ark:/67375/HXZ-1H6B26G2-7</idno>
+		<idno type="istexId">DDF260EDC169CA57DD0371551E557CAA99B49550</idno>
+		<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/21/15/3301/6236941/bti499.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<title level="j" type="abbrev">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<idno type="ISSNe">1460-2059</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page" from="3301" to="3307" />
+			<date type="published" when="2005-05-19" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Estimating the Error Rate of a Prediction Rule: Improvement on Cross-Validation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bradley</forename><surname>Efron</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1983.10477973</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<idno type="ISSNe">1537-274X</idno>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">382</biblScope>
+			<biblScope unit="page" from="316" to="331" />
+			<date type="published" when="1983-06" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">An Introduction to the Bootstrap</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bradley</forename><surname>Efron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">J</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-4899-4541-9</idno>
+		<ptr type="open-access" target="http://cindy.informatik.uni-bremen.de/cosy/teaching/CM_2011/Eval3/pe_efron_93.pdf" />
+		<imprint>
+			<date type="published" when="1993" />
+			<publisher>Springer US</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Cross-validation. Encyclopedia of database systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Refaeilzadeh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+			<publisher>Springer</publisher>
+			<biblScope unit="page" from="532" to="540" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Small Sample Issues for Microarray-Based Classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward</forename><forename type="middle">R</forename><surname>Dougherty</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/cfg.62</idno>
+		<idno type="PMID">18628896</idno>
+		<idno type="PMCID">PMC2447190</idno>
+		<idno type="ark">ark:/67375/WNG-SF9KLXL3-M</idno>
+		<idno type="istexId">1C09A7325C126E80943DF11BB6C11BB21E5E4295</idno>
+		<ptr type="open-access" target="http://downloads.hindawi.com/journals/ijg/2001/984620.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Comparative and Functional Genomics</title>
+		<title level="j" type="abbrev">Comparative and Functional Genomics</title>
+		<idno type="ISSN">1531-6912</idno>
+		<idno type="ISSNe">1532-6268</idno>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="28" to="34" />
+			<date type="published" when="2001" />
+			<publisher>Hindawi Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Is cross-validation valid for small-sample microarray classification?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><forename type="middle">M</forename><surname>Braga-Neto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">R</forename><surname>Dougherty</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btg419</idno>
+		<idno type="PMID">14960464</idno>
+		<idno type="ark">ark:/67375/HXZ-7QTWG52M-X</idno>
+		<idno type="istexId">01F7546A1EF906920B59ED0F2D835FC1ABE778A5</idno>
+		<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/20/3/374/455501/btg419.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<title level="j" type="abbrev">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<idno type="ISSNe">1460-2059</idno>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="374" to="380" />
+			<date type="published" when="2004-02-10" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">The meaning and use of the area under a receiver operating characteristic (ROC) curve.</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">A</forename><surname>Hanley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Mcneil</surname></persName>
+		</author>
+		<idno type="DOI">10.1148/radiology.143.1.7063747</idno>
+		<idno type="PMID">7063747</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/bc37/489e7173c75be152b2fcea35191c68847ab2.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Radiology</title>
+		<title level="j" type="abbrev">Radiology</title>
+		<idno type="ISSN">0033-8419</idno>
+		<idno type="ISSNe">1527-1315</idno>
+		<imprint>
+			<biblScope unit="volume">143</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="36" />
+			<date type="published" when="1982-04" />
+			<publisher>Radiological Society of North America (RSNA)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Stratification bias in low signal microarray studies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><forename type="middle">J</forename><surname>Parker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simon</forename><surname>Günter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Justin</forename><surname>Bedo</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-8-326</idno>
+		<idno type="PMID">17764577</idno>
+		<idno type="PMCID">PMC2211509</idno>
+		<ptr type="open-access" target="https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/1471-2105-8-326" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<title level="j" type="abbrev">BMC Bioinformatics</title>
+		<idno type="ISSN">1471-2105</idno>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">326</biblScope>
+			<date type="published" when="2007" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">A comparison of AUC estimators in small-sample studies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Airola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Pahikkala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Waegeman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">3rd International workshop on Machine Learning in Systems Biology</title>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="page" from="15" to="23" />
+		</imprint>
+	</monogr>
+	<note>MLSB 09</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">THE LEARNING CURVE: HISTORICAL REVIEW AND COMPREHENSIVE SURVEY</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Louis</forename><forename type="middle">E</forename><surname>Yelle</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1540-5915.1979.tb00026.x</idno>
+		<idno type="ark">ark:/67375/WNG-B1GX6ZG2-D</idno>
+		<idno type="istexId">C38553B32D8D82E2B012929B8502A956B54E0628</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Decision Sciences</title>
+		<title level="j" type="abbrev">Decision Sciences</title>
+		<idno type="ISSN">0011-7315</idno>
+		<idno type="ISSNe">1540-5915</idno>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="302" to="328" />
+			<date type="published" when="1979-04" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A Paradigm for Class Prediction Using Gene Expression Profiles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">D</forename><surname>Radmacher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lisa</forename><forename type="middle">M</forename><surname>Mcshane</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Simon</surname></persName>
+		</author>
+		<idno type="DOI">10.1089/106652702760138592</idno>
+		<idno type="PMID">12162889</idno>
+		<ptr type="open-access" target="http://linus.nci.nih.gov/techreport/TechReport001.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Biology</title>
+		<title level="j" type="abbrev">Journal of Computational Biology</title>
+		<idno type="ISSN">1066-5277</idno>
+		<idno type="ISSNe">1557-8666</idno>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="505" to="511" />
+			<date type="published" when="2002-06" />
+			<publisher>Mary Ann Liebert Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">An overview of statistical learning theory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><forename type="middle">N</forename><surname>Vapnik</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/72.788640</idno>
+		<idno type="PMID">18252602</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/4609/f6bdc3beab00c9beceaa12dd8101fefe6f1c.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Neural Networks</title>
+		<title level="j" type="abbrev">IEEE Trans. Neural Netw.</title>
+		<idno type="ISSN">1045-9227</idno>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="988" to="999" />
+			<date type="published" when="1999" />
+			<publisher>Institute of Electrical and Electronics Engineers (IEEE)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Support Vector Machines inR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandros</forename><surname>Karatzoglou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kurt</forename><surname>Hornik</surname></persName>
+		</author>
+		<idno type="DOI">10.18637/jss.v015.i09</idno>
+		<ptr type="open-access" target="https://www.jstatsoft.org/index.php/jss/article/view/v015i09/v15i09.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<title level="j" type="abbrev">J. Stat. Soft.</title>
+		<idno type="ISSNe">1548-7660</idno>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1" to="28" />
+			<date type="published" when="2006" />
+			<publisher>Foundation for Open Access Statistic</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Out-of-bag estimation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996" />
+			<pubPlace>Berkeley, CA</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Department of Statistics, University of California</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A comparison of bootstrap methods and an adjusted bootstrap approach for estimating the prediction error in microarray classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wenyu</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Simon</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/sim.2968</idno>
+		<idno type="PMID">17624926</idno>
+		<idno type="ark">ark:/67375/WNG-DNS0KHS2-1</idno>
+		<idno type="istexId">F8890BD8CFB7BF4EA9DEFA8964A241FF4A240B2E</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics in Medicine</title>
+		<title level="j" type="abbrev">Statist. Med.</title>
+		<idno type="ISSN">0277-6715</idno>
+		<idno type="ISSNe">1097-0258</idno>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">29</biblScope>
+			<biblScope unit="page" from="5320" to="5334" />
+			<date type="published" when="2007" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Improvements on Cross-Validation: The .632+ Bootstrap Method</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bradley</forename><surname>Efron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2965703</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<imprint>
+			<biblScope unit="volume">92</biblScope>
+			<biblScope unit="issue">438</biblScope>
+			<biblScope unit="page">548</biblScope>
+			<date type="published" when="1997-06" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Broad patterns of gene expression revealed by clustering analysis of tumor and normal colon tissues probed by oligonucleotide arrays</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><surname>Alon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Barkai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">A</forename><surname>Notterman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Gish</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ybarra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Mack</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">J</forename><surname>Levine</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.96.12.6745</idno>
+		<idno type="PMID">10359783</idno>
+		<idno type="PMCID">PMC21986</idno>
+		<ptr type="open-access" target="http://www.pnas.org/content/96/12/6745.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<title level="j" type="abbrev">Proceedings of the National Academy of Sciences</title>
+		<idno type="ISSN">0027-8424</idno>
+		<idno type="ISSNe">1091-6490</idno>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="6745" to="6750" />
+			<date type="published" when="1999-06-08" />
+			<publisher>Proceedings of the National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Gene Expression Profiling in Breast Cancer: Understanding the Molecular Basis of Histologic Grade To Improve Prognosis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christos</forename><surname>Sotiriou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pratyaksha</forename><surname>Wirapati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sherene</forename><surname>Loi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrian</forename><surname>Harris</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steve</forename><surname>Fox</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Johanna</forename><surname>Smeds</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hans</forename><surname>Nordgren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pierre</forename><surname>Farmer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Viviane</forename><surname>Praz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Haibe-Kains</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christine</forename><surname>Desmedt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Denis</forename><surname>Larsimont</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fatima</forename><surname>Cardoso</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hans</forename><surname>Peterse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dimitry</forename><surname>Nuyten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><surname>Buyse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><forename type="middle">J</forename><surname>Van De Vijver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonas</forename><surname>Bergh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martine</forename><surname>Piccart</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mauro</forename><surname>Delorenzi</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/jnci/djj052</idno>
+		<idno type="PMID">16478745</idno>
+		<idno type="ark">ark:/67375/HXZ-PL3CL9KV-5</idno>
+		<idno type="istexId">E51B89464568C6AE12428CDEE761C4E41F96F1AE</idno>
+		<ptr type="open-access" target="https://academic.oup.com/jnci/article-pdf/98/4/262/7688280/djj052.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">JNCI: Journal of the National Cancer Institute</title>
+		<idno type="ISSN">0027-8874</idno>
+		<idno type="ISSNe">1460-2105</idno>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="262" to="272" />
+			<date type="published" when="2006-02-15" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Gene-expression profiles to predict distant metastasis of lymph-node-negative primary breast cancer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">G</forename><surname>Klijn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Sieuwerts</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Look</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Talantov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Timmermans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Meijervangelder</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s0140-6736(05)70933-8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Lancet</title>
+		<title level="j" type="abbrev">The Lancet</title>
+		<idno type="ISSN">0140-6736</idno>
+		<imprint>
+			<biblScope unit="volume">365</biblScope>
+			<biblScope unit="issue">9460</biblScope>
+			<biblScope unit="page" from="671" to="679" />
+			<date type="published" when="2005-02-25" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Estimating Dataset Size Requirements for Classifying DNA Microarray Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sayan</forename><surname>Mukherjee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pablo</forename><surname>Tamayo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simon</forename><surname>Rogers</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Rifkin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><surname>Engle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Colin</forename><surname>Campbell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Todd</forename><forename type="middle">R</forename><surname>Golub</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jill</forename><forename type="middle">P</forename><surname>Mesirov</surname></persName>
+		</author>
+		<idno type="DOI">10.1089/106652703321825928</idno>
+		<idno type="PMID">12804087</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/04f3/3dd3e39f0e28ffa46333b028d72cbb9ab73c.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Biology</title>
+		<title level="j" type="abbrev">Journal of Computational Biology</title>
+		<idno type="ISSN">1066-5277</idno>
+		<idno type="ISSNe">1557-8666</idno>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="119" to="142" />
+			<date type="published" when="2003-04" />
+			<publisher>Mary Ann Liebert Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

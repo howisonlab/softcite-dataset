@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Detection of allele-specific methylation through a generalized heterogeneous epigenome model</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>Oxford University Press (OUP)</publisher>
+				<availability status="unknown"><p>Copyright Oxford University Press (OUP)</p>
+				</availability>
+				<date type="published" when="2012-06-11">2012-06-11</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qian</forename><surname>Peng</surname></persName>
+							<email>qpeng@cs.ucsd.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science and Engineering</orgName>
+								<orgName type="institution">University of California-San Diego</orgName>
+								<address>
+									<addrLine>9500 Gilman Drive</addrLine>
+									<postCode>92093</postCode>
+									<settlement>La Jolla</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="laboratory">Plant Biology Laboratory, The Salk Institute for Biological Studies</orgName>
+								<address>
+									<addrLine>La Jolla</addrLine>
+									<postCode>92037</postCode>
+									<region>CA</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="laboratory">Plant Biology Laboratory, The Salk Institute for Biological Studies</orgName>
+								<address>
+									<addrLine>La Jolla</addrLine>
+									<postCode>92037</postCode>
+									<region>CA</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="laboratory">Genomic Analysis Laboratory, The Salk Institute for Biological Studies</orgName>
+								<address>
+									<addrLine>La Jolla</addrLine>
+									<postCode>92037</postCode>
+									<region>CA</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff3">
+								<orgName type="department">The Salk Institute for Biological Studies</orgName>
+								<orgName type="institution">Howard Hughes Medical Institute</orgName>
+								<address>
+									<addrLine>10010 North Torrey Pines Road, La Jolla</addrLine>
+									<postCode>92037</postCode>
+									<region>California</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Detection of allele-specific methylation through a generalized heterogeneous epigenome model</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Bioinformatics</title>
+						<title level="j" type="abbrev">Bioinformatics</title>
+						<idno type="ISSN">1367-4803</idno>
+						<idno type="eISSN">1460-2059</idno>
+						<imprint>
+							<publisher>Oxford University Press (OUP)</publisher>
+							<biblScope unit="volume">28</biblScope>
+							<biblScope unit="issue">12</biblScope>
+							<biblScope unit="page" from="i163" to="i171"/>
+							<date type="published" when="2012-06-11" />
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1093/bioinformatics/bts231</idno>
+					<idno type="PMID">22689757</idno>
+					<idno type="PMCID">PMC3371863</idno>
+					<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/28/12/i163/752064/bts231.pdf" />
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2-SNAPSHOT" ident="GROBID" when="2020-08-13T22:17+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+				<p>Motivations: High-throughput sequencing has made it possible to sequence DNA methylation of a whole genome at the singlebase resolution. A sample, however, may contain a number of distinct methylation patterns. For instance, cells of different types and in different developmental stages may have different methylation patterns. Alleles may be differentially methylated, which may partially explain that the large portions of epigenomes from single cell types are partially methylated, and may have major effects on transcriptional output. Approaches relying on DNA sequence polymorphism to identify individual patterns from a mixture of heterogeneous epigenomes are insufficient as methylcytosines occur at a much higher density than SNPs. Results: We have developed a mixture model-based approach for resolving distinct epigenomes from a heterogeneous sample. In particular, the model is applied to the detection of allele-specific methylation (ASM). The methods are tested on a synthetic methylome and applied to an Arabidopsis single root cell methylome.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>The advancement of high-throughput sequencing has opened up many important areas of applications, one of which is epigenome sequencing. DNA methylation may repress or activate transcription, and is known to be involved in embryogenesis, genomic imprinting and tumorigenesis in mammals, and transposon silencing in plants <ref type="bibr" target="#b0">(Bestor, 2000;</ref><ref type="bibr" target="#b8">Li et al., 1992;</ref><ref type="bibr" target="#b9">Lippman et al., 2004;</ref><ref type="bibr" target="#b16">Rhee et al., 2002;</ref><ref type="bibr" target="#b22">Zhang et al., 2006;</ref><ref type="bibr" target="#b23">Zilberman et al., 2007)</ref>. To understand the regulation and dynamics of DNA methylation, the locations of the modified cytosines need to be identified. The first single-base resolution mappings of DNA methylation were produced for the whole Arabidopsis thaliana genome <ref type="bibr" target="#b1">(Cokus et al., 2008;</ref><ref type="bibr" target="#b11">Lister et al., 2008)</ref> and for selected subsets of sites in the mouse genome <ref type="bibr" target="#b14">(Meissner et al., 2008)</ref> using various bisulfite sequencing technologies. DNA methylation is the modification of DNA base cytosine (methylcytosine). A map of DNA methylation at single-base resolution is referred to as methylome or epigenome.</p><p>Cells of different types and in different developmental stages may have different methylation patterns. It has been observed that large portions of the Arabidopsis methylomes are partially methylated <ref type="bibr" target="#b11">(Lister et al., 2008)</ref>. This may be as a result of the sample containing a number of distinct methylomes. Aberrant methylation is also a general feature of cancer genomes. A better understanding of methylation patterns in cancer genomes may lead to both new diagnostic markers and therapies based on the detection of methylation changes occurring early in tumorigenesis <ref type="bibr" target="#b7">(Laird, 2003)</ref>. In a tumor tissue particularly of an early stage, however, cancerous cells and normal cells are often mixed together. DNA methylation patterns can also act as markers for tracing stem cell expansion and tumor growth <ref type="bibr" target="#b6">(Kim et al., 2005;</ref><ref type="bibr" target="#b19">Shibata and Tavaré, 2006;</ref><ref type="bibr" target="#b21">Yatabe et al., 2001)</ref>. Making use of methylation patterns in this way requires determining methylation patterns associated with individual cells or cells from the same clone.</p><p>When comparing human fibroblast cell IMR90 and H1 embryonic stem cell (ESC) lines, it is observed that IMR90 has a lower level of methylation than H1 ESC . Both IMR90 and H1 are of a single cell type. While it is expected that large portions (80%) of the X chromosome are partially methylated as the IMR90 cell line is from a female and the DNA methylation is known to play an important role in X chromosome inactivation <ref type="bibr" target="#b17">(Riggs, 1975)</ref>, it is unexpectedly observed that around 38% of IMR90 autosomes are identified as partially methylated domains (PMD). What is the nature of partial methylations in a single cell type? Might allelic differences contribute to the partial methylations? Answering these questions requires detecting allele-specific methylation (ASM) patterns.</p><p>The methylcytosine is sometimes referred to as the fifth DNA base <ref type="bibr" target="#b10">(Lister and Ecker, 2009)</ref>. Applying methods for detection of single nucleotide polymorphism (SNP) to methylation, however, may present difficulties. Methylcytosine is much more dynamic than nucleotides and observations generally suggest that methylation of a cytosine site is a statistical event. Unlike SNPs where a nucleotide occurs at a rate of 0, 50 or 100% in a diploid individual (if sequencing errors may be ignored), the methylation level at a particular site may fall anywhere in the range from 0% to 100%. Whether a methylcytosine is allele-specific therefore cannot be determined by the site alone. It needs supporting evidence from the neighboring nucleotides.</p><p>If a partially methylated cytosine is in the close vicinity of a SNP such that reads are long enough to cover both sites, then it is straightforward to determine from which allele the reads are originated thus determining the methylation level of the respective alleles. Some studies have shown that ASM is associated with SNPs <ref type="bibr" target="#b5">(Kerkel et al., 2008;</ref><ref type="bibr" target="#b20">Shoemaker et al., 2010)</ref>. The density of methylation across the whole genome, however, is much higher than that of DNA sequence polymorphism. For instance, while there are close to 3 million SNPs discovered in the human genome ∼62 million and 45 million methylcytosines were detected in H1 and IMR90 cells . It has also been observed that changes in cytosine methylation occur at a frequency much greater than that of the DNA sequence mutations <ref type="bibr" target="#b15">(Ossowski et al., 2010;</ref><ref type="bibr" target="#b18">Schmitz et al., 2011)</ref>. As a result, SNPs are absent in large portions of the methylomes. We will describe a method in this article that detects ASM without the assistance of SNPs. In addition, even though the functionalities of ASM are not well understood except that they play an important role in imprinting <ref type="bibr" target="#b3">(Hellman and Chess, 2007;</ref><ref type="bibr" target="#b5">Kerkel et al., 2008)</ref>, it seems that the methylation level of an individual cytosine is less important than the overall levels of methylations within a region, which is also in contrast to the SNPs. We, therefore, focus our effort in detecting regions of ASM.</p><p>The remainder of the article is organized as follows. A mixture model is described in Section 2 for modeling the outcome of a methylation sequencing experiment where the sample may contain a mixture of heterogeneous epigenomes. It aims at predicting methylation levels for each cytosine in each individual epigenome. Section 3 lays out the details for detecting regions of ASM based on the mixture model and validates the methods on a synthetic methylome. The methods are then applied to an Arabidopsis root cell methylome and the results are listed in Section 4. Section 5 discusses the results and offers some future directions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">A MIXTURE MODEL FOR HETEROGENEOUS EPIGENOMES</head><p>In bisulfite sequencing experiments, DNA fragments are treated with sodium bisulfite. The process converts unmethylated cytosines into uracils. The sequence of nucleotides (reads) in the converted fragments are subsequently determined by a sequencer. The reads produced by the sequencer are aligned to a reference genome. Usually only uniquely mapped reads are retained. As a result, what we have is a set of reads that are most similar in sequence to their respective mapped locations in the reference genome, which are presumably the genomic origins of the fragments that produced the reads. In addition, each cytosine on every mapped read is labeled as either methylated or unmethylated. The methylation level of a particular cytosine is computed as follows: if there are x reads that map to the position, and y out of the x reads have at this position a methylcytosine, then the methylation level is y/x. Note that if the read depth at a cytosine position is below a certain threshold, which is determined by the allowed false positive rate, the methylation is not called, i.e. y = 0. <ref type="bibr" target="#b11">(Lister et al., 2008)</ref> If the original sample is composed of a mixture of epigenomes, be it from a set of different cell types, tissues or alleles, the mapped reads will reflect the mixture. Our goal is to infer the original makeup of the mixture from the mapped reads. It should be noted that the attainment of the goal depends on whether the original epigenomes are sufficiently heterogeneous so that we may distinguish them.</p><p>As we are only concerned with methylation, we restrict the reads to the genomic positions where the methylation level is greater than zero. The epigenomes and reads may be represented as binary strings, where methylcytosine is set to 1 and the remainder to 0. Let R be a set of binary strings, which we assume are the reads produced by a bisulfite sequencing experiment further restricted to methylation sites. For string r ∈ R, let x ri be the letter appearing at position i from r; let [r a ,r b ] be the positions that r spans. Let C ={c j |j = 1•••k} be the set of natural frequencies of epigenomes, where c j is the frequency of the j-th epigenome, and k is the total number of epigenomes. When the model is used to detect the ASM of a diploid organism, k equals to 2. Let M ={m</p><formula xml:id="formula_0">ij |i = 1•••n,j = 1•••k},</formula><p>where m ij is the probability of methylation of epigenome j at position i, and n is the length of the epigenome. The probability of observing string r is</p><formula xml:id="formula_1">P(r) = k j=1 c j p rj ,</formula><p>where p rj is the probability that string r originates from epigenome j, and</p><formula xml:id="formula_2">p rj = r b i=r a m ij x ri +(1−m ij )(1−x ri ) .</formula><p>( <ref type="formula">1)</ref>The probability of observing the set R is therefore</p><formula xml:id="formula_3">P(M ,C,R) = r∈R P(r),</formula><p>or equivalently the log likelihood</p><formula xml:id="formula_4">l(M ,C,R) = r∈R logP(r).</formula><p>The optimization goal is to determine parameters C and M such that the probability of observing the set R is maximum, thus best explaining the reads. We estimate array C and matrix M by maximizing the likelihood l,</p><formula xml:id="formula_5">argmax M ,C r∈R logP(r),</formula><p>which can be solved by using the expectation-maximization (EM) algorithm <ref type="bibr" target="#b2">(Dempster et al., 1977)</ref>. First, we define a membership matrix</p><formula xml:id="formula_6">A ={a rj |r ∈ R,j = 1...k},</formula><p>where</p><formula xml:id="formula_7">a rj = 1 if r ∈ j, 0 if r / ∈ j.</formula><p>As the membership of string r with respect to epigenome j is unknown, it is estimated by its expected value as</p><formula xml:id="formula_8">a rj = c j p rj j c j p rj .<label>(2)</label></formula><p>The likelihood can then be rewritten as</p><formula xml:id="formula_9">l(M ,C,R,A) = r∈R k j=1 a rj log(c j p rj ),<label>(3)</label></formula><p>and the optimization becomes</p><formula xml:id="formula_10">argmax M ,C r∈R k j=1 a rj log(c j p rj ).</formula><p>Solving the maximization constrained by k j=1 c j = 1 yields the update equations at each M-step iteration of the EM algorithm as follows (see Appendix A for the detailed derivation),</p><formula xml:id="formula_11">c j = r a rj r j a rj , m ij = r a rj x ri r a rj .</formula><p>When the algorithm converges, the matrix M contains the predicted methylation levels for each epigenome in the mixture.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DETECTION OF ASM</head><p>In this section, we describe how the model is used to detect allele-specific methylated regions in a diploid organism. Notice that ASM is not a precisely defined term. It generally refers to a significant difference between the methylation levels of the two alleles. First, the methylome of a diploid individual is scanned for partially methylated regions (PMRs) as candidates for further analysis. Second, for each candidate region, the reads that align to this region are computationally assigned to the two alleles and the methylation levels of individual cytosines from each allele are estimated. Last, regions are classified to allele-specific or nonspecific methylated regions, based on read assignments and the predicted methylation levels from the previous step. A synthetic methylome is used to test the model and to illustrate the details of each step. We remark that determining whether a read along with its methylcytosines has a higher probability to originate from one allele or the other relies on the differences between the reads, i.e. the methylation states of the cytosines on the reads. The density of methylcytosines of a genome relative to the read length in a sequencing experiment is therefore critical. For instance, if, on average, a read covers at most one methylcytosine, then there is very little hope to deconvolve the allelic methylation states without additional information. While anticipating the rapid growth of the read length in high-throughput sequencing technology, we first tested our method on Arabidopsis thaliana, which has a reasonably high methylation density. The median genomic distance, for instance, between consecutive methylcytosines on Chromosome 1 of A. thaliana Col-0 is 15, while the typical read length of an Illumina sequencer is between 100 and 150 bp presently.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Identify PMRs as candidates</head><p>To detect ASM regions, the whole methylome is scanned for PMRs as candidates, as there is obviously not much difference between the two alleles if the methylation level of a region is near nil or complete. A contiguous methylated region (CMR) refers to a genomic region where the genomic distance between any two consecutive methylcytosines is no larger than a separation threshold s, which is set at around a width comparable to the read length. Each CMR is scanned with a fixed-width sliding window where the window width is the number of methylcytosines. A fixed-width window inside a CMR is classified as a PMR if no fewer than 90% of the methylcytosines are at most 70% methylated . A PMR may be called with or without a specific lower bound for methylation levels. In the data we have analyzed, the average level of methylations in a CMR is at least 25%, due to that (i) the region has contiguous methylcytosines; (ii) the allowed false positive rate for calling a methylcytosine <ref type="bibr" target="#b11">(Lister et al., 2008)</ref> in combination with the sequencing coverage dictates an implicit lower bound on the methylation levels. Consecutive PMRs within the same CMR are merged into a single region.</p><p>The dataset being tested is a synthetic methylome that is made up by combining the reads of two methylomes from Arabidopsis root cells: epidermis (Wer+) and endodermis (Scr+). The root cells are obtained by flow sorting; their methylomes by MethylC-Seq bisulfite sequencing <ref type="bibr" target="#b11">(Lister et al., 2008)</ref>. The genomic length of the reads is 83 bp. The reads from one cell type in the mixture are treated as if they are from one allele of the synthetic methylome. The ASM of the synthetic methylome is, therefore, simulated by cell-specific methylation in the mixture. Forward strand and reverse strand are processed separately.</p><p>As ASM and cell-specific methylation arise from different biological processes, the patterns of differential methylations might, therefore, carry signatures unique to each type. The aforementioned synthetic methylome is appropriate for testing cellspecific methylations; yet whether it is a good surrogate for testing ASMs may be questioned. We argue that since the classification is largely based on overall methylation levels within a region rather than relations among methylation levels of individual cytosine sites, the criteria similarly apply to both cell-specific methylation and ASM.</p><p>The separation threshold s is set to 100 bp. Each CMR is scanned with a sliding window of width 20, 35 and 50 methylcytosines respectively. Each PMR in the synthetic methylome is labeled as either cell-specific (allele-specific), if no fewer than 90% cytosines in the region are methylated in only one of the two cells, or nonspecific otherwise. For the purpose of learning, consecutive windows within the same CMR are merged into one region only if they are labeled as the same type. For a sliding window of width 20, both cell-specific regions and non-specific regions have a median width of 23 methylcytosines. All of the cell-specific regions and around the same number of randomly selected non-specific regions are kept as samples for further analysis. The samples are divided into training and testing samples <ref type="table" target="#tab_0">(Table 1)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Predict allelic methylation levels</head><p>For each PMR, the algorithm described in Section 2 is applied with k = 2. For each sample of the synthetic methylome, the reads from the two individual methylomes are mixed together.</p><p>One potential problem with the EM algorithm is that it may converge to a local optimum. There are various ways to initialize the parameters. One initialization is to randomly assign each read to a cluster, i.e. set a rj = 1 at probability 1/k. Another option is to set c j = 1/k, and then randomize matrix M . A third option is to randomize the membership matrix A, which appears to be the best option after testing with simulated data. We run the algorithm L times, each with a new random matrix A as the initialization. Let A 1 , A 2 ,...,A L be the membership matrix when each individual run converges, from which two new initializations are derived: A L+1 and A L+2 , for two additional runs. 1 They are defined as </p><formula xml:id="formula_12">.k, a L+1 rj = 1 L L i=1 a i rj ; a L+2 rj = 1 if j = argmax k j =1 (a L+1 rj ) 0 otherwise.</formula><p>Of the total L+2 runs, the one that converges to the largest likelihood is selected. The matrix M yields a predicted level of methylations at each cytosine site. <ref type="figure" target="#fig_0">Figure 1</ref> illustrates two samples of PMRs from the synthetic methylome: one cell-specific and the other non-specific. Both experimental and predicted methylation states are shown. The experimental data are from the individual methylomes and are thus treated as golden. The predicted methylation states are used for further classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Classify candidate regions with a support vector machine classifier</head><p>Once the methylation levels of individual methylcytosines in each allele are estimated and the membership of reads predicted by the model, what remains is to characterize and classify each region based on the estimations. Recall that we used a rather simplistic rule to automatically label the samples in the synthetic methylome when preparing the training and testing samples. The labels are derived from the knowledge of the two individual methylomes making up the synthetic methylome, and therefore are independent of the predictions made by the mixture model. One option is to use the same rule to classify a region from predicted methylation levels. We hope to capture more characteristics of the two classes, however, so multiple measures are employed for this task when it is applied to the real epigenome. We also use the synthetic methylome to train a support vector machine (SVM) classifier that is later used for a real single cell methylome. Notice that the value a rj gives the probability that the read r is from allele j. If a read needs to be assigned to a single allele, it should be assigned to the j that has the larger value of a rj , or formally, to cluster j r = argmax j (a rj ). The features for SVM are extracted from the estimated methylation levels (M ) and allele frequencies (C). A total of nine features are used (details omitted due to exigencies of space). Both linear and radial basis function (RBF) kernels are tested; the latter yield better performance. Five-fold cross-validation is used to select the best parameters for the kernel function from each training set. The testing results are shown in <ref type="table" target="#tab_1">Table 2</ref>. In some of the false positive (FP) samples, both cells have completely unmethylated reads and these reads are clustered together in the synthetic methylome, which are then classified as allele-specific (cell-specific). We hypothesize that these regions have ASM in both individual cell types.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>i166</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Identify ASM regions with multiple filters</head><p>Using an SVM classifier has its limitations. A classifier trained on one organism will certainly not be appropriate for other organisms.</p><p>A classifier trained on one cell type may be questionable for another very different type. When parameters for the sequencing experiment change, the classifier should be retrained. In addition, there may not be sufficient data samples for learning at all. Additional measures are therefore necessary for real data. The Mann-Whitney-Wilcoxon (mww) test is performed on the two clusters resulting from the mixture model. If the null hypothesis is rejected, one cannot readily claim that the methylations are allelespecific. But if on the other hand the null hypothesis is not rejected, it is unlikely that the methylations are allele-specific. Two additional filters are based on methylation rates. One filter is called low methylation rate (lmr). It computes whether one of the two clusters is ≤ 10% methylated at ≥ 80% sites. The other is called differential averaged methylation rate (dmr). The averaged methylation rate for each cluster in the region is defined as</p><formula xml:id="formula_13">r j = 1 n n i=1 m ij m i1 +m i2</formula><p>, and the differential averaged methylation as</p><formula xml:id="formula_14">d =|r 1 −r 2 |.</formula><p>We define three classes based on this measure shown in <ref type="table" target="#tab_2">Table 3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">DETECT ASM REGIONS FOR ARABIDOPSIS EPIDERMIS METHYLOME</head><p>The methods are applied to the methylome of a single cell type, a root epidermis (Wer+) cell from A. thaliana Col-0. There are a total of 452 partially methylated regions as defined in Section 3.1. The total genomic length of the regions is 84 397 bp, covering 9980 methylcytosines. The 22926 reads are aligned to these regions.</p><p>Once the methylation levels of the two alleles and the membership of all reads are predicted by the models, the results are subject to four methods for classification as mentioned in Sections 3.3 and 3.4. Recall that the SVM model is trained on the synthetic methylome made up of two Arabidopsis root methylomes, Wer+ being one of them. <ref type="table" target="#tab_3">Table 4</ref> shows the number of PMRs predicted to be allelespecific by each method and the intersection is taken so as to obtain the most conservative predictions. The first two rows of the table reflect the intersections taken between the d h class and all other criteria, and d m class and other criteria, respectively, totaling 34 regions. <ref type="table">Table 5</ref> lists the details and annotations for group (1), and <ref type="table" target="#tab_5">Table 6</ref> for group (2). Based on the predicted methylation levels, both groups are highly allele-specific. While one of the two alleles has nearly no methylation, in the first group of 18 regions, the other allele is in general highly methylated; and in the second group of 16 regions, the methylated allele is more partially methylated. An example from each group is shown in <ref type="figure">Figure 2</ref>. If the criteria for ASM are relaxed a bit by removing the rather stringent filter lmr, many more regions [the last row (3) in <ref type="table" target="#tab_3">Table 4</ref>] are admitted <ref type="table">Table 5</ref>. Predicted ASM regions, group (1) in <ref type="table" target="#tab_3">Table 4</ref> ch    for further examination. An example from this group is shown in <ref type="figure">Figure 3</ref>. <ref type="table" target="#tab_6">Table 7</ref> summarizes the TAIR9 annotations <ref type="bibr">(TAIR, 2009)</ref> for all three groups of a total of 226 predicated ASM regions. Many regions overlap with natural transposons as expected; the last row in the table reports the number of regions that have no other annotation than transposon. For the protein coding genes, the gene ontology annotations are summarized in <ref type="table" target="#tab_7">Table 8</ref>. One region from group (3), on forward strand of chromosome 1: 11267775 -11268327, is on the antisense of an exon of protein coding gene AT3G29360, an imprinted gene in A. thaliana seed reported by <ref type="bibr" target="#b13">McKeown et al. (2011)</ref>. The region has 26 methylcytosines. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">CONCLUSION AND DISCUSSION</head><p>We have described a computational model for resolving distinct epigenomes from a heterogeneous sample. In particular, we applied this model to identify allele-specific methylated regions. The reads from potentially multiple epigenomes are mapped to a common reference genome. The goal is essentially to infer the distinct methylation patterns from the mapped reads. Our approach is different from previous attempts in that it does not rely on SNPs, which are few and far between when compared with methylcytosines. The model was tested on a synthetic methylome. The classification based on the mixture model in conjunction with an SVM classifier yielded an accuracy of 87.5%. Even though the SVM approach is not always applicable to real methylomes, since all the features are derived from the predicted methylation levels and cluster frequencies, the test results reflect the reliability of the predictions made by the model. Additional multiple filters for ASMs may further reduce the number of false positives.</p><p>Additional approaches may be employed to validate the methods for ASM detection. One approach is to use ASMs determined with SNP data as ground truth, although such data are presently sparse and anecdotal. Another approach to validate ASM is to use heritable epi-alleles in combination with phasing information obtained from crossing of plants.</p><p>We applied the methods to regions of the genome with relatively high density of methylcytosines with each region being treated independently. By taking advantage of pair-end reads and other information, it will also be possible to do phasing and extend and connect the regions. Our model assumes that methylations are independent of each other. Methylations in some regions have a tendency to occur in clusters, which indicates a certain dependency. While our model gives a reasonably good first-order approximation, Markov chain-based models perhaps may be explored to take the dependency into consideration. Identifying ASM is still only at initial research stages. Another direction for future research is to focus on understanding the functionalities of ASM, for instance, how they are related to allele-specific expression.</p><p>More complicated heterogeneous epigenome samples may arise from a mixture of various cell types, or a mixture of cancerous cells at various stages, which present yet more and greater challenges than the allelic methylations of a diploid cell. Such samples will enable an ultimate test for the power of the methods. The initial steps are to develop scenarios and criteria for validation as it becomes less obvious what defines cell-specific methylations in the context of multiple cell types.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>APPENDIX A</head><p>Section 2 described the model for a mixture of epigenomes. This section details the derivation of the update equations at each M-step iteration for the EM algorithm.</p><p>Recall from Section 2 that the optimization goal is to determine the methylation probability matrix M and the epigenome frequency array C such that the likelihood l(M ,C,R,A) as defined by Equation <ref type="formula" target="#formula_9">3</ref>is maximized given the set of observed restricted reads R. The membership matrix A is estimated by Equation <ref type="formula" target="#formula_8">2</ref> </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Experimental (a and b) versus predicted (c and d) methylation levels of the synthetic methylome. Experimental methylation levels from Wer+ are shown in circles, Scr+ in stars. Two symbols in the bottom figures (c and d) indicate two predicted individual methylomes for the synthetic methylome. The left (a and c) is of an allele-specific region: chromosome 1: [7313026, 7313482] on forward strand. The region contains 50 methylcytosines (mC); 160 reads are aligned to this region. The right (b and d) is of a non-specific region: chromosome 3: [12698733, 12699133] on forward strand. The region contains 42 mC; 367 reads are aligned to the region follows: for r ∈ R, j = 1..</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .Fig. 3 .</head><label>23</label><figDesc>Read assignments (a and b) and methylation levels (c and d) of the predicted ASM regions of Arabidopsis Wer+ cell. Circle and star symbols in c and d represent two alleles. Lines in top (a and b) figures are restricted reads (solid and dotted lines represent two alleles); small diamonds on lines are methylations. Left (a and c) : a region of Table 4(1): chrom 4: [13269127, 13269376] − strand. Right (b and d) : a region of Table 4(2): chrom 5: [17406449, 17406557] + strand i168 An example from Table 4 group (3): region: chrom 1: [77393, 77508] − strand, 20 mC. (a) reads assignments. (b) predicted methylation levels</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>at each iteration.As the maximization of likelihood l(M ,C,R,A) is constrained by k j=1 c j = 1, i.e. the epigenome frequencies sum up to 1, we will introduce Lagrange multiplier λ and maximize the unconstrained functionl(M ,C,R,A,λ) = logp rj +a rj logc j )−λ log m ij x ri +(1−m ij )(1−x ri ) ri logm ij +(1−x ri )log(1−m ij )Maximizing l with respect to M ,C,λ by setting the respective partial derivatives to zero yields the following set of equations Solving for m ij and substituting in λ for c j lead to the update equations at each M-step iteration of the EM algorithm as follows,m ij = r arj x ri r a rj , c j = r a rj r j a rj . i171</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Samples of partially methylated regions for classification</figDesc><table><row><cell></cell><cell cols="2">≥20 mC</cell><cell cols="2">≥35 mC</cell><cell>≥50 mC</cell></row><row><cell>Samples</cell><cell>CS</cell><cell>NS</cell><cell cols="3">CS NS CS NS</cell></row><row><cell cols="4">Training 255 255 42</cell><cell>44</cell><cell>10</cell><cell>10</cell></row><row><cell>Testing</cell><cell cols="3">100 100 19</cell><cell>21</cell><cell>6</cell><cell>6</cell></row><row><cell cols="6">mc: methylcytosine; CS: cell-specific; NS: non-specific</cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc>Testing results for classification of partially methylated regions</figDesc><table><row><cell></cell><cell cols="2">≥20 mC</cell><cell cols="2">≥35 mC</cell><cell cols="2">≥50 mC</cell></row><row><cell>Samples</cell><cell>CS</cell><cell>NS</cell><cell>CS</cell><cell>NS</cell><cell cols="2">CS NS</cell></row><row><cell>Predicted CS</cell><cell>88 (TP)</cell><cell>13 (FP)</cell><cell>17</cell><cell>3</cell><cell>5</cell><cell>1</cell></row><row><cell cols="3">Predicted NS 12 (FN) 87 (TN)</cell><cell>2</cell><cell>18</cell><cell>1</cell><cell>5</cell></row><row><cell>Accuracy</cell><cell cols="2">87.5%</cell><cell cols="2">87.5%</cell><cell cols="2">83.3%</cell></row><row><cell cols="3">CS: cell-specific; NS: non-specific</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc>Classes based on differential averaged methylation</figDesc><table><row><cell>d</cell><cell>Class name</cell><cell>Label</cell></row><row><cell>[0.0,0.2]</cell><cell>Similarly methylated</cell><cell>d s</cell></row><row><cell cols="2">(0.2,0.9) Moderately differentially methylated</cell><cell>d m</cell></row><row><cell>[0.9,1.0]</cell><cell>Highly differentially methylated</cell><cell>d h</cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 .</head><label>4</label><figDesc>Predicted ASM regions</figDesc><table><row><cell>Method</cell><cell cols="2">svm lmr</cell><cell>dmr</cell><cell>mww</cell><cell>Intersection</cell></row><row><cell>Regions</cell><cell>277</cell><cell>39</cell><cell>d h : 19</cell><cell>362</cell><cell>18 (1)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>d m : 368</cell><cell></cell><cell>16 (2)</cell></row><row><cell></cell><cell></cell><cell></cell><cell>d m</cell><cell></cell><cell>192 (3)</cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 6 .</head><label>6</label><figDesc>Predicted ASM regions, group (2) inTable 4</figDesc><table><row><cell>ch</cell><cell>Coord start</cell><cell>Coord end</cell><cell>No. of mC</cell><cell>str</cell><cell>Gene model</cell></row><row><cell>1</cell><cell>18054504</cell><cell>18054609</cell><cell>20</cell><cell>−</cell><cell>&lt; AT1G48820 +</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&lt; AT1G48810</cell></row><row><cell>1</cell><cell>21249227</cell><cell>21249472</cell><cell>20</cell><cell>+</cell><cell>AT1TE70195 −</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>AT1TE70200 −</cell></row><row><cell>1</cell><cell>29696108</cell><cell>29696354</cell><cell>26</cell><cell>+</cell><cell>&lt; AT1G78960</cell></row><row><cell>2</cell><cell>2168534</cell><cell>2168695</cell><cell>21</cell><cell>−</cell><cell>AT2TE09960</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&gt; AT2G05752</cell></row><row><cell>2</cell><cell>11844725</cell><cell>11844944</cell><cell>20</cell><cell>−</cell><cell>AT2TE51520</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&gt; AT2G27780</cell></row><row><cell>2</cell><cell>11844762</cell><cell>11845016</cell><cell>25</cell><cell>−</cell><cell>AT2TE51520</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&gt; AT2G27780</cell></row><row><cell>3</cell><cell>10865759</cell><cell>10866031</cell><cell>21</cell><cell>+</cell><cell>&gt; AT3TE45185 −</cell></row><row><cell>3</cell><cell>12092064</cell><cell>12092269</cell><cell>25</cell><cell>+</cell><cell>AT3TE50300 −</cell></row><row><cell>3</cell><cell>16266681</cell><cell>16266822</cell><cell>21</cell><cell>+</cell><cell>AT3TE65915 −</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&lt; AT3G44718 −</cell></row><row><cell>3</cell><cell>16934173</cell><cell>16934369</cell><cell>20</cell><cell>−</cell><cell>AT3TE68630 +</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&gt; AT3G46110 +</cell></row><row><cell>4</cell><cell>4097347</cell><cell>4097458</cell><cell>20</cell><cell>+</cell><cell>&gt; AT4TE17760</cell></row><row><cell>4</cell><cell>4547945</cell><cell>4548048</cell><cell>39</cell><cell>−</cell><cell>AT4TE19110</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&lt; AT4G07747</cell></row><row><cell>5</cell><cell>13812896</cell><cell>13813035</cell><cell>21</cell><cell>+</cell><cell>AT5TE49235 −</cell></row><row><cell>5</cell><cell>15205421</cell><cell>15205719</cell><cell>23</cell><cell>+</cell><cell>AT5TE55020</cell></row><row><cell>5</cell><cell>15268332</cell><cell>15268498</cell><cell>21</cell><cell>−</cell><cell>AT5TE55235</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&lt; AT5G38220 +</cell></row><row><cell>5</cell><cell>17406449</cell><cell>17406557</cell><cell>22</cell><cell>+</cell><cell>AT5TE62865 −</cell></row><row><cell cols="4">ch: chromosome; str: strand; &lt;: upstream; &gt;: downstream; Signs in the last column indicate opposite strands.</cell><cell></cell><cell></cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 7 .</head><label>7</label><figDesc>Annotation summary of all ASM regions inTable 4</figDesc><table><row><cell>Annotation</cell><cell>Overlap</cell><cell cols="2">Upstream Downstream</cell></row><row><cell cols="2">Protein coding gene 4 (4) exon</cell><cell>50 (24)</cell><cell>56 (25)</cell></row><row><cell></cell><cell>9 (7) intron</cell><cell></cell><cell></cell></row><row><cell></cell><cell>1 (1) 3 UTR</cell><cell></cell><cell></cell></row><row><cell>TE gene</cell><cell>19 (8)</cell><cell>11 (3)</cell><cell>4 (1)</cell></row><row><cell>Pseudogene</cell><cell>2</cell><cell>2</cell><cell>3</cell></row><row><cell>mi, t, other RNA</cell><cell>1</cell><cell>5 (2)</cell><cell>3</cell></row><row><cell>Transposon (only)</cell><cell>66 (39)</cell><cell></cell><cell></cell></row><row><cell cols="4">Numbers in parenthesis are on the opposite strands. Upstream and</cell></row><row><cell cols="2">downstream are within 1kb.</cell><cell></cell><cell></cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 8 .</head><label>8</label><figDesc>GO annotation summary for protein coding genes inTable 7</figDesc><table><row><cell>Functional category</cell><cell cols="3">Gene body Upstream Downstream</cell></row><row><cell>Unknown cellular components</cell><cell>2</cell><cell>15</cell><cell>16</cell></row><row><cell>Chloroplast</cell><cell>2</cell><cell>8</cell><cell>6</cell></row><row><cell>Other intracellular components</cell><cell>2</cell><cell>6</cell><cell>6</cell></row><row><cell>Other cellular components</cell><cell></cell><cell>7</cell><cell>6</cell></row><row><cell>Other cytoplasmic components</cell><cell>2</cell><cell>6</cell><cell>4</cell></row><row><cell>Other membranes</cell><cell>3</cell><cell>4</cell><cell>3</cell></row><row><cell>Nucleus</cell><cell>2</cell><cell>2</cell><cell>5</cell></row><row><cell>Plastid</cell><cell>1</cell><cell>5</cell><cell>1</cell></row><row><cell>Plasma membrane</cell><cell>1</cell><cell>3</cell><cell>3</cell></row><row><cell>Unknown molecular functions</cell><cell>2</cell><cell>12</cell><cell>19</cell></row><row><cell>Other enzyme activity</cell><cell>5</cell><cell>7</cell><cell>8</cell></row><row><cell>Other binding</cell><cell>3</cell><cell>6</cell><cell>6</cell></row><row><cell>Protein binding</cell><cell>1</cell><cell>4</cell><cell>3</cell></row><row><cell>Transferase activity</cell><cell>2</cell><cell></cell><cell>4</cell></row><row><cell>Other molecular functions</cell><cell></cell><cell>4</cell><cell>2</cell></row><row><cell>Transferase activity</cell><cell></cell><cell>5</cell><cell></cell></row><row><cell>Transporter activity</cell><cell></cell><cell>1</cell><cell>4</cell></row><row><cell>Hydrolase activity</cell><cell></cell><cell>3</cell><cell></cell></row><row><cell>DNA or RNA binding</cell><cell></cell><cell>3</cell><cell></cell></row><row><cell>Nucleotide binding</cell><cell></cell><cell>3</cell><cell></cell></row><row><cell>Other metabolic processes</cell><cell>8</cell><cell>19</cell><cell>12</cell></row><row><cell>Unknown biological processes</cell><cell>1</cell><cell>17</cell><cell>18</cell></row><row><cell>Other cellular processes</cell><cell>4</cell><cell>18</cell><cell>12</cell></row><row><cell>Response to stress</cell><cell>4</cell><cell>5</cell><cell>7</cell></row><row><cell>Response to abiotic or biotic stimulus</cell><cell></cell><cell>5</cell><cell>6</cell></row><row><cell>Transcription,DNA-dependent</cell><cell>1</cell><cell>3</cell><cell>4</cell></row><row><cell>Protein metabolism</cell><cell></cell><cell>5</cell><cell>1</cell></row><row><cell>Transport</cell><cell></cell><cell>1</cell><cell>4</cell></row><row><cell>Others</cell><cell>10</cell><cell>15</cell><cell>10</cell></row></table><note></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">A subtlety here concerns the ordering of the clusters at the end of each run. The details are omitted.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGEMENT</head><p>We would like to thank Drs Ryan Lister and Ronan O'Malley from the Salk Institute for providing the experimental data, and Professor Sanjoy Dasgupta from UC-San Diego for insightful discussions.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Funding: This work was supported by the Howard Hughes Medical Institute and the Gordon and Betty Moore Foundation to JRE. JRE is an HHMI-GBMF Investigator.</p><p>Conflict of Interest: none declared.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The DNA methyltransferases of mammals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">H</forename><surname>Bestor</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/hmg/9.16.2395</idno>
+		<idno type="PMID">11005794</idno>
+		<ptr type="open-access" target="https://academic.oup.com/hmg/article-pdf/9/16/2395/9813820/092395.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Molecular Genetics</title>
+		<idno type="ISSNe">1460-2083</idno>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">16</biblScope>
+			<biblScope unit="page" from="2395" to="2402" />
+			<date type="published" when="2000-10-01" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Shotgun bisulphite sequencing of the Arabidopsis genome reveals DNA methylation patterning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shawn</forename><forename type="middle">J</forename><surname>Cokus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Suhua</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zugen</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Barry</forename><surname>Merriman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><forename type="middle">D</forename><surname>Haudenschild</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sriharsa</forename><surname>Pradhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stanley</forename><forename type="middle">F</forename><surname>Nelson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matteo</forename><surname>Pellegrini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><forename type="middle">E</forename><surname>Jacobsen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature06745</idno>
+		<idno type="PMID">18278030</idno>
+		<idno type="PMCID">PMC2377394</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc2377394?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<title level="j" type="abbrev">Nature</title>
+		<idno type="ISSN">0028-0836</idno>
+		<idno type="ISSNe">1476-4687</idno>
+		<imprint>
+			<biblScope unit="volume">452</biblScope>
+			<biblScope unit="issue">7184</biblScope>
+			<biblScope unit="page" from="215" to="219" />
+			<date type="published" when="2008-02-17" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Maximum likelihood from incomplete data via the EM algorithm</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Dempster</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. R. Stat. Soc. Ser. B</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="1" to="38" />
+			<date type="published" when="1977" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Gene Body-Specific Methylation on the Active X Chromosome</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hellman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Chess</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1136352</idno>
+		<idno type="PMID">17322062</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<title level="j" type="abbrev">Science</title>
+		<idno type="ISSN">0036-8075</idno>
+		<idno type="ISSNe">1095-9203</idno>
+		<imprint>
+			<biblScope unit="volume">315</biblScope>
+			<biblScope unit="issue">5815</biblScope>
+			<biblScope unit="page" from="1141" to="1143" />
+			<date type="published" when="2007-02-23" />
+			<publisher>American Association for the Advancement of Science (AAAS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The Arabidopsis Information Resource (TAIR): a comprehensive database and web-based information retrieval, analysis, and visualization system for a model plant</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Huala</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/29.1.102</idno>
+		<idno type="PMID">11125061</idno>
+		<idno type="PMCID">PMC29827</idno>
+		<ptr type="open-access" target="https://academic.oup.com/nar/article-pdf/29/1/102/9905094/290102.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<idno type="ISSNe">1362-4962</idno>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="102" to="105" />
+			<date type="published" when="2001-01-01" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Genomic surveys by methylation-sensitive SNP analysis identify sequence-dependent allele-specific DNA methylation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kristi</forename><surname>Kerkel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandra</forename><surname>Spadola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jolanta</forename><surname>Kosek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Le</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eldad</forename><surname>Hod</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kerry</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vundavalli</forename><forename type="middle">V</forename><surname>Murty</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicole</forename><surname>Schupf</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Vilain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mitzi</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fatemeh</forename><surname>Haghighi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Tycko</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ng.174</idno>
+		<idno type="PMID">18568024</idno>
+		<ptr type="open-access" target="https://academiccommons.columbia.edu/doi/10.7916/d8-06p0-9c84/download" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Genetics</title>
+		<title level="j" type="abbrev">Nat Genet</title>
+		<idno type="ISSN">1061-4036</idno>
+		<idno type="ISSNe">1546-1718</idno>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="904" to="908" />
+			<date type="published" when="2008-06-22" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Counting human somatic cell replications: Methylation mirrors endometrial stem cell divisions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">Y</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Tavare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Shibata</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0503976102</idno>
+		<idno type="PMID">16314580</idno>
+		<idno type="PMCID">PMC1308885</idno>
+		<ptr type="open-access" target="http://www.pnas.org/content/102/49/17739.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<title level="j" type="abbrev">Proceedings of the National Academy of Sciences</title>
+		<idno type="ISSN">0027-8424</idno>
+		<idno type="ISSNe">1091-6490</idno>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="issue">49</biblScope>
+			<biblScope unit="page" from="17739" to="17744" />
+			<date type="published" when="2005-11-28" />
+			<publisher>Proceedings of the National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The power and the promise of DNA methylation markers</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><forename type="middle">W</forename><surname>Laird</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nrc1045</idno>
+		<idno type="PMID">12671664</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Reviews Cancer</title>
+		<title level="j" type="abbrev">Nat Rev Cancer</title>
+		<idno type="ISSN">1474-175X</idno>
+		<idno type="ISSNe">1474-1768</idno>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="253" to="266" />
+			<date type="published" when="2003-04" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Targeted mutation of the DNA methyltransferase gene results in embryonic lethality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">En</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timothy</forename><forename type="middle">H</forename><surname>Bestor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rudolf</forename><surname>Jaenisch</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0092-8674(92)90611-f</idno>
+		<idno type="PMID">1606615</idno>
+		<idno type="PII">0092-8674(92)90611-F</idno>
+		<idno type="ark">ark:/67375/6H6-V6QK417P-L</idno>
+		<idno type="istexId">2603307AFC371EB05AE86D3BDF62E55596E6ED55</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<title level="j" type="abbrev">Cell</title>
+		<idno type="ISSN">0092-8674</idno>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="915" to="926" />
+			<date type="published" when="1992-06" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Role of transposable elements in heterochromatin and epigenetic control</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><surname>Lippman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anne-Valérie</forename><surname>Gendrel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Black</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><forename type="middle">W</forename><surname>Vaughn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Neilay</forename><surname>Dedhia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Richard Mccombie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kimberly</forename><surname>Lavine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vivek</forename><surname>Mittal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bruce</forename><surname>May</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kristin</forename><forename type="middle">D</forename><surname>Kasschau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">C</forename><surname>Carrington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rebecca</forename><forename type="middle">W</forename><surname>Doerge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Colot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rob</forename><surname>Martienssen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature02651</idno>
+		<idno type="PMID">15269773</idno>
+		<idno type="ark">ark:/67375/GT4-DT7NTGPM-X</idno>
+		<idno type="istexId">2D3F43F4082DF11AA017994A2C688A82D4ACD80D</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<title level="j" type="abbrev">Nature</title>
+		<idno type="ISSN">0028-0836</idno>
+		<idno type="ISSNe">1476-4679</idno>
+		<imprint>
+			<biblScope unit="volume">430</biblScope>
+			<biblScope unit="issue">6998</biblScope>
+			<biblScope unit="page" from="471" to="476" />
+			<date type="published" when="2004-07-22" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Finding the fifth base: Genome-wide sequencing of cytosine methylation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Lister</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/gr.083451.108</idno>
+		<idno type="PMID">19273618</idno>
+		<idno type="PMCID">PMC3807530</idno>
+		<ptr type="open-access" target="http://genome.cshlp.org/content/19/6/959.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Genome Research</title>
+		<title level="j" type="abbrev">Genome Research</title>
+		<idno type="ISSN">1088-9051</idno>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="959" to="966" />
+			<date type="published" when="2009-03-09" />
+			<publisher>Cold Spring Harbor Laboratory</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Highly Integrated Single-Base Resolution Maps of the Epigenome in Arabidopsis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Lister</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ronan</forename><forename type="middle">C</forename><surname>O'malley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julian</forename><surname>Tonti-Filippini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><forename type="middle">D</forename><surname>Gregory</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charles</forename><forename type="middle">C</forename><surname>Berry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Harvey</forename><surname>Millar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2008.03.029</idno>
+		<idno type="PMID">18423832</idno>
+		<idno type="PMCID">PMC2723732</idno>
+		<ptr type="open-access" target="http://www.cell.com/article/S0092867408004480/pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<title level="j" type="abbrev">Cell</title>
+		<idno type="ISSN">0092-8674</idno>
+		<imprint>
+			<biblScope unit="volume">133</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="523" to="536" />
+			<date type="published" when="2008-05" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Human DNA methylomes at base resolution show widespread epigenomic differences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Lister</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mattia</forename><surname>Pelizzola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">H</forename><surname>Dowen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">David</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gary</forename><surname>Hon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julian</forename><surname>Tonti-Filippini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">R</forename><surname>Nery</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Leonard</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhen</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Que-Minh</forename><surname>Ngo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lee</forename><surname>Edsall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jessica</forename><surname>Antosiewicz-Bourget</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Victor</forename><surname>Ruotti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Harvey</forename><surname>Millar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">A</forename><surname>Thomson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature08514</idno>
+		<idno type="PMID">19829295</idno>
+		<idno type="PMCID">PMC2857523</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc2857523?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<title level="j" type="abbrev">Nature</title>
+		<idno type="ISSN">0028-0836</idno>
+		<idno type="ISSNe">1476-4687</idno>
+		<imprint>
+			<biblScope unit="volume">462</biblScope>
+			<biblScope unit="issue">7271</biblScope>
+			<biblScope unit="page" from="315" to="322" />
+			<date type="published" when="2009-10-14" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Identification of imprinted genes subject to parent-of-origin specific expression in Arabidopsis thaliana seeds</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><forename type="middle">C</forename><surname>Mckeown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sylvia</forename><surname>Laouielle-Duprat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pjotr</forename><surname>Prins</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philip</forename><surname>Wolff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><forename type="middle">W</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mark</forename><forename type="middle">Ta</forename><surname>Donoghue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Antoine</forename><surname>Fort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dorota</forename><surname>Duszynska</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aurélie</forename><surname>Comte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nga</forename><surname>Lao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><forename type="middle">J</forename><surname>Wennblom</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geert</forename><surname>Smant</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Claudia</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ueli</forename><surname>Grossniklaus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charles</forename><surname>Spillane</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2229-11-113</idno>
+		<idno type="PMID">21838868</idno>
+		<idno type="PMCID">PMC3174879</idno>
+		<ptr type="open-access" target="https://bmcplantbiol.biomedcentral.com/track/pdf/10.1186/1471-2229-11-113" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Plant Biology</title>
+		<title level="j" type="abbrev">BMC Plant Biol</title>
+		<idno type="ISSN">1471-2229</idno>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">113</biblScope>
+			<date type="published" when="2011" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Genome-scale DNA methylation maps of pluripotent and differentiated cells</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Meissner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tarjei</forename><forename type="middle">S</forename><surname>Mikkelsen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hongcang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marius</forename><surname>Wernig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jacob</forename><surname>Hanna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrey</forename><surname>Sivachenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaolan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bradley</forename><forename type="middle">E</forename><surname>Bernstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chad</forename><surname>Nusbaum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">B</forename><surname>Jaffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreas</forename><surname>Gnirke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rudolf</forename><surname>Jaenisch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">S</forename><surname>Lander</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature07107</idno>
+		<idno type="PMID">18600261</idno>
+		<idno type="PMCID">PMC2896277</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc2896277?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<title level="j" type="abbrev">Nature</title>
+		<idno type="ISSN">0028-0836</idno>
+		<idno type="ISSNe">1476-4687</idno>
+		<imprint>
+			<biblScope unit="volume">454</biblScope>
+			<biblScope unit="issue">7205</biblScope>
+			<biblScope unit="page" from="766" to="770" />
+			<date type="published" when="2008-07-06" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The Rate and Molecular Spectrum of Spontaneous Mutations in Arabidopsis thaliana</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ossowski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Schneeberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">I</forename><surname>Lucas-Lledo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Warthmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">M</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">G</forename><surname>Shaw</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Weigel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lynch</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1180677</idno>
+		<idno type="PMID">20044577</idno>
+		<idno type="PMCID">PMC3878865</idno>
+		<ptr type="open-access" target="http://roderic.uv.es/bitstream/10550/44819/1/105222.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<title level="j" type="abbrev">Science</title>
+		<idno type="ISSN">0036-8075</idno>
+		<idno type="ISSNe">1095-9203</idno>
+		<imprint>
+			<biblScope unit="volume">327</biblScope>
+			<biblScope unit="issue">5961</biblScope>
+			<biblScope unit="page" from="92" to="94" />
+			<date type="published" when="2009-12-31" />
+			<publisher>American Association for the Advancement of Science (AAAS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">DNMT1 and DNMT3b cooperate to silence genes in human cancer cells</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ina</forename><surname>Rhee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kurtis</forename><forename type="middle">E</forename><surname>Bachman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ben</forename><forename type="middle">Ho</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kam-Wing</forename><surname>Jair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ray-Whay Chiu</forename><surname>Yen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kornel</forename><forename type="middle">E</forename><surname>Schuebel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hengmi</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">P</forename><surname>Feinberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christoph</forename><surname>Lengauer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenneth</forename><forename type="middle">W</forename><surname>Kinzler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><forename type="middle">B</forename><surname>Baylin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bert</forename><surname>Vogelstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/416552a</idno>
+		<idno type="PMID">11932749</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<title level="j" type="abbrev">Nature</title>
+		<idno type="ISSN">0028-0836</idno>
+		<idno type="ISSNe">1476-4687</idno>
+		<imprint>
+			<biblScope unit="volume">416</biblScope>
+			<biblScope unit="issue">6880</biblScope>
+			<biblScope unit="page" from="552" to="556" />
+			<date type="published" when="2002-04" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">X inactivation, differentiation, and DNA methylation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">D</forename><surname>Riggs</surname></persName>
+		</author>
+		<idno type="DOI">10.1159/000130315</idno>
+		<idno type="PMID">1093816</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cytogenetic and Genome Research</title>
+		<title level="j" type="abbrev">Cytogenet Cell Genet</title>
+		<idno type="ISSN">1424-8581</idno>
+		<idno type="ISSNe">1424-859X</idno>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="9" to="25" />
+			<date type="published" when="1975" />
+			<publisher>S. Karger AG</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Transgenerational Epigenetic Instability Is a Source of Novel Methylation Variants</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">J</forename><surname>Schmitz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">D</forename><surname>Schultz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">G</forename><surname>Lewsey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">C</forename><surname>O'malley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Urich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Libiger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">J</forename><surname>Schork</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1212959</idno>
+		<idno type="PMID">21921155</idno>
+		<idno type="PMCID">PMC3210014</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc3210014?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<title level="j" type="abbrev">Science</title>
+		<idno type="ISSN">0036-8075</idno>
+		<idno type="ISSNe">1095-9203</idno>
+		<imprint>
+			<biblScope unit="volume">334</biblScope>
+			<biblScope unit="issue">6054</biblScope>
+			<biblScope unit="page" from="369" to="373" />
+			<date type="published" when="2011-09-15" />
+			<publisher>American Association for the Advancement of Science (AAAS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Counting Divisions in a Human Somatic Cell Tree: How, What and Why</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Darryl</forename><surname>Shibata</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simon</forename><surname>Tavaré</surname></persName>
+		</author>
+		<idno type="DOI">10.4161/cc.5.6.2570</idno>
+		<idno type="PMID">16582617</idno>
+		<ptr type="open-access" target="https://www.tandfonline.com/doi/pdf/10.4161/cc.5.6.2570?needAccess=true" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell Cycle</title>
+		<title level="j" type="abbrev">Cell Cycle</title>
+		<idno type="ISSN">1538-4101</idno>
+		<idno type="ISSNe">1551-4005</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="610" to="614" />
+			<date type="published" when="2006-03-15" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Allele-specific methylation is prevalent and is contributed by CpG-SNPs in the human genome</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Shoemaker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/gr.104695.109</idno>
+		<idno type="PMID">20418490</idno>
+		<idno type="PMCID">PMC2892089</idno>
+		<ptr type="open-access" target="http://genome.cshlp.org/content/20/7/883.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Genome Research</title>
+		<title level="j" type="abbrev">Genome Research</title>
+		<idno type="ISSN">1088-9051</idno>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="883" to="889" />
+			<date type="published" when="2010-04-23" />
+			<publisher>Cold Spring Harbor Laboratory</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Investigating stem cells in human colon by using methylation patterns</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yatabe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Tavare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Shibata</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.191225998</idno>
+		<idno type="PMID">11517339</idno>
+		<idno type="PMCID">PMC58561</idno>
+		<ptr type="open-access" target="http://www.pnas.org/content/98/19/10839.full.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<title level="j" type="abbrev">Proceedings of the National Academy of Sciences</title>
+		<idno type="ISSN">0027-8424</idno>
+		<idno type="ISSNe">1091-6490</idno>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">19</biblScope>
+			<biblScope unit="page" from="10839" to="10844" />
+			<date type="published" when="2001-08-21" />
+			<publisher>Proceedings of the National Academy of Sciences</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Genome-wide High-Resolution Mapping and Functional Analysis of DNA Methylation in Arabidopsis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junshi</forename><surname>Yazaki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ambika</forename><surname>Sundaresan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shawn</forename><surname>Cokus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Null-</forename><forename type="middle">L</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Huaming</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><forename type="middle">R</forename><surname>Henderson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Shinn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matteo</forename><surname>Pellegrini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steve</forename><forename type="middle">E</forename><surname>Jacobsen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><forename type="middle">R</forename><surname>Ecker</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2006.08.003</idno>
+		<idno type="PMID">16949657</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<title level="j" type="abbrev">Cell</title>
+		<idno type="ISSN">0092-8674</idno>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1189" to="1201" />
+			<date type="published" when="2006-09" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Genome-wide analysis of Arabidopsis thaliana DNA methylation uncovers an interdependence between methylation and transcription</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Zilberman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mary</forename><surname>Gehring</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">K</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tracy</forename><surname>Ballinger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><surname>Henikoff</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ng1929</idno>
+		<idno type="PMID">17128275</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Genetics</title>
+		<title level="j" type="abbrev">Nat Genet</title>
+		<idno type="ISSN">1061-4036</idno>
+		<idno type="ISSNe">1546-1718</idno>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="61" to="69" />
+			<date type="published" when="2006-11-26" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
