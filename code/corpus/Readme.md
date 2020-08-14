@@ -68,7 +68,7 @@ In these JSON files, the segmentation in paragraphs as present in the TEI XML fi
 
 ### Adding the Softcite annotations into the JSON lossy format
 
-Install the dependency for sentence segmentation (using the pragmatic-segmenter port to Python, https://github.com/diasks2/pragmatic_segmenter), use:
+Install the dependency for sentence segmentation (using pysbd, a pragmatic-segmenter port to Python, see https://github.com/diasks2/pragmatic_segmenter) and for string distance (`textdistance` package):
 
 > pip3 install -r requirements.txt
 

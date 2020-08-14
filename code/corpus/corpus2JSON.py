@@ -12,6 +12,8 @@ from xml.sax import make_parser, handler
 from collections import OrderedDict
 from TEI2LossyJSON import TEIContentHandler, convert_tei_string
 import pysbd
+import textdistance
+import re
 
 class TEICorpusHandler(xml.sax.ContentHandler):
     """ 
@@ -20,7 +22,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
     json_path = None
     output_path = None
 
-    # working variable 
     # working variables
     accumulated = ''
     currentOffset = -1
@@ -96,8 +97,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                         self.current_entity["used"] = True
                 if "xml:id" in attrs:
                     self.current_entity["id"] = attrs.getValue("xml:id")
-                if "xml:id" in attrs:
-                    self.current_entity["id"] = attrs.getValue("xml:id")
                 if "corresp" in attrs:
                     self.current_entity["id"] = attrs.getValue("corresp")
                 self.current_entity["start"] = self.currentOffset
@@ -148,7 +147,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             # inject new annotated paragraph
             for para in self.document["body_text"]:
                 local_text = para["text"]
-                local_text_simplified = local_text.replace(" ", "")
                 local_text_simplified = signature(local_text)
                 #print(local_text)
                 if not self.grobid_json is None and "body_text" in self.grobid_json:
@@ -183,9 +181,43 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                 self.grobid_json["body_text"][i]["ref_spans"] = para["ref_spans"]
                             break
                         i += 1
+                    i = 0
                     if not local_match:
-                        print("no match:", self.origin_file)
-                        #print(local_text)
+                        # we perform a second pass, with more aggressive matching criteria for this target paragraph
+                        for candidate_text in self.grobid_json["body_text"]:
+                            # we check that all entity span texts are present
+                            if "entity_spans" in para:
+                                entity_match = True
+                                for entity_block in para["entity_spans"]:
+                                    if "rawForm" in entity_block:
+                                        ind = -1
+                                        try:
+                                            ind = candidate_text["text"].index(entity_block["rawForm"])
+                                        except:
+                                            ind = -1     
+                                        if ind == -1:
+                                            entity_match = False
+                                            break
+                                if entity_match:
+                                    # we add as constraint on a Ratcliff-Obershelp similarity, which is based on longest sequence 
+                                    # match (so good for sub-string match)
+                                    candidate_string = signature(candidate_text["text"])
+                                    if textdistance.ratcliff_obershelp.similarity(local_text_simplified, candidate_string) > 0.5:
+                                        candidate_text["text"] = local_text
+                                        if "entity_spans" in para:
+                                            #candidate_text["entity_spans"] = para["entity_spans"]
+                                            #print(para["entity_spans"])
+                                            self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
+                                        if "ref_spans" in para:    
+                                            #candidate_text["ref_spans"] = para["ref_spans"]
+                                            self.grobid_json["body_text"][i]["ref_spans"] = para["ref_spans"]
+                                        break
+                        i += 1
+
+                    if not local_match:
+                        # still no match for the corpus paragraph, we report this issue
+                        print("no match in", self.origin_file)
+                        print(local_text)
                         self.nb_unmatched_file += 1
 
             self.grobid_json = convert_to_sentence_segments(self.grobid_json)
@@ -215,11 +247,10 @@ class TEICorpusHandler(xml.sax.ContentHandler):
         self.accumulated = ""
 
 def signature(string):
-    string = string.replace("-", "")
-    string = string.replace("\t", "")
-    string = string.replace("\n", "")
+    string = string.lower()
+    string = re.sub('[^0-9a-z]+', '', string)
     #string = ''.join([i if ord(i) < 128 else '' for i in string])
-    return string.replace(" ", "")
+    return string
 
 def convert_to_sentence_segments(json):
     new_json = OrderedDict()
@@ -244,7 +275,6 @@ def convert_to_sentence_segments(json):
                         previous_start = -1
 
                     offset_pos = span.start
-                    #print(span.start, span.end)
                     sentence_structure = OrderedDict()
 
                     sentence_structure["text"] = text_part["text"][span.start:span.end]

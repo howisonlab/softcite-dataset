@@ -1,0 +1,868 @@
+{
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "cross-section relationship between income and consumption in household data, one might expect to find that the consumption of low-income households is more closely tied to income than that of high-income households, because the dollars of savings or deficit by poor households are likely to be much smaller in absolute value than high income households. "
+        },
+        {
+            "text": "In a cross-section regression of household consumption on income, the error terms seem likely to be systematically larger in absolute value for high-income than for low-income households, and the assumption of homoskedasticity seems implausible. "
+        },
+        {
+            "text": "In contrast, if one looked at an aggregate time series consumption function, comparing national income to consumption, it seems more plausible to assume that the variance of the error terms doesn't change much over time."
+        },
+        {
+            "text": "A recent development in estimation of standard errors, known as \"robust standard errors,\" has also reduced the concern over heteroskedasticity. "
+        },
+        {
+            "text": "If the sample size is large, then robust standard errors give quite a good estimate of standard errors even with heteroskedasticity. "
+        },
+        {
+            "text": "If the sample is small, the need for a heteroskedasticity correction that does not affect the coefficients, and only asymptotically corrects the standard errors, can be debated."
+        },
+        {
+            "text": "However, sometimes the natural question facing the applied econometrician is the accuracy of the predictions of the model. "
+        },
+        {
+            "text": "In this case, the key issue is the variance of the error terms and what makes them large. "
+        },
+        {
+            "text": "This question often arises in financial applications where the dependent variable is the return on an asset or portfolio and the variance of the return represents the risk level of those returns. "
+        },
+        {
+            "text": "These are time series applications, but it is nonetheless likely that heteroskedasticity is an issue. "
+        },
+        {
+            "text": "Even a cursory look at financial data suggests that some time periods are riskier than others; that is, the expected value of the magnitude of error terms at some times is greater than at others. "
+        },
+        {
+            "text": "Moreover, these risky times are not scattered randomly across quarterly or annual data. "
+        },
+        {
+            "text": "Instead, there is a degree of autocorrelation in the riskiness of financial returns. "
+        },
+        {
+            "text": "Financial analysts, looking at plots of daily returns such as in Figure 1, notice that the amplitude of the returns varies over time and describe this as \"volatility clustering.\" ",
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 73,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The ARCH and GARCH models, which stand for autoregressive conditional heteroskedasticity and generalized autoregressive conditional heteroskedasticity, are designed to deal with just this set of issues. "
+        },
+        {
+            "text": "They have become widespread tools for dealing with time series heteroskedastic models. "
+        },
+        {
+            "text": "The goal of such models is to provide a volatility measure-like a standard deviation-that can be used in financial decisions concerning risk analysis, portfolio selection and derivative pricing."
+        },
+        {
+            "text": "Because this paper will focus on financial applications, we will use financial notation. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Let the dependent variable be labeled r t , which could be the return on an asset or portfolio. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The mean value m and the variance h will be defined relative to a past information set. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Then, the return r in the present will be equal to the mean value of r (that is, the expected value of r based on past information) plus the standard deviation of r (that is, the square root of the variance) times the error term for the present period.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The econometric challenge is to specify how the information is used to forecast the mean and variance of the return, conditional on the past information. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "While many specifications have been considered for the mean return and have been used in efforts to forecast future returns, virtually no methods were available for the variance before the introduction of ARCH models. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The primary descriptive tool was the rolling standard deviation. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "This is the standard deviation calculated using a fixed number of the most recent observations. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "For example, this could be calculated every day using the most recent month (22 business days) of data. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "It is convenient to think of this formulation as the first ARCH model; it assumes that the variance of tomorrow's return is an equally weighted average of the squared residuals from the last 22 days. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The assumption of equal weights seems unattractive, as one would think that the more recent events would be more relevant and therefore should have higher weights. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Furthermore the assumption of zero weights for observations more than one month old is also unattractive. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The ARCH model proposed by Engle (1982) let these weights be parameters to be estimated. ",
+            "section": "ARCH/GARCH Models",
+            "ref_spans": [
+                {
+                    "start": 27,
+                    "end": 39,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "Engle (1982)"
+                }
+            ]
+        },
+        {
+            "text": "Thus, the model allowed the data to determine the best weights to use in forecasting the variance.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "A useful generalization of this model is the GARCH parameterization introduced by Bollerslev (1986). ",
+            "section": "ARCH/GARCH Models",
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 99,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "Bollerslev (1986)"
+                }
+            ]
+        },
+        {
+            "text": "This model is also a weighted average of past squared residuals, but it has declining weights that never go completely to zero. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "It gives parsimonious models that are easy to estimate and, even in its simplest form, has proven surprisingly successful in predicting conditional variances. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The most widely used GARCH specification asserts that the best predictor of the variance in the next period is a weighted average of the long-run average variance, the variance Figure 1 Nasdaq, Dow Jones and Bond Returns predicted for this period, and the new information in this period that is captured by the most recent squared residual. ",
+            "section": "ARCH/GARCH Models",
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 185,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Such an updating rule is a simple description of adaptive or learning behavior and can be thought of as Bayesian updating.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Consider the trader who knows that the long-run average daily standard deviation of the Standard and Poor's 500 is 1 percent, that the forecast he made yesterday was 2 percent and the unexpected return observed today is 3 percent. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Obviously, this is a high volatility period, and today is especially volatile, which suggests that the forecast for tomorrow could be even higher. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "However, the fact that the long-term average is only 1 percent might lead the forecaster to lower the forecast. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The best strategy depends upon the dependence between days. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "If these three numbers are each squared and weighted equally, then the new forecast would be 2.16 \u03ed \u034c (1 \u03e9 4 \u03e9 9)/3. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "However, rather than weighting these equally, it is generally found for daily data that weights such as those in the empirical example of (.02, .9, .08) are much more accurate. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Hence the forecast is 2.08 \u03ed \u034c .02*1 \u03e9 .9*4 \u03e9 .08*9.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "To be precise, we can use h t to define the variance of the residuals of a regression r t \u03ed m t \u03e9 \u034c h t t . ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "In this definition, the variance of is one. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The GARCH model for variance looks like this:",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The econometrician must estimate the constants , \u2423, \u2424; updating simply requires knowing the previous forecast h and residual. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The weights are (1 \u03ea \u2423 \u03ea \u2424, \u2424, \u2423), and the long-run average variance is \u034c /(1 \u03ea \u2423 \u03ea \u2424). ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "It should be noted that this only works if \u2423 \u03e9 \u2424 \u03fd 1, and it only really makes sense if the weights are positive, requiring \u2423 \u03fe 0, \u2424 \u03fe 0, \u03fe 0. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The GARCH model that has been described is typically called the GARCH(1,1) model. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The (1,1) in parentheses is a standard notation in which the first number refers to how many autoregressive lags, or ARCH terms, appear in the equation, while the second number refers to how many moving average lags are specified, which here is often called the number of GARCH terms. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Sometimes models with more than one lag are needed to find good variance forecasts.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Although this model is directly set up to forecast for just one period, it turns out that based on the one-period forecast, a two-period forecast can be made. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Ultimately, by repeating this step, long-horizon forecasts can be constructed. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "For the GARCH(1,1), the two-step forecast is a little closer to the long-run average variance than is the one-step forecast, and, ultimately, the distant-horizon forecast is the same for all time periods as long as \u2423 \u03e9 \u2424 \u03fd 1. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "This is just the unconditional variance. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Thus, the GARCH models are mean reverting and conditionally heteroskedastic, but have a constant unconditional variance.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "I turn now to the question of how the econometrician can possibly estimate an equation like the GARCH(1,1) when the only variable on which there are data is r t . ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The simple answer is to use maximum likelihood by substituting h t for 2 in the normal likelihood and then maximizing with respect to the parameters. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "An even simpler answer is to use software such as EViews, SAS, GAUSS, TSP, Matlab, RATS and many others where there exist already packaged programs to do this.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "But the process is not really mysterious. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "For any set of parameters , \u2423, \u2424 and a starting estimate for the variance of the first observation, which is often taken to be the observed variance of the residuals, it is easy to calculate the variance forecast for the second observation. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The GARCH updating formula takes the weighted average of the unconditional variance, the squared residual for the first observation and the starting variance and estimates the variance of the second observation. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "This is input into the forecast of the third variance, and so forth. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Eventually, an entire time series of variance forecasts is constructed. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Ideally, this series is large when the residuals are large and small when they are small. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The likelihood function provides a systematic way to adjust the parameters , \u2423, \u2424 to give the best fit.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Of course, it is entirely possible that the true variance process is different from the one specified by the econometrician. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "In order to detect this, a variety of diagnostic tests are available. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "The simplest is to construct the series of { t }, which are supposed to have constant mean and variance if the model is correctly specified. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Various tests such as tests for autocorrelation in the squares are able to detect model failures. ",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Often a \"Ljung box test\" with 15 lagged autocorrelations is used.",
+            "section": "ARCH/GARCH Models"
+        },
+        {
+            "text": "Applications of the ARCH/GARCH approach are widespread in situations where the volatility of returns is a central issue. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Many banks and other financial institutions use the concept of \"value at risk\" as a way to measure the risks faced by their portfolios. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The 1 percent value at risk is defined as the number of dollars that one can be 99 percent certain exceeds any losses for the next day. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Statisticians call this a 1 percent quantile, because 1 percent of the outcomes are worse and 99 percent are better. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Let's use the GARCH(1,1) tools to estimate the 1 percent value at risk of a $1,000,000 portfolio on March 23, 2000. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "This portfolio consists of 50 percent Nasdaq, 30 percent Dow Jones and 20 percent long bonds. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The long bond is a ten-year constant maturity Treasury bond. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "1 This date is chosen to be just before the big market slide at the end of March and April. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "It is a time of high volatility and great anxiety.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "First, we construct the hypothetical historical portfolio. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "(All calculations in this example were done with the EViews software program.) ",
+            "section": "A Value-at-Risk Example",
+            "entity_spans": [
+                {
+                    "start": 53,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "EViews",
+                    "resp": "#annotator14",
+                    "used": true,
+                    "id": "c377979b17-software-simple-6"
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 shows the pattern of returns of the Nasdaq, Dow Jones, bonds and the composite portfolio leading up to the terminal date. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Each of these series appears to show the signs of ARCH effects in that the amplitude of the returns varies over time. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "In the case of the equities, it is clear that this has increased substantially in the latter part of the sample period. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Visually, Nasdaq is even more extreme. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "In Table 1, we present some illustrative statistics for each of these three investments separately and for the portfolio as a whole in the final column. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 10,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "From the daily standard deviation, we see that the Nasdaq is the most volatile and interest rates the least volatile of the assets. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The portfolio is less volatile than either of the equity series even though it is 80 percent equity-yet another illustration of the benefits of diversification. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "All the assets show evidence of fat tails, since the kurtosis exceeds 3, which is the normal value, and evidence of negative skewness, which means that the left tail is particularly extreme.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The portfolio shows substantial evidence of ARCH effects as judged by the autocorrelations of the squared residuals in Table 2. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 119,
+                    "end": 126,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The first order autocorrelation is .210, and they gradually decline to .083 after 15 lags. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "These autocorrelations are not large, but they are very significant. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "They are also all positive, which is uncommon in most economic time series and yet is an implication of the GARCH(1,1) model. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Standard software allows a test of the hypothesis that there is no autocorrelation (and hence no ARCH). ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The test p-values shown in the last column are all zero to four places, resoundingly rejecting the \"no ARCH\" hypothesis.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Then we forecast the standard deviation of the portfolio and its 1 percent quantile. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "We carry out this calculation over several different time frames: the entire ten years of the sample up to March 23, 2000; the year before March 23, 2000; and from January 1, 2000, to March 23, 2000.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Consider first the quantiles of the historical portfolio at these three different time horizons. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "To do this calculation, one simply sorts the returns and finds the 1 percent worst case. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Over the full ten-year sample, the 1 percent quantile times $1,000,000 produces a value at risk of $22,477. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Over the last year, the calculation produces a value at risk of $24,653-somewhat higher, but not enormously so. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "However, if the 1 percent quantile is calculated based on the data from January 1, 2000, to March 23, 2000, the value at risk is $35,159. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Thus, the level of risk apparently has increased dramatically over the last quarter of the sample. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Each of these numbers is the appropriate value at risk if the next day is equally likely to be the same as the days in the given sample period. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "This assumption is more likely to be true for the shorter period than for the long one.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The basic GARCH(1,1) results are given in Table 3. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 49,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 3"
+                }
+            ]
+        },
+        {
+            "text": "Under this table it lists the dependent variable, PORT, and the sample period, indicates that it took the algorithm 16 iterations to maximize the likelihood function and computed stan- dard errors using the robust method of Bollerslev-Wooldridge. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The three coefficients in the variance equation are listed as C, the intercept; ARCH(1), the first lag of the squared return; and GARCH(1), the first lag of the conditional variance. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Notice that the coefficients sum up to a number less than one, which is required to have a mean reverting variance process. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Since the sum is very close to one, this process only mean reverts slowly. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Standard errors, Z-statistics (which are the ratio of coefficients and standard errors) and p-values complete the table.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The standardized residuals are examined for autocorrelation in Table 4. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 63,
+                    "end": 70,
+                    "type": "table",
+                    "ref_id": "tab_3",
+                    "text": "Table 4"
+                }
+            ]
+        },
+        {
+            "text": "Clearly, the autocorrelation is dramatically reduced from that observed in the portfolio returns themselves. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Applying the same test for autocorrelation, we now  find the p-values are about 0.5 or more, indicating that we can accept the hypothesis of \"no residual ARCH.\" ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The forecast standard deviation for the next day is 0.0146, which is almost double the average standard deviation of 0.0083 presented in the last column of Table 1. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 156,
+                    "end": 163,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "If the residuals were normally distributed, then this would be multiplied by 2.327, because 1 percent of a normal random variable lies 2.327 standard deviations below the mean. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The estimated normal value at risk \u03ed $33,977. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "As it turns out, the standardized residuals, which are the estimated values of { t }, are not very close to a normal distribution. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "They have a 1 percent quantile of 2.844, which reflects the fat tails of the asset price distribution. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Based on the actual distribution, the estimated 1 percent value at risk is $39,996. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Notice how much this value at risk has risen to reflect the increased risk in 2000.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Finally, the value at risk can be computed based solely on estimation of the quantile of the forecast distribution. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "This has recently been proposed by Engle and Manganelli (2001), adapting the quantile regression methods of Koenker and Basset (1978) and Koenker and Hallock in this symposium. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "Engle and Manganelli (2001)"
+                },
+                {
+                    "start": 108,
+                    "end": 133,
+                    "type": "bibr",
+                    "text": "Koenker and Basset (1978)"
+                }
+            ]
+        },
+        {
+            "text": "Application of their method to this data set delivers a value at risk \u03ed $38,228.",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "What actually did happen on March 24, 2000, and subsequently? ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The portfolio lost more than $1000 on March 24 and more than $3000 on March 27. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The biggest hit was $67,000 on April 14. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "We all know that Nasdaq declined substantially over the next year. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The Dow Jones average was much less affected, and bond prices increased as the Federal Reserve lowered interest rates. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Figure 2 plots the value at risk estimated each day using this methodology within the sample period and the losses that occurred the next day. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "text": "Figure"
+                }
+            ]
+        },
+        {
+            "text": "There are about 1 percent of times the value at risk is exceeded, as is expected, since this is in-sample. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Figure 3 plots the same graph for the next year and a quarter, during which the equity market tanks and the bond yields fall. ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The parameters are not reestimated, but the formula is simply updated each day. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "The computed value at risk rises substantially from the $40,000 initial figure as the volatility rises in April 2000. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Then the losses decline, so that the value at risk is well above the realized losses. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "Toward the end of the period, the losses approach the value at risk again, but at a lower level. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "In this year and a quarter, the value at risk is exceeded only once; thus, this is actually a slightly conservative estimate of the risk. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "It is not easy to determine whether a particular value-at-risk number is correct, although statistical tests can be formulated for this in the same way they are formulated for volatilities. ",
+            "section": "A Value-at-Risk Example"
+        },
+        {
+            "text": "For example, Engle and Manganelli (2001) present a \"dynamic quantile test.\" ",
+            "section": "A Value-at-Risk Example",
+            "ref_spans": [
+                {
+                    "start": 13,
+                    "end": 40,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "Engle and Manganelli (2001)"
+                }
+            ]
+        },
+        {
+            "text": "The GARCH(1,1) is the simplest and most robust of the family of volatility models. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "However, the model can be extended and modified in many ways. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "I will briefly mention three modifications, although the number of volatility models that can be found in the literature is now quite extraordinary.",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "The GARCH(1,1) model can be generalized to a GARCH( p,q) model-that is, a model with additional lag terms. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Such higher-order models are often useful when a long span of data is used, like several decades of daily data or a year of hourly data. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "With additional lags, such models allow both fast and slow decay of information. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "A particular specification of the GARCH(2,2) by Engle and Lee (1999), sometimes called the \"component model,\" is a useful starting point to this approach.",
+            "section": "Extensions and Modifications of GARCH",
+            "ref_spans": [
+                {
+                    "start": 48,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "Engle and Lee (1999)"
+                }
+            ]
+        },
+        {
+            "text": "ARCH/GARCH models thus far have ignored information on the direction of returns; only the magnitude matters. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "However, there is very convincing evidence that the direction does affect volatility. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Particularly for broad-based equity indices and bond market indices, it appears that market declines forecast higher volatility than comparable market increases do. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "There is now a variety of asymmetric GARCH models, including the EGARCH model of Nelson (1991), the TARCH modelthreshold ARCH-attributed to Rabemananjara and Zakoian (1993) and Glosten, Jaganathan and Runkle (1993), and a collection and comparison by Engle and Ng (1993).",
+            "section": "Extensions and Modifications of GARCH",
+            "ref_spans": [
+                {
+                    "start": 251,
+                    "end": 270,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "Engle and Ng (1993)"
+                }
+            ]
+        },
+        {
+            "text": "The goal of volatility analysis must ultimately be to explain the causes of volatility. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "While time series structure is valuable for forecasting, it does not satisfy our need to explain volatility. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "The estimation strategy introduced for ARCH/GARCH models can be directly applied if there are predetermined or exogenous variables. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Thus, we can think of the estimation problem for the variance just as we do for the mean. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "We can carry out specification searches and hypothesis tests to find the best formulation. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Thus far, attempts to find the ultimate cause of volatility are not very satisfactory. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Obviously, volatility is a response to news, which must be a surprise. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "However, the timing of the news may not be a surprise and gives rise to predictable components of volatility, such as economic announcements. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "It is also possible to see how the amplitude of news events is influenced by other news events. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "For example, the amplitude of return movements on the United States stock market may respond to the volatility observed earlier in the day in Asian markets as well as to the volatility observed in the United States on the previous day. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Engle, Ito and Lin (1990) call these \"heat wave\" and \"meteor shower\" effects.",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "A similar issue arises when examining several assets in the same market. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Does the volatility of one influence the volatility of another? ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "In particular, the volatility of an individual stock is clearly influenced by the volatility of the market as a whole. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "This is a natural implication of the capital asset pricing model. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "It also appears that there is time variation in idiosyncratic volatility (for example, Engle, Ng and Rothschild, 1992). ",
+            "section": "Extensions and Modifications of GARCH",
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 118,
+                    "type": "bibr",
+                    "text": "Engle, Ng and Rothschild, 1992)"
+                }
+            ]
+        },
+        {
+            "text": "This discussion opens the door to multivariate modeling where not only the volatilities but also the correlations are to be investigated. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "There are now a large number of multivariate ARCH models to choose from. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "These turn out often to be difficult to estimate and to have large numbers of parameters. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "Research is continuing to examine new classes of multivariate models that are more convenient for fitting large covariance matrices. ",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "This is relevant for systems of equations such as vector autoregressions and for portfolio problems where possibly thousands of assets are to be analyzed.",
+            "section": "Extensions and Modifications of GARCH"
+        },
+        {
+            "text": "ARCH and GARCH models have been applied to a wide range of time series analyses, but applications in finance have been particularly successful and have been the focus of this introduction. ",
+            "section": "Conclusion"
+        },
+        {
+            "text": "Financial decisions are generally based upon the tradeoff between risk and return; the econometric analysis of risk is therefore an integral part of asset pricing, portfolio optimization, option pricing and risk management. ",
+            "section": "Conclusion"
+        },
+        {
+            "text": "This paper has presented an example of risk measurement that could be the input to a variety of economic decisions. ",
+            "section": "Conclusion"
+        },
+        {
+            "text": "The analysis of ARCH and GARCH models and their many extensions provides a statistical stage on which many theories of asset pricing and portfolio analysis can be exhibited and tested.",
+            "section": "Conclusion"
+        }
+    ]
+}

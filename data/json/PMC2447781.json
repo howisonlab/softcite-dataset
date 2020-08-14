@@ -1,0 +1,1088 @@
+{
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "Conformational change plays a critical role in the functioning and regulation of many proteins, and comparing protein structures with different backbone conformations is a common task in structural biology (1). ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 206,
+                    "end": 209,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(1)"
+                }
+            ]
+        },
+        {
+            "text": "This task is particularly challenging when we compare two evolutionarily divergent proteins. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "The main goal of our work is to provide an automated tool for detecting conformational changes in remotely related proteins.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "For proteins undergoing conformational change, we can often find in them backbone fragments that remain rigid and are well aligned. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "However, these rigid local fragments reorient themselves with respect to one another during the conformational change, resulting in poor global alignment. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "A good example is large-scale domain movement. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Consider the HECT domain of the human ubiquitin ligase WWP1, which is homologous to the human ubiquitin ligase E6AP. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Comparing their crystal structures [PDB codes 1D5F:C (2) and 1ND7 (3)] reveals a dramatic conformational change ( Figure 1) crucial for their biological function, which is to move the ubiquitin molecule from one substrate protein to another.",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(3)"
+                },
+                {
+                    "start": 114,
+                    "end": 122,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The crystallographers who determined the WWP1 structure described in detail its comparison with E6AP (3), and they produced several figures depicting superpositions carried out manually, similar to what pFlexAna produces automatically. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "To our knowledge, there are currently no other computational tools that aim to automate such analyses.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Our pFlexAna (protein flexibility analyzer) web server aims at automatically detecting conformational changes between a pair of protein structures, without relying on sequence homology. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Specifically, it detects regions exhibiting structural change, contrasted with regions exhibiting structural similarity. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "The pFlexAna results can be viewed as indications of the endpoints of hypothesized molecular motions or mutation-induced conformational changes.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "To detect conformational changes in dissimilar proteins, we must first find structurally similar fragments (domains, sub-domains, etc.) in the proteins. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "pFlexAna employs a statistical test to match core protein fragments that are structurally similar and determine the geometric transformations that align them. ",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "id": "e136915730-software-simple-3"
+                }
+            ]
+        },
+        {
+            "text": "This statistical test of structural similarity has been shown to be effective in detecting many different types of conformational changes (4). ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "pFlexAna displays the protein structures superimposed according to each aligned fragment pair. ",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "id": "e136915730-software-simple-4"
+                }
+            ]
+        },
+        {
+            "text": "The superimposed display highlights the discontinuity from the similar to the dissimilar regions of the proteins and aids visualization of the conformational changes that occur relative to the aligned fragment pair used as the basis for superposition. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "See Figure 3 for a sample result. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Furthermore, pFlexAna clusters the aligned fragment pairs into 'super-alignments', according to the similarity of geometric transformations that align them. ",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "start": 13,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "id": "e136915730-software-simple-5"
+                }
+            ]
+        },
+        {
+            "text": "The result is that the dominant conformational changes occur between the clusters, while the smaller conformational changes occur within a cluster.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "There are many approaches for studying conformational changes. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "One possibility is to perform molecular dynamics (MD) simulation to generate alternative conformations from a single known protein structure (5). ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 141,
+                    "end": 144,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "(5)"
+                }
+            ]
+        },
+        {
+            "text": "However, MD simulation is computationally intensive, and usually it can only explore conformational changes that are small in magnitude. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "An alternative approach is to compare directly the structures of a protein in different conformations. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "There are several good methods for this (4,(6)(7)(8), but they can be applied only if the structures of the same protein in different conformations are available.",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 43,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "(4,"
+                },
+                {
+                    "start": 43,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "(6)"
+                },
+                {
+                    "start": 46,
+                    "end": 49,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "(7)"
+                },
+                {
+                    "start": 49,
+                    "end": 52,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(8)"
+                }
+            ]
+        },
+        {
+            "text": "It is thus sometimes necessary to compare conformations of related, but different proteins in order to infer conformational changes. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "One possibility is to perform sequence alignment as a preprocessing step to match the proteins and then detect conformational changes between them (9). ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "This method, however, is restricted to proteins with 90% sequence identity (9).",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "(9)"
+                }
+            ]
+        },
+        {
+            "text": "As a complementary approach, for cases with low sequence homology, one may attempt structural alignment i.e. matching the proteins based on structural similarity instead of sequence similarity. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "However, both rigid and flexible structural alignment methods focus on finding a single best fit between the protein structures, and may ignore small yet significant conformational changes. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Consider, for example, the relatively simple case of a same protein in two conformations. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Given the bound and unbound structures [PDB codes 3MBP (10) and 1LLS:A (11)] of the maltose-binding protein, two popular structural alignment methods, CE (12) and FATCAT (13), align the entire structures together without recognizing the hinge-like conformational change occurring between the two domains of the protein. ",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "start": 163,
+                    "end": 169,
+                    "type": "software",
+                    "rawForm": "FATCAT",
+                    "resp": "#curator",
+                    "id": "e136915730-software-simple-6"
+                }
+            ]
+        },
+        {
+            "text": "FlexProt (14), on the other hand, requires the user to know the number of hinges in order to interpret its results. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 13,
+                    "type": "bibr",
+                    "text": "(14)"
+                }
+            ]
+        },
+        {
+            "text": "What we need in this case is a method that automatically detects the 'discontinuity' in structural similarity at the hinge due to the conformational change and matches the two domains on each side of the hinge separately. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "See Figure 2 for a comparison between the results from FATCAT and pFlexAna. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 55,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "FATCAT",
+                    "resp": "#curator",
+                    "id": "e136915730-software-simple-7"
+                },
+                {
+                    "start": 66,
+                    "end": 74,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-8"
+                }
+            ]
+        },
+        {
+            "text": "In general, pFlexAna aims to detect such conformational changes for two related, but different proteins. ",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-9"
+                }
+            ]
+        },
+        {
+            "text": "Furthermore, it tries to identify and group together those protein fragments that move in tandem.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "The pFlexAna server takes as input two protein structures in PDB format, which may be uploaded or specified using PDB codes. ",
+            "section": "Input"
+        },
+        {
+            "text": "The user may also specify chain identifiers or a restricted range of residues for each file. ",
+            "section": "Input"
+        },
+        {
+            "text": "Finally, there are two optional parameters that the user may adjust. ",
+            "section": "Input"
+        },
+        {
+            "text": "The parameter k is the desired number of clusters for groupingthe aligned fragments together, and is the noise parameter, which determines how strictly structural similarity is applied. ",
+            "section": "Input"
+        },
+        {
+            "text": "For low -values, pFlexAna matches only fragments that are highly similar. ",
+            "section": "Input"
+        },
+        {
+            "text": "For high -values, it also matches fragments with weak similarity and ignores small differences. ",
+            "section": "Input"
+        },
+        {
+            "text": "Based on our experiences, -values between 0.2 and 0.4 work well for proteins with reasonably highsequence homology (40% or higher). ",
+            "section": "Input"
+        },
+        {
+            "text": "For proteins that are even more distantly related, we find -values up to 0.8 to be useful as well, though this may lead to false positive matches in some cases.",
+            "section": "Input"
+        },
+        {
+            "text": "OutputpFlexAna identifies pairs of fragments-one fragment from each protein-that show significant conformational similarity. ",
+            "section": "Input",
+            "entity_spans": [
+                {
+                    "start": 6,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-12"
+                }
+            ]
+        },
+        {
+            "text": "They are listed in a table and grouped into clusters, according to the similarity of the geometric transformation that aligns the fragment pair. ",
+            "section": "Input"
+        },
+        {
+            "text": "See Figure 3 for an example. ",
+            "section": "Input",
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Two or more fragment pairs may move together and form a semi-rigid domain. ",
+            "section": "Input"
+        },
+        {
+            "text": "By categorizing fragment pairs that are moving together versus moving independently, clustering helps to characterize conformational changes caused by domain movements or correlated motions.",
+            "section": "Input"
+        },
+        {
+            "text": "For each aligned fragment pair, pFlexAna provides a static cartoon of the proteins superimposed according to the aligned pair. ",
+            "section": "Input"
+        },
+        {
+            "text": "This highlights the movement of the proteins with respect to the aligned regions. ",
+            "section": "Input"
+        },
+        {
+            "text": "Jmol links are also provided so that the user may view the proteins from different angles. ",
+            "section": "Input"
+        },
+        {
+            "text": "Finally, the transformed PDB coordinate files that align the second protein to the first are available for download and the transformation matrices used for alignment are provided. ",
+            "section": "Input"
+        },
+        {
+            "text": "The same information is also provided for each cluster of aligned fragment pairs.",
+            "section": "Input"
+        },
+        {
+            "text": "To analyze the conformational changes between two protein structures, pFlexAna proceeds in two main steps. ",
+            "section": "Processing"
+        },
+        {
+            "text": "In the first step, it identifies pairs of fragments that are structurally similar. ",
+            "section": "Processing"
+        },
+        {
+            "text": "These fragment pairs serve as rigid cores for superimposing the two proteins and detecting conformational changes with respect to the cores. ",
+            "section": "Processing"
+        },
+        {
+            "text": "In the second step, pFlexAna clusters the aligned fragment pairs into 'super-alignments', according to the similarity of geometric transformations that align two fragments in a pair. ",
+            "section": "Processing"
+        },
+        {
+            "text": "The result is that the dominant conformational changes occur between the clusters, while the smaller conformational changes occur within a cluster. ",
+            "section": "Processing"
+        },
+        {
+            "text": "We now describe the two steps in greater detail below.",
+            "section": "Processing"
+        },
+        {
+            "text": "To identify structurally similar fragment pairs, pFlexAna uses an all-against-all approach that effectively compares every contiguous fragment from one protein with that from the other. ",
+            "section": "Processing"
+        },
+        {
+            "text": "First, we match the residues of the two proteins by 'sliding' one protein against the other (Figure 4). ",
+            "section": "Processing",
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 101,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "(Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "For each sliding position, let P and P 0 represent the matched residues from the two proteins, respectively. ",
+            "section": "Processing"
+        },
+        {
+            "text": "We generate all contiguous fragments of P and P 0 and check their structural similarity by applying a reliable statistical test (4). ",
+            "section": "Processing",
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "(4)"
+                }
+            ]
+        },
+        {
+            "text": "Briefly, this test uses a Gaussian noise model to represent acceptable deviations in atomic coordinates between two putatively similar protein fragments. ",
+            "section": "Processing"
+        },
+        {
+            "text": "Two fragments are considered statistically different if their coordinates deviate too much according to the Gaussian model. ",
+            "section": "Processing"
+        },
+        {
+            "text": "We then assign to each residue a flexibility score that incorporates information from all fragment comparisons that involve this residue. ",
+            "section": "Processing"
+        },
+        {
+            "text": "A high score indicates greater rigidity. ",
+            "section": "Processing"
+        },
+        {
+            "text": "Finally, each pair of aligned fragments must pass the following filter: the fragments must consist entirely of residues whose flexibility scores are above a threshold, and they must be longer than a given minimum length. ",
+            "section": "Processing"
+        },
+        {
+            "text": "Intuitively, this filter ensures that such a pair of fragments and all subfragments contained in them are structurally identical up to statistical variations. ",
+            "section": "Processing"
+        },
+        {
+            "text": "The minimum length requirement is imposed to avoid accidental structural matches. ",
+            "section": "Processing"
+        },
+        {
+            "text": "One advantage of our method is that it highlights the genuine conformational changes by suppressing the spurious ones due to noise. ",
+            "section": "Processing"
+        },
+        {
+            "text": "More details on this method and its advantages are available in ref. (  exhaustive comparison of all contiguous fragments in the two protein structures, our method can detect structurally similar fragments that are in opposite order along the protein sequences.",
+            "section": "Processing",
+            "ref_spans": [
+                {
+                    "start": 69,
+                    "end": 70,
+                    "type": "bibr",
+                    "text": "("
+                }
+            ]
+        },
+        {
+            "text": "To identify structurally similar fragment pairs,pFlexAna uses an all-against-all approach that effectively compares every contiguous fragment from one protein with that from the other. ",
+            "section": "4). Since we perform an",
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-17"
+                }
+            ]
+        },
+        {
+            "text": "First, we match the residues of the two proteins by 'sliding' one protein against the other (Figure 4). ",
+            "section": "4). Since we perform an",
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 101,
+                    "type": "figure",
+                    "text": "(Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "For each sliding position, let P and P 0 represent the matched residues from the two proteins, respectively. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "We generate all contiguous fragments of P and P 0 and check their structural similarity by applying a reliable statistical test (4). ",
+            "section": "4). Since we perform an",
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 131,
+                    "type": "bibr",
+                    "text": "(4)"
+                }
+            ]
+        },
+        {
+            "text": "Briefly, this test uses a Gaussian noise model to represent acceptable deviations in atomic coordinates between two putatively similar protein fragments. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "Two fragments are considered statistically different if their coordinates deviate too much according to the Gaussian model. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "We then assign to each residue a flexibility score that incorporates information from all fragment comparisons that involve this residue. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "A high score indicates greater rigidity. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "Finally, each pair of aligned fragments must pass the following filter: the fragments must consist entirely of residues whose flexibility scores are above a threshold, and they must be longer than a given minimum length. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "Intuitively, this filter ensures that such a pair of fragments and all subfragments contained in them are structurally identical up to statistical variations. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "The minimum length requirement is imposed to avoid accidental structural matches. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "One advantage of our method is that it highlights the genuine conformational changes by suppressing the spurious ones due to noise. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "More details on this method and its advantages are available in ref. (4). ",
+            "section": "4). Since we perform an",
+            "ref_spans": [
+                {
+                    "start": 69,
+                    "end": 72,
+                    "type": "bibr",
+                    "text": "(4)"
+                }
+            ]
+        },
+        {
+            "text": "Since we perform anexhaustive comparison of all contiguous fragments in the two protein structures, our method can detect structurally similar fragments that are in opposite order along the protein sequences. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "After obtaining an exhaustive list of structurally similar fragment pairs, we need to resolve the conflicts among them. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "A conflict occurs if in the list of matched fragment pairs, a residue from one protein is matched with multiple residues from the other protein. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "In practice, we have found that biologically significant matches have much longer fragment length than the spurious ones due to accidental structural similarity. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "So we remove the conflicts in the list by preferring fragment pairs with longer length.",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "Finally, pFlexAna hierarchically clusters the fragment pairs. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "The idea is to treat each structurally similar fragment pair as a point and divide these points into k clusters so that the dominant structural differences occur across clusters. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "To do this, we build a similarity graph. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "The vertices of this graph correspond to the fragment pairs obtained after conflict resolution. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "There is an edge between every two vertices, and the associated edge weight represents the similarity between the fragment pairs corresponding to the two vertices. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "Here, similarity is defined as the root mean square deviation (RMSD) for the best superposition when the two fragment pairs are combined. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "After constructing the similarity graph, we recursively remove from the graph the edge with the greatest weight and thus separate the most dissimilar fragment pairs, which represent the largest structural difference. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "We continue this edge removal process until the graph breaks into k connected components.",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "The web server implementation of our method uses PHP for its front-end interface, C++ for back-end processing, and a Ruby daemon to interface the front and back ends. ",
+            "section": "4). Since we perform an"
+        },
+        {
+            "text": "The output images are generated using PyMol (15) and interactive displays of each alignment are provided using Jmol (16).",
+            "section": "4). Since we perform an",
+            "ref_spans": [
+                {
+                    "start": 44,
+                    "end": 48,
+                    "type": "bibr",
+                    "text": "(15)"
+                },
+                {
+                    "start": 116,
+                    "end": 120,
+                    "type": "bibr",
+                    "text": "(16)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 38,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "PyMol",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-19"
+                },
+                {
+                    "start": 111,
+                    "end": 115,
+                    "type": "software",
+                    "rawForm": "Jmol",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-20"
+                }
+            ]
+        },
+        {
+            "text": "We illustrate the results of pFlexAna on several representative cases.",
+            "section": "RESULTS"
+        },
+        {
+            "text": "The crystal structures of the E6AP and WWP1 ubiquitin ligases [PDB codes 1D5F:C (2) and 1ND7 (3)] display a striking example of domain movement (Figure 1).",
+            "section": "Ubiquitin ligase",
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 153,
+                    "type": "figure",
+                    "text": "(Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna finds six core regions of significant structural similarity between the proteins and successfully clusters them into two domains which move independently (see Figure 1). ",
+            "section": "Ubiquitin ligase",
+            "ref_spans": [
+                {
+                    "start": 168,
+                    "end": 176,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-22"
+                }
+            ]
+        },
+        {
+            "text": "These images are obtained directly from the web server, but annotated with an arrow and dotted ovals to draw attention to the domains that are aligned. ",
+            "section": "Ubiquitin ligase"
+        },
+        {
+            "text": "The relative movement between the domains has been characterized as a 100 degree sweep with a 30 degree tilt (3). ",
+            "section": "Ubiquitin ligase",
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 112,
+                    "type": "bibr",
+                    "text": "(3)"
+                }
+            ]
+        },
+        {
+            "text": "Superpositions, such as those shown in Figure 1, help to highlight the context of each protein region undergoing conformation change.",
+            "section": "Ubiquitin ligase",
+            "ref_spans": [
+                {
+                    "start": 39,
+                    "end": 47,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Superpositions of similar regions, as shown in Figure 1, are ideal for visualization because they show the difference as a divergence from a fixed reference point. ",
+            "section": "Ubiquitin ligase",
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 55,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Beyond simply showing the context of each 'flexible' region, each superposition indicates a transition from similar (rigid) to different (flexible).",
+            "section": "Ubiquitin ligase"
+        },
+        {
+            "text": "The ubiquitin ligases have moderate sequence identity (< 40%), but we have tested pFlexAna on a range of protein pairs with low sequence identity such as the isomerase domain of glucosamine 6P synthase [1MOQ (17)] and arabinose binding protein [8ABP (18)], which have 10% sequence identity. ",
+            "section": "Glutamine amidotransferase and arabinose-binding protein",
+            "ref_spans": [
+                {
+                    "start": 208,
+                    "end": 212,
+                    "type": "bibr",
+                    "text": "(17)"
+                },
+                {
+                    "start": 250,
+                    "end": 254,
+                    "type": "bibr",
+                    "text": "(18)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 82,
+                    "end": 90,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-23"
+                }
+            ]
+        },
+        {
+            "text": "Figure 5 shows the alignments of 1MOQ and 8ABP. ",
+            "section": "Glutamine amidotransferase and arabinose-binding protein",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna finds two independent domains. ",
+            "section": "Glutamine amidotransferase and arabinose-binding protein",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-24"
+                }
+            ]
+        },
+        {
+            "text": "Each aligned domain centers around a parallel b-sheet buried by a-helices. ",
+            "section": "Glutamine amidotransferase and arabinose-binding protein"
+        },
+        {
+            "text": "In this figure, each alignment is rotated for viewing down the plane of an aligned sheet. ",
+            "section": "Glutamine amidotransferase and arabinose-binding protein"
+        },
+        {
+            "text": "To see the magnitude of the domain movement, note that the N-terminal domain of 8ABP (magenta) appears in the upper-right of both views, and 1MOQ (orange) is dramatically shifted between the two alignments.",
+            "section": "Glutamine amidotransferase and arabinose-binding protein"
+        },
+        {
+            "text": "pFlexAna is particularly useful for proteins exhibiting domain moments, but applying it to proteins with more subtle conformational changes and without major domain movements can also be informative. ",
+            "section": "PX domain",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-25"
+                }
+            ]
+        },
+        {
+            "text": "In particular, we set parameter k = 1 when we expect only a single cluster corresponding to the aligned protein core. ",
+            "section": "PX domain"
+        },
+        {
+            "text": "For example, Figure 6 compares two PX domain proteins [1KMD (19) and 1GD5 (20)]. ",
+            "section": "PX domain",
+            "ref_spans": [
+                {
+                    "start": 13,
+                    "end": 21,
+                    "type": "figure",
+                    "text": "Figure 6"
+                },
+                {
+                    "start": 60,
+                    "end": 64,
+                    "type": "bibr",
+                    "text": "(19)"
+                },
+                {
+                    "start": 74,
+                    "end": 78,
+                    "type": "bibr",
+                    "text": "(20)"
+                }
+            ]
+        },
+        {
+            "text": "The N-and C-termini of the two proteins are conserved, but the loop region in between contains several insertions/deletions. ",
+            "section": "PX domain"
+        },
+        {
+            "text": "Most structural alignment methods attempt to align these two proteins by superimposing their entire backbones globally. ",
+            "section": "PX domain"
+        },
+        {
+            "text": "While this may be useful for some purposes, single global alignments may be skewed as they include the loop region. ",
+            "section": "PX domain"
+        },
+        {
+            "text": "A more informative view of the evolutionary impact on conformational structure is shown by aligning only the conserved segments. ",
+            "section": "PX domain"
+        },
+        {
+            "text": "On the PX domains, pFlexAna automatically finds the fragments of tightest similarity, distinct from the loop region, and it presents the clustered alignment result without skew from the inserted amino acids.",
+            "section": "PX domain",
+            "entity_spans": [
+                {
+                    "start": 19,
+                    "end": 27,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-26"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna is a new tool for protein structure comparison. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "It detects and displays conformational changes in remotely related proteins, without relying on sequence homology. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Our tests show that pFlexAna helps in analyzing a wide variety of conformational changes. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "It can detect conformational changes in proteins with identical sequences or those with very low sequence similarity. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "It can detect dramatic domain movements as well as smaller, more subtle conformational changes.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "The output of pFlexAna helps the analysis of conformational changes in several ways. ",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 22,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-29"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna uses a reliable statistical test of structural similarity to demarcate the protein regions that undergo conformational changes. ",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-30"
+                }
+            ]
+        },
+        {
+            "text": "It also clusters the protein fragments that move in tandem. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "The clustering helps in finding domains comprised of fragments that are discontiguous and out of order along the sequences, e.g. in the case of the maltose-binding protein Figure 3). ",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 172,
+                    "end": 180,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Visualization of such information, provided in pFlexAna's output, helps the user to scan for hinge locations, active binding sites, domain movements, etc. ",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-31"
+                }
+            ]
+        },
+        {
+            "text": "For more detailed analysis, the user may use the quantitative information provided in pFlexAna's output, e.g. use the provided transformation matrix for alignment to compute the angle of bending at a particular hinge. ",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "start": 86,
+                    "end": 94,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-32"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna's output may also help users interested in predicting conformational motion. ",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#curator",
+                    "used": true,
+                    "id": "e136915730-software-simple-33"
+                }
+            ]
+        },
+        {
+            "text": "They may use the information that pFlexAna provides as a starting point and combine it with other methods such as targeted molecular dynamics (21), where an MD simulation trajectory is 'directed' from an inital conformation towards an alternative target conformation.",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 142,
+                    "end": 146,
+                    "type": "bibr",
+                    "text": "(21)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "pFlexAna",
+                    "resp": "#annotator13",
+                    "used": true,
+                    "id": "e136915730-software-simple-34"
+                }
+            ]
+        },
+        {
+            "text": "pFlexAna uses purely structural information to match two proteins. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "While this is often advantageous as it does not rely on sequence homology, it can potentially cause false positive matching. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "For example, for proteins with many secondary structure elements (SSEs), it is possible for unrelated long alpha helices or other common motifs comprised of multiple SSEs to be identified as aligned fragment pairs. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Comparing glutamine amidotransferase (1MOQ) with a ubiquitin ligase (1ND7) matches two pairs of highly similar a-helices, with RMSD values of 0.22 \u00c5 and 1.64 \u00c5 , respectively. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "While such aligned pairs are justified based on purely structural similarity, they may not be biologically significant to form a basis for inferring conformational changes. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "In the future, we intend to filter out such false positives by incorporating secondary structure or sequence information during the matching.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Conflict of interest statement. "
+        },
+        {
+            "text": "None declared."
+        }
+    ]
+}

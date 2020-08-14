@@ -1,0 +1,1251 @@
+{
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "In general, engineering systems are characterized by some designable parameters and some performance measures. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The desired performance of a system (design specifications) is described by specifying bounds on the performance measures of the system which is set by the designer. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The conventional system design aims at finding values of the system designable parameters that merely satisfy the design specifications. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "In general, there will be a multitude of acceptable designs. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "However, for contemporary engineering design, other criterion (objective function) can be chosen for comparing the different alternative acceptable designs (optimization problem) and for selecting the best one (optimal system design). ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Naturally, system performance measures and the objective functions are functions of system parameters values and evaluated through system simulations. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "For intensive CPU engineering systems, the high expense of the required system simulations may obstruct the optimization process.",
+            "section": "Introduction"
+        },
+        {
+            "text": "In practice, robust optimization methods that utilize the fewest possible number of function evaluations are greatly required [1,2]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 126,
+                    "end": 129,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 129,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "Another difficulty is the absence of any gradient information as the required simulations cost in evaluating the gradient information is prohibitive in practice [3]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 161,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Attempting to approximate the function gradients using the finite difference approach requires much more function evaluations, which highly increase the computational cost. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Another objection in estimating the gradients by finite differencing is that the estimated function values are usually contaminated by some numerical noise due to estimation uncertainty. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Hence, gradient-based optimization methods cannot be applied here.",
+            "section": "Introduction"
+        },
+        {
+            "text": "For such optimization problems, only derivative free optimization (DFO) methods can be applicable [1,[4][5][6][7]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 101,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 104,
+                    "end": 107,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 107,
+                    "end": 110,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 110,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "Further, the derivative free trust region methods usually handle such problems more efficiently as the trust region framework constitutes one of the most important globally convergent optimization methods, which has the ability to converge to a solution starting from any arbitrary initial point [8]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 296,
+                    "end": 299,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "In addition, these methods use computationally cheap surrogate-based models that can be constructed by using function evaluations at some selected points. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "These surrogate models may be response surfaces, radial basis method, neural networks, kriging, etc.",
+            "section": "Introduction"
+        },
+        {
+            "text": "The majority of the existing derivative-free trust region techniques have the following features:",
+            "section": "Introduction"
+        },
+        {
+            "text": "They require a relatively large number of function evaluations, O(n 2 ) (where n is the number of system design variables) to construct the initial quadratic model. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The quadratic surrogate models are constructed via interpolating the objective function at a constant number of points; when a point is obtained a previous point is dropped. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "In addition, these algorithms usually ignore the valuable information contained in all previously evaluated expensive function values.",
+            "section": "Introduction"
+        },
+        {
+            "text": "The work presented in this article introduces a new derivative free trust region approach that neither require nor approximate the gradients of the objective function. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "It implements a non-derivative optimization method that combine a trust region framework with quadratic fitting surrogates for the objective function [4,5]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 150,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 153,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "The principal operation of the method relies on building, successively updating and optimizing quadratic surrogate models of the objective function over trust regions. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The quadratic surrogate models reasonably reflect the local behavior of the objective function in a trust region around the current iterate and they are optimized instead of the objective function over trust regions.",
+            "section": "Introduction"
+        },
+        {
+            "text": "Truncated conjugate gradient method by Steihaug [9] is used to find the optimal point within each trust region. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 39,
+                    "end": 51,
+                    "type": "bibr",
+                    "text": "Steihaug [9]"
+                }
+            ]
+        },
+        {
+            "text": "The approach constructs the initial quadratic surrogate model using few data points of order O(n). ",
+            "section": "Introduction"
+        },
+        {
+            "text": "In each iteration of the proposed approach, the surrogate model is updated using a weighted least squares fitting. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The weights are assigned to give more emphasis to points close to the current center point. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The accuracy and efficiency of the proposed approach are demonstrated by applying it on a set of classical benchmark test problems and comparisons with a recent optimization technique [6] are also included.",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 187,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The linear accelerators (LINACS) provide beams of high quality and high energy in which charged particles move on a linear path and are accelerated by electromagnetic fields.",
+            "section": "Introduction"
+        },
+        {
+            "text": "The modern LINAC typically consists of sections of specially designed waveguides that are excited by RF electromagnetic fields, usually in the very high frequency (VHF) range. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The accelerating structures are tuned to resonance and are driven by external, high-power RF power tubes, such as klystrons. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "The accelerating structures must efficiently transfer the electromagnetic energy to the beam, and this is accomplished through an optimized configuration of the internal geometry, so that the structure can concentrate the electric field along the trajectory of the beam promoting maximal energy transfer, by adding nose cones to create a region of more concentrated axial electric field as shown in Fig. 1. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 399,
+                    "end": 405,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "RF cavity analysis and design brought researchers and engineers' attention due to its extensive applications [10][11][12][13][14][15][16][17]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 113,
+                    "end": 117,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 117,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 121,
+                    "end": 125,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 125,
+                    "end": 129,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 129,
+                    "end": 133,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 133,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                },
+                {
+                    "start": 137,
+                    "end": 141,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "Applications include: medicinal purposes in radiation therapy, food sterilization and transmute nuclear fuel waste, etc. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Design tools include: the computer code SUPERFISH [18], 3-D code MAFIA [19] and CST Studio Suite [20].",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 54,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                },
+                {
+                    "start": 71,
+                    "end": 75,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                },
+                {
+                    "start": 97,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "Design of accelerator RF cavities may include optimization of some of cavity parameters. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Among the parameters characterizing the operation of the RF cavities are, the average accelerating field Eacc, peak fields to accelerating field (Epk/Eacc, Hpk/Eacc), quality factor, and cavity shunt impedance R-shunt [21]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 218,
+                    "end": 222,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                }
+            ]
+        },
+        {
+            "text": "The parameters considered for optimization depend on the power level fed to the cavity, which limit the average accelerating field, where the constraints on these parameters are imposed by the application. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "For low power level feed, optimization may focus on maximizing shunt impedance, however for high power operation, limiting the peak fields inside is of concern in order to minimize multipacting [22]. ",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 194,
+                    "end": 198,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "In this work we will focus on the low power fed cavities, where maximizing the shunt impedance is of main concern and will be treated through our new optimization approach.",
+            "section": "Introduction"
+        },
+        {
+            "text": "The new proposed trust region (TR) optimization approach is capable of solving the design problems with either 2D or 3D simulators. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "It is expected to work as well if a 3D simulator was employed with the expense of more computational time. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "Most of the accelerators use body of revolution cavity structure which can be solved as 2D structure, saving the computational resources. ",
+            "section": "Introduction"
+        },
+        {
+            "text": "However, the proposed approach was successfully employed in microwave filter design utilizing 3D full-wave EM solver [23].",
+            "section": "Introduction",
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "The computationally expensive objective function is locally approximated around a current iterate x k by a computationally cheaper quadratic surrogate model M(x) which can be placed in the form: Fig. 1 Cross section of the cavity with nose cones and spherical outer walls.",
+            "section": "The new trust region approach",
+            "ref_spans": [
+                {
+                    "start": 195,
+                    "end": 201,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "where a 2 R, the vector b 2 R n , and the symmetric matrix B 2 R n\u00c2n are the unknown parameters of M(x). ",
+            "section": "The new trust region approach"
+        },
+        {
+            "text": "The total number of the model parameters is q = (n + 1)(n + 2)/2. ",
+            "section": "The new trust region approach"
+        },
+        {
+            "text": "These parameters can be evaluated by interpolating the objective function at q points.",
+            "section": "The new trust region approach"
+        },
+        {
+            "text": "Let x 0 be the initial point that is provided by the user. ",
+            "section": "Initial model"
+        },
+        {
+            "text": "Initially, assuming that B is a diagonal matrix, then the number of points required to construct the initial model is m = 2n + 1 [7]. ",
+            "section": "Initial model",
+            "ref_spans": [
+                {
+                    "start": 129,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "The initial m points x i , i = 1, 2, . ",
+            "section": "Initial model"
+        },
+        {
+            "text": ". ., m, can be chosen as follows [6,24] x 1 \u00bc x 0 and",
+            "section": "Initial model",
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 36,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6,"
+                },
+                {
+                    "start": 36,
+                    "end": 39,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "24]"
+                }
+            ]
+        },
+        {
+            "text": "where D 1 is the initial trust region radius that is provided by the user, and e i is the ith coordinate vector in R n . ",
+            "section": "Initial model"
+        },
+        {
+            "text": "The initial quadratic model M (1) (x) will have the parameters a (1) , the vector b (1) , and the n diagonal elements of the model Hessian matrix B (1) . ",
+            "section": "Initial model",
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(1)"
+                },
+                {
+                    "start": 84,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(1)"
+                },
+                {
+                    "start": 148,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(1)"
+                }
+            ]
+        },
+        {
+            "text": "These parameters are computed by requiring that the initial model interpolates the objective function f(x) at the initial m points given in (2). ",
+            "section": "Initial model",
+            "ref_spans": [
+                {
+                    "start": 140,
+                    "end": 143,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(2)"
+                }
+            ]
+        },
+        {
+            "text": "Therefore the initial model parameters are obtained by satisfying the matching conditions:",
+            "section": "Initial model"
+        },
+        {
+            "text": "At the kth iteration, assume that x k is the current solution point. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "The model M (k) (x) is then minimized, in place of the objective function, over the current trust region and a new point is produced by solving the trust region sub-problem:",
+            "section": "Model optimization"
+        },
+        {
+            "text": "where s = x \u00c0 x k , D k is the current trust region radius, and k \u00c1 k throughout is the l 2 -norm. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "This problem is solved by the method of truncated conjugate gradient by Steihaug [9]. ",
+            "section": "Model optimization",
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "It is identical as the standard conjugate gradient method as long as the iterates are inside the trust region. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "If the conjugate gradient method terminates at a point within the trust region, this point is a global minimizer of the objective function. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "If the new iterate is outside the trust region, a truncated step which is on the region boundary is considered. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "Also, the method treats the case where the minimum is in the opposite direction of the conjugate direction which is due to the non convexity of the model [9]. ",
+            "section": "Model optimization",
+            "ref_spans": [
+                {
+                    "start": 154,
+                    "end": 157,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "One good property of this method is that the solution computed has a sufficient reduction property, which was proved by Bandler and Abdel-Malek [25]. ",
+            "section": "Model optimization",
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 148,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "Let s * denotes the solution of (4), and then a new point x n = x k + s * is obtained. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "The achieved actual reduction in the objective function is compared to that predicted reduction using the model by computing the reduction ratio which is given by:",
+            "section": "Model optimization"
+        },
+        {
+            "text": "This ratio reflects how much the surrogate model agrees with the objective function within the trust region. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "The trust region radius and the current iterate will be updated such that, if r k is sufficiently high, i.e., r k P 0.7, there is a good agreement between the model and the objective function over this step. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "Hence, it is beneficial to expand the trust region for the next iteration, and to use x n as the new center of the trust region. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "If r k is positive but not close to 1, i.e., 0.1 6 r k < 0.7, the trust region radius is not altered. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "On the other hand, if r k is smaller than a certain threshold, r k < 0.1, the trust region radius is reduced. ",
+            "section": "Model optimization"
+        },
+        {
+            "text": "The updating formula used for updating D k and x k can be expressed as follows:",
+            "section": "Model optimization"
+        },
+        {
+            "text": "It is to be mentioned that the current center is the point of least function value achieved so far.",
+            "section": "Model optimization"
+        },
+        {
+            "text": "When a new point is available, the current quadratic model M (k) (x) is updated so that the point of lowest objective function value x k is now the center of the kth trust region. ",
+            "section": "Model update"
+        },
+        {
+            "text": "The model will take the form:",
+            "section": "Model update"
+        },
+        {
+            "text": "The parameters: a (k) , b (k) and B (k) are evaluated employing the parameter values of the previous model M k\u00c01 (x) in addition to all available function values. ",
+            "section": "Model update"
+        },
+        {
+            "text": "The constant a (k) is assigned the value of f(x) k , i.e., a (k) = f(x) k . ",
+            "section": "Model update"
+        },
+        {
+            "text": "The model will be updated in two steps. ",
+            "section": "Model update"
+        },
+        {
+            "text": "First, the vector b (k) is updated then the Hessian matrix B (k) is updated as follows:",
+            "section": "Model update"
+        },
+        {
+            "text": "Step1: Updating the vector b (k) The vector b (k) can be obtained using only n points. ",
+            "section": "Model update",
+            "ref_spans": [
+                {
+                    "start": 29,
+                    "end": 32,
+                    "type": "bibr",
+                    "text": "(k)"
+                }
+            ]
+        },
+        {
+            "text": "However, using the n recent points may result in ill-conditioned system of linear equations. ",
+            "section": "Model update"
+        },
+        {
+            "text": "In order to avoid this, it is proposed to use the least squares approximation with the most recent 2n points. ",
+            "section": "Model update"
+        },
+        {
+            "text": "So, the vector b (k) is evaluated such that the model M k (x) fits the last 2n points obtained, x i , i = 1, 2, . ",
+            "section": "Model update"
+        },
+        {
+            "text": ". ., 2n, i.e., the following condition should be satisfied:",
+            "section": "Model update"
+        },
+        {
+            "text": "When computing the vector b (k) , the matrix B (k) is assigned temporarily the value of the previous model Hessian matrix, B (k\u00c01) , hence the vector b (k) is obtained by solving the following system of linear equations:",
+            "section": "Model update"
+        },
+        {
+            "text": "Design algorithm shown in Fig. 6 is implemented in MAT-LAB code, where an initial case is chosen corresponding to ten z positions of points with cavity curvature is described with spline curve (step 2). ",
+            "section": "Model update",
+            "ref_spans": [
+                {
+                    "start": 26,
+                    "end": 32,
+                    "type": "figure",
+                    "text": "Fig. 6"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "MAT-LAB",
+                    "resp": "#annotator25",
+                    "used": true,
+                    "id": "b6ffbe355d-software-simple-0"
+                }
+            ]
+        },
+        {
+            "text": "Then the spline interpolated curve is sampled at 100 points, where those sampled points are considered connected with piecewise linear, approximating the cavity curvature. ",
+            "section": "Model update"
+        },
+        {
+            "text": "This piece wise linear description is fed to AUTO- MESH program to generate mesh (step 3). ",
+            "section": "Model update",
+            "entity_spans": [
+                {
+                    "start": 45,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "AUTO- MESH",
+                    "resp": "#curator",
+                    "id": "b6ffbe355d-software-simple-1"
+                }
+            ]
+        },
+        {
+            "text": "The solution of lowest TM mode of the cavity is made at step 4 by calling SUPERFISH, and the obtained frequency in step 5 is used to scale the cavity dimensions to keep the resonance frequency at 9.4 GH (step 6). ",
+            "section": "Model update"
+        },
+        {
+            "text": "The corresponding scaling is reflected on the obtained cavity shunt impedance (step 7), where this value is fed to the optimizer algorithm to determine the new ten points positions. ",
+            "section": "Model update"
+        },
+        {
+            "text": "Then the process is repeated starting from step 2.",
+            "section": "Model update"
+        },
+        {
+            "text": ". . : \u00f011\u00de",
+            "section": "Model update"
+        },
+        {
+            "text": "The previous system is an over-determined system. ",
+            "section": "Model update"
+        },
+        {
+            "text": "The least squares approximation for b (k) is",
+            "section": "Model update"
+        },
+        {
+            "text": "Step2: Updating the matrix B (k) The model Hessian matrix B (k) is evaluated using the following updating formula:",
+            "section": "Model update"
+        },
+        {
+            "text": "where c is a positive constant, 0.5 < c < 1, and the vector",
+            "section": "Model update"
+        },
+        {
+            "text": "This choice of q, ensures that changes in B (k) occur gradually. ",
+            "section": "Model update"
+        },
+        {
+            "text": "The vector p is evaluated such that the model M (k) (x) tries to fit all the available m points obtained so far, x i , i = 1, 2, . ",
+            "section": "Model update"
+        },
+        {
+            "text": ". ., m, i.e., the following condition should be satisfied",
+            "section": "Model update"
+        },
+        {
+            "text": "i.e., the vector p is obtained by solving the weighted system of linear equations",
+            "section": "Model update"
+        },
+        {
+            "text": "where ; ",
+            "section": "Model update"
+        },
+        {
+            "text": "To obtain more accurate model in the neighborhood of the current center, the available points are assigned different weights w i , i = 1, 2, . ",
+            "section": "Model update"
+        },
+        {
+            "text": ". ., m according to their distances from the trust region center. In the proposed approach the weight w i , associated with each equation, takes the form:",
+            "section": "Model update"
+        },
+        {
+            "text": "where c 1 is a positive constant, c 1 P 1.",
+            "section": "Model update"
+        },
+        {
+            "text": "The previous system in (16) is an over-determined system (m > n). ",
+            "section": "Model update"
+        },
+        {
+            "text": "The least squares approximation for p is",
+            "section": "Model update"
+        },
+        {
+            "text": "After getting the vector p, the term qp T is calculated and the matrix is made symmetric by resetting the off-diagonal elements to their average values, i.e., b ij = b ji \u2039 (b ij + b ji )/2, then the new Hessian matrix B (k) is updated according to Eq. ",
+            "section": "Model update"
+        },
+        {
+            "text": "(13).",
+            "section": "Model update",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "(13)"
+                }
+            ]
+        },
+        {
+            "text": "The model can be improved by generating a new point s new = x new \u00c0 x k , which is chosen to be on the boundary of the trust region so that it improves the distribution of points around the center of the trust region. ",
+            "section": "Model update"
+        },
+        {
+            "text": "A suggested solution to find s new is to solve the following problem:  ) is found to be less than f(x k ), then x new will be considered as the new trust region center of the subsequent iteration, otherwise, x new will just be added to the available set of points.",
+            "section": "Model update",
+            "ref_spans": [
+                {
+                    "start": 71,
+                    "end": 72,
+                    "type": "table",
+                    "text": ")"
+                }
+            ]
+        },
+        {
+            "text": "A complete algorithm for the proposed method is given below (see also an illustrative flowchart in Fig. 2). ",
+            "section": "Algorithm",
+            "ref_spans": [
+                {
+                    "start": 99,
+                    "end": 105,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "The effectiveness of the proposed algorithm is demonstrated through two benchmark examples. ",
+            "section": "Examples"
+        },
+        {
+            "text": "All results are compared with those obtained by NEWUOA (NEW Unconstrained Optimization Algorithm) by Powell [6]. ",
+            "section": "Examples",
+            "ref_spans": [
+                {
+                    "start": 108,
+                    "end": 111,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The performance is measured by the number of function evaluations N required to reach the optimal solution.",
+            "section": "Examples"
+        },
+        {
+            "text": "The function is by [26]:",
+            "section": "The 2D Beale function",
+            "ref_spans": [
+                {
+                    "start": 19,
+                    "end": 23,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "where a 1 = 1.5, a 2 = 2.25, and a 3 = 2.625. ",
+            "section": "The 2D Beale function"
+        },
+        {
+            "text": "This function has a valley approaching the line x 2 = 1, and has a minimum of 0 at (3 0.5) T . ",
+            "section": "The 2D Beale function"
+        },
+        {
+            "text": "The initial values used for x 0 and D 1 are (0.1 0.1) T and 0.8, respectively. ",
+            "section": "The 2D Beale function"
+        },
+        {
+            "text": "The results in Table 1 and Fig. 3 compare the optimal value obtained by applying the proposed technique versus NEWUOA with the same number of function evaluation N. It is to be noticed, that starting from the same initial point and after only 11 iterations; the proposed algorithm gives a function value of 0.8065 while NEWUOA gives 14.2031.",
+            "section": "The 2D Beale function",
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 22,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 1"
+                },
+                {
+                    "start": 27,
+                    "end": 33,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "The function was proposed by [27]:",
+            "section": "The 3D Box function",
+            "ref_spans": [
+                {
+                    "start": 29,
+                    "end": 33,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                }
+            ]
+        },
+        {
+            "text": "This function has a minima at (1 10 1) T , and also along the line{(a a 0) T } with value 0. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "The initial values used for x 0 and D 1 are (0 10 2) T and 9.9, respectively. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "Table 2 shows a comparison of the optimal value obtained after N function evaluations using the proposed algorithm versus NEWUOA (see also Fig. 4).",
+            "section": "The 3D Box function",
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "ref_id": "tab_3",
+                    "text": "Table 2"
+                },
+                {
+                    "start": 139,
+                    "end": 145,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "In the above numerical examples, it is to be noticed that at the beginning of the optimization process, the proposed algorithm is much faster than NEWUOA. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "However, as the optimization gets closer to the optimum, the methods based on interpolation will be more accurate as expected. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "This explains why the proposed algorithm is well suited for objective functions that have some uncertainty in their values or subject to statistical variations. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "This may occur for design of systems whose parameter values are subject to known but unavoidable statistical fluctuations [1,28]. ",
+            "section": "The 3D Box function",
+            "ref_spans": [
+                {
+                    "start": 122,
+                    "end": 125,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 125,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "28]"
+                }
+            ]
+        },
+        {
+            "text": "Also, the algorithm may be useful for surrogate-based system design [2,29]. ",
+            "section": "The 3D Box function",
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 71,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2,"
+                },
+                {
+                    "start": 71,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "29]"
+                }
+            ]
+        },
+        {
+            "text": "These surrogates are updated during the optimization process, and a few iterations in the optimization process will be sufficient at the beginning. ",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "In this case the new technique will produce a significant reduction in few iterations.",
+            "section": "The 3D Box function"
+        },
+        {
+            "text": "The RF cavity is a major component of linear accelerators [30,31]. ",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30,"
+                },
+                {
+                    "start": 62,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "31]"
+                }
+            ]
+        },
+        {
+            "text": "The structure of RF cavity must efficiently transfer the electromagnetic energy to the charged particles beam. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "This can be accomplished through an optimized configuration of its internal geometry, by adding nose cones to create a region of more concentrated axial electric field along the path of the electron beam, as shown in Fig. 1.",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 217,
+                    "end": 223,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "The most useful figure of merit for high field concentration along the beam axis and low ohmic power loss in the cavity walls is the effective shunt impedance per unit length ZT 2 where T is the transient-time factor (a measure of the energy gain reduction caused by the sinusoidal time variation of the field in the cavity, [32]).",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 325,
+                    "end": 329,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "[32]"
+                }
+            ]
+        },
+        {
+            "text": "One of the main objectives in cavity design is to choose geometry to maximize effective shunt impedance per unit length. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "This indicates increasing the energy delivered to the beam compared to that thermally lost in the cavity walls. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The effective shunt impedance per unit length is usually expressed in mega ohms per meter and is defined by",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "where P is the thermal power losses in the walls of the cavity, V 0 = \u00f2 E(z)dz = E 0 L, and E 0 is the average axial electric field along the cavity axis with length L. The technique is applied to an RF cavity with resonance frequency 9.4 GHz, shown in Fig. 5. ",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 253,
+                    "end": 259,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "The objective is to maximize effective shunt impedance per unit length. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "In order to do that, we optimize the axial z positions of ten points that describe the cavity curvature through a spline curve. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The axial positions z = (z 1 , z 2 ,. . ., z 10 ) T in the z-direction are taken as the design parameters. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The radial positions of these points are chosen on a logarithmic scale along r-direction. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "It is to be noted that during the variation of the curvature, the    resonance frequency is always kept at 9.4 GHz. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The initial values used for the ten radial positions z 0 are all set to 0.6 cm and D 1 is set to 0.02 cm. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "Cavity design generally requires electromagnetic field-solver that solves Maxwell equations numerically for the specified boundary conditions. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "In the simulations, POISSON and SUPERFISH are used as the main solver programs in a collection of programs from LANL [18,33]. ",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18,"
+                },
+                {
+                    "start": 121,
+                    "end": 124,
+                    "type": "bibr",
+                    "text": "33]"
+                }
+            ]
+        },
+        {
+            "text": "The solver is used to calculate the static magnetic and electric fields and radio-frequency electromagnetic fields for either 2-D Cartesian coordinates or axially symmetric cylindrical coordinates. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The code SUPER-FISH is used to solve for axisymmetric TM0nl modes, for the field components Hphi, Er and Ez. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The solution is obtained through solving Hemholtz equation using finite element method FEM over a triangular mesh subject to the proper boundary conditions and symmetries imposed [34].",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 179,
+                    "end": 183,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "[34]"
+                }
+            ]
+        },
+        {
+            "text": "Design algorithm shown in Fig. 6 is implemented in MAT-LAB code, where an initial case is chosen corresponding to ten z positions of points with cavity curvature is described with spline curve (step 2). ",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 26,
+                    "end": 32,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "Then the spline interpolated curve is sampled at 100 points, where those sampled points are considered connected with piecewise linear, approximating the cavity curvature. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "This piece wise linear description is fed to AUTO-MESH program to generate mesh (step 3). ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The solution of lowest TM mode of the cavity is made at step 4 by calling SUPERFISH, and the obtained frequency in step 5 is used to scale the cavity dimensions to keep the resonance frequency at 9.4 GH (step 6). ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The corresponding scaling is reflected on the obtained cavity shunt impedance (step 7), where this value is fed to the optimizer algorithm to determine the new ten points positions. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "Then the process is repeated starting from step 2.",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The results of the effective shunt impedance per unit length for RF cavity in mega ohm per meter after N function evaluations for both the proposed algorithm and NEWUOA are shown in Table 3.",
+            "section": "Optimized design of RF cavity",
+            "ref_spans": [
+                {
+                    "start": 182,
+                    "end": 189,
+                    "type": "table",
+                    "ref_id": "tab_4",
+                    "text": "Table 3"
+                }
+            ]
+        },
+        {
+            "text": "It is to be mentioned that starting from the same initial point, the convergence of the proposed algorithm is as best as NEWUOA. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "However, the advantage of the proposed algorithm is its easy implementation and accessibility for update and modification.",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "The figures of optimal cavity using the proposed algorithm and the NEWUOA are shown in Figs. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "7 and 8 respectively.",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "It worth mentioning that one could criticize the proposed optimized structure, that it contains sharp edge nose, which is difficult to manufacture and is a point of field singularity that causes breakdown. ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "One way to override that problem is to add some curvature to the nose sharp tip, which would slightly reduce the realized shunt impedance.     ",
+            "section": "Optimized design of RF cavity"
+        },
+        {
+            "text": "In this article, a new trust region optimization method that does not require any derivative information has been proposed. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "In this method, the objective function is approximated via quadratic surrogates, and using few number of initial data points than the exact number of surrogate parameters. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "Classical benchmark test problems were used to demonstrate the accuracy and efficiency of the proposed method. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "The results obtained showed the ability of the proposed method to rapidly converge to the final region containing the optimum solution when only a limited number of function evaluations is permissible and when a high accuracy is not really necessary. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "Least-squares fitting is used instead of interpolation which explains the inaccurate solution in case of explicit objective functions. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "Thus, the proposed method is suitable for stochastic optimization or objectives that suffer from numerical inaccuracy. ",
+            "section": "Conclusions"
+        },
+        {
+            "text": "In addition, the proposed method has been used to obtain the optimal design for the structure of RF cavity which is the major part of any linear accelerator.",
+            "section": "Conclusions"
+        },
+        {
+            "text": "The authors deeply thank Dr. Sami Tantawi from SLAC National Accelerator Laboratory for the fruitful discussion on the optimization of the RF cavity resonators.",
+            "section": "Acknowledgment"
+        },
+        {
+            "text": "The authors have declared no conflict of interest.",
+            "section": "Conflict of interest"
+        },
+        {
+            "text": "This article does not contain any studies with human or animal subjects.",
+            "section": "Compliance with Ethics Requirements"
+        }
+    ]
+}

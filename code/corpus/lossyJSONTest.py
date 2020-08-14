@@ -1,5 +1,7 @@
 '''
-    Some tests for the generated degraded JSON format with offset annotations
+    Some tests for the generated degraded JSON format with offset annotations.
+    Check if the raw texts (rawForm/text) given in the annotations match with 
+    the corresponding offset chunks in the full text snippet. 
 '''
 
 import os
@@ -30,8 +32,8 @@ def test_corpus(path_json_repo):
                             for entity in entities:
                                 entity_str = entity["rawForm"]
                                 entity_text = text[entity["start"]:entity["end"]]
-                                #print(entity_str)
                                 if entity_str != entity_text:
+                                    # report the entity string mismatch
                                     print("\n")
                                     print(os.path.join(path_json_repo, file))
                                     print(text, " -> ", entity_str, "/", entity_text, "|", entity["start"], entity["end"])
@@ -40,8 +42,8 @@ def test_corpus(path_json_repo):
                             for reference in references:
                                 reference_str = reference["text"]
                                 reference_text = text[reference["start"]:reference["end"]]
-                                #print(reference_str)
                                 if reference_str != reference_text:
+                                    # report the reference string mismatch
                                     print("\n")
                                     print(os.path.join(path_json_repo, file))
                                     print(text, " -> ", reference_str, "/", reference_text, "|", reference["start"], reference["end"])            
