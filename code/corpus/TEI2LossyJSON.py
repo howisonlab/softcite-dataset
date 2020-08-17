@@ -50,6 +50,7 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.current_reference = None
             self.current_entity = None
             self.document = OrderedDict() 
+            self.document["level"] = "paragraph"
             self.accumulated = ''
             self.abstract = False
         if name == "abstract":

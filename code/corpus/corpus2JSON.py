@@ -64,6 +64,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             self.document = OrderedDict() 
             self.nb_file += 1
             self.doc_id = None
+            self.is_origin_file = False
         if name == "body":
             self.document["body_text"] = []
             self.accumulated = ''
@@ -111,16 +112,19 @@ class TEICorpusHandler(xml.sax.ContentHandler):
         # print("endElement '" + name + "'")
         if name == 'idno':
             if self.is_origin_file:
+                self.is_origin_file = False
                 self.origin_file = self.accumulated.strip()
                 json_file_path = os.path.join(self.json_path, self.origin_file + ".json")
                 print(json_file_path)
 
                 if not os.path.isfile(json_file_path):
-                    print("no raw json file available for", self.origin_file + ".json")
+                    print("ERROR: no raw json file available for", self.origin_file + ".json")
+                    self.grobid_json = OrderedDict();
                 else:
                     with open(json_file_path,"r") as f:
                         grobid_json_string = f.read() 
-                self.grobid_json = json.loads(grobid_json_string, object_pairs_hook=OrderedDict)
+                    self.grobid_json = json.loads(grobid_json_string, object_pairs_hook=OrderedDict)
+                    print("self.grobid_json instanciated from", json_file_path)
                 if self.doc_id is not None:
                     self.grobid_json["id"] = self.doc_id
         if name == "rs":
@@ -139,7 +143,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                 local_paragraph['text'] = self.paragraph
                 if len(self.ref_spans) > 0:
                     local_paragraph['ref_spans'] = self.ref_spans
-                if len(self.ref_spans) > 0:
+                if len(self.entity_spans) > 0:
                     local_paragraph['entity_spans'] = self.entity_spans
                 if not "body_text" in self.document:
                     self.document["body_text"] = []
@@ -182,7 +186,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                             candidate_text["text"] = local_text
                             if "entity_spans" in para:
                                 #candidate_text["entity_spans"] = para["entity_spans"]
-                                #print(para["entity_spans"])
                                 self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
                             if "ref_spans" in para:    
                                 #candidate_text["ref_spans"] = para["ref_spans"]
@@ -213,12 +216,11 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                     if textdistance.ratcliff_obershelp.similarity(local_text_simplified, candidate_string) > 0.5:
                                         candidate_text["text"] = local_text
                                         local_match = True
+                                        #print("match2", local_text)
                                         if "entity_spans" in para:
-                                            #candidate_text["entity_spans"] = para["entity_spans"]
                                             #print(para["entity_spans"])
                                             self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
                                         if "ref_spans" in para:    
-                                            #candidate_text["ref_spans"] = para["ref_spans"]
                                             self.grobid_json["body_text"][i]["ref_spans"] = para["ref_spans"]
                                         break
                         i += 1
@@ -232,13 +234,14 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             self.grobid_json = convert_to_sentence_segments(self.grobid_json)
 
             # and write it
-            if self.output_path is None:
-                output_file = self.origin_file + ".json"
-            else:
-                output_file = os.path.join(self.output_path, self.origin_file + ".json")
-            print(output_file)
-            with open(output_file, 'w') as outfile:
-                json.dump(self.grobid_json, outfile, indent=4)
+            if self.origin_file is not None:
+                if self.output_path is None:
+                    output_file = self.origin_file + ".json"
+                else:
+                    output_file = os.path.join(self.output_path, self.origin_file + ".json")
+                print(output_file)
+                with open(output_file, 'w') as outfile:
+                    json.dump(self.grobid_json, outfile, indent=4)
 
         if name == 'teiCorpus':
             print("total unmatched", self.nb_unmatched_file, "/", self.nb_file)
@@ -248,9 +251,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
 
     def characters(self, content):
         self.accumulated += content
-
-    def getDocument(self):
-        return self.grobid_json
 
     def clear(self): # clear the accumulator for re-use
         self.accumulated = ""
@@ -264,10 +264,12 @@ def signature(string):
 def convert_to_sentence_segments(json):
     new_json = OrderedDict()
     if json is None:
+        print("WARNING: json is empty")
         return new_json
     # the abstract is empty for softcite corpus
     if "id" in json:
         new_json["id"] = json["id"]
+    new_json["level"] = "sentence"
     new_json["abstract"] = []
     new_json["body_text"] = []
     seg = pysbd.Segmenter(language="en", clean=False, char_span=True)
@@ -352,7 +354,7 @@ def convert_to_sentence_segments(json):
                                 if "id" in entity_span:
                                     new_entity_span["id"] = entity_span["id"]
                                 new_entity_spans.append(new_entity_span)
-                        if len(new_entity_spans) >0 and previous_start == -1:
+                        if len(new_entity_spans) > 0 and previous_start == -1:
                             sentence_structure["entity_spans"] = new_entity_spans
 
                     if previous_start == -1:

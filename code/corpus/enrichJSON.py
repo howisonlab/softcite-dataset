@@ -12,6 +12,8 @@ import json
 from collections import OrderedDict
 import pysbd
 import re
+from corpus2JSON import convert_to_sentence_segments
+import requests
 
 class Annotator(object):    
 
@@ -105,16 +107,107 @@ class Annotator(object):
                                         entities.append(entity)
                             if method == 'service' or method == 'all':
                                 json_results = self.software_mention_service(text)
+                                if "mentions" in json_results:
+                                    for mention in json_results["mentions"]:
+                                        the_type = None
+                                        if "software-name" in mention:
+                                            the_type = "software-name"
+                                        if "version" in mention:
+                                            the_type = "version"
+                                        if "publisher" in mention:
+                                            the_type = "publisher" 
+                                        if "url" in mention:
+                                            the_type = "url"
+                                        if the_type is not None:                                            
+                                            the_mention = mention[the_type]
+                                            entity = OrderedDict()
+                                            if the_type == "software-name":
+                                                the_type = "software"
+                                            entity['type'] = the_type
+                                            entity['start'] = the_mention["offsetStart"]
+                                            entity['end'] = the_mention["offsetEnd"]
+                                            entity['rawForm'] = the_mention['rawForm']
+                                            entity['resp'] = "service"
+                                            if document_id is not None:
+                                                entity['id'] = document_id + "-"
+                                            else:
+                                                entity['id'] = ''
+                                            if the_type == 'software':
+                                                rank += 1
+                                                entity['id'] += "software-simple-s" + str(rank)
+                                            else:
+                                                entity['id'] += "#software-simple-s" + str(rank)
+                                            entities.append(entity)
                             if len(entities)>0:
                                 paragraph["entity_spans"] = entities
                             new_doc["body_text"].append(paragraph)
 
+                    if "level" in new_doc and new_doc["level"] == "paragraph":
+                        new_doc = convert_to_sentence_segments(new_doc)
                     output_file = os.path.join(output_path, file)
                     with open(output_file, 'w') as outfile:
                         json.dump(new_doc, outfile, indent=4)  
 
     def software_mention_service(self, text):
-        return {}
+        the_url = _grobid_software_url(self.config['software_mention_host'], self.config['software_mention_port'])
+        the_url += "processSoftwareText"
+        the_data = {'text': text, 'disambiguate': 0}
+        response = requests.post(the_url, data=the_data)
+        jsonObject = None
+        if response.status_code == 503:
+            print('service overloaded, sleep', self.config['sleep_time'], seconds)
+            time.sleep(self.config['sleep_time'])
+            return self.software_mention_service(text)
+        elif response.status_code >= 500:
+            print('[{0}] Server Error -'.format(response.status_code), text)
+        elif response.status_code == 404:
+            print('[{0}] URL not found: [{1}]'.format(response.status_code,the_url))
+        elif response.status_code >= 400:
+            print('[{0}] Bad Request'.format(response.status_code))
+            print(response.content )
+        elif response.status_code == 200:
+            #print('softcite succeed')
+            jsonObject = response.json()
+        else:
+            print('Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
+
+        '''
+        if jsonObject is not None and 'mentions' in jsonObject and len(jsonObject['mentions']) != 0:
+            # apply blacklist
+            new_mentions = []
+            for mention in jsonObject['mentions']:
+                if "software-name" in mention:
+                    software_name = mention["software-name"]
+                    normalizedForm = software_name["normalizedForm"]
+                    normalizedForm = normalizedForm.replace(" ", "").strip()
+                    if normalizedForm not in self.blacklisted:
+                        new_mentions.append(mention)
+            jsonObject['mentions'] = new_mentions
+        '''    
+        return jsonObject
+
+    def service_isalive(self):
+        # test if GROBID software mention recognizer is up and running...
+        the_url = _grobid_software_url(self.config['software_mention_host'], self.config['software_mention_port'])
+        the_url += "isalive"
+        try:
+            r = requests.get(the_url)
+            if r.status_code != 200:
+                print('Grobid software mention server does not appear up and running ' + str(r.status_code))
+            else:
+                print("Grobid software mention server is up and running")
+                return True
+        except: 
+            print('Grobid software mention server does not appear up and running:',
+                'test call to grobid software mention failed, please check and re-start a server.')
+        return False
+
+def _grobid_software_url(grobid_base, grobid_port):
+    the_url = 'http://'+grobid_base
+    if grobid_port is not None and len(grobid_port)>0:
+        the_url += ":"+grobid_port
+    the_url += "/service/"
+    return the_url
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

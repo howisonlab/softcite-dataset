@@ -152,6 +152,8 @@ Given a set of JSON files comverted from TEI XML corresponding to any selection 
 
 + using the existing Softcite software mention service, relying on the existing machine learning models to annotate new text.
 
+In case the text are provided at paragraph level (`"level": "paragraph"`), the text will be segmented into sentence. If it is already at sentence level (`"level": "sentence"`), no additional segmentation is done. 
+
 > pip3 install -r requirements.txt
 
 ```
