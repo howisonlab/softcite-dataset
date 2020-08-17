@@ -8,7 +8,7 @@ library(here)
 
 tei_doc <- read_xml("https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/data/corpus/softcite_corpus-full.tei.xml") %>% xml_ns_strip()
 
-# Auditing the annotations
+# Auditing corpus annotations
 n_software <- xml_find_num(tei_doc, xpath="count(//rs[@type='software'])")
 n_attrs <- xml_find_num(tei_doc, xpath="count(//rs[not(@type='software')])")
 n_anno <- xml_find_num(tei_doc, xpath="count(//rs)")
@@ -122,7 +122,9 @@ sw_pub_url <- mentions %>%
 add = as.numeric(200-tally(all_mentioned))
 
 rich_mentions <- bind_rows(sw_ver_pub, sw_ver_url, sw_pub_url) %>% 
+  filter(article_set=="Biomedicine") %>% 
   sample_n(size=add, replace=FALSE) %>% 
   bind_rows(all_mentioned)
 # write to data/200-rich-mentions-subset.csv
 # use annotation `id` to identify text!
+
