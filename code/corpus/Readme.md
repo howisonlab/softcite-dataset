@@ -179,3 +179,12 @@ optional arguments:
 The config file `config.json` contains the path to the whitelist/stoplist of software names to consider and the connection information to the software-mention service. 
 
 > python3 enrichJSON.py --method whitelist --json-repo ../../data/json --output ../../data/json2
+
+Annotations are added with `"resp": "whitelist"` following this method. 
+
+Using the service method, after having started the software-mention recognizer service:
+
+> python3 enrichJSON.py --method service --json-repo ~/tmp/json3 --output ~/tmp/json4  
+
+Annotations are added with `"resp": "service"` following this method. 
+
