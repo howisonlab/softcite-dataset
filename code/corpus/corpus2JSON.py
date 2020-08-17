@@ -37,6 +37,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
     document = None
     nb_file = 0
     nb_unmatched_file = 0
+    doc_id = None
 
     def __init__(self, json_path, output_path):
         xml.sax.ContentHandler.__init__(self)
@@ -62,6 +63,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             self.grobid_json = None
             self.document = OrderedDict() 
             self.nb_file += 1
+            self.doc_id = None
         if name == "body":
             self.document["body_text"] = []
             self.accumulated = ''
@@ -100,6 +102,10 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                 if "corresp" in attrs:
                     self.current_entity["id"] = attrs.getValue("corresp")
                 self.current_entity["start"] = self.currentOffset
+        if name == "fileDesc":
+            if attrs.getLength() != 0:
+                if "xml:id" in attrs:
+                    self.doc_id = attrs.getValue("xml:id")
 
     def endElement(self, name):
         # print("endElement '" + name + "'")
@@ -115,6 +121,8 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                     with open(json_file_path,"r") as f:
                         grobid_json_string = f.read() 
                 self.grobid_json = json.loads(grobid_json_string, object_pairs_hook=OrderedDict)
+                if self.doc_id is not None:
+                    self.grobid_json["id"] = self.doc_id
         if name == "rs":
             self.paragraph += self.accumulated.strip()
             # end of entity
@@ -204,6 +212,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                     candidate_string = signature(candidate_text["text"])
                                     if textdistance.ratcliff_obershelp.similarity(local_text_simplified, candidate_string) > 0.5:
                                         candidate_text["text"] = local_text
+                                        local_match = True
                                         if "entity_spans" in para:
                                             #candidate_text["entity_spans"] = para["entity_spans"]
                                             #print(para["entity_spans"])
@@ -257,6 +266,8 @@ def convert_to_sentence_segments(json):
     if json is None:
         return new_json
     # the abstract is empty for softcite corpus
+    if "id" in json:
+        new_json["id"] = json["id"]
     new_json["abstract"] = []
     new_json["body_text"] = []
     seg = pysbd.Segmenter(language="en", clean=False, char_span=True)
@@ -349,7 +360,7 @@ def convert_to_sentence_segments(json):
 
     return new_json
 
-def convert_corpus(tei_corpus_path, json_path, output_path):
+def inject_corpus_annotations(tei_corpus_path, json_path, output_path):
     parser = make_parser()
     handler = TEICorpusHandler(json_path, output_path)
     parser.setContentHandler(handler)
@@ -357,13 +368,13 @@ def convert_corpus(tei_corpus_path, json_path, output_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description = "Convert a TEI XML file with Software mention annotations into CORD-19-style JSON format")
+        description = "Inject Softcite corpus manual annotations into fulltext in lossy JSON format")
     parser.add_argument("--tei-corpus", type=str, 
-        help="path to the TEI corpus file corresponding to the Softcite annotated corpus to convert")
+        help="path to the Softcite TEI corpus file corresponding to the curated annotated corpus to inject")
     parser.add_argument("--json-repo", type=str, 
-        help="path to the directory of JSON files converted from TEI XML produced by GROBID and used in the Softcite corpus")
+        help="path to the directory of JSON files converted from TEI XML produced by GROBID, where to inject the Softcite corpus annotations")
     parser.add_argument("--output", type=str, 
-        help="path to an output directory where to write the converted JSON file(s), default is the same directory as the input file")
+        help="path to an output directory where to write the enriched JSON file(s)")
 
     args = parser.parse_args()
     tei_corpus_path = args.tei_corpus
@@ -376,4 +387,4 @@ if __name__ == "__main__":
     if json_repo is None or not os.path.isdir(json_repo):
         print("the path to the JSON files is not valid: ", json_repo)
 
-    convert_corpus(tei_corpus_path, json_repo, output_path)
+    inject_corpus_annotations(tei_corpus_path, json_repo, output_path)

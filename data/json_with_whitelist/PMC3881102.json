@@ -1,0 +1,766 @@
+{
+    "id": "a84b610ea8",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "While various methods have been explored to bring structure to unstructured health data, or to extract clinically meaningful data from unstructured clinical documents [1], there is comparatively little reported on the topic of converting structured data to a more readily analyzable form.",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 167,
+                    "end": 170,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "In our Emergency Department (ED) information system, patient vital signs were transcribed electronically, but in separate free-text fields. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "This practice limits the usefulness of the data outside of its immediate, clinical scope.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Vital signs are an important clinical tool, both for triage decisions [2] and for monitoring disease progression and therapy efficacy. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 73,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "But vital signs have the potential to aid public health goals and research as well. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Vital sign data can augment syndromic surveillance systems in place in many emergency departments [3]. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Public health researchers can monitor hypertension prevalence in a community through collected ED vitals signs data [4,5]. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 119,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "Decision support tools can be triggered or adjusted based on vital sign analysis [3,6].",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 84,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "6]"
+                }
+            ]
+        },
+        {
+            "text": "To make use of vital signs for research and quality assurance purposes, we embarked upon a project to convert vital sign values, recorded as plain text, to numerical format, upon their extraction to a data warehouse.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "A 1:1 conversion from text to numeric data, however, would result in the inclusion of many erroneous values and lead to poor data quality in the warehouse. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "So we developed a process for transforming data exhibiting common errors of text entry (such as commas instead of decimal points, or temperatures in Celsius instead of Fahrenheit), and assigning quality scores to the transformed data based on the steps required to deliver physiologic vital signs.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "This effort posed an immediate challenge, as emergency department patients include the very young and old, with some patients in relatively good health and others in extremis. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "There is likely no other setting in healthcare delivery where such variability in vital signs is routinely encountered. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "And while the range of what can be considered normal or abnormal for a given age is generally agreed upon [7][8][9][10], there is little data on the prevalence of abnormal vitals, the true range of vitals encountered in the emergency department [11], or factors influencing the error rate while recording vitals [11][12][13][14].",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 109,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 109,
+                    "end": 112,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                },
+                {
+                    "start": 112,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 115,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 245,
+                    "end": 249,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 312,
+                    "end": 316,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 316,
+                    "end": 320,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 320,
+                    "end": 324,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 324,
+                    "end": 328,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "Thus, to determine the appropriateness of vital sign transform rules and determine the quality of imported vital sign data, proposed rules were retrospectively derived from a set of emergency department vital signs, and then prospectively applied to a wider set.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "We hypothesized that analyzing the free-text entries for vital signs would reveal, for the vast majority of cases, usable and clinically appropriate information, but that some small fraction of data would require transformation (such as changing Fahrenheit to Celsius, or deleting an extraneous character) to be usable, and some data would be so confusingly inappropriate as to not be usable at all.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Regarding the vital sign data itself, we hypothesized that the average vital sign data would conform to expected human physiologic parameters, such as heart rate, pulse oximetry, and blood pressure changes with respect to age, and that daily variations in blood pressure and seasonal variations in temperature might be observed. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Furthermore, we expected this set of vital signs would suggest a particular period of the day when errors in entry were most common, though it was unclear whether this period of highest errors would be associated with the stress that comes with high patient census (later afternoons and evenings, in our facility), or boredom that comes with low volume (the predawn hours, in our ED).",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "The wider purpose in reporting our observations here is twofold. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "First, the transformation rules we validated should have immediate bearing on the clinical data tasks informaticists and information technology (IT) personnel find themselves facing today, such as minimizing errors, making data available for health information exchange [15], demonstrating meaningful use of electronic health records [16], or complying with accountable care organization goals for blood pressure control in at-risk populations.",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 270,
+                    "end": 274,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 334,
+                    "end": 338,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "Secondly, in the course of this work, we generated what we believe is the first comprehensive data set demonstrating the range of emergency department vital signs. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Using a data warehouse to correlating vitals with comorbidities, laboratory results or outcomes data may help identify patients at particular risk, and help marshal resources to manage at-risk patients more efficiently.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "For the derivation phase of this project, assessments of all unique values of Heart Rate (HR), Respiratory Rate (RR), Temperature (T), Blood Pressure (BP) and Oxygen Saturation (SpO2) were extracted from the ED information system (Picis, Wakefield, Massachusetts) over a date range of one month (December 2009). ",
+            "section": "METHODS"
+        },
+        {
+            "text": "In our large urban academic emergency department, which includes pediatric patients and sees approximately 100,000 visits per year, vitals are typically entered by nurses at triage and again by technicians, nurses and physicians at regular intervals during the patient visit, depending on their complaint and degree of illness.",
+            "section": "METHODS"
+        },
+        {
+            "text": "The vital sign extraction was performed using HL7 interface and Extract-Transfer-Load (ETL) tools in the Mount Sinai Data Warehouse (MSDW). ",
+            "section": "METHODS"
+        },
+        {
+            "text": "The MSDW contains data extracted from twenty of Mount Sinai's clinical and financial systems, including all 2.7 million patients in the Master Person Index and over one billion facts for these patients. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "Database searches are performed with an internally developed Cohort Query Tool written in Java. ",
+            "section": "METHODS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 74,
+                    "end": 78,
+                    "rawForm": "Tool",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w0"
+                },
+                {
+                    "type": "software",
+                    "start": 90,
+                    "end": 94,
+                    "rawForm": "Java",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "The MSDW is compliant with HIPAA and New York State privacy and security regulations and with institutional policy regarding protection of human subjects and participation in research.",
+            "section": "METHODS"
+        },
+        {
+            "text": "Extract-Transfer-Load (ETL) processes are written in Business Objects Data Integrator and Oracle stored procedures, and the Rules Engine in the MSDW is an inhouse developed component of our ETL process. ",
+            "section": "METHODS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 90,
+                    "end": 96,
+                    "rawForm": "Oracle",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w2"
+                },
+                {
+                    "type": "software",
+                    "start": 130,
+                    "end": 136,
+                    "rawForm": "Engine",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Every transaction loaded to MSDW is processed through the Rules Engine, and actions are applied according to the nature of the transaction and matching rules. ",
+            "section": "METHODS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 64,
+                    "end": 70,
+                    "rawForm": "Engine",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "These actions are typically a data quality score reduction. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "Rules are formulated by extensive profiling of the source data, and in consultation with subject matter experts. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "Typical data quality issues that result in quality score deductions include removing special characters from free-text data or data that falls outside the range experts consider possible. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "The magnitude of these deductions -from 5 points to a full 100 point deduction -are based on user's impressions of the meaningfulness of imported data.",
+            "section": "METHODS"
+        },
+        {
+            "text": "Text values for vital signs were analyzed, and rules for deducting points from quality scores were developed, as a search of the literature, web and our colleagues revealed no applicable set of transformation rules. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "We developed rules (see Appendix A) based on commonly accepted ranges for human physiology and some of our judgments (NG, KB) as emergency physicians, and also as users of the Picis system, for what would make a reasonable deduction in score.",
+            "section": "METHODS"
+        },
+        {
+            "text": "The rules engine was then applied to automatically identify, cleanse, and score uploaded vital sign data. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "This validation phase involved applying the derived rules to data collected over a period of from January 1, 2010 to July 30, 2010. ",
+            "section": "METHODS"
+        },
+        {
+            "text": "An iterative text parsing mechanism was used to process the free-text vital sign data, so data type corrections could be performed (such as assigning proper units of measure). ",
+            "section": "METHODS"
+        },
+        {
+            "text": "The Rule Engine reduced quality score based on the number and types of efforts necessary to process the original data. ",
+            "section": "METHODS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 9,
+                    "end": 15,
+                    "rawForm": "Engine",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "The end result was a cumulative score assigned to every vital sign \"fact\" entered into the data warehouse.",
+            "section": "METHODS"
+        },
+        {
+            "text": "From the derivation cohort of unique values of heart rate, respiratory rate, blood pressure (separated here as systolic and diastolic values) temperature and pulse oximetry, we developed the transform rules (see Appendix A).",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "Applying these rules prospectively over a period of 6 months of collected HL7 messages from the emergency department led to the generation of our prospective data set of vital signs, which consisted of 497,302 detected vital sign fields, from 30,269 distinct medical record numbers associated with 41,624 visits. ",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "799 patients had fields associated with no usable data (for these cases, typically one field would be used to indicate the patient refused or vital signs could not be obtained).",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "98% of the imported vital signs in the validation set had a quality score of 100, with an additional 1.3% of signs achieving a score of 95 and 0.3% having a score of 90. ",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "Scores between 0 and 90 occurred 147 times (0.02%) and there were 1079 instances of quality scores of 0 (0.21%).",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "The reason most vital signs had quality score points deducted was a use of Fahrenheit instead of Celsius for the temperature field, and the reason most scores fell below 90 and hence, outside the range of usable data, was because of pulse oximeter values outside physiologic norms or above 100% (see Table 1).",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 300,
+                    "end": 307,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Comparatively, deductions in the quality score of heart rate, respiratory rate and blood pressure were less common that those for temperature and pulse oximetry (see Table 1).",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 166,
+                    "end": 173,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "The average values for respiratory rate, heart rate, blood pressure, temperature and pulse oximetry, along with standard deviations and range, are shown in Table 2A.",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 156,
+                    "end": 164,
+                    "type": "table",
+                    "text": "Table 2A"
+                }
+            ]
+        },
+        {
+            "text": "Heart and respiratory rate were recorded more often than blood pressure and pulse oximetry and over twice as often as temperature. ",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "Rectal temperature was least commonly employed but was consistently higher than tympanic temperature, perhaps reflecting clinical suspicion of a fever before ordering the procedure. ",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "When plotted by age, the vital signs confirm physiologic expectations; heart rates and oxygen saturation decline with age, while blood pressure rises (Table 2B).",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 150,
+                    "end": 159,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "(Table 2B"
+                }
+            ]
+        },
+        {
+            "text": "There was no daily variation in blood pressure and no seasonal variation in temperature (data not shown), as others have suggested in non-emergency cohorts [17,18].",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 156,
+                    "end": 160,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17,"
+                },
+                {
+                    "start": 160,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "18]"
+                }
+            ]
+        },
+        {
+            "text": "The time period most associated with low quality scores (370 total) was from 9-10pm, which is ten hours after the time of peak intake time (when most patients receive a set of vital sign measurements) in our emergency department, but at the tail end of the peak occupancy rate [19] (which remains consistently high from 3pm until 10pm). ",
+            "section": "OBSERVATIONS",
+            "ref_spans": [
+                {
+                    "start": 277,
+                    "end": 281,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "The fewest low-quality vitals (106 total) were recorded between 5-6am, which is associated with both the lowest intake and lowest occupancy in the department. ",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "The rate of error per patient triaged at this early morning hour, however, was approximately equal to (in fact, slightly higher than) the 9-10pm error rate per patient triaged (0.190 vs 0.178), despite a much lower influx of patients and a much lower patient census.",
+            "section": "OBSERVATIONS"
+        },
+        {
+            "text": "In the process of importing free-text vital sign data from our emergency department information system, we now have a data warehouse with quality-checked emergency department vital signs. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "We can now analyze what may be the broadest set of human vital signs yet reported, encompassing neonates to centenarians, the mostly-well to the moribund. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Prior to processing this data, applying transforms when necessary, and importing the data into the MSDW, analysis of our ED's vital sign characteristics, such as determining standard deviations or averages based on age, was not possible.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "The usefulness of this data is manifold. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "First, just as some [20,21] have argued that clinical lab values are a valuable resource for studying outcomes and disease progression, so too can vital sign warehousing demonstrate significance for health prognostication, especially when correlated with outcomes data demographic information, diagnoses and comorbidities, laboratory and imaging results.",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 24,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20,"
+                },
+                {
+                    "start": 24,
+                    "end": 27,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "21]"
+                }
+            ]
+        },
+        {
+            "text": "Second, our transforms were very useful. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "In EMR, users have demonstrated preference for free-text fields [22] and we've shown that we can capture meaningful data from over 98% of these fields. ",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 64,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "This system preserves the best of both worlds: preserving free-text entry fields preventing frustrating data entry experiences in the chaotic environment of the ED, and the transforms allow meaningful data to be graded or salvaged.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Furthermore, the transformation rules we validated will have immediate application to the clinical data tasks informaticists and IT personnel find themselves facing today, in making data available for health information exchange, demonstration of meaningful use of electronic health records, or compliance with accountable care organization goals [15,16].",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 347,
+                    "end": 351,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15,"
+                },
+                {
+                    "start": 351,
+                    "end": 354,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "16]"
+                }
+            ]
+        },
+        {
+            "text": "We suspect hospital QA efforts may be aided by the finding that quality scores per patient triaged are relatively low, and by inference, data entry error rates are highest, in the pre-dawn hours. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "At the very least, this finding may help guide staffing and break time decisions.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Prior studies on the usefulness of vital signs in the ED have focused on accuracy and precision of measurements. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Our database can serve as a standard by which future ED studies can compare averages, variation and ranges in human vital signs.",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "The compilation of this data now makes possible determinations such as \"the average ED patient temperature\" or \"the fraction of patients with abnormal vitals.\" ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Additionally, simple correlations that have long been suspected, such as pain and heart rate [23], may be easily researched.",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 93,
+                    "end": 97,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "The authors confirm that this article content has no conflicts of interest. ",
+            "section": "CONFLICT OF INTEREST"
+        },
+        {
+            "text": "This research was deemed exempt from review of the Mount Sinai Program for the Protection of Human Subjects.",
+            "section": "ACKNOWLEDGEMENTS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 63,
+                    "end": 70,
+                    "rawForm": "Program",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "Pulse: a range between 30 and 250 (outside of which quality is set to 0).",
+            "section": "APPENDIX A Logic for Vital Sign Transformations",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 5,
+                    "rawForm": "Pulse",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "remove all special characters other than '-', '.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "', '%'",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If value reported as 'a-b', take the highest, reduce quality score by 10",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If value is decimal, take the whole number before the decimal point, set data quality score to 0",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If the value has '%' take the whole number before the '%', set data quality score to 0",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Respiratory Rate: a range between 6 and 60, outside of which quality is set to 0. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "if SBP or DBP is left blank or one has alphanumeric, then load both in SBP/DBP Comments, set quality score to 0.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Remove '-', '%', '.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "', and space in between the numbers. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If these characters are found, reduce data quality score by 5.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If DBP > SBP or SBP = DBP, set the quality score of both to 0 If SBP/DBP is 0/0, then set the quality score to 0. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "set any 0 or blank to a quality of 0, as with any value less than 20.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "In all cases where the recorded value (after stripping any leading and trailing nonnumeric characters) is not in the form of xxx/yyy where xxx>yyy, we stored the full entered value in the comment field. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "There are no SBP or DBP facts stored, so there is no opportunity to assign a quality score to either SDP or DBP, and the quality score of the Comment field is set to 0 (giving a way to differentiate these comments from other comments for future reference).",
+            "section": "Transformation:",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 142,
+                    "end": 149,
+                    "rawForm": "Comment",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "Oxygen Saturation: A range from 60 to 100 (with anything outside that range set to a quality score of 0).",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Consider the numeric value before first '%' or space. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If it's a text character, then load the comments with source as-is, set quality score to 0.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Clinical Result(O2 Saturation) should be a whole number, else reduce quality score by 5",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Remove '$','*', '-','.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "' between Number and '%' and if resulting value is in range, reduce quality score by 10, else set quality score to 0 For entries marked \"UT0\" (\"unable to obtain\") Set UT0[zero] to UTO, load into comments, set quality score to 0",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Temperature: The Celsius range runs from 29.5 to 41.5 (outside of which quality score is set to 0).",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Temperatures recorded in the range between 85-105 were assumed as Fahrenheit, converted to Celsius by subtracting 32 then multiplying by 5/9ths. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "For temperatures that come suffixed with alpha characters (such as F, C, T, R, O). ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "We stripped off the alpha part and storing the numeric part as a numeric fact and the alpha part as a Comment (text) fact.",
+            "section": "Transformation:",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 102,
+                    "end": 109,
+                    "rawForm": "Comment",
+                    "resp": "whitelist",
+                    "id": "a84b610ea8-software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "For temperatures containing punctuation other than a decimal point between digits (such as a comma): in these cases we changed the punctuation to a decimal point. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "Any ',' or ';' in values are converted to '.', reduce quality score by 5",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If the value is above the range, assume a missing period and divide it by 10 to get the actual value. ",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If the value is If the actual value derived is still above range set quality score to 0, else reduce quality score by 10.",
+            "section": "Transformation:"
+        },
+        {
+            "text": "When value in oF is converted to oC If value has 'C' suffix, consider as 'oC'",
+            "section": "Transformation:"
+        },
+        {
+            "text": "If value like 'a-b', take the highest value and reduce quality score by 10.",
+            "section": "Transformation:"
+        }
+    ]
+}

@@ -1,0 +1,664 @@
+{
+    "id": "ad038d0cf7",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "Protein structure comparison (PSC) has been a staple method for obtaining information about a protein when its 3D structure is determined experimentally or predicted computationally. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "It is therefore not surprising that the development of new PSC algorithms has been continuing for more than two decades with no sign of ceasing (1)(2)(3)(4)(5)(6). ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(1)"
+                },
+                {
+                    "start": 147,
+                    "end": 150,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(2)"
+                },
+                {
+                    "start": 150,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(3)"
+                },
+                {
+                    "start": 153,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "(4)"
+                },
+                {
+                    "start": 156,
+                    "end": 159,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "(5)"
+                },
+                {
+                    "start": 159,
+                    "end": 162,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "(6)"
+                }
+            ]
+        },
+        {
+            "text": "These efforts are needed not only to meet new scientific challenges but also to benefit maximally from the large number of new structures now pouring in from structural genomics projects (7,8).",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 187,
+                    "end": 190,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "(7,"
+                },
+                {
+                    "start": 190,
+                    "end": 192,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "8)"
+                }
+            ]
+        },
+        {
+            "text": "To these ends, a number of laboratories have created PSC servers in recent years to provide information beyond the basic PSC operations, including, e.g. those that do flexible alignment (9,10), those that discover recurring substructures or motifs (11,12), those that perform multiple structure alignment (13) and those that focus on fast structure feature extraction (14)(15)(16).",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 186,
+                    "end": 189,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(9,"
+                },
+                {
+                    "start": 189,
+                    "end": 192,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "10)"
+                },
+                {
+                    "start": 248,
+                    "end": 252,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "(11,"
+                },
+                {
+                    "start": 252,
+                    "end": 255,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "12)"
+                },
+                {
+                    "start": 305,
+                    "end": 309,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "(13)"
+                },
+                {
+                    "start": 368,
+                    "end": 372,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "(14)"
+                },
+                {
+                    "start": 372,
+                    "end": 376,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "(15)"
+                },
+                {
+                    "start": 376,
+                    "end": 380,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "(16)"
+                }
+            ]
+        },
+        {
+            "text": "Here we offer a new PSC server with the functionality to report statistically significant alternative alignments (17,18) and structural permutations (19,20) at all levels of complexity. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 117,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "(17,"
+                },
+                {
+                    "start": 117,
+                    "end": 120,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "18)"
+                },
+                {
+                    "start": 149,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "(19,"
+                },
+                {
+                    "start": 153,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "20)"
+                }
+            ]
+        },
+        {
+            "text": "Our method, named OPAAS, which has been detailed elsewhere (21,22), deduces the probabilities of aligning every possible pair of secondary structure elements (SSEs) between two protein structures prior to the search for a solution of their alignment. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 63,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(21,"
+                },
+                {
+                    "start": 63,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "22)"
+                }
+            ]
+        },
+        {
+            "text": "This deduction allows the ready identification of most, though not all, statistically significant alignment solutions, many of which being distinct alternatives to the 'optimal' solution, the target of conventional PSC operations. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "As we reported previously from a study of all-against-all database comparisons (22), about half of the alternative alignments were detectable only when permutation, i.e. non-topological alignment, was allowed. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "(22)"
+                }
+            ]
+        },
+        {
+            "text": "Moreover, many of the permuted alignments exhibited a permutation complexity higher than that of circular permutation, meaning that more than two separable regions of the protein structure could be aligned non-sequentially. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "To quantitatively measure the level of permutation complexity for all the alignments, we devised a permutation index (PI) as follows:",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "where S i is the size (number of aligned amino acid residues) of the aligned region i and n is the total number of aligned regions. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "A region is an independently, and, within the region itself, topologically aligned part of an alignment. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "That is, within a region, all the aligned residues are ordered sequentially, which may or may not be interrupted by gaps, but these regions, if there are more than one, are aligned nonsequentially. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "It follows that an alignment without any permutation will have just one region, and will have, by definition, a PI value of 1.0. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Also by definition, a circular permutation, *To whom correspondence should be addressed. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Tel: +886 2 2789 9033; Fax: +886 2 2788 7641; Email: mjhwang@ibms.sinica.edu.tw",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 46,
+                    "end": 51,
+                    "rawForm": "Email",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "The Author(s). ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "This is an Open Access article distributed under the terms of the Creative Commons Attribution Non-Commercial License (http://creativecommons.org/licenses/ by-nc/2.0/uk/) which permits unrestricted non-commerical use, distribution, and reproduction in any medium, provided the original work is properly cited.",
+            "section": "INTRODUCTION",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 16,
+                    "end": 22,
+                    "rawForm": "Access",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "which involves swapping two regions in a non-topological alignment (19,20), will receive a PI value >1.0 but not >2.0. ",
+            "section": "INTRODUCTION",
+            "ref_spans": [
+                {
+                    "start": 67,
+                    "end": 71,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "(19,"
+                },
+                {
+                    "start": 71,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "20)"
+                }
+            ]
+        },
+        {
+            "text": "PI hence furthermore let us know how much the sizes of the separately aligned regions differ. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "For example, given two permuted protein pairs having PI 3.0 and 2.5, respectively, we will know that they both have three aligned regions, but the sizes of the three regions are equal for the former and vary significantly for the latter. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "Both permuted and non-permuted alternative alignments are reported by the OPAAS server in a fashion that is easy for a non-specialist user to grasp the main significance of the comparison as one would with the 'optimal' alignment featured by other PSC servers. ",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "This is aided by the server's user-friendly interfaces described below, which use intuitive viewing directions, informative tables that can be sorted by different parameters, cascading information windows, and a structured user guide with examples.",
+            "section": "INTRODUCTION"
+        },
+        {
+            "text": "At the portal of the OPAAS web server ( Figure 1a) lay two main structure comparison functions, '1 against SCOP90 dataset' and '2 chains alignment', and a Help webpage for a structured OPAAS user guide, which can be viewed on-line (http://opaas.ibms.sinica.edu.tw/help/opaas.html) as well as interactively in different contexts (see below).",
+            "section": "OPAAS WEB SERVER LAYOUT",
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 49,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1a"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 155,
+                    "end": 159,
+                    "rawForm": "Help",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w2"
+                },
+                {
+                    "type": "software",
+                    "start": 274,
+                    "end": 279,
+                    "rawForm": ".html",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "The one-against-all on SCOP90 function is designed to find structural neighbors of a protein of interest in the structure classification of proteins (SCOP) (23) database. ",
+            "section": "One-against-all search on SCOP90",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 150,
+                    "end": 154,
+                    "rawForm": "SCOP",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "One of the following three input options (left panel in Figure 1b and user guide 3.1.1) is available for the search: a structure domain already in SCOP 90 (SCOP version 1.55, <90% sequence identity non-redundant set), a structure in the current Protein Data Bank (PDB; the server updates its local PDB weekly) (24) with a specified chain (PDB ID option), or a structure in PDB format uploaded by user (User's structure option). ",
+            "section": "One-against-all search on SCOP90",
+            "ref_spans": [
+                {
+                    "start": 56,
+                    "end": 64,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 147,
+                    "end": 151,
+                    "rawForm": "SCOP",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w5"
+                },
+                {
+                    "type": "software",
+                    "start": 156,
+                    "end": 160,
+                    "rawForm": "SCOP",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w6"
+                },
+                {
+                    "type": "software",
+                    "start": 264,
+                    "end": 267,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w7"
+                },
+                {
+                    "type": "software",
+                    "start": 298,
+                    "end": 301,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w8"
+                },
+                {
+                    "type": "software",
+                    "start": 339,
+                    "end": 342,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w9"
+                },
+                {
+                    "type": "software",
+                    "start": 373,
+                    "end": 376,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "All of the three inputs can be accompanied with optional parameter settings for customized output. ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "The parameters that could be changed from default include minimum rough Z-score [for the alignment prior to refinement (21)], minimum refined Z-score, maximum root mean square deviation (RMSD) of Ca superposition between two aligned protein chains, minimum aligned sequence identity, maximum number of shown matches, and sorting options (right panel in Figure 1b and user guide 3.1.2). ",
+            "section": "One-against-all search on SCOP90",
+            "ref_spans": [
+                {
+                    "start": 119,
+                    "end": 123,
+                    "type": "bibr",
+                    "text": "(21)"
+                },
+                {
+                    "start": 353,
+                    "end": 384,
+                    "type": "figure",
+                    "text": "Figure 1b and user guide 3.1.2)"
+                }
+            ]
+        },
+        {
+            "text": "Unlike the first input option, for which pre-computed results will be retrieved, the last two input options require entry of user's e-mail address (user guide 3.1.3) because the OPAAS server needs time for computation and will return the result via email in, typically, minutes to hours, depending mainly on the stringency of the selected parameters.",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "For the first input option, a table of matched results retrieved from a pre-computed database will be displayed directly on the web page (Figure 1c and user guide 3.2). ",
+            "section": "One-against-all search on SCOP90",
+            "ref_spans": [
+                {
+                    "start": 137,
+                    "end": 147,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "(Figure 1c"
+                }
+            ]
+        },
+        {
+            "text": "In this table, Z-score, #a.a. aligned (number of aligned amino acids), and RMSD reported are those for the optimal alignment solution only, #alt. ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "sol. ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "is the number of alternative alignment solutions that satisfy the parameters specified by the user, and PI indicates the level of permutation complexity as described above. ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "User can sort the table by the field selected (user guide 3.2.2) and download this table either as a plain text file or a comma separated values format file (user guide 3.2.3). ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "User also can click on the matched entry to view details of each alignment solution, which will have exactly the same output as that from using the function of '2 chains alignment' (user guide 3.2.4; see below). ",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "For the output of the last two input options, an e-mail of search result with the subject title 'OPAAS result' will be sent back to the e-mail address supplied (user guide 3.3). ",
+            "section": "One-against-all search on SCOP90",
+            "ref_spans": [
+                {
+                    "start": 160,
+                    "end": 176,
+                    "type": "figure",
+                    "text": "(user guide 3.3)"
+                }
+            ]
+        },
+        {
+            "text": "The e-mail contains a table of search result like that of the first input option described above, but to interactively view details of individual alignment solution, the second function, described below, needs to be separately invoked.",
+            "section": "One-against-all search on SCOP90"
+        },
+        {
+            "text": "For the function of '2 chains alignment' (Figure 1d and user guide 4.1), the structures of the two protein chains could either be selected from PDB (i.e. entering PDB ID) or uploaded by user in PDB format. ",
+            "section": "Alignment of two protein chains",
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 51,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "(Figure 1d"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 144,
+                    "end": 147,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w11"
+                },
+                {
+                    "type": "software",
+                    "start": 163,
+                    "end": 166,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w12"
+                },
+                {
+                    "type": "software",
+                    "start": 194,
+                    "end": 197,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w13"
+                }
+            ]
+        },
+        {
+            "text": "Display of the comparison results, which can be expected to follow immediately upon submission of the request, is split into three frames to show 'basic information of the comparison', 'information of each solution', and 'detail alignment of selected region' (Figure 1e and user guide 4.2).",
+            "section": "Alignment of two protein chains",
+            "ref_spans": [
+                {
+                    "start": 259,
+                    "end": 289,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "(Figure 1e and user guide 4.2)"
+                }
+            ]
+        },
+        {
+            "text": "In the frame of 'basic information of the comparison', one of two tables gives some basic information about the two chains compared: size (number of amino acid residues), and number of SSE (user guide 4.2.1). ",
+            "section": "Alignment of two protein chains"
+        },
+        {
+            "text": "User can click a hyperlink on the name of the two chains placed above the table to learn more about the compared proteins from the PDB website (user guide 4. ",
+            "section": "Alignment of two protein chains",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 131,
+                    "end": 134,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w14"
+                }
+            ]
+        },
+        {
+            "text": "The best way to compare two protein structures often depends on the question being asked (6), so having a server like OPAAS that can simultaneously analyze solutions beyond the 'optimal' alignment is useful. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "Although most of the published PSC algorithms can be modified to offer similar capability, to our knowledge, only two PSC servers give user the option to see alternative alignments: Prosup (25) and SARF2 (26), but Prosup is limited to topological alignments and neither offers one-against-all database searching service. ",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 189,
+                    "end": 193,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "(25)"
+                },
+                {
+                    "start": 204,
+                    "end": 208,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "(26)"
+                }
+            ]
+        },
+        {
+            "text": "Moreover, with an intuitive hierarchical layout of the com-parison results and optional parameter settings to view most significant alignments (e.g. with similarity P-value set at 10 \u00c05 , a typical comparison usually resulted in <5 such solutions), an informative summary that could lead to unexpected insight from unexpected alternative alignments is effectively produced. ",
+            "section": "DISCUSSION"
+        },
+        {
+            "text": "The main limitation of OPAAS, at its current version, arose from a compromise to trade for computational efficiency, which dictates that a structure must possess at least three SSEs to be compared (21,22); elimination of this limitation is in progress. ",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 197,
+                    "end": 201,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(21,"
+                },
+                {
+                    "start": 201,
+                    "end": 204,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "22)"
+                }
+            ]
+        },
+        {
+            "text": "Significantly, our server allows database search with an efficiency comparable that of the popular CE server (27), despite ours being run on a personal computer (Pentium IV) and being asked to find alternative alignments. ",
+            "section": "DISCUSSION",
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "(27)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 99,
+                    "end": 101,
+                    "rawForm": "CE",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w15"
+                }
+            ]
+        },
+        {
+            "text": "The source code of OPAAS is also available at the server for free download for standalone computations and for incorporation of structure database other than SCOP.",
+            "section": "DISCUSSION",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 158,
+                    "end": 162,
+                    "rawForm": "SCOP",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "Funding to pay the Open Access publication charges for this article was provided by the Academia Sinica and National Science Council of Taiwan.",
+            "section": "ACKNOWLEDGEMENTS",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 24,
+                    "end": 30,
+                    "rawForm": "Access",
+                    "resp": "whitelist",
+                    "id": "ad038d0cf7-software-simple-w17"
+                }
+            ]
+        },
+        {
+            "text": "Conflict of interest statement. "
+        },
+        {
+            "text": "None declared."
+        }
+    ]
+}

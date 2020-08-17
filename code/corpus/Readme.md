@@ -68,28 +68,29 @@ In these JSON files, the segmentation in paragraphs as present in the TEI XML fi
 
 ### Adding the Softcite annotations into the JSON lossy format
 
+Given a set of JSON files comverted from TEI XML corresponding to the articles selected for the Softcite dataset, the following script will inject Softcate corpus manual annotations into the JSON files as span annotations with offset relative to sentence level segments. 
+
 Install the dependency for sentence segmentation (using pysbd, a pragmatic-segmenter port to Python, see https://github.com/diasks2/pragmatic_segmenter) and for string distance (`textdistance` package):
 
 > pip3 install -r requirements.txt
 
 ```
-usage: corpus2JSON.py [-h] [--tei-corpus TEI_CORPUS] 
-                      [--json-repo JSON_REPO] [--output OUTPUT]
+usage: corpus2JSON.py [-h] [--tei-corpus TEI_CORPUS] [--json-repo JSON_REPO]
+                      [--output OUTPUT]
 
-Convert a TEI XML file with Software mention annotations into CORD-19-style
-JSON format
+Inject Softcite corpus manual annotations into fulltext in lossy JSON format
 
 optional arguments:
   -h, --help            show this help message and exit
   --tei-corpus TEI_CORPUS
-                        path to the TEI corpus file corresponding to the
-                        Softcite annotated corpus to convert
+                        path to the Softcite TEI corpus file corresponding to
+                        the curated annotated corpus to inject
   --json-repo JSON_REPO
                         path to the directory of JSON files converted from TEI
-                        XML produced by GROBID and used in the Softcite corpus
+                        XML produced by GROBID, where to inject the Softcite
+                        corpus annotations
   --output OUTPUT       path to an output directory where to write the
-                        converted JSON file(s), default is the same directory
-                        as the input file
+                        enriched JSON file(s)
 ```
 
 Having produced the JSON files as indicated above (under `~/tmp/`), we can inject the Softcite corpus curated annotations into the JSON as follow:
@@ -141,3 +142,38 @@ with open(os.path.join(path_json_repo, file)) as jsonfile:
 ``` 
 
 The loaded `json_doc` will be of type `OrderedDict` and the order of sentences in the document will be preserved. 
+
+
+### Adding automatic annotations into any JSON lossy format files
+
+Given a set of JSON files comverted from TEI XML corresponding to any selection of articles, the following script will inject automatic annotations into the JSON files as span annotations with offset relative to sentence level segments based on two methods:
+
++ a basic term lookup using a list of software names, an annotation being introduced for each term matching (aka dictionary look-up),
+
++ using the existing Softcite software mention service, relying on the existing machine learning models to annotate new text.
+
+> pip3 install -r requirements.txt
+
+```
+usage: enrichJSON.py [-h] [--method METHOD] [--json-repo JSON_REPO]
+                     [--output OUTPUT] [--config CONFIG]
+
+Inject automatic software mention annotations into fulltext in lossy JSON
+format
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --method METHOD       method for producing the annotations
+  --json-repo JSON_REPO
+                        path to the directory of JSON files converted from TEI
+                        XML produced by GROBID, where to inject the automatic
+                        annotations
+  --output OUTPUT       path to an output directory where to write the
+                        enriched JSON file(s)
+  --config CONFIG       path to the config file, default is ./config.json
+
+```
+
+The config file `config.json` contains the path to the whitelist/stoplist of software names to consider and the connection information to the software-mention service. 
+
+> python3 enrichJSON.py --method whitelist --json-repo ../../data/json --output ../../data/json2
