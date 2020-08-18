@@ -1,0 +1,645 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Motivation: One of the most successful methods to date for recognizing protein sequences that are evolutionarily related, has been profile hidden Markov models. However, these models do not capture pairwise statistical preferences of residues that are hydrogen bonded in \u03b2-sheets. We thus explore methods for incorporating pairwise dependencies into these models. Results: We consider the remote homology detection problem for \u03b2-structural motifs. In particular, we ask if a statistical model trained on members of only one family in a SCOP \u03b2-structural superfamily, can recognize members of other families in that superfamily. We show that HMMs trained with our pairwise model of simulated evolution achieve nearly a median 5% improvement in AUC for \u03b2-structural motif recognition as compared to ordinary HMMs."
+        }
+    ],
+    "body_text": [
+        {
+            "section": "INTRODUCTION",
+            "text": "Profile hidden Markov models (HMMs) have been one of the most successful methods to date for recognizing both close and distant homologs of given protein sequences. Popular HMM methods such as HMMER (Eddy et al., 1998a, b) and SAM (Hughey and Krogh, 1996) have been behind the design of databases such as Pfam (Finn et al., 2006), PROSITE (Hulo et al., 2006) and SUPERFAMIILY (Wilson et al., 2007). However, a limitation of these HMMs is, since there is only finite state information about the sequence that can be held in any particular position, HMMs cannot capture dependencies that are far, and variable distance apart, in sequence.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 199,
+                    "text": "(Eddy et al., 1998a, b)",
+                    "end": 222
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 231,
+                    "text": "(Hughey and Krogh, 1996)",
+                    "end": 255
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 310,
+                    "text": "(Finn et al., 2006)",
+                    "end": 329
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 339,
+                    "text": "(Hulo et al., 2006)",
+                    "end": 358
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 376,
+                    "text": "(Wilson et al., 2007)",
+                    "end": 397
+                }
+            ]
+        },
+        {
+            "section": "INTRODUCTION",
+            "text": "On the other hand, in \u03b2-structural motifs, as was noticed by Lifson, Sander and others (Hubbard and Park, 1995;Lifson and Sander, 1980;Olmea et al., 1999;Steward and Thornton, 2002;Zhu and Braun, 1995), amino acid residues that are hydrogen bonded in \u03b2-sheets exhibit strong pairwise statistical dependencies. These residues, however, can be far away and a variable distance apart in sequence, making them impossible to capture in an HMM. Early work of Bradley et al. (Bradley et al., 2001;Cowen et al., 2002) show that these pairwise correlations help to recognize protein sequences that fold into the right-handed parallel \u03b2-helix fold. More recent work has used a conditional random field or Markov random field framework, both of which generalize HMMs beyond linear dependencies, to identify the right-handed parallel \u03b2-helix fold (Liu et al., 2009), the leucine rich repeat fold (Liu et al., 2009) and the \u03b2-propeller folds (Menke et al., 2010). * To whom correspondence should be addressed.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 87,
+                    "text": "(Hubbard and Park, 1995;",
+                    "end": 111
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 111,
+                    "text": "Lifson and Sander, 1980;",
+                    "end": 135
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 135,
+                    "text": "Olmea et al., 1999;",
+                    "end": 154
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 154,
+                    "text": "Steward and Thornton, 2002;",
+                    "end": 181
+                },
+                {
+                    "type": "bibr",
+                    "start": 181,
+                    "text": "Zhu and Braun, 1995)",
+                    "end": 201
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 453,
+                    "text": "Bradley et al. (Bradley et al., 2001;",
+                    "end": 490
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 490,
+                    "text": "Cowen et al., 2002)",
+                    "end": 509
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 835,
+                    "text": "(Liu et al., 2009)",
+                    "end": 853
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 884,
+                    "text": "(Liu et al., 2009)",
+                    "end": 902
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 929,
+                    "text": "(Menke et al., 2010)",
+                    "end": 949
+                }
+            ]
+        },
+        {
+            "section": "INTRODUCTION",
+            "text": "While these conditional random field and Markov random field models are extremely powerful in theory, in practice, substantial computational barriers remain for template construction, training and computing the minimum energy threading of an unknown sequence onto a template. Thus, a general structure software tool designed for \u03b2-structural folds, in the same manner as HMMER and SAM packages recognize all protein structural folds, remains a challenging unsolved problem."
+        },
+        {
+            "section": "INTRODUCTION",
+            "text": "In this article, we find an unusual and different way to incorporate pairwise dependencies into profile HMM. In particular, we generalize our recent work (Kumar and Cowen, 2009) on augmenting HMM training data to include these very pairwise dependencies as a part of a larger training set (see below). While this method of incorporating pairwise dependencies is undoubtedly less powerful than MRF methods, it has the advantage of being simple to implement, computationally fast and allows the modular application of existing HMM software packages. We show that our augmented HMMs perform better than ordinary HMMs on the task of recognizing \u03b2-structural SCOP (Lo Conto et al., 2002) protein superfamilies. In particular, we consider the problem of how well an HMM trained on only one family \u03b2-structural SCOP superfamily can learn to recognize members of other SCOP families in that SCOP superfamily, as compared to decoys. We show a median AUC improvement of nearly 5% for our approach compared to ordinary HMMs on this task.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 154,
+                    "text": "(Kumar and Cowen, 2009)",
+                    "end": 177
+                },
+                {
+                    "type": "bibr",
+                    "start": 659,
+                    "text": "(Lo Conto et al., 2002)",
+                    "end": 682
+                }
+            ]
+        },
+        {
+            "section": "APPROACH",
+            "text": "Our approach is based on the simulated evolution paradigm introduced in Kumar and Cowen (2009). The possibility that motif recognition methods could be improved with the addition of artificial training sequences had been previously suggested in the protein design community (Koehl and Levitt, 1999), though the methods of Koehl and Levitt (1999); Larson et al. (2003) and Am Busch et al. (2009) to generate these sequences are much more computationally intensive than the simple sequence-based mutation model of Kumar and Cowen. In particular, Kumar and Cowen created new training sequences by artificially adding point mutations to the original sequences in the training set, using the BLOSUM62 matrix (Eddy, 2004). The HMM training was then used on this larger, augmented training set unchanged.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 72,
+                    "text": "Kumar and Cowen (2009)",
+                    "end": 94
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 274,
+                    "text": "(Koehl and Levitt, 1999)",
+                    "end": 298
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 322,
+                    "text": "Koehl and Levitt (1999)",
+                    "end": 345
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 347,
+                    "text": "Larson et al. (2003)",
+                    "end": 367
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 372,
+                    "text": "Am Busch et al. (2009)",
+                    "end": 394
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 703,
+                    "text": "(Eddy, 2004)",
+                    "end": 715
+                }
+            ]
+        },
+        {
+            "section": "APPROACH",
+            "text": "In this article, we compare ordinary HMMER Profile HMMs, HMMER Profile HMMs augmented with a point mutation model (similar to Kumar and Cowen, 2009), and HMMs augmented with training sequences based on pairwise dependencies of \u03b2-sheet hydrogen bonding (see Fig. 1). Thus we have generalized the single frequency approach of Kumar and Cowen (2009), to pairwise probabilities. More specifically, to create our new training sequence  based on \u03b2-strand constrained evolution, the following pipeline is followed:",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 126,
+                    "text": "Kumar and Cowen, 2009)",
+                    "end": 148
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 257,
+                    "text": "Fig. 1",
+                    "end": 263
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 324,
+                    "text": "Kumar and Cowen (2009)",
+                    "end": 346
+                }
+            ]
+        },
+        {
+            "section": "APPROACH",
+            "text": "1. The input to HMM training is a set of PDB files for sequences that lie in the same SCOP family."
+        },
+        {
+            "section": "APPROACH",
+            "text": "2. The sequences are aligned by way of multiple structure alignment program."
+        },
+        {
+            "section": "APPROACH",
+            "text": "3. Positions corresponding to paired residues that hydrogen bond in adjacent \u03b2-strands are found using SmurfParse package."
+        },
+        {
+            "section": "APPROACH",
+            "text": "4. For each sequence that lies in the original training set, additional sequences are added to the training set using random mutations according to a probability distribution based on the paired positions within \u03b2-strands, as described below."
+        },
+        {
+            "section": "APPROACH",
+            "text": "5. The multiple sequence alignment, including sequences in the original training set as well as the new sequences generated by simulated evolution, is passed to the ordinary HMM training module."
+        },
+        {
+            "section": "APPROACH",
+            "text": "This pipeline is illustrated in Figure 1B, along with HMM-C, an approach that combines both point mutations and pairwise mutations in the training set.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 32,
+                    "text": "Figure 1B",
+                    "end": 41
+                }
+            ]
+        },
+        {
+            "section": "APPROACH",
+            "text": "We use these augmented HMMs to solve the following task: trained only on the sequences from single SCOP family can our HMMs distinguish between the following two classes: (i) sequences from other SCOP families in the same SCOP superfamily as the training set and (ii) decoy sequences that lie outside the fold class of the family of the training set."
+        },
+        {
+            "section": "Datasets",
+            "text": "We employed an approach similar to that of Wistrand and Sonnhammer (2004) to pick SCOP families and superfamilies from among those that belong to the 'mainly beta proteins' class in SCOP and train HMMs. First, we chose sequences from SCOP that are <95% identical based on the ASTRAL database version 1.73 (Chandonia et al., 2004). The dataset was then filtered to include only the SCOP families that belonged to 'mainly beta proteins' class and had at least 10 sequences. Another constraint imposed in order to have test sets was to make sure that other SCOP families in the superfamily hierarchy had at least one sequence but not more than 50 sequences. Our test set consisted of all the sequences from the rest of the families in the superfamily and an equal number of decoy sequences chosen at random from different SCOP folds. The dataset is available at: http://bcb.cs.tufts.edu/pairwise/.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 43,
+                    "text": "Wistrand and Sonnhammer (2004)",
+                    "end": 73
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 305,
+                    "text": "(Chandonia et al., 2004)",
+                    "end": 329
+                }
+            ]
+        },
+        {
+            "section": "Multiple sequence alignment",
+            "text": "This is the process of aligning the homologous residues in protein sequences into columns and thus generating a multiple sequence alignment (MSA)."
+        },
+        {
+            "section": "Aligning sequences with MUSCLE",
+            "text": "For the single frequency augmented training model, we used the popular program MUSCLE Version 4 (Edgar, 2004) to generate the MSA that was provided to the HMM training methods. It is one of the fastest programs available and produces global sequence alignments for the set of sequences from a family. We developed a script to transform the MUSCLE alignment output to .ssi (STOCKHOLM) format since other MUSCLE output formats are not supported by HMMER 3.0a2.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 96,
+                    "text": "(Edgar, 2004)",
+                    "end": 109
+                }
+            ]
+        },
+        {
+            "section": "Aligning sequences with Matt",
+            "text": "For the pairwise augmented training model, and the hybrid model, we used multiple alignment with translations and twists (Matt) (Menke et al., 2008) to align the sequences based on the structure. By allowing local flexibility and allowing small translations and rotations, Matt demonstrates an ability to better align the ends of \u03b1helices and \u03b2-strands. We used Matt in default configuration for aligning the sequences in a family. Alignment based on structure is essential to determine the location of \u03b2-strands in the sequences and thus augment the dataset based on conserved residue pairs in \u03b2-strands.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 128,
+                    "text": "(Menke et al., 2008)",
+                    "end": 148
+                }
+            ]
+        },
+        {
+            "section": "Simple mutation model",
+            "text": "We used the BLOSUM62 matrix as our simple model of evolutionary mutations (Eddy, 2004). Mutations in a sequence are added by randomly picking a position in the sequence and the replacing the amino acid in that position with a new amino acid based on the BLOSUM62 probability until a desired threshold of s% mutations is reached. For each training sequence, N new mutated sequences with s% mutations are created and added to the training set. Therefore a family with 100 sequences will have 100 + N \u00d7 100 (100 original + N \u00d7 100 mutated) sequences in the training set. In this study, we create training sets with 5, 10, 15, 20 and 25% mutations per the length of sequence and tested several values of N ranging from 10-1000. We picked a value of N at the 20% mutation rate for which the results were stable (see Section 3.5).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 74,
+                    "text": "(Eddy, 2004)",
+                    "end": 86
+                }
+            ]
+        },
+        {
+            "section": "\u03b2-Strand mutation model",
+            "text": "In this step we augment the MSA with a set of sequences that are produced by mutating the original sequences in such a way that the frequency of pairs of amino acids hydrogen bonded in \u03b2-sheets resembles the frequency observed in known protein fold space. We use the pairwise conditional probability frequency tables from the recent paper of Menke et al. (2010). There are two tables, representing the in-out residue positions, respectively, for \u03b2-sheets that have one side buried and one side exposed to solvent. The tables were learned from solved protein structures in the PDB.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 342,
+                    "text": "Menke et al. (2010)",
+                    "end": 361
+                }
+            ]
+        },
+        {
+            "section": "\u03b2-Strand mutation model",
+            "text": "\u03b2\u2212Strands in the aligned set of structures are found by the program SmurfPreparse which is part of the Smurf Package (Menke, 2009;Menke et al., 2010). The program not only outputs the positions of the consensus \u03b2-strands in the alignment, it also declares a position buried or exposed based on which of the two tables is the best fit to the amino acids that appear in that position in the training data.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 117,
+                    "text": "(Menke, 2009;",
+                    "end": 130
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 130,
+                    "text": "Menke et al., 2010)",
+                    "end": 149
+                }
+            ]
+        },
+        {
+            "section": "\u03b2-Strand mutation model",
+            "text": "For each sequence in the training set, M mutated sequences with p% mutations are created and added to the training set. Here 'p' is set not to be proportional to the total length of the entire sequence, but instead to the total length of the \u03b2-strand positions in the alignment. New sequences are created as follows. Residue positions contained in \u03b2-strands are selected uniformly at random. If position 'i' is selected, its pair residue 'j' is found (note that j may appear before or after 'i' in sequence) and i is mutated according to the appropriate pairwise table, conditioned on it being hydrogen bonded to the residue of type in position 'j'. This process is repeated p times and the resulting sequence is added to the augmented training set. At the end of this process, for example, a family with 100 original sequences in the training set will have 100 + M \u00d7 100 (100 original + M \u00d7 100 mutated) sequences in the augmented training set. In this study, we set values of p that would result in training sets with 10-100% mutations (note: we allow sites to mutate more than once, for example some of the positions even a sequence with a 100% mutation rate may not end up mutated) and tested multiple values of M ranging from 10-1000. We picked a value of M at which the results were stable at the 20% mutation rate (see Section 3.5)."
+        },
+        {
+            "section": "Building the HMM",
+            "text": "In our approach, the primary steps in building the HMM remain the same except the training set is augmented with mutated sequences based on the two evolutionary models. The process is shown in Figure 1.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 193,
+                    "text": "Figure 1",
+                    "end": 201
+                }
+            ]
+        },
+        {
+            "section": "Building the HMM",
+            "text": "Two packages are widely adopted to work width profile HMMs: SAM (Hughey and Krogh, 1996) and HMMER (Eddy, 1998a, b). SAM has been demonstrated to be more sensitive overall, while HMMER's model scoring is more accurate (Wistrand and Sonnhammer, 2004). In this study we use HMMER versions 3.0a2 to evaluate the models of protein families as it is freely available and can be easily downloaded from the website. We construct HMMs from the MSAs using the hmmbuild program which is part of the HMMER package.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 64,
+                    "text": "(Hughey and Krogh, 1996)",
+                    "end": 88
+                },
+                {
+                    "type": "bibr",
+                    "start": 99,
+                    "text": "(Eddy, 1998a, b)",
+                    "end": 115
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 218,
+                    "text": "(Wistrand and Sonnhammer, 2004)",
+                    "end": 249
+                }
+            ]
+        },
+        {
+            "section": "Building the HMM",
+            "text": "In this approach, the model of the HMM is made up of a linear set of match (M) states, one per consensus column in the MSA. Each M state emits a single residue, with a probability score that is determined by the frequency that residues have been observed in the corresponding column of the MSA. Each match state therefore carries a vector of 20 probabilities, for scoring the 20 amino acids. The HMMs also model the gapped alignments by including insertion (I) and deletion (D) states in between the match states. The match, insertion and deletion states are connected by the transition probabilities. In our experiment, HMMER is used as a black box except the constraints on choosing match states are made tighter. Using default settings, HMMER creates a match state whenever a column in the MSA has <50% gaps. We found empirically in Kumar and Cowen (2009) that the default cutoff was not optimal for our datasets because homology was too remote, and creating a column whenever there are <20% gaps yielded the best HMMs on our datasets. Thus we duplicate this threshold in the current study.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 836,
+                    "text": "Kumar and Cowen (2009)",
+                    "end": 858
+                }
+            ]
+        },
+        {
+            "section": "Building the HMM",
+            "text": "By default, HMMER uses a maximum a posteriori (MAP) architecture algorithm to find the model architecture with the highest posterior probability for the alignment data. The algorithm is guaranteed to find a model and i289 constructs the model by assuming that the MSA is correct and then marks columns that correspond to match states. An HMM is created for every MSA, thus there is a one to one correspondence between an MSA and an HMM, generating a library of HMMs. Therefore, for any sequence from the MSA, the HMM can be used to determine if it belongs to the MSA. In addition, the HMM can be used to check if a new sequence is similar to the sequences in the MSA and if it is then one can place the new protein in the same family. We used the default 'glocal' setting to construct the models which are global with respect to model and find multiple hit local with respect to sequence."
+        },
+        {
+            "section": "Building the HMM",
+            "text": "In order to reduce the skewness in the distribution of sequences used to construct an HMM, HMMER supports several options to weight the sequences in training data. The default option GSC assigns lower weights to sequences that are over-represented (Gerstein et al., 1994). In addition, HMMER supports external and internal sequence weighting strategies based on information theoretic principles. Based on our study of different sequence weighting options for HMMs with and without the point mutation augmented training for the task of learning SCOP superfamilies (Kumar and Cowen, 2009) we used SAM sequence entropy (Karplus et al., 1998) throughout the present study.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 248,
+                    "text": "(Gerstein et al., 1994)",
+                    "end": 271
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 563,
+                    "text": "(Kumar and Cowen, 2009)",
+                    "end": 586
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 616,
+                    "text": "(Karplus et al., 1998)",
+                    "end": 638
+                }
+            ]
+        },
+        {
+            "section": "HMM scoring",
+            "text": "Once an HMM is build from an MSA, a new sequence can be scored by the HMM. The score (S) is the log of the probability of observing the sequence from a HMM divided by the probability of observing the same sequence from the 'null hypothesis' model or HMM."
+        },
+        {
+            "section": "HMM scoring",
+            "text": "is the probability of the target sequence according to a HMM and P(seq|null) is the probability of the target sequence given a 'null hypothesis' model of the statistics of random sequence. In HMMER, this null model is a simple one-state HMM that says that random sequences are independently and identically distributed sequences with a specific residue composition. In addition, HMMER also generates an E-value which is the expected number of false positives with a score as high as the hit sequence. While the log odd scores (S) provides information on the quality of a hit, the E-value gives a measure relative to other sequences. Therefore a lower E-value implies that the sequence matches more closely to the HMM."
+        },
+        {
+            "section": "HMM scoring",
+            "text": "After constructing an HMM, a cutoff for the score (S), or E-value, is set. A new sequence that lies within the cutoff is said to belong to the family that is associated with the HMM. Thus by varying the cutoff, the true positive and false positive rates of the classifier can be tuned. We run experiments over a range of cutoffs to generate receiver operating characteristics (ROC) plots that graph the tradeoffs of the true and false positives, as the cutoffs are tuned. We also compute the area under the ROC curve (AUC) to summarize the classifier statistic in a single number (Sonego et al., 2008).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 580,
+                    "text": "(Sonego et al., 2008)",
+                    "end": 601
+                }
+            ]
+        },
+        {
+            "section": "HMM scoring",
+            "text": "We also use average errors at minimum error point (MEP) statistics to assess the performance of HMMs. An MEP is the score threshold at which the classifier makes fewest errors of both kinds, i.e. false positives and false negatives (Karchin et al, 2002). The percentage of both types of errors provides a comparison of both sensitivity and specificity.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 232,
+                    "text": "(Karchin et al, 2002)",
+                    "end": 253
+                }
+            ]
+        },
+        {
+            "section": "HMM stability",
+            "text": "Because our method for augmenting the training data is randomized there is a legitimate concern that any reported result might vary each time the algorithm is run. While results will in fact vary, in fact the variation decreases as N and M grow larger. We refer to the variation between different runs of the algorithm as the stability of the procedure and we empirically experimented with different values of N and M in order to ensure sufficiently consistent results. We augmented the training set with 10, 50, 100, 200, 500 and 1000 mutated sequences for each original sequence in the training set, for both pointwise and pairwise mutation models. We generated the augmented training set 40 times at 20% mutation rate for each protein family in our  training set with a different random seed and constructed the HMMs as described above. For each HMM, we computed the MEP for each iteration. Figure 2 shows the variation in the SD of the MEP for the single mutation model, and Figure 3 shows the variation in the SD of the MEP for the pairwise mutation model. Based on these results we set N and M to each be 150 in this artilcle.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 894,
+                    "text": "Figure 2",
+                    "end": 902
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 979,
+                    "text": "Figure 3",
+                    "end": 987
+                }
+            ]
+        },
+        {
+            "section": "RESULTS",
+            "text": "As described in Section 3.1, our dataset consisted of the 41 SCOP families from the 'mainly beta' section of SCOP hierarchy, each of which had at least 10 structures, after filtering at the 95% sequence identity level and for which between 1 and 50 sequences in their associated SCOP superfamily but outside the SCOP family existed. In each of the 41 cases, the training set was derived from the training sequences from the SCOP family, and the test set consisted of the sequences outside the SCOP family from the same SCOP superfamily (the positive examples) as well as an equal number of decoy sequences chosen randomly from outside the associated SCOP fold (the negative examples). For each SCOP family in the training set, we trained an ordinary HMM model and plotted the ROC curve and calculated the AUC for this task. Over all 41 families, the median AUC was 69%. We then augmented the training set with the point mutation model (Fig. 4), our new pairwise \u03b2-sheet model (Fig. 5) and using training sequences generated from both models simultaneously (Fig. 6). Figure 4 displays how the median AUC varies with the pointwise mutation rate. Similar to Kumar and Cowen, 2009, the median AUC improves by training set augmented with simulated evolution all the way up to just above a 15% mutation rate, which gives a median AUC improvement of 3.72%. When we look at the same statistics for the pairwise mutation model in Figure 5, the results are less linear with a peak 3.94% improvement at the 10% mutation rate and maximum median AUC improvement of 4.79%. Combining both types of augmented data it is the first peak of pairwise mutations combined with pointwise mutation rate of 15% that give the maximum median AUC for our experiment, an AUC improvement of 4.95%. However, the variance in different runs of this randomized procedure might mean that the best setting is sometimes here and sometimes closer to the second highest peak in Figure 6 (around 50% pairwise mutations).",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 935,
+                    "text": "(Fig. 4)",
+                    "end": 943
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 976,
+                    "text": "(Fig. 5",
+                    "end": 983
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1056,
+                    "text": "(Fig. 6",
+                    "end": 1063
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1066,
+                    "text": "Figure 4",
+                    "end": 1074
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 1155,
+                    "text": "Kumar and Cowen, 2009",
+                    "end": 1176
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1421,
+                    "text": "Figure 5",
+                    "end": 1429
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1939,
+                    "text": "Figure 6",
+                    "end": 1947
+                }
+            ]
+        },
+        {
+            "section": "RESULTS",
+            "text": "Finally in Figures 7 (pointwise) and 8 (pairwise), we break down the increase and decrease in AUC as a function of mutation rate family by family. Most families show some positive increase in AUC in all augmented training models, but for around a fifth of the families performance degrades for the pointwise mutation model. The non-linearity in the median AUC as a function of mutation rate in the pairwise mutation model is partially explained by examining the proportion of families where performance improves versus degrades in Figure 8. In particular, performance degrades for <25% of the families at the 10% pairwise mutation rate, but this jumps up to 25% or more thereafter. Meanwhile the families where AUC improves with pairwise mutations shows a peak improvement level between 40 and 50% mutation rate.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 531,
+                    "text": "Figure 8",
+                    "end": 539
+                }
+            ]
+        },
+        {
+            "section": "RESULTS",
+            "text": "It would be nice if there was a biological characterization of what families will have improved versus degraded AUC with pairwise mutated augmented training data. However, in this study, the biological variation is almost certainly swamped by the variation we see due to the different extent varying families within the same    superfamily are represented among solved structures in the PDB and hence the size and diversity of our test sets, as well as the difficulty of the different random decoy structures that were chosen when we constructed our datasets. Although the present study cannot therefore address exactly how to tune mutation rate parameters on a per family level, it is clear from our results that out pairwise mutation model is successful in improving the detection of remote homologs of \u03b2-structural motifs. While we cannot make any strong conclusions, we did find, as a general rule, that the pairwise mutations helped the most when there was the smallest diversity in the training sequences at a family level, that is, when there were the fewest number of known families for a given superfamily."
+        },
+        {
+            "section": "DISCUSSION",
+            "text": "We have shown how pairwise dependencies in \u03b2-sheets can be incorporated into an augmented HMM training set using simulated evolution, resulting in improved recognition of \u03b2-structural motifs. Our datasets, augmented training sets, and our HMMs are all available online at http://bcb.cs.tufts.edu/pairwise/."
+        },
+        {
+            "section": "DISCUSSION",
+            "text": "In the present work, it was assumed that the structural information was available for sequences in the training set; thus structural information was used to construct the multiple sequence alignment, to locate \u03b2-strands, and to determine how the \u03b2-strands were hydrogen bonded into \u03b2-sheets. However, ordinary HMMs and our earlier, simpler, point mutation model of simulated evolution require only sequence information, not structure. Extending our work to the case where no solved protein strcuture is known is an interesting open question. Secondary-structure prediction programs (Rost, 2001) could be used to find \u03b2-strands, but determining how they are paired and hydrogen bonded is a much more difficult issue. Computationally predicting how \u03b2-strands are paired in the absence of structural information is a well-studied problem since 1995 (Cheng and Baldi, 2006;Hubbard and Park, 1995;Jeong et al., 2007;Steward and Thornton, 2002;Zhu and Braun, 1999). Recent work that has tried to computationally model transmembrane \u03b2-barels (Waldispuhl et al., 2008) and \u03b2-amyloids (Bryan et al., 2009) without a structural template may also be relevant.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 582,
+                    "text": "(Rost, 2001",
+                    "end": 593
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 846,
+                    "text": "(Cheng and Baldi, 2006;",
+                    "end": 869
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 869,
+                    "text": "Hubbard and Park, 1995;",
+                    "end": 892
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 892,
+                    "text": "Jeong et al., 2007;",
+                    "end": 911
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 911,
+                    "text": "Steward and Thornton, 2002;",
+                    "end": 938
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 938,
+                    "text": "Zhu and Braun, 1999)",
+                    "end": 958
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 1035,
+                    "text": "(Waldispuhl et al., 2008)",
+                    "end": 1060
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 1076,
+                    "text": "(Bryan et al., 2009)",
+                    "end": 1096
+                }
+            ]
+        },
+        {
+            "section": "ACKNOWLEDGEMENTS",
+            "text": "The authors thank Matt Menke for help with SmurfParse. They thank Michael Baym, Noah Daniels and Charlie O'Donnell for helpful discussions."
+        },
+        {
+            "text": "Funding: National Institutes of Health grant 1R01GM080330-01A1 (to L.C.)."
+        },
+        {
+            "text": "Conflict of Interest: none declared."
+        }
+    ]
+}

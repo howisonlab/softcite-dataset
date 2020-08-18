@@ -1,0 +1,949 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Contrary to frequent recommendations of the public finance literature and international institutions, a persistently high tax wedge on labor is observed in Europe. Simultaneously, the scope for shifting taxes to more growth-friendly revenue sources appears underused. This motivates our simulation of a tax shift from labor to property for Germany, a country where property tax revenues are particularly low and the tax wedge on labor income is among the highest in industrialized countries. We simulate a reform where property is no longer taxed by its (often) outdated cadastral value but by its market value, using the additional revenue to reduce social insurance contributions (SIC). To make such a simulation possible, we match property-related information with the input data of the tax-benefit microsimulation model EUROMOD. We find a considerable increase in property tax revenues, allowing to reduce the implicit tax rate on labor from 37.2 to 36.5%. Distributive effects tend to be modest and depend on the design of the SIC reduction. Overall, our results suggest that more households would gain than lose from the tax shift, with gainers mostly situated in the middle of the income distribution."
+        }
+    ],
+    "body_text": [
+        {
+            "section": "Introduction",
+            "text": "A high implicit tax rate on labor is often said to be detrimental to growth and employment (e.g., Arnold et al. 2011;Myles 2009). In general, the literature suggests that taxes levied on consumption or property are less distortionary and growth-harming than those levied on corporate or labor income (Mankiw et al. 2009;Slemrod 1990). Despite these findings, the scope for shifting taxes to more growth-friendly revenue sources appears underused in many countries. For instance, various institutions have frequently advised European governments to augment growth potentials by shifting the tax burden away from labor to other tax bases such as property (e.g., European Council 2015;OECD 2014;IMF 2013). Germany in particular has been identified as a country which makes only little use of property taxes, 1 while having a high implicit tax rate on labor (see Fig. 1). At the same time, the distribution of income and wealth has become more uneven in many advanced economies (including Germany) over the past few decades, and finding better ways to tax affluent households is back on the policy agenda of many governments (Atkinson and Piketty 2010;Peichl et al. 2010;Bach et al. 2009). Property constitutes the quantitatively most important wealth asset of German households, and the development of real estate prices has been found a crucial component of observed wealth inequalities (Lindner 2015).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 98,
+                    "text": "Arnold et al. 2011;",
+                    "end": 117
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 117,
+                    "text": "Myles 2009)",
+                    "end": 128
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 300,
+                    "text": "(Mankiw et al. 2009;",
+                    "end": 320
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 320,
+                    "text": "Slemrod 1990",
+                    "end": 332
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 660,
+                    "text": "European Council 2015;",
+                    "end": 682
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 682,
+                    "text": "OECD 2014;",
+                    "end": 692
+                },
+                {
+                    "type": "bibr",
+                    "start": 692,
+                    "text": "IMF 2013)",
+                    "end": 701
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 859,
+                    "text": "Fig. 1",
+                    "end": 865
+                },
+                {
+                    "type": "bibr",
+                    "start": 1121,
+                    "text": "(Atkinson and Piketty 2010;",
+                    "end": 1148
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 1148,
+                    "text": "Peichl et al. 2010;",
+                    "end": 1167
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1167,
+                    "text": "Bach et al. 2009)",
+                    "end": 1184
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 1385,
+                    "text": "(Lindner 2015)",
+                    "end": 1399
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The use of outdated cadastral values to determine property tax liabilities is commonly said to be an important reason why revenues from taxing property are so low in Germany (Spahn 2004). Indeed, the current valuation of real estate defining the property tax base dates back to 1964 in Western Germany and to 1935 in Eastern Germany. Various scholars have argued for a revaluation of such cadastral values, but no reform has been carried out (e.g., Bl\u00f6chliger 2015;F\u00e4rber et al. 2014). Similar situations with very outdated cadastral values determining property tax liability can be found in several other European countries (Andrews et al. 2011).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 174,
+                    "text": "(Spahn 2004)",
+                    "end": 186
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 449,
+                    "text": "Bl\u00f6chliger 2015;",
+                    "end": 465
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 465,
+                    "text": "F\u00e4rber et al. 2014)",
+                    "end": 484
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 625,
+                    "text": "(Andrews et al. 2011)",
+                    "end": 646
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Our study first simulates a property tax reform for Germany in which the tax base is no more defined by the cadastral value but by the market value of the property. To assess distributional consequences, we study changes in pre-and post-reform property tax liabilities as well as in disposable income across the income distribution. This relates to the literature recommending to look at both income and wealth when interested in distributive effects (e.g., Peichl and Pestel 2013). 2 Further, we simulate two revenueneutral scenarios in which the additional tax receipts are used to finance a reduction in social insurance contributions on labor income.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 458,
+                    "text": "Peichl and Pestel 2013",
+                    "end": 480
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Simulating such a policy reform is difficult since there exists no data source which provides information on both current property tax liability and the actual market value of the property. 3 However, the HFCS (Household Finance and Consumption Survey)"
+        },
+        {
+            "section": "Introduction",
+            "text": "1 \"Property taxes \" in this paper describe recurrent levies on immovable real estate owned by private households, i.e., excluding transaction taxes as well as property taxes on corporate assets. 2 Please note that we desist from constructing a multidimensional measure as an indicator for affluence or living standards but combine detailed information of a household's property wealth with disaggregated income measures in order to conduct our policy simulations. 3 Only in its survey of 1988, the German Socio-Economic Panel (SOEP) asked respondents about the cadastral and market values of their main household residence. However, three shortcomings make the use of the ECB provides extensive information regarding the value of properties owned. In addition, the EU-SILC survey (European Union Statistics on Income and Living Conditions) contains information on property taxes currently paid. In order to conduct our simulation, we match the two representative survey microdatasets. Performing a number of validity checks we show that especially on a more aggregate level such as household income deciles, the matched dataset preserves the properties of the original HFCS dataset sufficiently well.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 464,
+                    "text": "3",
+                    "end": 465
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The matched dataset is then used to simulate a property tax reform that applies current market values instead of cadastral values. In a first scenario, we assess the potential revenue gain induced by the use of up-to-date property values. Next, we simulate a revenue-neutral scenario in which the additional revenue is used to lower social insurance contributions (SIC) via a lump sum SIC credit. As a third scenario, we simulate a proportional reduction of social insurance contributions, again under revenue neutrality. All simulations are carried out using EUROMOD-the tax-benefit microsimulation model for EU member states. It allows us to evaluate changes in households' disposable income induced by the different scenarios. Our baseline simulations focus on first-order effects of the three reform scenarios. In addition, we also discuss the relevance of second-order effects in our context, and provide robustness checks in the Appendix accounting for potential labor supply responses."
+        },
+        {
+            "section": "Introduction",
+            "text": "From a budgetary perspective, our simulations suggest that the revenue from property taxation would rise from currently e 5.8 bil. to e 16.3 bil. This additional revenue would allow a reduction of the implicit tax rate on labor from currently 37.2 to 36.5%. Examining distributive effects, our results first indicate that the (average) percentage increase in the property tax liability is roughly constant across the income distribution of property owners. Hence, the relative size of the property tax liability across the income distribution of homeowners is by and large preserved. Second, when examining the effect of the proposed update of cadastral values (again without redistributing the additional revenue) across the entire income distribution, we find that the relative change in disposable income varies little across income deciles. Thus, an update of cadastral values without using the additional revenue to lower the tax burden on labor would render such a reform virtually neutral in terms of redistribution."
+        },
+        {
+            "section": "Introduction",
+            "text": "Finally, we turn toward the two revenue-neutral scenarios in which the additional tax receipts are used to lower the tax burden on labor income. We find that when a lump sum SIC credit is granted, all household deciles would gain in disposable income except for the top three ones. In contrast, when using the additional revenue for a proportional reduction of social insurance contributions, the effect on disposable income is small and relatively similar across the income distribution. In sum, we find for both scenarios that more households would gain than lose from the tax shift, with gainers mostly situated in the middle of the income distribution."
+        },
+        {
+            "section": "Introduction",
+            "text": "Footnote 3 continued of this joint observation impractical. First, the information dates back to 1988, and property values have changed substantially since then. Second, SOEP only collected ordinal measures of market value. Third and most importantly, information on property is only available for the main household residence and not for any other real estate owned."
+        },
+        {
+            "section": "Introduction",
+            "text": "Our results relate to the existing literature in a number of ways. First, several proposals have been made to increase tax revenues from wealth and property (e.g., Bach et al. 2014;Piketty 2014). Our paper adds to this literature by assessing the revenue potential of an important policy tool, namely an up-to-date valuation of the property tax base. As mentioned above, outdated cadastral values determine property tax liability not only in Germany but also in several other European countries, making our results also relevant for other jurisdictions (see OECD 2014; Andrews et al. 2011). Furthermore, previous authors have pointed out that the redistributive element of the German property tax in its current form is rather limited (Bach and Schratzenstaller 2013). Our results support this view and indicate that this would not be substantially different once cadastral values are updated. In fact, our findings suggest that the potential for redistribution (if desired by the legislator) depends on the simultaneous reduction of the tax burden on labor.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 164,
+                    "text": "Bach et al. 2014;",
+                    "end": 181
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 181,
+                    "text": "Piketty 2014)",
+                    "end": 194
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 569,
+                    "text": "Andrews et al. 2011)",
+                    "end": 589
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 735,
+                    "text": "(Bach and Schratzenstaller 2013)",
+                    "end": 767
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In addition, our results speak to the literature analyzing the distributive effects of tax shifts from labor income toward other tax bases such as consumption (e.g., Pestel and Sommer 2017). So far, little empirical work has been dedicated to property tax related simulations, mostly driven by data limitations. A notable exception is Moscarola et al. (2015), assessing labor market reactions to a property and labor tax reform in Italy. In a similar vein, Figari et al. (2017) investigate the fiscal and distributional consequences of including homeowners' imputed rent in personal taxable income as a kind of property tax for six European countries. Using up-to-date property values to determine property taxes could be regarded as an important complement (and maybe even as a substitute depending on the specific design) to housing income taxation. Finally, Kuypers et al. (2017) currently create a EUROMOD input database directly from the HFCS dataset. Their approach aims at broadening the scope of EUROMOD by including information on wealth from HFCS, but they do not combine this with EU-SILC data. The novelty of our paper is the creation of a new dataset via statistical matching that allows analyses regarding two variables which have never been jointly observed, namely the current property tax liability and the actual market value of the property. Our approach may potentially be extended to other European countries covered by EUROMOD, providing a fruitful avenue for further research.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 166,
+                    "text": "Pestel and Sommer 2017)",
+                    "end": 189
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 335,
+                    "text": "Moscarola et al. (2015)",
+                    "end": 358
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 457,
+                    "text": "Figari et al. (2017)",
+                    "end": 477
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 861,
+                    "text": "Kuypers et al. (2017)",
+                    "end": 882
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The remainder of this paper is organized as follows: Sect. 2 illustrates the institutional background of property taxes in Germany. Section 3 describes the matching procedure which combines the two datasets. An analysis of the quality and validity of the matched dataset is provided in Sect. 4. The simulated tax reform and its distributional and revenue effects are described in Sect. 5. The final section contains a conclusive discussion of our results."
+        },
+        {
+            "section": "Motivation and institutional background",
+            "text": "As stressed above, Germany appears to have considerable scope to reform the valuation of property used for property taxation. Basic cross-country comparable descriptives underpin this view. Figure 1 illustrates large disparities across EU-28's member states with regard to revenue from property taxes and the implicit tax rate (ITR) on labor. Revenues from property taxes are comparatively low for Germany (0.44% of GDP vs. 1.5% in EU-28). At the same time, the ITR on labor in Germany is above average (37.2 vs. 36.1% in EU-28). So far, several attempts to reform German property taxation have been made, e.g., an overhaul of the Grundsteuer was part of the national Reform Program 2014 and 2015 but put on hold hitherto. As a consequence, the current valuation of property dates back to 1964 in Western Germany and to 1935 in Eastern Germany. Back then, rateable values 4 were assessed on the basis of capitalized gross returns (i.e., rental income) or, in the case of owner-occupied dwellings, on the basis of construction costs (for details see Spahn 2004). The original intention of the legislature was to update the property value on a regular basis, but this was never put into practice. 5 To make cadastral values comparable, even new buildings, sales or improvements in existing buildings are rated as if they were built several decades ago. Hence, the tax valuations of German properties differ substantially from current market values. 6 In sum, the link between the property tax liability based on outdated cadastral values and the actual market value of the real estate is very weak (Wissenschaftlicher Beirat BMF 2010).",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 190,
+                    "text": "Figure 1",
+                    "end": 198
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 1049,
+                    "text": "Spahn 2004",
+                    "end": 1059
+                },
+                {
+                    "type": "bibr",
+                    "start": 1195,
+                    "text": "5",
+                    "end": 1196
+                },
+                {
+                    "type": "bibr",
+                    "start": 1447,
+                    "text": "6",
+                    "end": 1448
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "start": 1616,
+                    "text": "Beirat BMF 2010)",
+                    "end": 1632
+                }
+            ]
+        },
+        {
+            "section": "Motivation and institutional background",
+            "text": "From a policy perspective, two reasons render a reform of the current property tax system in Germany important and hence our simulation relevant. First, a sunset clause in the German Finanzausgleich-an equalization payment in the German multilevel government-makes its reorganization inevitable by the end of 2018. Since it is often argued that reforms of property tax regimes should be linked to reforms of intergovernmental fiscal frameworks (e.g., Devereux et al. 2007), we consider the sunset clause as a window of opportunity for an overhaul of property taxation in Germany. Second, two pertinent constitutional complaints (BvR 639/11 and 1 BvR 889/12) are currently pending before the Federal Constitutional Court. The court has to decide whether the continued failure to conduct a general reassessment of property values violates the equality-of-treatment clause of the constitution.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 451,
+                    "text": "Devereux et al. 2007)",
+                    "end": 472
+                }
+            ]
+        },
+        {
+            "section": "Description of the data used for the simulation",
+            "text": "This paper is based on HFCS and EU-SILC data. The European Union Statistics on Income and Living Conditions (SILC) is a representative survey coordinated by Eurostat that encompasses rich information on income, benefits and taxes, including property taxes paid. Its main limitation is the lack of information on household wealth. In contrast, the Eurosystem Household Finance and Consumption Survey (HFCS) provides detailed data on assets and liabilities, including the (self-assessed) value of real estates households own. 7 In line with Lindner (2015) and Zhan (2015), we find real estate as the quantitatively most important wealth component of German households. Summary statistics on the two main variables of interest are presented in Table 1. Finally, both surveys contain a number of overlapping variables which we will use below for the matching procedure.",
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "start": 741,
+                    "text": "Table 1",
+                    "end": 748
+                }
+            ]
+        },
+        {
+            "section": "Methodology of statistical matching",
+            "text": "Statistical matching aims to create a dataset from different sources which do not contain the same units. The difference to record linkage, which uses, e.g., social security numbers to link identical units, is that statistical matching combines similar ones (R\u00e4ssler 2002). Statistical matching in our context allows for imputing the property value Y from HFCS (donor) to SILC (recipient) via a number of appropriate matching 6 Already in 1992 German fiscal authorities executed a comparison of selling prices with underlying cadastral values and found a ratio of ca. 5 to 1 (Bach and Bartholmai 2002). 7 Due to non-response, the most affluent households are likely to be underrepresented in the HFCS. This issue can be addressed by assuming that the upper tail of the wealth distribution approximates a Pareto distribution (Vermeulen 2016). However, this approach is not applicable for subordinate wealth components such as real estate. Importantly, real estate has been found one of the most accurately reported subordinate wealth components in HFCS, with a ratio of reported values in HFCS compared to national accounts amounting to 86% (Eurosystem Household Finance and Consumption Network 2013). Other property e 264,924 e 678,954 e 115,000 \"Tax liability\" stands for the annual property tax liability paid for all owned immovable properties. \"Main residence\" displays the value of the main household residence. \"Other property\" represents the value of other properties than the main residence. Source: Own calculations based on sample of property owners in German HFCS and SILC, respectively",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 258,
+                    "text": "(R\u00e4ssler 2002)",
+                    "end": 272
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 575,
+                    "text": "(Bach and Bartholmai 2002)",
+                    "end": 601
+                },
+                {
+                    "type": "bibr",
+                    "start": 603,
+                    "text": "7",
+                    "end": 604
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 824,
+                    "text": "(Vermeulen 2016)",
+                    "end": 840
+                }
+            ]
+        },
+        {
+            "section": "Methodology of statistical matching",
+            "text": "variables. These matching variables should be strongly correlated with the merger variable Y and be jointly observed with (Y ) as well as (X ), i.e., appear in both datasets. Although EU-SILC does not contain property values, it does provide information on whether a household owns property and how much property tax it pays. Through the careful selection of matching variables, we can assign respondents of EU-SILC (who do own property) the approximate market value of their property. Appendix A provides a detailed description regarding the choice of appropriate matching variables we use. 8 We apply a so-called hot deck matching procedure which assigns each observation in HFCS to at least one \"nearest neighbor unit\" in SILC that is most similar with respect to the matching variables. \"Nearest\" is defined as the associated observational unit that shows the smallest distance metric based on the set of matching variables. Specifically, we transform the data into uncorrelated, standardized variables with variance equal to 1 and then compute the Euclidean distance between two vectors x and y (McLachlan 2004). Let C denote covariance matrix and the superscript T the matrix transpose, the distance between a HFCS observation",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 592,
+                    "text": "8",
+                    "end": 593
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 1100,
+                    "text": "(McLachlan 2004)",
+                    "end": 1116
+                }
+            ]
+        },
+        {
+            "section": "Methodology of statistical matching",
+            "text": "T and a SILC observation y = y 1 , y 2, y 3, . . . , y N T is then defined as:"
+        },
+        {
+            "section": "Methodology of statistical matching",
+            "text": "Since our recipient dataset (EU-SILC) is more than three times larger than our donor dataset, donor units may be used for different recipient units repeatedly. Such a marriage algorithm is known as polygamy (R\u00e4ssler 2002). If the marriage is restricted to a single spouse (monogamy), we would lose almost three quarters of our SILC observations. Hence, we opted for a n > 1 nearest neighbor match with multiple use of donor units (from HFCS). The final matched dataset we generate consists of 13,079 household observations, among which the 6629 households liable for property taxes are enriched by the market value of their properties. In the next section, we will assess the quality of the matched dataset by comparing its properties, marginal, and joint distributions to the original HFCS dataset.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 207,
+                    "text": "(R\u00e4ssler 2002)",
+                    "end": 221
+                }
+            ]
+        },
+        {
+            "section": "Assessment of the matching result",
+            "text": "In order to assess the validity of our matching procedure, we start with analyzing the consistency of the overall marginal distribution. Therefore, we follow established literature and compare the mean value of property owned per property decile between the matched dataset and the original HFCS dataset (R\u00e4ssler 2002). Visual inspection of Fig. 2 shows quite similar distributions of our matched property values. More formally, we perform a two-sample Kolmogorov-Smirnov test comparing the equality of the weighted distributions. Using this test, we cannot reject the null hypothesis that the distribution of property values in the HFCS and the matched dataset are equal.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 304,
+                    "text": "(R\u00e4ssler 2002)",
+                    "end": 318
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 341,
+                    "text": "Fig. 2",
+                    "end": 347
+                }
+            ]
+        },
+        {
+            "section": "Assessment of the matching result",
+            "text": "As a next step, we analyze the joint distributions of the matching variables and the merger variable in the original HFCS dataset and the matched dataset. Figure 10 in Appendix separately depicts the joint distribution of our merger variable-property value-with each matching variable. Visual inspection of Fig. 10 indicates similar joint distributions in both datasets. Furthermore, we perform parametric tests to detect  The null hypothesis is that the coefficients obtained from these regressions do not differ between the original HFCS dataset and the matched dataset. The first column shows results from mean regressions, while the second column is based on quantile regressions. See text for details significant differences in the joint distributions of the matching variables and the merger variable. First, we run two separate univariate regressions of property value on each matching variable. One regression uses the original HFCS dataset, while the other regression uses the matched dataset. We then perform a Wald test on the equality of the two estimated coefficients from both datasets, testing the hypothesis:",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 155,
+                    "text": "Figure 10",
+                    "end": 164
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 307,
+                    "text": "Fig. 10",
+                    "end": 314
+                }
+            ]
+        },
+        {
+            "section": "Assessment of the matching result",
+            "text": "In order to not only compare means but get a deeper understanding whether the joint distribution is preserved in the matched dataset, the same procedure is conducted using quantile regression. We estimate quantile regressions with coefficients for the 75th quantile. 9 The first column of Table 2 shows that for the mean regression, the H 0 cannot be rejected across all matching variables. Looking at the results based on quantile regressions (the second column), we continue to find no significant differences in the distribution for most of the matching variables. In sum, our results suggest that both the marginal and joint distributions in the original HFCS are sufficiently preserved in the matched dataset.",
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 289,
+                    "text": "Table 2",
+                    "end": 296
+                }
+            ]
+        },
+        {
+            "section": "Assessment of the matching result",
+            "text": "As a final step, we make use of auxiliary information to assess the quality and validity of the matched dataset. Specifically, we use the variable property (market) value at time of acquisition (which we only observe in HFCS) as an instrument for the current property tax liability (which we only observe in SILC). The idea is that for survey respondents who acquired their property around the year of the last general assessment in 1964, the variable property value at time of acquisition should be highly correlated with the cadastral value of this property and thus with the current property tax liability. Hence, we can assess the quality of our matched dataset by comparing the (post-match) rank position of the property value at the time of acquisition with the rank position of the current property tax liability of these respondents. 10 To make this quality assessment valid, we restrict our analysis to households who acquired their property around the year of the last assessment, since the (market) value at the time of acquisition should come very close to the cadastral value of the property (we set an interval of \u00b1 5 years around 1964). 11 Further, we only use households whose only property is their main residence, since property value at time of acquisition is only inquired for the dwelling the household lives in. We find around 600 households in our sample who meet these restrictions, close to 10% of our total sample. Figure 3 presents a binned scatterplot of the mean rank position of the property value at time of acquisition versus the rank position of the current property tax liability. The rank-rank relationship is almost perfectly linear, suggesting that our matching procedure assigns the underlying property value to the current tax liability reasonably well. The relationship between the two ranks is measured via a Spearman's rho and yields \u03c1 = 0.74. Given that we have no information about improvements made to the property since 1964 (which would change the cadastral value of the respective property and hence its property tax liability), we consider this a sufficiently high degree of similarity. In sum, we conclude that our matched dataset should allow for valid inferences, especially on a more aggregated level such as income deciles. In the next section, we will run our simulations on this matched dataset.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 842,
+                    "text": "10",
+                    "end": 844
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 1441,
+                    "text": "Figure 3",
+                    "end": 1449
+                }
+            ]
+        },
+        {
+            "section": "The tax-benefit model EUROMOD",
+            "text": "Our policy reform simulations are performed on EUROMOD (version G2.0), the tax-benefit microsimulation model designed for EU member states. It applies national tax-benefit policy rules to harmonized microdata and calculates their effects on household disposable income (Sutherland and Figari 2013). Unlike computable general equilibrium (CGE) approaches, the only assumptions we impose concern our proposed reform scenarios, or the elasticity of labor supply. Our approach is in the spirit of recent research, for instance on fiscal sustainability (Dolls et al. 2017), income distribution analysis (Bargain et al. 2015), or mortgage interest deductibility (Figari et al. 2017). Thus, we follow well-established simulation techniques using EUROMOD,  1964). It presents a binned scatterplot of the relationship between a household's rank position of the property value at time of acquisition and a household's rank position of the current property tax liability using our matched dataset. To construct the figure, we split observations into 20 equal-sized bins based on the rank position of the current property tax liability and plot the mean rank position of the property value at time of acquisition within each bin (the y-axis). See text for details allowing for inferences about the distributional and revenue effects of a tax shift from labor to property. The German component of EUROMOD reproducing the 2010 German tax-benefit system has been validated through comparison with aggregate statistics provided by fiscal authorities (Ochmann and Granados 2011). We run all tax-benefit policy rules at their 2010 setting and then augment the model with a simulated change in property and labor taxation. Hence, our simulation model calculates household disposable income under the current as well as the reformed tax-benefit rules holding everything else constant and, therefore, avoiding endogeneity problems (Bourguignon and Spadaro 2006).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 269,
+                    "text": "(Sutherland and Figari 2013)",
+                    "end": 297
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 548,
+                    "text": "(Dolls et al. 2017)",
+                    "end": 567
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 598,
+                    "text": "(Bargain et al. 2015)",
+                    "end": 619
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 656,
+                    "text": "(Figari et al. 2017)",
+                    "end": 676
+                },
+                {
+                    "type": "bibr",
+                    "start": 749,
+                    "text": "1964)",
+                    "end": 754
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 1534,
+                    "text": "(Ochmann and Granados 2011)",
+                    "end": 1561
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1910,
+                    "text": "(Bourguignon and Spadaro 2006)",
+                    "end": 1940
+                }
+            ]
+        },
+        {
+            "section": "The tax-benefit model EUROMOD",
+            "text": "In general, our analysis focuses on first-order effects of the simulated reform. However, there may also be second-order responses to the proposed tax policy changes. For instance, it seems plausible that the proposed reduction in social insurance contributions on labor income affects labor supply. Therefore, we provide an additional analysis in Appendix B which takes such behavioral responses into account. 12 Finally, we abstract from potential shifts of the property tax from owners onto tenants. L\u00f6ffler and Siegloch (2015) find that in the short run, the incidence of the German property tax is borne by landlords. Other scholars argue that this might also be the case in the long run (Broer 2013). More importantly, two-thirds of the property tax collected stems from owner-occupied housing, which cannot be shifted onto a third party. In addition, it has been proposed that a reformed property tax should use legal requirements to prevent shifting of the tax onto tenants (Fuest 2016).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 411,
+                    "text": "12",
+                    "end": 413
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 503,
+                    "text": "L\u00f6ffler and Siegloch (2015)",
+                    "end": 530
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 693,
+                    "text": "(Broer 2013)",
+                    "end": 705
+                }
+            ]
+        },
+        {
+            "section": "Current property taxation and the reform scenarios",
+            "text": "In this section, we provide details regarding property taxation in Germany and our proposed policy reform. In our analysis, we focus on property taxes levied on (nonagricultural) land, buildings and improvements. All legal regulations of the German property tax, i.e., the definition of the tax base, federal tax rates as well as legal norms regarding the property assessment are set at the federal level. Specifically, the German property tax is calculated as the product of three components: the cadastral value of the property, the federal tax rate and a municipality tax multiplier. Equation 2formally shows the calculation of the property tax liability:",
+            "ref_spans": [
+                {
+                    "start": 596,
+                    "text": "2",
+                    "end": 597
+                }
+            ]
+        },
+        {
+            "section": "Current property taxation and the reform scenarios",
+            "text": "Property tax = tax multiplier local * tax rate federal * rateable value 2The tax multiplier is set by the local municipality and has been raised by most German municipalities over time (L\u00f6ffler and Siegloch 2015). This reflects the attempt to at least partly offset the nominally fixed cadastral values. However, using municipality tax multipliers to offset nominally fixed cadastral values does not provide a comprehensive remedy against outdated rateable values. For instance, any adjustment of the tax multiplier occurs on the municipality level only, and hence does not account for heterogenous developments of property values within a given municipality. 13 Federal tax rates have rarely been changed over the last decades and range from 0.26 to 0.35% for West Germany and from 0.5 to 1% for East Germany. The main reason why the federal tax rate differs between West and East Germany lies in the different reference year regarding the last assessment of rateable values (1964 for West and 1935 for East Germany, respectively). Simulated property tax reform We simulate a property tax reform in which the taxable base-the rateable value-is no more defined by the cadastral value of the property but by its current market value. Since the introduction and rise of the municipality multiplier after 1964 mostly reflects the fact that cadastral values were not adjusted to inflation, we do not apply them when calculating the new property tax liability. This is consistent with the idea to simulate a situation in which current market values (instead of cadastral values) determine property taxes due, which makes the use of inflation-Footnote 12 continued given that estimated labor supply responses in Germany are modest, and the SIC reduction in our simulations is small. offsetting multipliers redundant. Using current multipliers and current market values would lead to extremely inflated estimates of the new property tax liability. In contrast, not using multipliers when calculating the new property tax liability means that our simulation presents a more conservative estimate of the potential revenue effects of such a reform. Please note that we apply federal tax rates for West Germany to our entire sample, since the reason for the higher federal rate in East Germany is the different reference year regarding the last assessment (1935 instead of 1964), which becomes obsolete when using current market values for all German properties.",
+            "ref_spans": [
+                {
+                    "start": 72,
+                    "text": "2",
+                    "end": 73
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 185,
+                    "text": "(L\u00f6ffler and Siegloch 2015)",
+                    "end": 212
+                },
+                {
+                    "type": "bibr",
+                    "start": 660,
+                    "text": "13",
+                    "end": 662
+                }
+            ]
+        },
+        {
+            "section": "Current property taxation and the reform scenarios",
+            "text": "Three reform scenarios We simulate three different scenarios in conjunction with the proposed property tax reform. While the first simulation updates the cadastral values without changing any other taxes, the other two scenarios seek to shift part of the tax burden from labor to property:"
+        },
+        {
+            "section": "Current property taxation and the reform scenarios",
+            "text": "-(1) The update of cadastral values is non-revenue neutral: In this first scenario, we estimate the additional tax revenue collected from the update of cadastral values irrespective of budget neutrality. -(2) Revenue neutrality through a lump sum SIC credit: The extra revenue from the update of cadastral values is offset by a nonrefundable lump sum SIC credit granted to all employees (all employees with positive SIC). -(3) Revenue neutrality through a proportional reduction of employees' SIC: Under this scenario, the additional revenue is used to grant a rebate that is proportional to the SIC payment of an employee. 14 The first scenario functions as a gauge for the distributive effects from the sole update of cadastral values. The second reform scenario provides a simulation that especially benefits employees at the lower end of the income distribution, where the current tax wedge is particularly large. In the third scenario, the size of the SIC rebate is more closely tied to the current SIC payment of the employee."
+        },
+        {
+            "section": "Revenue effects",
+            "text": "We start with the overall revenue effect of the proposed property tax reform. The current annual property tax liability for German households owning property equals e 345 on average. The proposed property tax reform changing from cadastral values to market values would raise this average property tax liability to e 967. This would increase the total revenue collected from property taxes substantially from currently e 5.8 bil. to e 16.3 bil. 15 The extra revenue of e 10.5 bil. raised by the proposed property tax reform represents around 1.9% of total tax revenue Germany collected in 2010. In our second scenario (2), we use this additional revenue to grant a credit on  For the average household, this would reduce annual social insurance contributions from e 6245 to e 5920. In our third scenario (3), we apply the additional revenue to grant a 5.2% rebate on the SIC payment of every employee, again under revenue neutrality.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 445,
+                    "text": "15",
+                    "end": 447
+                }
+            ]
+        },
+        {
+            "section": "Distributive effects",
+            "text": "Now we want to analyze in greater detail how the reform of the property tax and the different scenarios would affect groups of taxpayers differently. Specifically, we examine how the burden of the update of cadastral values is distributed across income deciles of (i) property owners only and (ii) the overall population. 16 (i) We start with examining changes in household budgets following the increase in property tax liability for proprietors only. that the increase in the property tax liability is relatively constant across the income distribution of proprietors with an only slightly more pronounced increase in the top five deciles. The post-reform property tax liability for each household income decile is approximately three times larger, compared to a pre-reform situation. Hence, the relative size of the property tax liability across the income distribution of homeowners is by and large preserved under the proposed reform. (ii) Next we want to study the effect of the proposed update of cadastral values across the entire income distribution (regardless of being a homeowner or not). We start with scenario (1), which is the non-revenue-neutral simulation. The bars in Fig. 5 show the change in disposable income in absolute monetary values (EUR) by disposable income decile. The negative change in income increases with household income, which is expected given that ownership rates in Germany rise substantially with income (see Fig. 11 in Appendix).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 322,
+                    "text": "16",
+                    "end": 324
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1186,
+                    "text": "Fig. 5",
+                    "end": 1192
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1448,
+                    "text": "Fig. 11",
+                    "end": 1455
+                }
+            ]
+        },
+        {
+            "section": "Distributive effects",
+            "text": "When displaying the relative income change, a different picture emerges. The triangles in Fig. 5, representing  in relative terms as affected by the update of cadastral values as richer ones. Thus, an update of cadastral values without redistributing the additional revenue would render such a reform virtually neutral in terms of redistribution. Previous authors have noted that the redistributive element of the German property tax is limited (e.g., Bach and Schratzenstaller 2013; Broer 2013). Our findings suggest that this would not change when cadastral values are updated. This motivates the analysis of our revenue-neutral reform scenarios (2) and 3, where the additional tax revenue is used to lower the tax burden on labor. Scenario (2) is a simulation in which the additional tax revenue of the proposed update of cadastral values is offset by a nonrefundable lump sum SIC credit. Such a lump sum SIC credit corresponds with a relatively high tax relief for low-income earners, whose contribution rate is reduced to a relatively greater extent. e 60 on average across the household income deciles, whereas the three top deciles loose between e 15 and e 209 on average. The triangles in Fig. 6 display the income change relative to disposable household income, ranging between + 0.43 and \u2212 0.40% for the single deciles. As a next step, we turn to our third reform scenario (3), in which the additional revenue is used to grant a rebate that is proportional to the SIC payment of an employee. Specifically, we simulate a 5.2% rebate on the social insurance contribution paid by the employee. The impetus for scenario (3) is that employees should enjoy a proportional reduction of their SIC payments. Figure 7 displays the income change relative to deciles of disposable household income under reform scenario (3). The figure indicates that the proportional rebate would have only small effects in terms of redistribution. With exception of the first decile, which clearly suffers, the average losses and gains per income decile do not exceed 0.2% of income. Similarly, absolute changes in disposable income across income deciles do not exceed e 50. In sum, it seems that middle-income households would profit to some extent from this reform scenario, whereas low-and high-income households slightly suffer. Figure 8 provides additional insights into the distributional effects of our simulations. For each of our two revenue-neutral scenarios, we now display the share of gainers and losers per disposable income decile. A household is defined as a gainer  Fig. 8 shows the result for reform scenario (2). We find more gainers than losers, with the share of losers increasing steadily with the income level. In contrast, the share of gainers is much more evenly distributed across income deciles. Turning toward scenario (3), we find again more gainers than losers, but this time losers are less concentrated in the upper part of the income distribution than under scenario (2). This mirrors our results of Fig. 7, suggesting that the proportional rebate would have only small effects regarding the income distribution. Please note the share of gainers generally exceeds the share of losers across all income deciles, except for the top income decile under scenario (2). In contrast, the mean change in disposable income is negative for three income deciles under scenario (2) (see Fig. 6) and for five income deciles under scenario (3) (see Fig. 7). Thus, we conclude that gains of the tax shift are modest but widespread, whereas losses tend to be bigger but less frequent. Finally, we want to assess overall changes in inequality associated with our three reform scenarios. For this purpose, we employ two widely used inequality indices, namely the Gini and the Atkinson with A \u03b5 = 1. In line with our previous results, we find the non-revenue-neutral scenario (1) to barely change the distribution of income (see Table 3). Regarding scenario (2), we observe a small reduction in income inequality. In contrast, scenario (3) would widen the income distribution, though only very slightly. Looking at changes in poverty thresholds (set at 60% of median disposable income), we barely find any effect of the three reform scenarios. However, this does not rule out that the proposed tax shift may generate significant gainers and losers. As the comparison of extensive margin (see Fig. 8) with the intensive margin (see Figs. 6, 7) already suggests, the worst off 1% might be affected by a considerable income shock in both scenarios (2) and (3). These scenarios could therefore potentially face opposition from asset-rich but income-poor households, which might ask for mitigating measures. This seems to be pertinent especially to the political acceptance of such a reform, given that the issue of property taxation can affect election outcomes (Bosch and Sol\u00e9-Oll\u00e9 2007).",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 90,
+                    "text": "Fig. 5, representing",
+                    "end": 110
+                },
+                {
+                    "ref_id": "formula_3",
+                    "start": 656,
+                    "text": "3",
+                    "end": 657
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1197,
+                    "text": "Fig. 6",
+                    "end": 1203
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 1709,
+                    "text": "Figure 7",
+                    "end": 1717
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 2316,
+                    "text": "Figure 8",
+                    "end": 2324
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 2566,
+                    "text": "Fig. 8",
+                    "end": 2572
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 3016,
+                    "text": "Fig. 7",
+                    "end": 3022
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 3391,
+                    "text": "Fig. 6",
+                    "end": 3397
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 3451,
+                    "text": "Fig. 7",
+                    "end": 3457
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_3",
+                    "start": 3926,
+                    "text": "Table 3",
+                    "end": 3933
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 4389,
+                    "text": "Fig. 8",
+                    "end": 4395
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 4428,
+                    "text": "Figs. 6, 7)",
+                    "end": 4439
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 4855,
+                    "text": "(Bosch and Sol\u00e9-Oll\u00e9 2007)",
+                    "end": 4881
+                }
+            ]
+        },
+        {
+            "section": "Conclusion",
+            "text": "The idea of higher taxes on land, capital and wealth to finance mounting public debt has gained ground in several OECD countries. At the same time, the scope for shifting taxes to more growth-friendly revenue sources appears underused in many European countries. This seems to be especially true for Germany, a country which makes only little use of property taxes, while at the same time having a high implicit tax rate on labor. Against this backdrop, we simulate a property tax reform for Germany which increases revenues from the taxation of property while simultaneously lowering the tax burden on labor. Changing the current property tax scheme based on outdated cadastral values to one based on market property values, we find substantial revenue effects of the proposed reform. Specifically, tax collection from private household property would increase from currently e 5.8 bil. to e 16.3 bil., allowing for an overall reduction of the implicit tax rate on Status Quo\" represents the pre-reform situation. \"Private property tax revenue\"depicts property tax revenues collected from private households, \"worst/best off 1 %\" depicts the mean percentage loss/gain in disposable income of the 1% most affected households labor from 37.2 to 36.5%. Using EU-28 cross-country levels as a comparison, this equates to an improvement of the implicit tax rate on labor by three positions. In contrast, the increase in the ratio of property tax revenue to GDP would change Germany's position by 13 places, with an after-reform level similar to Denmark's (compare Fig. 1). Examining the distributional effects of the reform on the household level, we find the update of cadastral values without using the additional revenue to lower SIC to be virtually neutral in terms of redistribution. As rich and poor households show comparable increases in the (relative) property tax burden, any potential redistribution under the proposed reform depends crucially on the design of the revenue-neutral SIC reduction. While a SIC reduction via a lump-sum tax credit would especially benefit low-income households, a SIC rebate proportional to households' current contributions would barely alter the overall distribution of disposable income. This gives policy-makers considerable scope via the specific design of such a reform.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1559,
+                    "text": "Fig. 1",
+                    "end": 1565
+                }
+            ]
+        },
+        {
+            "section": "Conclusion",
+            "text": "In light of the controversial nature of the outdated taxation of property in Germany and the apparent reluctance of policy-makers to tackle it, our paper reduces uncertainty about both revenue and distributional effects of such a reform. Depending on the exact design, our results suggest that low-and median income households could be made better off when reducing the overall tax burden on labor."
+        },
+        {
+            "section": "Conclusion",
+            "text": "We are aware that shifting taxes from labor to property is not easy to implement, especially in a federal system like Germany where property taxes accrue to local municipalities, and social insurance contributions to federal budgets. In addition, mass appraisal can be both expensive and perceived as intrusive. However, our analysis aims to inform about the fiscal and distributional effects of such a shift, which can then be mapped against institutional costs and legal constraints. While such an analysis is beyond the scope of our paper, it provides a fruitful avenue for future research."
+        },
+        {
+            "section": "Conclusion",
+            "text": "Acknowledgements Open access funding provided by Paris Lodron University of Salzburg. Parts of the paper were written during a research visit of Markus Tiefenbacher at the University of Essex and University of Antwerp. We would like to thank numerous seminar participants at Essex, Antwerp, Salzburg, WIFO Vienna and the IIPF Annual Congress 2016 for helpful comments and discussions. Financial support from the Humer Foundation and the Salzburg Centre for European Union Studies (SCEUS) is gratefully acknowledged. The research leading to these results has also received support from the European Commission's 7th Framework Programme (FP7/2013-2017) under Grant Agreement No. 312691 (InGRID-Inclusive Growth Research Infrastructure Diffusion). The results presented here are based on EUROMOD version G2.0. EUROMOD is maintained, developed and managed by the Institute for Social and Economic Research (ISER) at the University of Essex, in collaboration with national teams from the EU member states. We are indebted to the many people who have contributed to the development of EUROMOD. The process of extending and updating EUROMOD is financially supported by the European Union Programme for Employment and Social Innovation \"Easi\" (2014-2020). The results and their interpretation are the authors' responsibility. They make use of microdata for Germany from the EU Statistics on Incomes and Living Conditions (EU-SILC) and the Eurosystem Household Finance and Consumption Survey (HFCS)."
+        },
+        {
+            "section": "Conclusion",
+            "text": "Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made."
+        },
+        {
+            "section": "A. Appendix A: Construction of the matched dataset",
+            "text": "The following sections provide a detailed description of the different steps taken to construct the matched dataset."
+        },
+        {
+            "section": "A.1 Coherence check of datasets",
+            "text": "Before applying statistical matching, it is important to make sure that data collection and survey design of HFCS and SILC are comparable. As a matter of fact, HFCS and EU-SILC have the same target reference population, namely all private households in Germany. Both surveys exclude all institutionalized population, i.e., people living in retirement homes, health care, religious, correctional and penal institutions. The reference units are defined as all age 16+ members currently living in the same household. Reference point for balance sheet items is in both surveys the date of interview. Interviews for EU-SILC were held between May 2010 and November 2010. The field work for HFCS data was conducted from September 2010 to July 2011. Both surveys use the same income reference period, which is 2009. Finally, due to the potential nonresponse bias, HFCS tries to oversample wealthier households. In contrast, SILC does not apply such oversampling. However, it is important to note that for Germany, we find one of the best data coherence between HFCS and EU-SILC among the 15 euro area countries regarding potential matching variables. For instance, the median annual gross income differs by less than e 100. This small difference in median annual gross income despite oversampling might reflect the very limited oversampling of HFCS in Germany. Oversampling in Germany was only based on geographic information about the distribution of taxable income, whereas other countries applied much more rigorous oversampling based on, e.g., wealth tax records. In sum, we conclude that regarding target population, household definition and reference period, the two survey designs appear to be sufficiently coherent to allow statistical matching."
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "As mentioned in the main text, the careful selection of the matching variables is crucial when using statistical matching (Little and Rubin 2014). In the spirit of the stepwise approach of Leulescu and Agafitei (2013), we apply the following three key steps to choose appropriate matching variables:",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 122,
+                    "text": "(Little and Rubin 2014)",
+                    "end": 145
+                }
+            ]
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "First, we carry out a data reconciliation process to correct variable discrepancies of HFCS and SILC due to the use of different technical definitions or variable concepts. For instance, we harmonize potential matching variables when their scale of measure differs. Sometimes such harmonization is not possible when the level of detail and accuracy lie far apart. In such cases, we do not consider these variables for the matching procedure. 19   Table 4 provides a comprehensive summary of the reconciliation process and a list of the common set of variables from both surveys.",
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_4",
+                    "start": 447,
+                    "text": "Table 4",
+                    "end": 454
+                }
+            ]
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "Second, it is important that the common set of variables (i.e., our potential matching variables), which appear both in HFCS and SILC, show similar distributions. We apply Hellinger Distance (HD), a measure to evaluate similarity of variable distribution of two different datasets (Webber and Tonki 2013;Eurostat 2013). Equation 3assesses the similarity/dissimilarity between donor HFCS and recipient SILC for each potential matching variable. A HD value of 0 can be interpreted as perfect similar and a value of 1 as perfect discrepancy. As commonly stated in the literature, an HD of over 5% raises concerns about the similarity in marginal distributions (e.g., Leulescu and Agafitei 2013).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 281,
+                    "text": "(Webber and Tonki 2013;",
+                    "end": 304
+                },
+                {
+                    "type": "bibr",
+                    "start": 304,
+                    "text": "Eurostat 2013)",
+                    "end": 318
+                },
+                {
+                    "ref_id": "formula_3",
+                    "start": 329,
+                    "text": "3",
+                    "end": 330
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 664,
+                    "text": "Leulescu and Agafitei 2013)",
+                    "end": 691
+                }
+            ]
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "V is the donor dataset (HFCS) and V the recipient dataset (SILC), K is the total number of cells in a contingency table, n Di is the frequency of cell i in donor data D, n Ri is the frequency of cell i in recipient data R, and N is the total size of the specific contingency table."
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "We calculate HD metrics on a truncated dataset. To be more precise, only HFCS units that own property are taken into account as only this subsample is liable to property taxation. This restriction reduces noise as it prevents the matching of property values to households not liable for property taxation. In a similar vein, we also restrict the recipient file to observations liable to property taxes. Figure 9 indicates that for quite some variables, the HD metric is below 5%. For instance, most of the demographic variables from both surveys show a strong degree of similarity regarding their distributions. Furthermore, total household (gross) income and contributions to private pension plans are very similar across both surveys. More importantly, variables capturing whether a person has rental income or tenure status are very evenly distributed in both surveys. Unsurprisingly, relatively low similarity is found for variables measuring welfare transfers. All other variables exceeding the 5% threshold are not used for the matching, as this would introduce noise to our analysis. Additional tests comparing weighted means by using simple t tests confirm our selection of suitable variables based on the HD metrics (results available upon request).",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 403,
+                    "text": "Figure 9",
+                    "end": 411
+                }
+            ]
+        },
+        {
+            "section": "A.2 Identification of matching variables",
+            "text": "As a third step, we want to test the explanatory power of the set of common variables which fulfill the condition of coherence and similarity of distributions (i.e., all variables not exceeding the 5% threshold in Fig. 9). According to D'Orazio et al. (2006), common variables for matching should be selected on the basis that they significantly explain the variation in the merger variable Y , that is the value of properties owned. As standard in the literature, the null hypothesis of no association between common variables and market value of property is tested. We run Rao-Scott tests, a correction of Chi-squared tests for contingency tables when the estimated cell proportions are derived from survey data (Rao and Scott 1981). In order to also provide a measure of strength of association between two variables, the Pearson correlation coefficients  Fig. 9 Comparing extensive margins of common variables. Notes: Hellinger Distance metrics for common coherent variables with reference line at 0.05. For further information on variables abbreviations, we refer to Table 4 in Appendix. Source: Own calculations based on sample of property owners in German HFCS and SILC, respectively  Tests of independence-dichotomized for continuous variables-cover Pearson's and likelihood-ratio Chisquared, both corrected for the survey design with the second-order correction of Rao and Scott (1981). Pairwise correlation coefficients are calculated allowing for sample design. Significance levels are based on survey-based variance estimates, with * and ** indicating significance at 5 and 1% levels, respectively are calculated. Table 5 shows results for the Rao-Scott test and Pearson correlation coefficient. 20 As depicted, 13 of the 19 variables that have been found to be similarly distributed across both surveys are also significantly correlated with our merger variable Y . When regressing the market value of property owned (= Y ) on such 13 variables, we obtain a R 2 of 0.64. Hence, based on overall coherence, similar distributions and sufficient predictive power, we select these 13 variables for statistical matching. Table 6 provides an overview of all variables considered for statistical matching, with the 13 variables finally selected for statistical matching shaded in gray (Figs. 10, 11).  use stylized values of labor supply elasticities estimated for Germany in order to account for second-order distributional consequences. We use values of 0.25 for female couples, 0.15 for male couples and 0.2 for singles, as reported in Bargain et al. (2014). The elasticities are estimated applying a flexible discrete choice model where couples are assumed to maximize a joint utility function over a discrete set of working hour choices. The utility function is specified to account for fixed costs of work, labor market restrictions, and preference heterogeneity with respect to age, the presence and number of children as well as unobserved heterogeneity components. We draw on their elasticity estimates, distinguished by sex and marital status. We then apply these elasticities in our simulations to infer the additional labor supply (and hence, labor income) of German households for our reform scenarios (2) and (3). 21 For the sake of simplicity and due to missing estimates, we assume the responses to be constant across income groups. Figures 12 and 13 replicate Figs. 6 and 7 from the main text, this time accounting for labor supply second-order adjustments. Since both reform scenarios lower the tax burden on labor, we find that on average households respond positively in terms of labor supply and gross income. For instance, when accounting for second-order effects, also the third highest income decile now gains on average reform scenarios (2) (see Fig. 6 and 6 for comparison). Overall, however, the differences to our baseline estimates are small. The additional gain in disposable income when accounting for second-order responses ranges between 0.01 and 0.12% across income deciles. Hence, the differences between our first-and second-order results appear to be small and do not qualitatively change our interpretation. This seems not surprising, given that estimated labor supply responses for Germany are modest (Bargain et al. 2014), and the SIC reduction in terms of annual income in our simulation is small. 22 If anything, accounting for labor supply responses turns more households into gainers when simulating our reform scenarios, making our first-order baseline a somewhat conservative estimate. Finally, Figs. 14 and 15 summarize the main distributional results under reform scenario (2) and (3). They contrast first-order results as depicted in Figs. 6 and 7 with results when accounting for behavioral responses as shown in Figs. 12 and 13, respectively. ",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 214,
+                    "text": "Fig. 9",
+                    "end": 220
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 236,
+                    "text": "D'Orazio et al. (2006)",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 714,
+                    "text": "(Rao and Scott 1981)",
+                    "end": 734
+                },
+                {
+                    "type": "figure",
+                    "start": 859,
+                    "text": "Fig. 9",
+                    "end": 865
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_4",
+                    "start": 1072,
+                    "text": "Table 4",
+                    "end": 1079
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 1374,
+                    "text": "Rao and Scott (1981)",
+                    "end": 1394
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_6",
+                    "start": 1626,
+                    "text": "Table 5",
+                    "end": 1633
+                },
+                {
+                    "type": "table",
+                    "start": 2129,
+                    "text": "Table 6",
+                    "end": 2136
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2291,
+                    "text": "(Figs. 10, 11",
+                    "end": 2304
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 2545,
+                    "text": "Bargain et al. (2014)",
+                    "end": 2566
+                },
+                {
+                    "type": "bibr",
+                    "start": 3234,
+                    "text": "21",
+                    "end": 3236
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 3355,
+                    "text": "Figures 12 and 13",
+                    "end": 3372
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 3777,
+                    "text": "Fig. 6",
+                    "end": 3783
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 4246,
+                    "text": "(Bargain et al. 2014)",
+                    "end": 4267
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 4769,
+                    "text": "Figs. 12 and 13",
+                    "end": 4784
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 17091,
+                    "text": "Spahn 2004)",
+                    "end": 17102
+                }
+            ]
+        },
+        {
+            "section": "Table 5",
+            "text": "This section provides an additional analysis which incorporates labor supply responses into our simulation. Therefore, we follow the approach of Bargain et al. (2015) and",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 145,
+                    "text": "Bargain et al. (2015)",
+                    "end": 166
+                }
+            ]
+        }
+    ]
+}

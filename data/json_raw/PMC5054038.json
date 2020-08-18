@@ -1,0 +1,903 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Studies on high-t hroughput global gene expression using microarray technology have generated ever larger amounts of systematic transcriptome data. A major challenge in exploiting these heterogeneous datasets is how to normalize the expression profiles by inter-assay methods. Different non-linear and linear normalization methods have been developed, which essentially rely on the hypothesis that the true or perceived logarithmic fold-change distributions between two different assays are symmetric in nature. However, asymmetric gene expression changes are frequently observed, leading to suboptimal normalization results and in consequence potentially to thousands of false calls. Therefore, we have specifically investigated asymmetric comparative transcriptome profiles and developed the normalization using weighted negative second order exponential error functions (NeONORM) for robust and global inter-assay normalization. NeONORM efficiently damps true gene regulatory events in order to minimize their misleading impact on the normalization process. We evaluated NeONORM's applicability using artificial and true experimental datasets, both of which demonstrated that NeONORM could be systematically applied to inter-assay and inter-condition comparisons."
+        }
+    ],
+    "body_text": [
+        {
+            "section": "Introduction",
+            "text": "Studying the cellular transcriptome and its dynamics using microarray technology has become a common application in modern biomedical research ( 1 ), and has spurred over the past two decades many novel insights into the mechanisms of gene regulation and physiopathology (2-5). Microarray technology has seen considerable advances in the number of transcripts that can be detected simultaneously as well as the precision of the measurement. Several all-in-one commercial solutions and a multitude of array scanner systems in the public domain have emerged. However, these technologic solutions often diverge in the design of the probes and the method of transcript detection, making the statistical analysis of transcriptome data challenging and non-uniform ( 6 , 7). Microarray technology cannot be used for absolute but only relative *Corresponding author. Email: arndtQihes.fr quantification of the abundance of individual transcripts (8). Obviously, this fact greatly complicates the successful analysis of microarray experiments. As for inter-assay comparisons, which hence need to be carried out for relative quantification between two different biologic samples, efficient and accurate normalization methods have to be developed (9)(10)(11).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 938,
+                    "text": "(8)",
+                    "end": 941
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 1236,
+                    "text": "(9)",
+                    "end": 1239
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 1239,
+                    "text": "(10)",
+                    "end": 1243
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 1243,
+                    "text": "(11)",
+                    "end": 1247
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In the first step, intra-assay normalization methods account for variations in print-tip quality, irregular sample distribution over the array surface, irregularities in the surface itself, camera aperture related distortions, non-linear detection-dye dynamic ranges, and (depending on the technology used) many other phenomena that contribute to technical variations for individual probes (1 0,12 , 13). Then, inter-assay normalization techniques in the optimal case capture technical variations (which are due to sample preparation, extraction, amount, or labeling), quality variations, dye related differences (2 dye setup) and vari-ations, chemical batch variations, array batch variations, and so on. If intra-array normalization methods have been successfully applied before, inter-assay normalization techniques usually require a global rescaling of the entire datasets relative to each other and thus are of homogenous nature (11 , 14).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 390,
+                    "text": "(1 0,12 , 13)",
+                    "end": 403
+                },
+                {
+                    "type": "bibr",
+                    "start": 934,
+                    "text": "(11 , 14)",
+                    "end": 943
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Many of the non-linear and basically all linear normalization methods thereby make two assumptions about the nature of the data: (I) invariance in the absolute quantity of a majority of transcripts, and (2) symmetry of the probe variation distribution (9)(10)(11)(12)(13)(14). Note that normalization methods are based solely on control probes for which synthetic transcripts are added at different moments during the experimentation, assuming analogously invariance and symmetry of the control signals. Since solely internal control based normalization fails to capture sample related technical variation and is not very robust, it is rarely used by itself. The first invariance assumption for the majority of probes, in the limit of large probe sets, seems to hold and can be biologically justified. Furthermore, this assumption is necessarily required for the principle of inter-assay normalization based on probe signals to be meaningful. The second assumption about symmetry of the probe variation distribution, which is exploited in non-discriminant averaging normalizations, cannot be justified from a biological point of view. This assumption only holds true for technical replicates generated from a single biologic sample.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 252,
+                    "text": "(9)",
+                    "end": 255
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 255,
+                    "text": "(10)",
+                    "end": 259
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 259,
+                    "text": "(11)",
+                    "end": 263
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 263,
+                    "text": "(12)",
+                    "end": 267
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 267,
+                    "text": "(13)",
+                    "end": 271
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 271,
+                    "text": "(14)",
+                    "end": 275
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Biological questions frequently pose concern about the dynamics in the transcriptome profile when comparing two different states of cell differentiation (15), or the differences and/or similarities between a physiologic and a pathologic state of a cell ( 1 6 ) . When comparing distinct physiologic situations, the symmetry assumption seems to be poorly reflecting biological reality. A multitude of biologic processes can be cited that will consequently lead to asymmetric changes in the expression profile of a cell. For instance, inherently asymmetric processes such as apoptosis or mitotic repression will lead to a majority of genes being down-regulated and only a comparatively small fraction being induced (17,18). Furthermore, due to their very different mechanistic nature, transcription activation and repression mechanisms follow distinct dynamics. Consequently, such asymmetries are frequently observed in \"real world\" data ( 19,20). Since these asymmetries are not corrected in technical and/or biological replicates, they reflect true biological variations. Most inter-assay normakmtion Geno. Prot. Bioinfo. methods do not account for such asymmetries and use non-discriminant averaging (mean, median) for normalization of these data. It is obvious that averaging methods, provided the asymmetry is of sufficient significance to exceed numerical precision, will lead to suboptimal normalization factor estimation. Such considerations, especially in the case of the so-called boutique arrays where the invariance assumption cannot be made, have lead to the development of discriminant normalization methods (21,22). Here, only either pre-defined or conditionally determined subsets of probes are used for the normalization process. For the former, either the so-called house-keeping genes that are thought to be invariant in their expression across a large number of cellular conditions, or external and synthetic probe/target pairs are added to the experimental pipeline at different points in time, and then are considered for normalization. However, such methods have significant disadvantages. The notion of a house-keeping gene is at best empiric and often circumstantial (23). Dynamic determination (no a priori assumptions made) of the probes to be considered for normalization could be a solution to this problem. Unfortunately, few methods exist for such a type of inter-assay normalization (22,24 ). Those methods, however, are either expression rank-based (22,(25)(26)(27), or depend on Statistical tests that are performed after inter-assay comparison/subtraction profiles have been calculated (14 ). Especially in view of the increasing sensitivity of some microarray solutions, analysis methods that do not or only partially consider information on individual signal variance, will lead to suboptimal statistical interpretation of the transcriptome data (9).",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 253,
+                    "text": "( 1 6 )",
+                    "end": 260
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 713,
+                    "text": "(17,",
+                    "end": 717
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 717,
+                    "text": "18)",
+                    "end": 720
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 936,
+                    "text": "( 19,",
+                    "end": 941
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 941,
+                    "text": "20)",
+                    "end": 944
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 1620,
+                    "text": "(21,",
+                    "end": 1624
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 1624,
+                    "text": "22)",
+                    "end": 1627
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 2413,
+                    "text": "(22,",
+                    "end": 2417
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 2417,
+                    "text": "24 )",
+                    "end": 2421
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 2480,
+                    "text": "(22,",
+                    "end": 2484
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 2484,
+                    "text": "(25)",
+                    "end": 2488
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 2488,
+                    "text": "(26)",
+                    "end": 2492
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 2492,
+                    "text": "(27)",
+                    "end": 2496
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 2619,
+                    "text": "(14 )",
+                    "end": 2624
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 2881,
+                    "text": "(9)",
+                    "end": 2884
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "While analyzing high-density kinetic transcriptome data for myeloid cell differentiation, we have realized that the asymmetries in the probe variance distributions did significantly compromise the median-based inter-assay normalization. We employed the novel AB1700 platform (Product Info: http://www.appliedbiosystems.com) for transcriptome analysis. As detailed in Materials and Methods, several non-linear and linear intra-assay normalization techniques were systematically and automatically applied during the primary analysis of raw image data. The resulting probe signal estimates were considered sufficiently normalized to directly proceed with inter-assay comparisons (http://www.appliedbiosystems.com) . However, when carefully analyzing the phenomenon of asymmetric probe variance distributions, we realized"
+        },
+        {
+            "section": "Introduction",
+            "text": "that additional means of inter-assay normalization were required. F'urthermore, after carefully reviewing the literature as well as the data generated by a different technology, we realized that this problem seems to be not limited to a particular technology or biologic model (19,20). Unsatisfied with existing solutions to the normalization problem, we developed a novel method, namely NeONORM, for inter-assay normalization that is insensitive to asymmetries in probe variation distributions. This study summarizes the development of NeONORM and its evaluation using synthetic test and 9eal world\" data.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 277,
+                    "text": "(19,",
+                    "end": 281
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 281,
+                    "text": "20)",
+                    "end": 284
+                }
+            ]
+        },
+        {
+            "section": "Derivation of the NeONORM error function",
+            "text": "We specifically thought to develop an inter-assay normalization method for transcriptome or similar data that overcomes the problems associated with asymmetric heavy tails in fold-change distributions (Figure 1). This method would supposedly be applied once (generally non-linear) intra-assay normalizations (such as print-tip correction) have already successfully been applied. Our central assumption in the reasoning leading up to the NeONORM method is that except for technical replicates, the common hypothesis of symmetry of fold-change distributions is not well founded for inter-assay comparisons. In order to avoid implementing several different methods specifically tailored to and distinguishing explicitly between technical replicates, biological replicates, and comparisons of truly different conditions, ideally, this novel method would also intrinsically adapt according to the nature of the inter-assay comparison. Therefore, the method would behave in the limit of technical replicates and highly symmetric fold-change distributions, which is closely similar to the existing, averaging, and linear methods such as Median normalization.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 201,
+                    "text": "(Figure 1)",
+                    "end": 211
+                }
+            ]
+        },
+        {
+            "section": "Derivation of the NeONORM error function",
+            "text": "In addition to a quadratic error function (quadratic in the signal difference x), we construct a damping function such that it would restrict the maximum contribution of a large logQ (defined as the binary logarithm of the signal quotient) on the local quadratic error (small variation Ax of z, see Figure 2A). In the limit of Ax approaching zero, the influence of the damping function should disappear. For illustration, we have sketched the product of two between the contributions of both functions, and can hence not be used. The NeONORM error function, however, approximates the multiplicative functions in the bounds of 1x1 <EP, and for 1x1 >EP, the error becomes essentially invariant (Figure 2A). Additionally, the individual contributed errors would be scaled as a function of the quality of measurement (cumulated variances over both individual signals). The formal derivation of this modified NeONORM error function can be found in the supporting online material (\"NeONORMformalism.pdf\"). In short: Damping the derivative of the quadratic error function with a Gaussian:",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 299,
+                    "text": "Figure 2A",
+                    "end": 308
+                },
+                {
+                    "type": "figure",
+                    "start": 692,
+                    "text": "(Figure 2A)",
+                    "end": 703
+                }
+            ]
+        },
+        {
+            "section": "Derivation of the NeONORM error function",
+            "text": "yields the overall error function after integration and introduction of weights: "
+        },
+        {
+            "section": "Properties of the NeONORM error function",
+            "text": "The NeONORM error function has very interesting properties with respect to the free parameter k . As can be seen in Equation 3, the entire error to be minimized is in fact a sum of individual contributing error functions err, ( u ) , each symmetrically centered at x, and scaled by w,. Sums of these individual error functions have interesting properties that shall be discussed here, referring in particular to Figure 3.",
+            "ref_spans": [
+                {
+                    "start": 125,
+                    "text": "3",
+                    "end": 126
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 412,
+                    "text": "Figure 3",
+                    "end": 420
+                }
+            ]
+        },
+        {
+            "section": "Properties of the NeONORM error function",
+            "text": "The free parameter k , which we also refer to as the \"sensitivity parameter\", has crucial influence on the shape of the total error function. For two values x, and xk, differences in their summation depending on their distance are depicted in Figure 3, where ",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 243,
+                    "text": "Figure 3",
+                    "end": 251
+                }
+            ]
+        },
+        {
+            "section": "Properties of the NeONORM error function",
+            "text": "In the second case, the saddle point is a \"wide\" minimum and indicates a bifurcation point. In the third case, two distinct minima exist, as can be easily The parameter k thus determines a border of discrimination between clusters of points: no two points that have a distance less than 2k will create distinct minima."
+        },
+        {
+            "section": "Properties of the NeONORM error function",
+            "text": "Unfortunately, at present, we are not able to derive a formal definition of k . The parameter therefore has to be empirically derived."
+        },
+        {
+            "section": "Sign plots of the first order derivatives of the NeONORM error function as visual indicators",
+            "text": "In order to further illustrate the properties of the NeONORM error function at different values for k, we plotted the first derivative over the range of -2 < a < 2 and < k < 10'. In Figure 4A, we show a sign plot (blue=negative, rcd=positive) and a 3D-surface plot of the function over the same parameter space. We compared two technical replicates generated from total RNA of HT29 cells [HT29(1) vs. HT29 2 In the upper panel, we schematize the derivatives of the individual NeONORM contributing error functions (black: probe 1, blue: probe 2 ) , and their composite (red) for different values of T at constant k (shown are the first order derivates in the normalization factor u). The lower panel displays the original functions. Only when T increases above 2, the NeONORM error function acquires two distinct minima. artificial dataset HT29(l)mod 1/4 1.5&0.15 vs. HT29 (2). In order to generate the modified dataset, a random chosen quarter of all probe signals of the HT29(1) dataset was individually multiplied with a different random value drawn from a normal distribution with p=21.5 and a=O.l*p. C . As in panel A, but only a sign plot for the second order derivative in a is shown. D. The NeONORM error function for selected increasing values for k is shown for the HT29 (1) vs. HT29(2) (upper) and the HT29(l)mod 1/4 1.5f0.15 vs. HT29(2) datasets. Note that k=0.02 is the flattest curve in both cases.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 182,
+                    "text": "Figure 4A",
+                    "end": 191
+                },
+                {
+                    "start": 406,
+                    "text": "2",
+                    "end": 407
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 872,
+                    "text": "(2)",
+                    "end": 875
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1280,
+                    "text": "(1)",
+                    "end": 1283
+                }
+            ]
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "local minima. These bifurcations process onset at multiple a over a relatively short range of k. They hence reflect the growing (with decreasing k)"
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "influence of smaller and smaller clusters of co-varying probes generating local minima in the error landscape."
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "At the limit of k approaching zero (the granularity or numerical resolution of the given data), individual probes will generate local minima in the error function, whereas in the limit of k approaching infinity, the data are \"appraised\" by the function in the same way as in the quadratic error function."
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "We then plotted the first derivative of the NeONORM error function for an inter-assay comparison where we used artificially distorted data (in order to generate asymmetry in the logQ distribution, see Materials and Methods). Briefly, the HT29(l)mod 1/4 1.5 f 0.15 dataset was generated from HT29(1) by randomly choosing a quarter of all probe signals and multiplying each of them with a factor randomly drawn from a normal distribution with a mean of 21.5 and a variance of 0.1*21.5. As becomes evident from both plots in Figure 4B, the perturbation of the underlying data generates a massive distortion in the",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 522,
+                    "text": "Figure 4B",
+                    "end": 531
+                }
+            ]
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "The multiplication of a subset of probe signals with an almost constant factor essentially subdivides the probe set into two distinct clusters. This effect is noticeable at relative large k when compared to the bifurcations observed within very symmetric data (Figure 4A). The NeONORM error function hence c a p tures strong clustering in the data. A second phenomenon can be observed in the sign plots of the artificial dataset. With decreasing k, the relative position of the global minimum of the error function shifts in a. Only at sufficiently small k , thus at sufficiently high sensitivity, the NeONORM error function returns the optimal normalization factor amin. This obviously has major implications for the choice of k.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 260,
+                    "text": "(Figure 4A)",
+                    "end": 271
+                }
+            ]
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "At the same time, it illustrates the advantage of the NeONORM method in that averaging error functions (comparable to NeONORM in the limit of k approaching infinity) return suboptimal normalization factor For further illustration purposes, we also plotted the second derivative of the NeONORM error function over the same parameter space with the unmodified HT29 data. Here, the commencement of the multiple bifurcation zone already appears at larger k (Figure 4C). In Figure 4D, we show the NeONORM error function at selected k (increasing from top to bottom) for both datasets, the unmodified (top) and modified amm.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 453,
+                    "text": "(Figure 4C)",
+                    "end": 464
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 469,
+                    "text": "Figure 4D",
+                    "end": 478
+                }
+            ]
+        },
+        {
+            "section": "_ _~~~ ~",
+            "text": "(bottom) HT29 inter-assay comparison. In the case of the asymmetric data, the appearance of a second minimum at small k is clearly visible."
+        },
+        {
+            "section": "Choosing NeONORM parameter k",
+            "text": "Since at present we are unable to derive a formal description of k, we had to empirically derive a suitable value for k. Thereby an equilibrium between two considerations had to be found. Whereas \u20acor k tending to zero the sensitivity of the NeONORM error function is maximal, the global minimum in the error function is the result of fewer and fewer probes, making the estimation of the normalization factor a less and less robust against variations and numerical inadequacy of the data. Using the artificial datasets, as well as some one hundred different experiments performed in our own laboratory, we have found that k=0.20 provides a stable estimate for amin, and should be considered the lower bound for k. The derivation of a from uk=0.20 at smaller k thereby is systematically inferior to the numerical precision imposed by the data. At the same time, k=0.20 should also.be the upper bound for k since the maximal attainable sensitivity/precision of the NeONORM method is reached. Note that k=0.20 is found close to the commencement of the bifurcation zone in almost all the data we have analyzed. The algorithmic implementation of NeONORM is capable of correctly identifying the global minimum of the error function for arbitrarily small k, thus amin is correctly estimated even within the bifurcation zone."
+        },
+        {
+            "section": "Choosing NeONORM parameter k",
+            "text": "Since we cannot rule out the possibility that k needs to be adjusted for different microarray platforms (for example, due to different precision of the numerical values), we have successfully applied the NeONORM method with k=0.20 to nine inter-assay comparisons of Affymetrix datasets (http://www.affymetrix.com). The evaluation of the NeONORM method presented below has been done at k=0.20."
+        },
+        {
+            "section": "\"Asymmetric\" test data",
+            "text": "In order to evaluate the NeONORM method, several well defined test datasets had to be acquired. First, we were looking for \"real world'' inter-assay comparisons where the fold-change distributions were as close to symmetric as possible. To this end, we decided to use two technical replicates generated in our laboratory from the total RNA extracted from HT29 cells. These technical replicates, here denominated as HT29(1) and HT29(2), share a Pear-son correlation of R=0.993, thus are indeed highly reproducible for the single biologic condition (Supporting online material: \"HT29.txt\"). In order to generate asymmetries in a controlled fashion in the fold-change distributions, the HT29( 1) dataset was modified according to two distinct procedures to generate: (1) A dataset with ever increasing perturbations at ever larger distance to a=O, and with a constant and small variance over the perturbation (Figure 5; see Materials and Methods). This dataset was used to simultaneously test the performance and the robustness of the NeONORM method. Having up to a quarter of all probe signals artificially induced with a logQ average of up to 21.5, and a con-stant <logR>/<variance> ratio of 0.1, this dataset resulted in highly significant perturbations easily detectable in the sign plots shown in Figure 5 (Supporting online material: \"HT29( 1)robustness.txt\").",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 906,
+                    "text": "(Figure 5",
+                    "end": 915
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1299,
+                    "text": "Figure 5",
+                    "end": 1307
+                }
+            ]
+        },
+        {
+            "section": "\"Asymmetric\" test data",
+            "text": "(2) A second dataset where exponentially increasing perturbations with a constant and large variance are introduced (Table 1; see Materials and Methods). For small ratios of modified probe signals f (n=-32,500 for our AB1700 data), the perturbations were very modest (Supporting online material: \"HT29(l)sensitivity.txt\"). Hence, this dataset can be used to evaluate the sensitivity of the NeONORM method at k=0.20.  In conclusion, the artificial datasets generated here to evaluate the absolute and relative performance of the NeONORM method are of high quality as the nature of the perturbations covers and exceeds the entire range of feasible naturally occurring asymmetries, and the perturbations, due to the process of how they were generated, have similar statistical properties to real experimental data.",
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 116,
+                    "text": "(Table 1",
+                    "end": 124
+                }
+            ]
+        },
+        {
+            "section": "\"Asymmetric\" test data",
+            "text": "Finally, we chose two datasets from retinoic acid (RA) treated and untreated NB4 cells obtained recently in our laboratory as an example of \"real\" biologic data (Supporting online material: \"NB4.txt\").  ( 3 1 ) . Given the nature of the activity switch, as well as the rapidness of the physiologic response, we rightly assumed that these datasets would display some degree of asymmetry in the foldchange distributions.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 203,
+                    "text": "( 3 1 )",
+                    "end": 210
+                }
+            ]
+        },
+        {
+            "section": "\"Asymmetric\" test data",
+            "text": "Note that all of these datasets had previously undergone identical multiple non-linear and linear normalization steps to account for systematic intra-assay variations before the artificial perturbations were introduced and before these data were used for evalu-ating NeONORM (see Materials and Methods)."
+        },
+        {
+            "section": "Algorithmic implement at ion of the NeONORM method",
+            "text": "Based on the above reasoning, we have developed an algorithm capable of generating and minimizing the negative second order exponential error functions used by the NeONORM method. For illustration of the algorithmic implementation, a pseudo-code description of the NeONORM algorithm is displayed in Figure 6.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 299,
+                    "text": "Figure 6",
+                    "end": 307
+                }
+            ]
+        },
+        {
+            "section": "Algorithmic implement at ion of the NeONORM method",
+            "text": "The algorithm consists of the following three steps:  number of steps and is shown to be sufficient for the described purpose."
+        },
+        {
+            "section": "Algorithmic implement at ion of the NeONORM method",
+            "text": "Step 2: For every such candidate q, the minimum m; is further approached iteratively, halving the size of the interval [xlow, xhigh]  Step 3: For every minimum m;, the actual error is calculated. The errors for all minima are compared and the mininum that belongs to the smallest error is returned.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 119,
+                    "text": "[xlow, xhigh]",
+                    "end": 132
+                }
+            ]
+        },
+        {
+            "section": "Algorithmic implement at ion of the NeONORM method",
+            "text": "Functions for calculating the cumulated error and its derivative sum up the results of corresponding functions that calculate individual error and error derivative for each gene, respectively."
+        },
+        {
+            "section": "Algorithmic implement at ion of the NeONORM method",
+            "text": "Assume there are n genes in a dataset. For every single error or derivative, n. exponentials have hence to be calculated (plus n times some basic arithmetical operations that are not regarded here). The step size d is proportional to k. So the number of exponentials to be calculated for Step 1 is proportional to n . s / k ."
+        },
+        {
+            "section": "The iterative method in",
+            "text": "Step 2 will find exactly one minimum in the given interval if at least one exists. If there exist several minima, the method will find one of them ignoring the existence of others. The method is fast, stable, and rarely requires more than 30 iterations to converge under ~o n v = l O -~ for all considered cases so far."
+        },
+        {
+            "section": "The iterative method in",
+            "text": "The algorithm was tested for k less than the numerical precision of data provided ( distinguishing more than 500 minima in the interval [-0.1 : 0.11."
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "We proceeded to evaluate the performance, robustness, and sensitivity of the NeONORM method on the different \"real world\" and artificial datasets by comparative validation of three methods, that is, inter-assay normalization by the Median, LOWESS (Locally WEighted Scatterplot Smoothing), and NeONORM methods. Figure 7 summarizes the key comparison results of the Median and NeONORM methods for the artificial datasets from Figure 5. In all the three panels of Figure 7A, frequency plots of the logQ distributions between two input sample datasets are depicted. On the unmodified HT29(1) vs. HT29(2) inter-assay comparison ( Figure 7A1), both methods perform highly similarly as expected.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 310,
+                    "text": "Figure 7",
+                    "end": 318
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 424,
+                    "text": "Figure 5",
+                    "end": 432
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 461,
+                    "text": "Figure 7A",
+                    "end": 470
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 625,
+                    "text": "Figure 7A1)",
+                    "end": 636
+                }
+            ]
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "As we have shown above formally for the NeONORM error function in the limit of large k (2 lo), the error estimate becomes virtually identical to the one obtained by Median normalization. We have furthermore contended that the NeONORM error function at k10.20 still closely resembles the quadratic error function in case of symmetric fold-change distributions ( Figure 5A). We find this assumption confirmed using the technical HT29 replicates since the normalization factors a are virtually identical for both methods (a~=0.0000, a~=-0.0045). Note that the small differences of both curves in the frequency plot are rather due to rounding differences in the bin- however, NeONORM clearly much better normalizes this dataset as well ( Figure 7A3: a~=-0.1672, a~=-0.0038). The fact that Median normalization does not lead to identical results here is due to the successively random choosing of probe subsets for modification, which, as can be easily shown, highly unlikely leads to perfectly symmetric data. Together with the initial unmodified data shown in Figure  7A1, this experiment demonstrates that NeONORM is insensitive to the presence of asymmetric heavy tails in the fold-change distributions, whereas averaging normalization methods for obvious reasons fail to correctly normalize the datasets. In Figure 7B, we look at Median ( Figure 7B1) vs. NeONORM (Figure 7B2) normalization performance on the remaining nine artificial datasets shown in Figure 5B. As before, NeONORM correctly normalizes the different datasets such that the maxima of the increasingly perturbed datasets all superimpose at logQ=O. Median normalization, in contrast, leads to maxima being gradually (as a function of the perturbation of the artificial dataset) shifted towards negative logQ values ( Figure 7B1). Figure 7B3 summarizes these -0.00601. In conclusion, the NeONORM method performs very well even on highly asymmetric data, and is robust with respect to the grade of the asymmetry [the range covered is from near zero (technical replicates shown in Figure 7A1) to a point that certainly exceeds any natural occurring gene regulatory event ( Figure 7B3)].",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 361,
+                    "text": "Figure 5A",
+                    "end": 370
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 734,
+                    "text": "Figure 7A3",
+                    "end": 744
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1057,
+                    "text": "Figure  7A1",
+                    "end": 1068
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 1308,
+                    "text": "Figure 7B",
+                    "end": 1317
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1339,
+                    "text": "Figure 7B1",
+                    "end": 1349
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 1363,
+                    "text": "(Figure 7B2)",
+                    "end": 1375
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1453,
+                    "text": "Figure 5B",
+                    "end": 1462
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1782,
+                    "text": "Figure 7B1",
+                    "end": 1792
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1795,
+                    "text": "Figure 7B3",
+                    "end": 1805
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2043,
+                    "text": "Figure 7A1",
+                    "end": 2053
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 2135,
+                    "text": "Figure 7B3)",
+                    "end": 2146
+                }
+            ]
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "In order to perform a sensitivity test of the NeONORM method, we used the second artificial test dataset. In this case, we additionally compared NeONORM performance relative to an implementation of the LOWESS algorithm (32-34). LOWFSS is a very well performing non-linear normalization method widely used for intra-and inter-assay normalization ( Ref. 12,32; see Materials and Methods). The results of the direct comparisons are summarized in Figure 8A. The three panels show histogram plots for the logQ distributions of the second artificial dataset (Table 1; see Materials and Methods) as functions of the normalization methods. As was true for the previous dataset, Median normalization results in successive \"migration\" of the distribution maximum towards negative logQ values as a function of the severity of the perturbation ( Figure 8A1). The LOWESS method seems to perform much better than Median normalization, as much as the maximum of the distribution is more stable around the logQ=O point. However, when the perturbations of the original dataset become more and more severe (here especially evident for f =1/8 and f=1/4), the maximum of the distribution also shifts towards negative logQ values, indicating that the LOWESS method cannot correct for the asymmetries in the logQ distribution. Furthermore, due to the nature of the non-linear approach, the relative stability of LOWESS at low f values is counterbalanced by a significant distortion of the data (compare characteristic peaks at the maximum or the heavy tails between all distributions and with respect to the normalization methods). By contrast, NeONORM again performs equally well on all eight conditions, with the maxima of the distributions perfectly superimposed at logQ=O. Note that due to the linear nature of the normalization operation, no distortion of the distributions occurs. In order to demonstrate the significance of the differences in normalization factor ai over this experimental series, we have generated a probe call table using arbitrary thresholds for logQ (as the nature and absolute I/* 1.5 f 0.15 VS. HT29(2); UM=-0.4774, UN= value of the thresholds do not matter), and compared the differences in logQ calls (Table 2). It is apparent from this table that NeONORM, due to more accurate normalization, is the only method that shows constant logQ< -1 calls [see column with relative values, note that variation (negative values) is due to the normal distribution properties of the random drawing of factors during the perturbation of the data]. f i rthermore, the logQ> 1 calls are proportional to the severity of the perturbation. Median normalized data, as expected by the nature of the operation, almost \"grow\" symmetrically over both thresholds, whereas LOWESS normalization generates satisfactory results for slightly biased test data and just starts to diverge significantly from NeONORM at f > 1/32. The distortion of the dataset also becomes apparent when comparing the total numbers of probe calls beyond the two thresholds.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 219,
+                    "text": "(32-34)",
+                    "end": 226
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 347,
+                    "text": "Ref. 12,32",
+                    "end": 357
+                },
+                {
+                    "type": "figure",
+                    "start": 443,
+                    "text": "Figure 8A",
+                    "end": 452
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 552,
+                    "text": "(Table 1",
+                    "end": 560
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 834,
+                    "text": "Figure 8A1",
+                    "end": 844
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 2211,
+                    "text": "(Table 2)",
+                    "end": 2220
+                }
+            ]
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "In order to further quantify the relative performance of the different normalization techniques and demonstrate the robustness of NeONORM when dealing with asymmetric microarray data, we calculated the Type I and Type I1 errors resulting from NeONORM and Median normalization methods (the latter was found to be the least appropriate method in the above assays, see Table 2) on a selection of the synthetic datasets introduced above. Since those synthetic data were generated from the HT29(1) dataset (see Materials and Methods), we can calculate the number of probe calls that should occur in a comparison with HT29(1) using the correct normalization factor a,=O. Any deviation from this calculated number is to be considered an error introduced through the normalization method that was applied. According to the nature of the false call (false positive or false negative), we can determine the type of error [incorrect rejection of a true null-hypothesis (I) or failure to reject a false zero hypothesis (11) of non-change]. Table 3 lists the results where the two types of errors were calculated as percent false calls when subtracting the four increasingly asymmetric synthetic datasets from the original HT29(1) dataset. We thereby investigated the 99% confidence interval for our zerohypothesis and set a cut-off for determining the number of probe calls at IlogQI > 1.00. Note that due to the use of random number generators when creating the synthetic files, the calculated expected probe calls are associated with a variance. Thus, only errors superior to 0.038% are significant (bold-face). In agreement with the observations made before (Table  2), NeONORM consistently outperforms Median nor- *Probe calls according to all three normalization methods are summarized for the second set of artificially generated data. Corresponding Pearson correlations are shown in Table 1. See Materials and Methods for a description of the modification procedure. abs = absolute number of probes, re1 = relative (to the first row in each column) number of probes. Parameters for LOWESS and NeONORM methods are also indicated in the header row. malization whether Type I or Type I1 error is considered. As a matter of fact, NeONORM is resistant against Type I errors even when Median normalization results in greater one percent of false p o s itive calls, which corresponds here to 386 out of a total of 32,821 probes. When very significant asymmetries are introduced (up to a quarter of all probe signals being modified), NeONORM starts to gener-ate some Type I1 errors; however, the values are still well below the Type I1 errors observed with Median normalization. NeONORM thus indeed significantly reduces the number of false calls due to inadequate or inefficient inter-assay normalization. Most importantly, NeONORM avoids Type I errors.",
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 366,
+                    "text": "Table 2",
+                    "end": 373
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_7",
+                    "start": 1028,
+                    "text": "Table 3",
+                    "end": 1035
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 1649,
+                    "text": "(Table  2)",
+                    "end": 1659
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 1878,
+                    "text": "Table 1",
+                    "end": 1885
+                }
+            ]
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "Finally, we also applied all the three normalization methods to a second \"real world\" dataset (NB4 RA 4h  *Error is expressed as percent false probe calls at the given threshold and confidence interval for the zero-hypothesis of non-change in the subtraction profiles generated when comparing the modified datasets to the original HT29( 1) dataset. Significant values are in bold type setting."
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "vs. NB4, see Materials and Methods, and also the paragraph on \"Asymmetric test data\"). As discussed above, given the nature of the physiologic response to RA, we had reasons to believe that such a dataset might be similar to some of the datasets presented in Figure 1 that show asymmetric heavy tails in the logQ distributions. Figure 8B summarizes the results we obtained by using the three normalization methods in direct comparison. In Figure 8B1, we show the first order derivative of the NeONORM error function at k=0.20 over the range from -2 < a < 2.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 259,
+                    "text": "Figure 1",
+                    "end": 267
+                },
+                {
+                    "type": "figure",
+                    "start": 328,
+                    "text": "Figure 8B",
+                    "end": 337
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 439,
+                    "text": "Figure 8B1",
+                    "end": 449
+                }
+            ]
+        },
+        {
+            "section": "Comparative validation of the NeONORM method",
+            "text": "The histogram plots of logQ distributions in Figure  8B2 recapitulate the results that were earlier obtained with the constructed test data. Median normalization leads to a very significantly shifted maximum (blue curve); LOWESS shows intermediate performance with respect to positioning of the maximum, but distorts the distribution (grey curve) when compared to NeONORM. Since these are non-controlled data (in the sense that we have not generated the asymmetry ourselves), we can only judge the relative performance. On the other hand, since the data are individually (intra-assay) median pre-normalized, the fact that the NeONORM normalization factor is close to zero [a~=-0.4106, aN=0.0000, note that aL (given the non-linear nature) cannot be directly determined, and can only be estimated by renormalizing these data with NeONORM and determining the required normalization factor aaNL, which repositions the LOWESS maximum back to superimpose exactly with the NeONORM value UUNL=-0.0399] indicates that NeONORM here again performs close to optimum. As for the artificial data in Figure 8A, we also performed the probe call test (Table 4) to demonstrate the significant impact of choice of inter-assay normal-ization on potential results of comparative studies. Interestingly, due to the compression of the data during the LOWESS normalization, this method performs most poorly on the dataset (highest number of potentially false \"down-regulated\" calls, and lowest number of \"up-regulated\" calls) when compared to the other two methods. These results clearly can only be an indication of the relative performance of the three methods, as at present we can neither establish this dataset as representative for transcriptome studies, nor estimate the number of \"down-\" and \"up-regulated\" calls we should expect. However, given the detailed analysis we have performed above using artificially (in a well-controlled manner) modified data, NeONORM is the only method that shows robustness towards asymmetric logQ distributions. Given the fact that our two distinct strategies for generating these test datasets largely cover what could be expected to occur in real biologic samples as maximal asymmetry, and show that NeONORM scales very well with the degree of asymmetry and performs perfectly well in the limit of maximal symmetric data, we can draw the conclusion that NeONORM overcomes the problems associated with the standard symmetry hypothesis in linear inter-assay normalization.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 45,
+                    "text": "Figure  8B2",
+                    "end": 56
+                },
+                {
+                    "type": "figure",
+                    "start": 1086,
+                    "text": "Figure 8A",
+                    "end": 1095
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_8",
+                    "start": 1135,
+                    "text": "(Table 4)",
+                    "end": 1144
+                }
+            ]
+        },
+        {
+            "section": "Applicability of NeONORM",
+            "text": "Since NeONORM is basically invariant to the level of asymmetry in the data, perfectly symmetric data are also processed correctly. Hence, NeONORM can be applied to any comparative inter-assay study without any a priori knowledge about, and regardless of the level of symmetry. Given their similitude in nature, NeONORM should also find its application in other functional genomics applications such as comparative genome hybridizations or ChIP-on-chip experiments, which seem even more prone to asymmetries given an even reduced dynamic range of the signal response. The same prerequisites as for microarray experiments will probably have to be met there, as non-linear intra-assay normalization methods should for similar reasons be applied first to the individual experiments."
+        },
+        {
+            "section": "Future challenges",
+            "text": "Since Finally, the integration of NeONORM with other methods of normalization deserves further interest. We clearly state that the NeONORM normalization can only be one of the several methods applied to current microarray data. However, the potential interplay of different non-linear intra-assay and linear inter-assay normalization methods does not seem to have been studied systematically yet. Potentially, a combination of particularly robust and situation/data adapted methods can be found and optimized to simplify, at a maximum of coherence, the microarray statistical analysis process."
+        },
+        {
+            "section": "Conclusion",
+            "text": "The NeONORM method overcomes a current limitation of inter-assay normalization methods in that it is robust against asymmetries in the underlying fold change distributions. Such asymmetries reflect true changes in gene expression patterns rather than systematic experimental variation. NeONORM, a nondiscriminant method, if combined with initial nonlinear intmassay normalization methods, could lead to better inter-assay normalization and thus better identification and estimation of gene regulatory phenomena in comparative transcriptome studies. all-trans FtA (Sigma) was directly applied to the culture for 4 h prior to harvesting of the cells. RNA extraction was performed using the Qiagen RNeasy method according to the manufacture's recommendations (ProdNo: 75144). Quality and quantity of the isolated total RNA was determined using an Agilent 2100 Bioanalyzer as well as standard spectre photometry."
+        },
+        {
+            "section": "Microarray technology",
+            "text": "We used the novel Applied Biosystems AB1700 (ProdNo: 4338036) oligonucleotidebased microarray technology (http://www.appliedbiosystems.com)."
+        },
+        {
+            "section": "Microarray technology",
+            "text": "For the present study, only Human Genome Survey Microarrays (V1.0, ProdNo: 4337467) were used, which contain probes for 29,918 validated human genes. Two assays with HT29 total RNA were performed as technical replicates [HT29( 1) and HT29(2)]. One assay with NB4 cells that had been treated for 4 h with RA (NB4 RA 4h) and the other from untreated NB4 cells (NB4) have further been specifically used."
+        },
+        {
+            "section": "RNA labeling, hybridization, and detection",
+            "text": "RNA labeling, hybridization, and detection were performed following the protocols supplied by Applied Biosystems together with the corresponding kits. 20 pg of total RNA sample was subjected to Chemiluminescence (CL) RT Labeling (Applied Biosystems, ProdNo: 4339628). Labeled cDNAs were then hybridized and detected (Applied Biosystems, ProdNo: 4346875)."
+        },
+        {
+            "section": "Data preprocessing and primary analysis",
+            "text": "Applied Biosystems Expression Array System Software (V1.l.l, ProdNo: 4364137) has been used to acquire the CL and fluorescence (FL) images and primary data analysis. Briefly, the primary analysis consists of the following individual operations: (1) Image correction; (2) Global and local background correctton;",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 245,
+                    "text": "(1)",
+                    "end": 248
+                }
+            ]
+        },
+        {
+            "section": "Data preprocessing and primary analysis",
+            "text": "(3) Feature normalization; (4) Spatial normalization; (5) Global normalization. Note that we renormalize the resulting data according to the median once more after having removed probes for which the Applied Biosystems Software has set flags greater than 212, indicating compromised or failed measurements (as recommended by Applied Biosystems). This secondary normalization is implemented in the ace.map suite."
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "Two artificially modified test datasets were generated by modifying the HT29(1) dataset. The modifications were carried out in order to generate asymmetries in a controlled fashion in the fold-change distributions. The general procedure for the modification can be summarized as follows:"
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "A selected dataset X of size n is modified according to three parameters:"
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "Geno. Prot. Bioinfo."
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "(1) f-the ratio of signals to be modified. Exactly"
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "Lf . nJ signals are modified;"
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "(2) p-the mean of the normal distribution from which the factor is drawn;"
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "(3) u-the variance of the normal distribution from which the factor is drawn."
+        },
+        {
+            "section": "Generation of artificially modified test dat aset s",
+            "text": "The routine is implemented in Java using the supplied pseudo random number generator and the transformation function Ijava.util.Random.next The two generated artificial datasets differ by the ratio f, the mean p, and the variance B . The first dataset shown in Figure 5B was generated at constant a=O.l*p for all combinations of f=l/16, l/s, 114 and p=0.5, 1.0, 1.5. The second dataset discussed in Tables 1 and 2 was generated with constant constant B = p, and varying f=l/256 to 1/4. Simply, the first dataset creates ever larger perturbations (with increasing f ) at ever larger distance to a=O (with increasing p ) with a constant and small variance of the perturbation. The second dataset creates exponentially increasing perturbations (with increasing f ) at a constant distance to a=O with a constant and large variance.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 261,
+                    "text": "Figure 5B",
+                    "end": 270
+                }
+            ]
+        },
+        {
+            "section": "Inter-array normalization",
+            "text": "(1) Median normalization, linear. Assuming symmetry in the fold change; after calculating the fold changes, the median is subtracted from the log2transformed signal quotients. (2) LOWESS normalization, non-linear. LOWESS is a method developed by Cleveland (33) in 1979 and since then has been frequently improved and modified. It was a p plied to microarray data analysis for the first time by Yang et  al ( 1 1 ) in 2001. For the original method, four parameters have to be specified (which normally happens more or less arbitrarily), and changes in each of them lead to different results. A suggestion for optimized parameter selection was published by Berger et a1 ( 1 2 ) in 2004. LOWESS performs very well for poorly preprocessed data. The LOWESS implementation used to compare to NeONORM is a Java port of Cleveland's original FORTRAN code from 1985 freely available (http://netlib.belllabs.com/netlib/go/lowess.f.gz), which was temporarily embedded in the ace.map platform for direct comparative testing.",
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 246,
+                    "text": "Cleveland (33)",
+                    "end": 260
+                },
+                {
+                    "type": "bibr",
+                    "start": 394,
+                    "text": "Yang et",
+                    "end": 401
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 403,
+                    "text": "al ( 1 1 )",
+                    "end": 413
+                }
+            ]
+        },
+        {
+            "section": "Inter-array normalization",
+            "text": "For the Median and NeONORM normalization methods, profiles are biased by a single additive value identical for all probes. LOWESS normalization is performed on Bland-Altman-/MA-plots and hence additionally uses the average of the log2-transformed signal values (M) corresponding to one gene and, roughly speaking, generates a bias function, possibly different for every mEM. LOWESS parameters used for all normalizations were: f=0.3; polynome order=l; iterations=2; delta=0.00001."
+        },
+        {
+            "section": "Data representation",
+            "text": "Histograms and frequency plots appearing in the figures were generated using ace.map, however, are standard means of data representation. The 3Dsurface plots in Figure 4 were rendered using gnupplot 4.0. Sign plots (blue = negative, red = positive) were rendered by an ace.map plug-in. Subtraction profiles consist of logs-transformed quotients (logQ) of signal intensities for the intersection set of the probe IDS, which were contained in the two input sample files used for the subtraction.",
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 161,
+                    "text": "Figure 4",
+                    "end": 169
+                }
+            ]
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "The authors thank Annick Lesne for very helpful comments on this work and critically reading the manuscript. All other members of the systems epigenomics group are thanked for stimulating discussions. CBcile Acquaviva is thanked for initial help with the cell culture of HT29 and NB4 cells. This"
+        },
+        {
+            "text": "Authors' contributions SN has significantly participated in the mathematical formulation of NeONORM, the generation of artificial data, the statistical data analysis, and manuscript preparation, as well as algorithmically implemented all of the three normalization methods. GB has contributed to the algorithmic implementation of NeONORM and manuscript preparation. AB has significantly participated in the mathematical formulatibn of NeONORM, the generation of artificial data, the statistical data analysis, and manuscript preparation. AB has designed and coordinated this study, and has acquired the experimental data. All authors read and approved the final manuscript."
+        },
+        {
+            "section": "Competing interests",
+            "text": "The authors have declared that no competing interests exist."
+        }
+    ]
+}
