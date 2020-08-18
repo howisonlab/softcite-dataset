@@ -102,6 +102,8 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                     self.current_entity["id"] = attrs.getValue("xml:id")
                 if "corresp" in attrs:
                     self.current_entity["id"] = attrs.getValue("corresp")
+                if "cert" in attrs:
+                    self.current_entity["cert"] = attrs.getValue("cert")
                 self.current_entity["start"] = self.currentOffset
         if name == "fileDesc":
             if attrs.getLength() != 0:
@@ -353,6 +355,8 @@ def convert_to_sentence_segments(json):
                                     new_entity_span["used"] = entity_span["used"]
                                 if "id" in entity_span:
                                     new_entity_span["id"] = entity_span["id"]
+                                if "cert" in entity_span:
+                                    new_entity_span["cert"] = entity_span["cert"]
                                 new_entity_spans.append(new_entity_span)
                         if len(new_entity_spans) > 0 and previous_start == -1:
                             sentence_structure["entity_spans"] = new_entity_spans
