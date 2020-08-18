@@ -117,7 +117,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                 self.is_origin_file = False
                 self.origin_file = self.accumulated.strip()
                 json_file_path = os.path.join(self.json_path, self.origin_file + ".json")
-                print(json_file_path)
+                #print(json_file_path)
 
                 if not os.path.isfile(json_file_path):
                     print("ERROR: no raw json file available for", self.origin_file + ".json")
@@ -126,7 +126,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                     with open(json_file_path,"r") as f:
                         grobid_json_string = f.read() 
                     self.grobid_json = json.loads(grobid_json_string, object_pairs_hook=OrderedDict)
-                    print("self.grobid_json instanciated from", json_file_path)
                 if self.doc_id is not None:
                     self.grobid_json["id"] = self.doc_id
         if name == "rs":
@@ -229,7 +228,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
 
                     if not local_match:
                         # still no match for the corpus paragraph, we report this issue
-                        print("no match in", self.origin_file)
+                        print("\nno match in", self.origin_file)
                         print(local_text)
                         self.nb_unmatched_file += 1
 
@@ -241,7 +240,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                     output_file = self.origin_file + ".json"
                 else:
                     output_file = os.path.join(self.output_path, self.origin_file + ".json")
-                print(output_file)
+                #print(output_file)
                 with open(output_file, 'w') as outfile:
                     json.dump(self.grobid_json, outfile, indent=4)
 
