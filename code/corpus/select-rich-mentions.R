@@ -135,16 +135,27 @@ sw_pub_url <- mentions_p %>%
 # 20 software mentioned with publisher and URL in PMC articles
   mutate(mention_status = "sw-pub-url") 
 
-add = as.numeric(200-tally(all_mentioned)-30)
+add_1 = as.numeric(200-tally(all_mentioned))
+add_2 = as.numeric(200-tally(all_mentioned)-30)
 
-mention_sample <- bind_rows(sw_ver_pub, sw_ver_url, sw_pub_url) %>% 
+mention_sample_1 <- bind_rows(sw_ver_pub, sw_ver_url, sw_pub_url) %>% 
   filter(article_set=="PMC") %>% 
-  sample_n(size=add, replace=FALSE) %>% 
+  sample_n(size=add_1, replace=FALSE) %>% 
   bind_rows(all_mentioned)
 
+mention_sample_2 <- bind_rows(sw_ver_pub, sw_ver_url, sw_pub_url) %>% 
+  filter(article_set=="PMC") %>% 
+  sample_n(size=add_2, replace=FALSE) %>% 
+  bind_rows(all_mentioned)
+
+set.seed(42)
+rows <- sample(nrow(mention_sample_2))
+mention_sample_2 <- mention_sample_2[rows, ]
+# repeat the same procedure for another data frame
+
 library(janitor)
-mention_sample %>% 
+mention_sample_2 %>% 
   tabyl(mention_status)
-# write to data/170_mention_sample_tasks.csv
+# write to data/*_mention_sample_tasks.csv
 # use annotation `id` to identify text!
 
