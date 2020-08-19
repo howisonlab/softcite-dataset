@@ -120,12 +120,6 @@ all_mentioned <- mentions_p %>%
   filter(article_set == "PMC")
   # 9 software mentions in PMC article set with every detail
 
-no_details <- mentions_p %>% 
-  filter(is.na(version1) & is.na(publisher1) & is.na(url)) %>% 
-  mutate(mention_status = "none") %>% 
-  filter(article_set == "PMC")
-# 1932 software mentions with no more details in PMC articles
-  
 sw_ver_pub <- mentions_p %>% 
   filter(!is.na(version1) & !is.na(publisher1)) %>% 
 # 699 software mentioned with version and publisher together in PMC articles
@@ -142,18 +136,15 @@ sw_pub_url <- mentions_p %>%
   mutate(mention_status = "sw-pub-url") 
 
 add = as.numeric(200-tally(all_mentioned)-30)
-none_sample <- no_details %>% 
-  sample_n(size=30, replace=FALSE)
 
 mention_sample <- bind_rows(sw_ver_pub, sw_ver_url, sw_pub_url) %>% 
   filter(article_set=="PMC") %>% 
   sample_n(size=add, replace=FALSE) %>% 
-  bind_rows(all_mentioned) %>% 
-  bind_rows(none_sample)
+  bind_rows(all_mentioned)
 
 library(janitor)
 mention_sample %>% 
   tabyl(mention_status)
-# write to data/200_mention_sample_tasks.csv.csv
+# write to data/170_mention_sample_tasks.csv
 # use annotation `id` to identify text!
 
