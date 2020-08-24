@@ -9,6 +9,7 @@ library(stringr)
 
 tei_doc <- read_xml("https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/data/corpus/softcite_corpus-full.tei.xml") %>% xml_ns_strip()
 
+# getting a sense of where the corpus is
 article_id <- xml_find_all(tei_doc, xpath="//fileDesc/@xml:id")
 origin_id <- xml_find_all(tei_doc, xpath="//idno[@type='origin']")
 
@@ -138,7 +139,7 @@ mismatch_list <- as_tibble_col(mismatches, column_name = "text") %>%
   select(article)
 
 # find xml:id of articles with paragraph mismatches
-article_list <- read_csv("sample-csv.csv") %>% 
+article_list <- read_csv(here("data/corpus-article-id.csv")) %>% 
   mutate(tag=str_remove(tag, "\\{http\\:\\/\\/www.tei-c.org\\/ns\\/1.0\\}")) %>% 
   filter(tag %in% c("title", "idno")) %>% 
   mutate(group_var = if_else(tag == "idno", str_sub(structure_xpath, 1, -13), str_sub(structure_xpath, 1, -8))) 
@@ -204,6 +205,7 @@ rows <- sample(nrow(mention_sample_1))
 mention_sample_1 <- mention_sample_1[rows, ]
 # repeat the same procedure for another data frame
 
+# sanity check
 library(janitor)
 mention_sample_1 %>% 
   tabyl(mention_status)
