@@ -130,7 +130,7 @@ mentions_p <- software_p %>% left_join(version_p, by="id") %>%
            if_else(article %in% pmc_id, "PMC", "Economics")) 
 
 # excluding articles missing paragraphs during JSON conversion
-mismatches <- read_lines("C:/Users/D/Documents/Academics/1-Projects/HowisonLab/softcite/softcite-dataset/code/corpus/paragraph_matching_issues.txt")
+mismatches <- read_lines(here("code/corpus/paragraph_matching_issues.txt"))
 
 mismatch_list <- as_tibble_col(mismatches, column_name = "text") %>% 
   filter(str_detect(text, "no match in")) %>% 
