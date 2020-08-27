@@ -26,6 +26,7 @@ class TEIContentHandler(xml.sax.ContentHandler):
     accumulated = ''
     currentOffset = -1
     abstract = False
+    biblio_section = False
     current_reference = None
     current_entity = None
 
@@ -90,6 +91,8 @@ class TEIContentHandler(xml.sax.ContentHandler):
                     self.current_reference["start"] = self.currentOffset
         if name == "body":
             self.document["body_text"] = []
+        if name == "listBibl":
+            self.biblio_section = True
         self.accumulated = ''
 
     def endElement(self, name):
@@ -98,7 +101,7 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.section = self.accumulated  
         if name == 'div':
             self.section = None
-        if name == "p" or name == "note" or name == 'figDesc':
+        if (name == "p" or name == "note" or name == 'figDesc') and not self.biblio_section:
             # end of paragraph 
             # note is considered as a paragraph
             if self.paragraph == None:
@@ -134,6 +137,8 @@ class TEIContentHandler(xml.sax.ContentHandler):
                 self.current_reference["end"] = self.currentOffset + len(self.accumulated)
                 self.ref_spans.append(self.current_reference)
             self.current_reference = None
+        if name == "listBibl":
+            self.biblio_section = False
 
         self.currentOffset += len(self.accumulated)
         self.accumulated = ''
