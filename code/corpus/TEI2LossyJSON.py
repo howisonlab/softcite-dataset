@@ -61,7 +61,7 @@ class TEIContentHandler(xml.sax.ContentHandler):
         if name == "head":
             # beginning of paragraph
             self.section = self.accumulated                
-        if name == "p":
+        if name == "p" or name == 'note' or name == 'figDesc':
             # beginning of paragraph
             self.paragraph = ''
             self.ref_spans = []
@@ -98,23 +98,23 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.section = self.accumulated  
         if name == 'div':
             self.section = None
-        if name == "p":
+        if name == "p" or name == "note" or name == 'figDesc':
             # end of paragraph 
+            # note is considered as a paragraph
             if self.paragraph == None:
                 self.paragraph = ''
             self.paragraph += self.accumulated
-
             local_paragraph = OrderedDict() 
-            if self.section is not None:
+            if self.section is not None and len(self.section.strip())>0:
                 local_paragraph['section'] = self.section
             local_paragraph['text'] = self.paragraph
             if len(self.ref_spans) > 0:
                 local_paragraph['ref_spans'] = self.ref_spans
-            if self.abstract:
-                self.document["abstract"].append(local_paragraph)
-            else:
-                if "body_text" in self.document:
-                    self.document["body_text"].append(local_paragraph)
+            if len(local_paragraph['text'].strip())>0:
+                if self.abstract:
+                    self.document["abstract"].append(local_paragraph)
+                elif "body_text" in self.document:
+                        self.document["body_text"].append(local_paragraph)
             self.paragraph = None
         if name == "rs":
             self.paragraph += self.accumulated
