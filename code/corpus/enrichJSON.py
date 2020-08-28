@@ -48,6 +48,8 @@ class Annotator(object):
         print("total", str(len(whitelist)), "terms")
         self.whitelist_matcher = re.compile(r'\b(?:%s)\b' % "|".join([re.escape(x) for x in whitelist]))
 
+        self.use_service = self.service_isalive()
+
     def _load_config(self, path='./config.json'):
         """
         Load the json configuration 
@@ -72,6 +74,8 @@ class Annotator(object):
                     json_doc = json.load(jsonfile, object_pairs_hook=OrderedDict)
                     new_doc = OrderedDict()
                     document_id = None
+                    if "level" in json_doc:
+                        new_doc["level"] = json_doc["level"]
                     if "id" in json_doc:
                         document_id = json_doc["id"]
                         new_doc["id"] = json_doc["id"]
@@ -149,27 +153,28 @@ class Annotator(object):
                         json.dump(new_doc, outfile, indent=4)  
 
     def software_mention_service(self, text):
-        the_url = _grobid_software_url(self.config['software_mention_host'], self.config['software_mention_port'])
-        the_url += "processSoftwareText"
-        the_data = {'text': text, 'disambiguate': 0}
-        response = requests.post(the_url, data=the_data)
         jsonObject = None
-        if response.status_code == 503:
-            print('service overloaded, sleep', self.config['sleep_time'], seconds)
-            time.sleep(self.config['sleep_time'])
-            return self.software_mention_service(text)
-        elif response.status_code >= 500:
-            print('[{0}] Server Error -'.format(response.status_code), text)
-        elif response.status_code == 404:
-            print('[{0}] URL not found: [{1}]'.format(response.status_code,the_url))
-        elif response.status_code >= 400:
-            print('[{0}] Bad Request'.format(response.status_code))
-            print(response.content )
-        elif response.status_code == 200:
-            #print('softcite succeed')
-            jsonObject = response.json()
-        else:
-            print('Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
+        if self.use_service:
+            the_url = _grobid_software_url(self.config['software_mention_host'], self.config['software_mention_port'])
+            the_url += "processSoftwareText"
+            the_data = {'text': text, 'disambiguate': 0}
+            response = requests.post(the_url, data=the_data)
+            if response.status_code == 503:
+                print('service overloaded, sleep', self.config['sleep_time'], seconds)
+                time.sleep(self.config['sleep_time'])
+                return self.software_mention_service(text)
+            elif response.status_code >= 500:
+                print('[{0}] Server Error -'.format(response.status_code), text)
+            elif response.status_code == 404:
+                print('[{0}] URL not found: [{1}]'.format(response.status_code,the_url))
+            elif response.status_code >= 400:
+                print('[{0}] Bad Request'.format(response.status_code))
+                print(response.content )
+            elif response.status_code == 200:
+                #print('softcite succeed')
+                jsonObject = response.json()
+            else:
+                print('Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
 
         '''
         if jsonObject is not None and 'mentions' in jsonObject and len(jsonObject['mentions']) != 0:
@@ -183,7 +188,7 @@ class Annotator(object):
                     if normalizedForm not in self.blacklisted:
                         new_mentions.append(mention)
             jsonObject['mentions'] = new_mentions
-        '''    
+        ''' 
         return jsonObject
 
     def service_isalive(self):
@@ -220,7 +225,7 @@ if __name__ == "__main__":
         help="path to an output directory where to write the enriched JSON file(s)")
     parser.add_argument("--config", default="./config.json", help="path to the config file, default is ./config.json") 
 
-    valid_methods = ['whitelist', 'service', 'all']
+    valid_methods = ['whitelist', 'service', 'all', 'none']
 
     args = parser.parse_args()
     method = args.method

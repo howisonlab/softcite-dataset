@@ -188,3 +188,5 @@ Using the service method, after having started the software-mention recognizer s
 
 Annotations are added with `"resp": "service"` following this method. 
 
+When the indicated method is none, `--method none`, no extra annotations are added and the text is simply converted to sentence-level text. 
+ 
