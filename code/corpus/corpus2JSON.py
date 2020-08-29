@@ -59,7 +59,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                         self.is_origin_file = True
         if name == 'TEI' or name == 'tei':
             # reinit working variable
-            self.is_origin_file = False
             self.grobid_json = None
             self.document = OrderedDict() 
             self.nb_file += 1
@@ -184,7 +183,8 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                         if ind != -1:
                             #print("match", local_text)
                             local_match = True
-                            candidate_text["text"] = local_text
+                            #candidate_text["text"] = local_text
+                            self.grobid_json["body_text"][i]["text"] = local_text
                             if "entity_spans" in para:
                                 #candidate_text["entity_spans"] = para["entity_spans"]
                                 self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
@@ -215,7 +215,8 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                     # match (so good for sub-string match)
                                     candidate_string = signature(candidate_text["text"])
                                     if textdistance.ratcliff_obershelp.similarity(local_text_simplified, candidate_string) > 0.5:
-                                        candidate_text["text"] = local_text
+                                        #candidate_text["text"] = local_text
+                                        self.grobid_json["body_text"][i]["text"] = local_text
                                         local_match = True
                                         #print("match2", local_text)
                                         if "entity_spans" in para:

@@ -38,6 +38,7 @@ def test_corpus(path_json_repo):
                                     print(os.path.join(path_json_repo, file))
                                     print(text, " -> ", entity_str, "/", entity_text, "|", entity["start"], entity["end"])
 
+                        '''
                         if references is not None:
                             for reference in references:
                                 reference_str = reference["text"]
@@ -47,7 +48,8 @@ def test_corpus(path_json_repo):
                                     print("\n")
                                     print(os.path.join(path_json_repo, file))
                                     print(text, " -> ", reference_str, "/", reference_text, "|", reference["start"], reference["end"])            
-
+                        '''
+                        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description = "Test degraded JSON format")

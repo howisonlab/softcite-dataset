@@ -62,7 +62,7 @@ optional arguments:
 
 For instance, converting the set of around 5000 Softcite corpus TEI XML files produced by Grobid from the PDF (using typically a client like the [GROBID python client](https://github.com/kermitt2/grobid-client-python)):
 
-> python3 TEI2LossyJSON.py --tei-corpus ~/tools/softcite-dataset/tei/ --output ~/tmp/
+> python3 TEI2LossyJSON.py --tei-corpus ~/tools/softcite-dataset/tei/ --output ../../data/json_raw/
 
 In these JSON files, the segmentation in paragraphs as present in the TEI XML files are preserved. 
 
@@ -95,7 +95,7 @@ optional arguments:
 
 Having produced the JSON files as indicated above (under `~/tmp/`), we can inject the Softcite corpus curated annotations into the JSON as follow:
 
-> python3 corpus2JSON.py  --tei-corpus ~/tools/softcite-dataset/data/corpus/softcite_corpus.tei.xml --json-repo ~/tmp/ --output ~/tools/softcite-dataset/data/json
+> python3 corpus2JSON.py  --tei-corpus ~/tools/softcite-dataset/data/corpus/softcite_corpus.tei.xml --json-repo ../../data/json_raw/ --output ../../data/json_goldstandard
 
 
 The script realign the annotations from the excerpts present in the corpus file into the complete JSON document and segment the paragraphs into sentences. The added annotations are present in each JSON sentence elements introduced by the `entity_spans` key.
@@ -178,15 +178,14 @@ optional arguments:
 
 The config file `config.json` contains the path to the whitelist/stoplist of software names to consider and the connection information to the software-mention service. 
 
-> python3 enrichJSON.py --method whitelist --json-repo ../../data/json --output ../../data/json2
+> python3 enrichJSON.py --method whitelist --json-repo ../../data/json_goldstandard --output ../../data/json_whitelist
 
 Annotations are added with `"resp": "whitelist"` following this method. 
 
 Using the service method, after having started the software-mention recognizer service:
 
-> python3 enrichJSON.py --method service --json-repo ~/tmp/json3 --output ~/tmp/json4  
+> python3 enrichJSON.py --method service --json-repo --json-repo ../../data/json_raw/ --output ../../data/json_service  
 
 Annotations are added with `"resp": "service"` following this method. 
 
 When the indicated method is none, `--method none`, no extra annotations are added and the text is simply converted to sentence-level text. 
- 
