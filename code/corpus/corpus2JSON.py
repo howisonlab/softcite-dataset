@@ -14,6 +14,7 @@ from TEI2LossyJSON import TEIContentHandler, convert_tei_string
 import pysbd
 import textdistance
 import re
+from nltk.tokenize.punkt import PunktSentenceTokenizer
 
 class TEICorpusHandler(xml.sax.ContentHandler):
     """ 
@@ -183,7 +184,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                         if ind != -1:
                             #print("match", local_text)
                             local_match = True
-                            #candidate_text["text"] = local_text
                             self.grobid_json["body_text"][i]["text"] = local_text
                             if "entity_spans" in para:
                                 #candidate_text["entity_spans"] = para["entity_spans"]
@@ -215,7 +215,6 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                     # match (so good for sub-string match)
                                     candidate_string = signature(candidate_text["text"])
                                     if textdistance.ratcliff_obershelp.similarity(local_text_simplified, candidate_string) > 0.5:
-                                        #candidate_text["text"] = local_text
                                         self.grobid_json["body_text"][i]["text"] = local_text
                                         local_match = True
                                         #print("match2", local_text)
@@ -285,39 +284,55 @@ def convert_to_sentence_segments(json):
 def process_text_list(seg, text_list, new_json, zone):
     for text_part in text_list:
         if "text" in text_part:
-            sentences = seg.segment(text_part["text"])
+            the_sentences = seg.segment(text_part["text"])
+            sentences = []
+            for the_span in the_sentences:
+                span = {}
+                span["start"] = the_span.start
+                span["end"] = the_span.end
+                sentences.append(span)
+            # check if result is acceptable
+            valid_segmentation = validate_segmentation(sentences)
+            if not valid_segmentation:
+                # fall back to NLTK
+                sentences = []
+                for start, end in PunktSentenceTokenizer().span_tokenize(text_part["text"]):
+                    span = {}
+                    span["start"] = start
+                    span["end"] = end
+                    sentences.append(span)
             offset_pos = 0
             # the following is to cancel a sentence segmentation because it is located in the middle of an existing span
             # if previous_start is -1, previous segmentation was correct
             previous_start = -1
             for span in sentences:
                 if previous_start != -1:
-                    span.start = previous_start
+                    span["start"] = previous_start
                     previous_start = -1
 
-                offset_pos = span.start
+                offset_pos = span["start"]
                 sentence_structure = OrderedDict()
 
-                sentence_structure["text"] = text_part["text"][span.start:span.end]
+                sentence_structure["text"] = text_part["text"][span["start"]:span["end"]]
                 if "section" in text_part:
                     sentence_structure["section"] = text_part["section"]
                 if "ref_spans" in text_part:
                     new_ref_spans = []
                     for ref_span in text_part["ref_spans"]:
                         # check if we have a segmentation in the middle of a ref span
-                        if ref_span["start"] >= offset_pos and ref_span["start"] < span.end and ref_span["end"] > span.end:
+                        if ref_span["start"] >= offset_pos and ref_span["start"] < span["end"] and ref_span["end"] > span["end"]:
                             """
                             print("\nwarning, segmentation in the middle of ref span: sentence at", 
-                                span.start, span.end, "with ref at", ref_span["start"], ref_span["end"])
-                            print("sentence:", text_part["text"][span.start:span.end])
+                                span["start"], span["end"], "with ref at", ref_span["start"], ref_span["end"])
+                            print("sentence:", text_part["text"][span["start"]:span["end"]])
                             print("ref:", text_part["text"][ref_span["start"]:ref_span["end"]])
                             print("\n")
                             """
                             # in this case, we cancel this sentence boundary
-                            previous_start = span.start
+                            previous_start = span["start"]
                             break
 
-                        if ref_span["start"] >= offset_pos and ref_span["end"] <= span.end:
+                        if ref_span["start"] >= offset_pos and ref_span["end"] <= span["end"]:
                             new_ref_span = OrderedDict()
                             new_ref_span["start"] = ref_span["start"] - offset_pos
                             new_ref_span["end"] = ref_span["end"] - offset_pos
@@ -335,19 +350,19 @@ def process_text_list(seg, text_list, new_json, zone):
                     new_entity_spans = []
                     for entity_span in text_part["entity_spans"]:
                         # check if we have a segmentation in the middle of an entity span
-                        if entity_span["start"] >= offset_pos and entity_span["start"] < span.end  and entity_span["end"] > span.end:
+                        if entity_span["start"] >= offset_pos and entity_span["start"] < span["end"]  and entity_span["end"] > span["end"]:
                             """
                             print("\nwarning, segmentation in the middle of entity span: sentence at", 
-                                span.start, span.end, "with entity at", entity_span["start"], entity_span["end"])
-                            print("sentence:", text_part["text"][span.start:span.end])
+                                span["start"], span["end"], "with entity at", entity_span["start"], entity_span["end"])
+                            print("sentence:", text_part["text"][span["start"]:span["end"])
                             print("entity:", text_part["text"][entity_span["start"]:entity_span["end"]])
                             print("\n")
                             """
                             # in this case, we cancel this sentence boundary
-                            previous_start = span.start
+                            previous_start = span["start"]
                             break
 
-                        if entity_span["start"] >= offset_pos and entity_span["end"] <= span.end:
+                        if entity_span["start"] >= offset_pos and entity_span["end"] <= span["end"]:
                             new_entity_span = OrderedDict()
                             new_entity_span["start"] = entity_span["start"] - offset_pos
                             new_entity_span["end"] = entity_span["end"] - offset_pos
@@ -369,6 +384,13 @@ def process_text_list(seg, text_list, new_json, zone):
 
                 if previous_start == -1:
                     new_json[zone].append(sentence_structure)
+
+def validate_segmentation(sentences):
+    # if we observe a sentence of more than 1500 characters, we reject the segmentation
+    for span in sentences:
+        if span["end"] - span["start"] >= 1500:
+            return False
+    return True
 
 def inject_corpus_annotations(tei_corpus_path, json_path, output_path):
     parser = make_parser()
