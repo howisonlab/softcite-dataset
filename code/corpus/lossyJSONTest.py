@@ -49,12 +49,10 @@ def test_corpus(path_json_repo):
                                     print(text, " -> ", reference_str, "/", reference_text, "|", reference["start"], reference["end"])            
 
                         # also check the length of the text segment
-                        '''
                         if len(text)>1500:
                             print("\n")
                             print(os.path.join(path_json_repo, file))
                             print("text length beyond 1500 characters:", str(len(text)), "/", text)
-                        '''
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

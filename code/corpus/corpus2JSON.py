@@ -150,10 +150,12 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                     self.document["body_text"] = []
                 self.document["body_text"].append(local_paragraph)
         if name == 'ref':
-            self.paragraph += self.accumulated.strip()
+            if self.paragraph is None:
+                self.paragraph = ""
+            self.paragraph += self.accumulated
             if self.current_reference is not None:
-                self.current_reference["text"] = self.accumulated.strip()
-                self.current_reference["end"] = self.currentOffset + len(self.accumulated.strip())
+                self.current_reference["text"] = self.accumulated
+                self.current_reference["end"] = self.currentOffset + len(self.accumulated)
                 self.ref_spans.append(self.current_reference)
             self.current_reference = None
         if name == "body":
@@ -186,11 +188,11 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                             local_match = True
                             self.grobid_json["body_text"][i]["text"] = local_text
                             if "entity_spans" in para:
-                                #candidate_text["entity_spans"] = para["entity_spans"]
                                 self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
                             if "ref_spans" in para:    
-                                #candidate_text["ref_spans"] = para["ref_spans"]
                                 self.grobid_json["body_text"][i]["ref_spans"] = para["ref_spans"]
+                            else:
+                                self.grobid_json["body_text"][i]["ref_spans"] = []
                             break
                         i += 1
                     i = 0
@@ -223,9 +225,10 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                                             self.grobid_json["body_text"][i]["entity_spans"] = para["entity_spans"]
                                         if "ref_spans" in para:    
                                             self.grobid_json["body_text"][i]["ref_spans"] = para["ref_spans"]
+                                        else:
+                                            self.grobid_json["body_text"][i]["ref_spans"] = []
                                         break
                         i += 1
-
                     if not local_match:
                         # still no match for the corpus paragraph, we report this issue
                         print("\nno match in", self.origin_file)
@@ -314,8 +317,10 @@ def process_text_list(seg, text_list, new_json, zone):
                 sentence_structure = OrderedDict()
 
                 sentence_structure["text"] = text_part["text"][span["start"]:span["end"]]
+                
                 if "section" in text_part:
                     sentence_structure["section"] = text_part["section"]
+                
                 if "ref_spans" in text_part:
                     new_ref_spans = []
                     for ref_span in text_part["ref_spans"]:
