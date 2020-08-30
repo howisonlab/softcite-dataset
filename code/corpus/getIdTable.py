@@ -61,6 +61,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             self.current_identifier[self.current_identifier_type] = self.accumulated.strip()
         if name == "body":
             # write entry
+            #print(self.current_identifier)
             doi = ""
             if "DOI" in self.current_identifier:
                 doi = self.current_identifier["DOI"]
@@ -68,8 +69,8 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             if "PMID" in self.current_identifier:
                 pmid = self.current_identifier["PMID"]
             pmcid = ""
-            if "PMCID" in self.current_identifier:
-                pmcid = self.current_identifier["PMCID"]
+            if "PMC" in self.current_identifier:
+                pmcid = self.current_identifier["PMC"]
             self.writer.writerow([self.doc_id, self.origin_file, doi, pmid, pmcid])
         if name == 'teiCorpus':
             self.output_file.close()
