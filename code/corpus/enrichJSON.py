@@ -204,7 +204,7 @@ class Annotator(object):
                 return True
         except: 
             print('Grobid software mention server does not appear up and running:',
-                'test call to grobid software mention failed, please check and re-start a server.')
+                'test call to grobid software mention failed, please check and re-start a server if you wish to use it for enrichment.')
         return False
 
 def _grobid_software_url(grobid_base, grobid_port):

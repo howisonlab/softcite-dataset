@@ -1,6 +1,47 @@
 {
+    "level": "sentence",
     "id": "ebbcac31d1",
-    "abstract": [],
+    "abstract": [
+        {
+            "text": "S imulation models, now widely used in the physical sciences, can also help economists in depicting the actions and interactions of individuals and firms through time. "
+        },
+        {
+            "text": "Such models can be built and run on any personal computer. "
+        },
+        {
+            "text": "They can illuminate a wide variety of issues that are difficult to analyze with an economist's conventional tool-kit and are especially useful in studying dynamic processes. "
+        },
+        {
+            "text": "Microsimulation models allow the analyst to produce simulated aggregate time series that are rigorously consistent with the assumptions made about behavior on the micro level. "
+        },
+        {
+            "text": "Thus, simulations provide a means of bridging the micro-macro split in economic analysis. "
+        },
+        {
+            "text": "This article provides an introduction to microsimulation: how it works, how to do it, its potential, and its drawbacks. "
+        },
+        {
+            "text": "It then allows readers, even those with no experience in computer programming, to work through the details of a simple microsimulation model. "
+        },
+        {
+            "text": "Readers can put this model on their PCs, watch it run through its paces, and experiment with their own modifications. "
+        },
+        {
+            "text": "With this model as an example, it should be fairly easy to create programs for new models on other subjects for use in theoretical exploration, empirical research, or classroom demonstrations. "
+        },
+        {
+            "text": "The demonstration model I present depicts the experience of individual workers during recession and recovery in the labor market. "
+        },
+        {
+            "text": "As the model runs, its internal \"Census Bureau\" performs surveys on the microlevel, and sums up to macrolevel variables. "
+        },
+        {
+            "text": "The model is simple, but it has some interesting applications. "
+        },
+        {
+            "text": "After explaining how to set it up, I use it to explore the effect of unemployment insurance on the level of unemployment, and to point up a common fallacy in current labor market literature."
+        }
+    ],
     "body_text": [
         {
             "text": "A diskette containing the program for the model discussed in this article, plus programs for the microsimulation models of Pryor (1973), Nelson, Winter, and Schuette (1976), and some others is available free from Member Services, Inter-university Consortium for Political and Social Research, University of Michigan, P.O. Box 1248, Ann Arbor, MI 48106. ",
@@ -1512,6 +1553,115 @@
         {
             "text": "\u2022 Much of the work underlying this paper was done while I was a member of the Department of Economics of the University of Maryland at College Park, where I was immeasurably helped by generous access to computers of all kinds.",
             "section": "Final Comments"
+        },
+        {
+            "text": "] 4 190 IF IEMPST(ICHOSE) = 0 THEN GOTO 180 [If the worker chosen in line 180 is already unemployed, go back and chose another. Otherwise, go on to the next instruction.] 200 IEMPST(ICHOSE) = 0 [Change the status of the employed worker chosen to \"unemployed.\"] 210 IDATE(ICHOSE) = IWEEK [Record the current week, IWEEK, as the date of this worker's most recent transition from employment to unemployment.]",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 288,
+                    "end": 294,
+                    "rawForm": "Record",
+                    "resp": "whitelist",
+                    "id": "ebbcac31d1-software-simple-w28"
+                }
+            ]
+        },
+        {
+            "text": "2 BASIC program of labor market simulation Micro-to-Macro Simulation 107 do the required number of run-throughs. ",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 2,
+                    "end": 7,
+                    "rawForm": "BASIC",
+                    "resp": "whitelist",
+                    "id": "ebbcac31d1-software-simple-w29"
+                },
+                {
+                    "type": "software",
+                    "start": 8,
+                    "end": 15,
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "ebbcac31d1-software-simple-w30"
+                }
+            ]
+        },
+        {
+            "text": "These tasks are accomplished in lines 140-170: 140 LEAVS = RATLV*( LABFOR -UN) [The number of persons involved in turnover (other than turnover due to a net change in the number of jobs), LEAVS, is determined. The (exogenously supplied) turnover rate, RATLV, is multiplied by the number of currently occupied job slots, LABFOR-UN.] 150 DIFEMP -NEMP(IWEEK) -NEMP(IWEEK -1) [The change since the previous week in the number of job slots employers wish to fill is computed.] 160 IF DIFEMP<0 THEN ISEP = LEAVS -DIFEMP ELSE ISEP = LEAVS [The number of persons going from employment to unemployment this week, ISEP, is calculated. ISEP is set at the number of jobs that have been vacated, LEAVS, unless there has been a net loss of jobs. If that has been the case, ISEP is increased (by subtracting a negative number) by the number of jobs lost.] 170 FOR K = 1 TO ISEP [Perform the disemployment routine ISEP times.]Then come the four steps already explained above: and the instruction that serves to mark the end of the disemployment routine: 220 NEXT K",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 1042,
+                    "end": 1046,
+                    "rawForm": "NEXT",
+                    "resp": "whitelist",
+                    "id": "ebbcac31d1-software-simple-w31"
+                }
+            ]
+        },
+        {
+            "text": "Rates and Average Durations from the Simulation Model in",
+            "section": "Figure 1 Unemployment"
+        },
+        {
+            "text": "Each week, an employed worker earns an additional eligibility credit of 1/3 of a week.",
+            "section": "["
+        },
+        {
+            "text": "] 312 IF IEMPST(IPERS) = O THEN ELIG(IPERS) = ELIG(IPERS) -1 [Each week, an unemployed person uses up one week of eligibility.] 313 IF ELIG(IPERS)>6 THEN ELIG(IPERS) = 6 [Number of weeks of eligibility cannot exceed 6.] 314 IF ELIG(IPERS)<0 THEN ELIG(IPERS) = 0 [Number of weeks of eligibility cannot be negative.]",
+            "section": "["
+        },
+        {
+            "text": "Figure 2",
+            "section": "Figure 2"
+        },
+        {
+            "text": "When a random number between 0 and 1, RND, is multiplied by LABFOR, the size of the labor force, and .5 is added, we get a real number X between .5 and LABFOR + .5. ",
+            "section": "Table 3"
+        },
+        {
+            "text": "When that number is stored in the memory space for ICHOSE, which has been marked as an integer as a result of instruction 10, BASIC rounds it off to the nearest integer. ",
+            "section": "Table 3",
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 126,
+                    "end": 131,
+                    "rawForm": "BASIC",
+                    "resp": "whitelist",
+                    "id": "ebbcac31d1-software-simple-w32"
+                }
+            ]
+        },
+        {
+            "text": "This procedure produces an ICHOSE that is an integer between 1 and LABFOR.",
+            "section": "Table 3"
+        },
+        {
+            "text": "Better initial conditions on the microeconomic level can be generated by running the simulation for a considerable number of time periods at an appropriate setting of the exogenous variables, and printing the microeconomic information about the actors into a data file at the end of the last period. ",
+            "section": "Table 3"
+        },
+        {
+            "text": "In subsequent runs, this file can be read in, and can replace lines 90-120. ",
+            "section": "Table 3"
+        },
+        {
+            "text": "If this technique is used, care must be taken to insure that the macro and micro conditions that one starts off with are consistent.6  Of course, the simulation's Census Bureau can be programmed to print the average length of completed spells. ",
+            "section": "Table 3"
+        },
+        {
+            "text": "This is a good exercise for the novice.",
+            "section": "Table 3"
+        },
+        {
+            "text": "Many of these authors also discuss the probability that the existence of unemployment insurance raises the unemployment rate in a second way-it motivates employers to conduct temporary layoffs that would not occur without it. ",
+            "section": "Table 3"
+        },
+        {
+            "text": "A simulation model that took account of that possibility might have to model employers' weighting of the likelihood of laid-off workers taking another job given the expected timing of callbacks, the firm's investment in these workers' training, and the benefits of having a large crew at times of peak load.",
+            "section": "Table 3"
         }
     ]
 }
