@@ -1,12 +1,13 @@
 ---
 title: "Softcite Processing Summary"
 author: "Fan Du"
-date: "5/30/2020"
+date: "9/11/2020"
 output: html_document
 ---
 
 This document is built in comparison with:
 https://github.com/ourresearch/software-mentions/blob/master/doc/corpus-counts.md
+
 Difference may come from differed rules used for calculation.
 
 ```{r setup, include=FALSE}
@@ -41,7 +42,7 @@ csv_articles %>%
   kable() %>% kable_styling()
 ```
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, results='hide'}
 raw_software_annotations <- csv_articles %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>% 
   filter(no_selections_found == F) %>% 
@@ -51,13 +52,13 @@ raw_software_annotations <- csv_articles %>%
   # TODO: there might be duplicated values in the fields dropped
   # make sure that every record is uniquely identified
   distinct()
-  # 6,206 annotations of software entities (selections)
+  # 6,206 annotations of software entities (i.e. unique selections)
+  # NOTE: some selections may not be uniquely identified during annotation but very rare. Estimated difference within ~10
 
 raw_software_names <- raw_software_annotations %>% 
   left_join(csv_codes, by=c("selection", "coder")) %>% 
   filter(code == "software_name") 
   # 6,208 named and non-named software annotations
-  # NOTE: some selections may not be uniquely identified during annotation but very rare. Estimated difference within ~10
 
 raw_software_attributes <- raw_software_annotations %>% 
   left_join(csv_codes, by=c("selection", "coder")) %>% 
@@ -91,8 +92,7 @@ top_annotators %>%
 # The definition of the largest run has not been clarified yet. Here I use the annotator at one particular article who produced the most annotations of software entity and attributes.
 ```
 
-```{r, echo=TRUE}
-library(xml2)
+```{r, echo=TRUE, results='hide'}
 
 tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/softcite_corpus-full.tei.xml") %>% xml_ns_strip()
 
@@ -124,8 +124,8 @@ xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
 |Raw annotation runs|6208|15718|1823|3730|5553|
 |Raw annotation largest run|5658|14426|1823|3730|5553|
 |Annotations located in PDFs|-|-|-|-|-|
-|Annotations reviewed by curator|5210|8398|1432|3544|4976|
-|Annotations edited by curator|773|1217|1432|3544|4976|
+|Annotations reviewed by curator|5170|8335|1427|3544|4971|
+|Annotations edited by curator|741|2043|1427|3544|4971|
 
 
 Notes:
