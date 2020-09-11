@@ -42,6 +42,27 @@ csv_articles %>%
   kable() %>% kable_styling()
 ```
 
+**If we start with articles that only contain software mentions (mention_type == "software")**
+
+```{r, echo=TRUE, results='hide'}
+# only within the PMC and econ article sets
+csv_articles %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  filter(no_selections_found==FALSE) %>% 
+  # identify only articles with software mentions
+  left_join(csv_mentions, by=c("article", "coder")) %>%
+  filter(mention_type=="software") %>% 
+  distinct(article)
+  # 1,495 articles annotated as containing software mentions in csv dataset
+
+csv_articles %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  filter(no_selections_found==TRUE) %>% 
+  # identify only pmc and econ articles without software mentions
+  distinct(article)
+  # 3,430 article with no software mention annotated
+```
+
 ```{r, echo=TRUE, results='hide'}
 raw_software_annotations <- csv_articles %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>% 
@@ -69,13 +90,18 @@ raw_software_attributes <- raw_software_annotations %>%
 raw_annotation_pairs <- raw_software_names %>% 
   left_join(raw_software_attributes, by=c("selection", "coder")) %>% 
   select(-code.x, -article.y, -article_set.y, -no_selections_found.y, -mention_type.y) %>% 
-  rename(article=article.x, article_set=article_set.x, no_selections_found=no_selections_found.x, mention_type=mention_type.x, named=was_code_present.x, software_name=code_label.x, attribute=code.y, was_attr_present=was_code_present.y, attr_detail=code_label.y)
+  rename(article=article.x, article_set=article_set.x, no_selections_found=no_selections_found.x, mention_type=mention_type.x, was_name_present=was_code_present.x, software_name=code_label.x, attribute=code.y, was_attr_present=was_code_present.y, attr_detail=code_label.y)
 
 top_annotators <- raw_annotation_pairs %>% 
   group_by(article, coder) %>% 
   summarise(n_anno_per_coder=sum(n_distinct(software_name)+n_distinct(attr_detail))) %>% 
   top_n(n=1, wt=n_anno_per_coder)
 # top annotator in 1,618 articles
+
+top_annotators %>% 
+  left_join(raw_annotation_pairs, by=c("article","coder")) %>% 
+  filter(attribute=="creator")
+# 1,714 creator annotated by top annotator of each article
 
 top_annotators %>% 
   left_join(raw_software_names, by=c("article", "coder")) %>% 
@@ -117,12 +143,11 @@ xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
 ```
 
 **Process summary statistics break down by steps (as of May 30, 2020):**
-(Estimated difference < ~10)
 
 |steps|software_annotation_count|annotation_total_count|articles_with_annotations|articles_with_zero_annotations|article_total_count|
 |-----|----------------------|----------------------|-------------------------|------------------------------|-------------------|
-|Raw annotation runs|6208|15718|1823|3730|5553|
-|Raw annotation largest run|5658|14426|1823|3730|5553|
+|Raw annotation runs|6208|15718|1495|3430|4925|
+|Raw annotation largest run|5658|14426|1495|3430|4925|
 |Annotations located in PDFs|-|-|-|-|-|
 |Annotations reviewed by curator|5170|8335|1427|3544|4971|
 |Annotations edited by curator|741|2043|1427|3544|4971|
@@ -130,8 +155,10 @@ xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
 
 Notes:
 
-1. Statistics in the first 2 rows are calculated from CSV data. 
-It should be noted that the definition of the largest run has not been clarified yet. Here I use the annotator at one particular article who produced the most annotations of software entity and attributes.
+1. Statistics in the first 2 rows are calculated from CSV data. Only within the PMC and econ article sets.
+article_with_annotations does not contain articles annotated as containing mentions other than the software type.
+Estimated error < ~10
 
 2. Statistics in the 4th and 5th row are queried from the current version of softcite TEI corpus.
+
 
