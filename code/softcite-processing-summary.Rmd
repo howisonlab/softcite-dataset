@@ -1,12 +1,14 @@
 ---
 title: "Softcite Processing Summary"
 author: "Fan Du"
-date: "5/30/2020"
+date: "9/11/2020"
 output: html_document
 ---
 
 This document is built in comparison with:
 https://github.com/ourresearch/software-mentions/blob/master/doc/corpus-counts.md
+
+Difference may come from differed rules used for calculation.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -24,18 +26,44 @@ csv_mentions <- read_csv(here("data/csv_dataset/softcite_in_text_mentions.csv"))
 csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
 ```
 
-```{r, include=FALSE}
+**Number of articles annotated in the CSV data:**
+```{r, echo=TRUE}
 csv_articles %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>% 
   group_by(article) %>% 
   # 5,553 articles annotated
+  #filter(codable == TRUE | is.na(codable)) %>% 
+  # 5,549 after excluding non-codable articles
+  #filter(standard_article == TRUE | is.na(standard_article)) %>% 
+  # 4,645 after excluding non-standard articles
   tabyl(no_selections_found) %>% 
   adorn_totals("row") %>% 
   adorn_pct_formatting() %>% 
   kable() %>% kable_styling()
 ```
 
-```{r, include=FALSE}
+**If we start with articles that only contain software mentions (mention_type == "software")**
+
+```{r, echo=TRUE, results='hide'}
+# only within the PMC and econ article sets
+csv_articles %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  filter(no_selections_found==FALSE) %>% 
+  # identify only articles with software mentions
+  left_join(csv_mentions, by=c("article", "coder")) %>%
+  filter(mention_type=="software") %>% 
+  distinct(article)
+  # 1,495 articles annotated as containing software mentions in csv dataset
+
+csv_articles %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  filter(no_selections_found==TRUE) %>% 
+  # identify only pmc and econ articles without software mentions
+  distinct(article)
+  # 3,430 article with no software mention annotated
+```
+
+```{r, echo=TRUE, results='hide'}
 raw_software_annotations <- csv_articles %>% 
   filter(article_set %in% c("pmc_article", "econ_article")) %>% 
   filter(no_selections_found == F) %>% 
@@ -45,7 +73,8 @@ raw_software_annotations <- csv_articles %>%
   # TODO: there might be duplicated values in the fields dropped
   # make sure that every record is uniquely identified
   distinct()
-  # 6,206 annotations of software entities
+  # 6,206 annotations of software entities (i.e. unique selections)
+  # NOTE: some selections may not be uniquely identified during annotation but very rare. Estimated difference within ~10
 
 raw_software_names <- raw_software_annotations %>% 
   left_join(csv_codes, by=c("selection", "coder")) %>% 
@@ -56,17 +85,23 @@ raw_software_attributes <- raw_software_annotations %>%
   left_join(csv_codes, by=c("selection", "coder")) %>% 
   filter(code %in% c("software_was_used", "creator", "version_date", "version_number", "url") & was_code_present == T) 
   # 9,510 annotations of software attributes
+  # 6208 + 9510 = 15718 labels in total
 
 raw_annotation_pairs <- raw_software_names %>% 
   left_join(raw_software_attributes, by=c("selection", "coder")) %>% 
   select(-code.x, -article.y, -article_set.y, -no_selections_found.y, -mention_type.y) %>% 
-  rename(article = article.x, article_set = article_set.x, no_selections_found = no_selections_found.x, mention_type = mention_type.x, named = was_code_present.x, software_name = code_label.x, attribute = code.y, was_attr_present = was_code_present.y, attr_detail = code_label.y)
+  rename(article=article.x, article_set=article_set.x, no_selections_found=no_selections_found.x, mention_type=mention_type.x, was_name_present=was_code_present.x, software_name=code_label.x, attribute=code.y, was_attr_present=was_code_present.y, attr_detail=code_label.y)
 
 top_annotators <- raw_annotation_pairs %>% 
   group_by(article, coder) %>% 
-  summarise(n_anno_per_coder = sum(n_distinct(software_name)+n_distinct(attr_detail))) %>%
-  top_n(1)
+  summarise(n_anno_per_coder=sum(n_distinct(software_name)+n_distinct(attr_detail))) %>% 
+  top_n(n=1, wt=n_anno_per_coder)
 # top annotator in 1,618 articles
+
+top_annotators %>% 
+  left_join(raw_annotation_pairs, by=c("article","coder")) %>% 
+  filter(attribute=="creator")
+# 1,714 creator annotated by top annotator of each article
 
 top_annotators %>% 
   left_join(raw_software_names, by=c("article", "coder")) %>% 
@@ -77,50 +112,53 @@ top_annotators %>%
   left_join(raw_software_attributes, by=c("article", "coder")) %>% 
   distinct()
 # 8,768 software attributes annotation made by top annotators
+# 5658 + 8768 = 14426 lables in total produced by top annotators in each annotated article
+# TODO: check missing values in each field.
 
 # The definition of the largest run has not been clarified yet. Here I use the annotator at one particular article who produced the most annotations of software entity and attributes.
 ```
 
-```{r, include=FALSE}
-library(xml2)
+```{r, echo=TRUE, results='hide'}
 
-tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/all_clean_post_processed_with_no_mention.tei.xml") %>% xml_ns_strip()
+tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/softcite_corpus-full.tei.xml") %>% xml_ns_strip()
 
 xml_find_num(tei_doc, xpath="count(//fileDesc[@xml:id])")
-# 4,976 articles in tei_doc
+# 4,971 articles in softcite_corpus-full.tei.xml
 
 xml_find_num(tei_doc, xpath="count(//body[not(node())])")
 # 3,544 articles with zero mentions
 xml_find_num(tei_doc, xpath="count(//body[.//text()])")
-# 1,432 articles with mentions
+# 1,427 articles with mentions
 
 xml_find_num(tei_doc, xpath="count(//rs[@type='software'])")
-# 5,210 annotations of software entity
+# 5,171 annotations of software entity
 xml_find_num(tei_doc, xpath="count(//rs)")
-# 8,398 annotations in total, all are reviewed by curators
-# which means 3,188 annotations of software attributes
+# 8,335 annotations in total, all are reviewed by curators
+# which means 8335-5171=3164 annotations of software attributes
 
 xml_find_num(tei_doc, xpath="count(//rs[@type='software' and @resp='#curator'])")
-# 773 annotations of software entity edited by curator
+# 741 annotations of software entity edited by curator
 xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
-# 1,217 annotations edited by curator in total
+# 2,043 annotations edited by curator in total
 ```
 
 **Process summary statistics break down by steps (as of May 30, 2020):**
 
 |steps|software_annotation_count|annotation_total_count|articles_with_annotations|articles_with_zero_annotations|article_total_count|
 |-----|----------------------|----------------------|-------------------------|------------------------------|-------------------|
-|Raw annotation runs|6208|15718|1823|3730|5553|
-|Raw annotation largest run|5658|14426|1823|3730|5553|
+|Raw annotation runs|6208|15718|1495|3430|4925|
+|Raw annotation largest run|5658|14426|1495|3430|4925|
 |Annotations located in PDFs|-|-|-|-|-|
-|Annotations reviewed by curator|5210|8398|1432|3544|4976|
-|Annotations edited by curator|773|1217|1432|3544|4976|
+|Annotations reviewed by curator|5170|8335|1427|3544|4971|
+|Annotations edited by curator|741|2043|1427|3544|4971|
 
 
 Notes:
 
-1. Statistics in the first 2 rows are calculated from CSV data. 
-It should be noted that the definition of the largest run has not been clarified yet. Here I use the annotator at one particular article who produced the most annotations of software entity and attributes.
+1. Statistics in the first 2 rows are calculated from CSV data. Only within the PMC and econ article sets.
+article_with_annotations does not contain articles annotated as containing mentions other than the software type.
+Estimated error < ~10
 
 2. Statistics in the 4th and 5th row are queried from the current version of softcite TEI corpus.
+
 
