@@ -320,6 +320,10 @@ def process_text_list(seg, text_list, new_json, zone):
                 
                 if "section" in text_part:
                     sentence_structure["section"] = text_part["section"]
+                if "paragraph_rank" in text_part:
+                    sentence_structure["paragraph_rank"] = text_part["paragraph_rank"]
+                if "section_rank" in text_part:
+                    sentence_structure["section_rank"] = text_part["section_rank"]
                 
                 if "ref_spans" in text_part:
                     new_ref_spans = []
