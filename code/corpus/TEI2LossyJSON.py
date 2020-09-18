@@ -29,6 +29,8 @@ class TEIContentHandler(xml.sax.ContentHandler):
     biblio_section = False
     current_reference = None
     current_entity = None
+    paragraph_rank = -1
+    section_rank = -1
 
     # dict corresponding to the converted json document
     document = None
@@ -54,11 +56,14 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.document["level"] = "paragraph"
             self.accumulated = ''
             self.abstract = False
+            self.paragraph_rank = -1
+            self.section_rank = -1
         if name == "abstract":
             self.abstract = True
             self.document["abstract"] = []
             self.ref_spans = []
             self.entity_spans = []
+            self.section_rank += 1
         if name == "head":
             # beginning of paragraph
             self.section = self.accumulated                
@@ -68,6 +73,11 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.ref_spans = []
             self.entity_spans = []
             self.currentOffset = 0
+            self.paragraph_rank += 1
+        if name == 'div':
+            self.section_rank += 1
+        if name == 'figure':
+            self.section_rank += 1    
         if name == "rs":
             # beginning of entity
             self.current_entity = OrderedDict() 
@@ -111,6 +121,8 @@ class TEIContentHandler(xml.sax.ContentHandler):
             if self.section is not None and len(self.section.strip())>0:
                 local_paragraph['section'] = self.section
             local_paragraph['text'] = self.paragraph
+            local_paragraph['paragraph_rank'] = self.paragraph_rank
+            local_paragraph['section_rank'] = self.section_rank
             if len(self.ref_spans) > 0:
                 local_paragraph['ref_spans'] = self.ref_spans
             if len(local_paragraph['text'].strip())>0:

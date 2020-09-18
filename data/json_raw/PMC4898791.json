@@ -2,17 +2,23 @@
     "level": "paragraph",
     "abstract": [
         {
-            "text": "We present an efficient and flexible method for computing likelihoods for phenotypic traits on a phylogeny. The method does not resort to Monte Carlo computation but instead blends Felsenstein's discrete character pruning algorithm with methods for numerical quadrature. It is not limited to Gaussian models and adapts readily to model uncertainty in the observed trait values. We demonstrate the framework by developing efficient algorithms for likelihood calculation and ancestral state reconstruction under Wright's threshold model, applying our methods to a data set of trait data for extrafloral nectaries across a phylogeny of 839 Fabales species."
+            "text": "We present an efficient and flexible method for computing likelihoods for phenotypic traits on a phylogeny. The method does not resort to Monte Carlo computation but instead blends Felsenstein's discrete character pruning algorithm with methods for numerical quadrature. It is not limited to Gaussian models and adapts readily to model uncertainty in the observed trait values. We demonstrate the framework by developing efficient algorithms for likelihood calculation and ancestral state reconstruction under Wright's threshold model, applying our methods to a data set of trait data for extrafloral nectaries across a phylogeny of 839 Fabales species.",
+            "paragraph_rank": 2,
+            "section_rank": 0
         }
     ],
     "body_text": [
         {
             "section": "Introduction",
-            "text": "Statistical models for nucleotide or amino acid mutations and substitutions, and the algorithms for computing with them, are fundamental to the study of molecular evolution and biology. As we widen our focus from the evolution of genes to the evolution of genomes, individuals, and populations, a whole new class of modeling challenges present themselves. These include the development of realistic quantitative models for traits which vary over a continuous range of values (O'Meara 2012). Of course, the usefulness of any new model is contingent on the tools available to compute with them. The main contribution of this article is to show how, by combining ideas from statistical phylogenetics and numerical mathematics, we can compute efficiently with a far larger range of evolutionary models."
+            "text": "Statistical models for nucleotide or amino acid mutations and substitutions, and the algorithms for computing with them, are fundamental to the study of molecular evolution and biology. As we widen our focus from the evolution of genes to the evolution of genomes, individuals, and populations, a whole new class of modeling challenges present themselves. These include the development of realistic quantitative models for traits which vary over a continuous range of values (O'Meara 2012). Of course, the usefulness of any new model is contingent on the tools available to compute with them. The main contribution of this article is to show how, by combining ideas from statistical phylogenetics and numerical mathematics, we can compute efficiently with a far larger range of evolutionary models.",
+            "paragraph_rank": 3,
+            "section_rank": 1
         },
         {
             "section": "Introduction",
             "text": "The algorithms we develop are for computation of the likelihood, that is the probability of the data given the phylogeny, evolutionary model and parameters. If we are working with an evolutionary model with only a small (finite) number of states, then likelihoods can be computed using the dynamic programming algorithm of Felsenstein (1981a). We will show how to extend this algorithm to also compute likelihoods for (essentially) arbitrary continuous trait models.",
+            "paragraph_rank": 4,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -26,6 +32,8 @@
         {
             "section": "Introduction",
             "text": "There is already a wide range of evolutionary phenomena that are studied using continuous trait models. Much of comparative genomics relies on implicit or explicit models for the evolution of morphology (Stevens 1991;Felsenstein 2002;Ronquist 2004;Harmon et al. 2010; O'Meara 2012), many of which make gross simplifying assumptions about how traits vary over time. Continuous evolutionary models have been used in comparative transcriptomics to study heritable aspects of gene expression levels (Khaitovich et al. 2005(Khaitovich et al. , 2006, an area with exceptional promise given recent improvements in accuracy and the ability to sample in situ (Voelckel et al. 2002).",
+            "paragraph_rank": 5,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -80,6 +88,8 @@
         {
             "section": "Introduction",
             "text": "Continuous trait models will be of growing importance in evolutionary studies of whole-genome single nucleotide polymorphism-databases. Inference methods based on the coalescent such as SNAPP (Bryant et al. 2012) do not scale well as the number of individuals grows, while those based on continuous models of gene frequencies (Cavalli-Sforza and Edwards 1967;Felsenstein 1981b; Sir\u00e9 n et al. 2011) depend only on proportions of populations with each allele, so scale extremely well. In addition, it is often easier to model the effect of selection on continuous gene frequency models than with the coalescent. Continuous evolutionary models have also been applied successfully to the study of ancestral geography distributions (Lemey et al. 2010).",
+            "paragraph_rank": 6,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -114,6 +124,8 @@
         {
             "section": "Introduction",
             "text": "Our interest is in developing techniques used to compute with these models, and to expand the range of models we can work with. Early work of Felsenstein (1968Felsenstein ( , 1973, revisited by Freckleton (2012) and FitzJohn (2012), demonstrated that if traits are evolving according to Brownian motion then we can compute likelihoods quickly and (up to numerical precision) exactly. Felsenstein's approach extends to other Gaussian processes, notably the Ornstein-Uhlenbeck (OU) process (Lande 1976;Felsenstein 1988;Hansen 1997), and for several decades, Gaussian models were used almost exclusively to model the evolution of quantitative traits. Ho and An\u00e9 (2014) used clever algebraic techniques to develop an alternative algorithm for computing the likelihood and related quantities. They survey several other models which can be handled using the same approach.",
+            "paragraph_rank": 7,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -176,6 +188,8 @@
         {
             "section": "Introduction",
             "text": "These methods are very efficient, and when they can be used, they should be used. The drawback of these methods is that they are fundamentally restricted to models which are Gaussian processes or transforms of Gaussian processes, where the computational bottleneck lies in the computation of a quadratic form involving the covariance matrix of Ho and An\u00e9 (2014). Many evolutionary models cannot be handled within this framework (e.g., Ronquist 2004;Landis et al. 2013). Some of the properties of Gaussian processes are quite restrictive: Gaussian processes have single modes, so can only model adaptive landscapes with single peaks; Brownian motion has independent increments, so the rate of change is independent of the value of a trait. The standard strategy for computing with non-Gaussian models is to resort to Monte-Carlo strategies. Even when we are working with a model satisfying the assumptions of Ho and An\u00e9 (2014), the algorithms they describe do not give an efficient method for integrating over sets of trait values at the tips, as in the threshold models we discuss below.",
+            "paragraph_rank": 8,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -210,6 +224,8 @@
         {
             "section": "Introduction",
             "text": "Computing the probability of quantitative character evolution may be framed as a numerical integration (quadrature) problem. For most models, if we know the value of the trait at each ancestral node in the phylogeny, we can quickly compute the various transition probabilities. Because we do not usually know these ancestral trait values we integrate them out. This is a multidimensional integration problem with one dimension for each ancestral node (or two dimensions for each node if we are modeling covarying traits) see Felsenstein (2004).",
+            "paragraph_rank": 9,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -221,19 +237,27 @@
         },
         {
             "section": "Introduction",
-            "text": "Methods for estimating or approximating integrals are usually judged by their \"rate of convergence\": how quickly the error of approximation decreases as the amount of work (function evaluations) increases. Consider the problem of computing a one-dimensional integral"
+            "text": "Methods for estimating or approximating integrals are usually judged by their \"rate of convergence\": how quickly the error of approximation decreases as the amount of work (function evaluations) increases. Consider the problem of computing a one-dimensional integral",
+            "paragraph_rank": 10,
+            "section_rank": 1
         },
         {
             "section": "Introduction",
-            "text": "where f is a \"nice\" function with continuous and bounded derivatives. Simpson's rule, a simple textbook method reviewed below, can be shown to have an O\u00f0N \u00c04 \u00de rate of convergence, meaning that, asymptotically in N, evaluating ten times more points reduces the error by a factor of 10 4 . In contrast, a standard Monte Carlo method has a rate of convergence of O\u00f0N \u00c0 1 2 \u00de, meaning that evaluating ten times more points will only reduce the error by a factor of around 3. For this reason, numerical analysis texts often refer to Monte Carlo approaches as \"methods of last resort.\""
+            "text": "where f is a \"nice\" function with continuous and bounded derivatives. Simpson's rule, a simple textbook method reviewed below, can be shown to have an O\u00f0N \u00c04 \u00de rate of convergence, meaning that, asymptotically in N, evaluating ten times more points reduces the error by a factor of 10 4 . In contrast, a standard Monte Carlo method has a rate of convergence of O\u00f0N \u00c0 1 2 \u00de, meaning that evaluating ten times more points will only reduce the error by a factor of around 3. For this reason, numerical analysis texts often refer to Monte Carlo approaches as \"methods of last resort.\"",
+            "paragraph_rank": 11,
+            "section_rank": 1
         },
         {
             "section": "Introduction",
-            "text": "Despite this apparently lacklustre performance guarantee, Monte Carlo methods have revolutionized phylogenetics in general and the analysis of quantitative characters in particular. The reason is their partial immunity to the curse of dimensionality. Methods like Simpson's rule are not practical for a high number of dimensions as the asymptotic convergence rate, quoted above, is only achieved for an infeasibly large number of function evaluations N. The effective convergence rate for small N can be very poor, and typically worse than Monte Carlo. In contrast, there are Monte Carlo approaches which achieve close to O\u00f0N \u00c0 1 2 \u00de convergence irrespective of dimension. This has been critical when computing the likelihoods of complex evolutionary models with as many dimensions as there are nodes in the phylogeny."
+            "text": "Despite this apparently lacklustre performance guarantee, Monte Carlo methods have revolutionized phylogenetics in general and the analysis of quantitative characters in particular. The reason is their partial immunity to the curse of dimensionality. Methods like Simpson's rule are not practical for a high number of dimensions as the asymptotic convergence rate, quoted above, is only achieved for an infeasibly large number of function evaluations N. The effective convergence rate for small N can be very poor, and typically worse than Monte Carlo. In contrast, there are Monte Carlo approaches which achieve close to O\u00f0N \u00c0 1 2 \u00de convergence irrespective of dimension. This has been critical when computing the likelihoods of complex evolutionary models with as many dimensions as there are nodes in the phylogeny.",
+            "paragraph_rank": 12,
+            "section_rank": 1
         },
         {
             "section": "Introduction",
             "text": "The main contribution of our article is to demonstrate how to efficiently and accurately compute likelihoods on a phylogeny using a sequence of one-dimensional integrations. We obtain a fast algorithm with convergence guarantees that far exceed what can be obtained by Monte Carlo integration. Our approach combines two standard tools: classical numerical integrators and Felsenstein's pruning algorithm for discrete characters (Felsenstein 1981a). Indeed, the only real difference between our approach and Felsenstein's discrete character algorithm is that we use numerical integration techniques to integrate states at ancestral nodes, instead of just carrying out a summation.",
+            "paragraph_rank": 13,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -246,11 +270,15 @@
         },
         {
             "section": "Introduction",
-            "text": "The running time of the algorithm is O\u00f0N 2 n\u00de, where N is the number of points used in the numerical integration at each node and n is the number of taxa (leaves) in the tree. Using Simpson's method, we obtain a convergence rate of O\u00f0nN \u00c04 \u00de, meaning that if we increase N by a factor of 10, we will obtain an estimate which is accurate to four more decimal places."
+            "text": "The running time of the algorithm is O\u00f0N 2 n\u00de, where N is the number of points used in the numerical integration at each node and n is the number of taxa (leaves) in the tree. Using Simpson's method, we obtain a convergence rate of O\u00f0nN \u00c04 \u00de, meaning that if we increase N by a factor of 10, we will obtain an estimate which is accurate to four more decimal places.",
+            "paragraph_rank": 14,
+            "section_rank": 1
         },
         {
             "section": "Introduction",
             "text": "To illustrate the application of our general framework, we develop an efficient algorithm for computing the likelihood of a tree under the threshold model of Wright (1934) and Felsenstein (2005Felsenstein ( , 2012. We also show how to infer marginal trait densities at ancestral nodes. We have implemented these algorithms and used them to study evolution of extrafloral nectaries (EFN) on an 839-taxon phylogeny of Marazzi et al. (2012). MATLAB code for computing the threshold likelihood has been posted on MATLAB Central and complete MATLAB code for all analyses and simulations can be found in supplementary material, Supplementary Material online.",
+            "paragraph_rank": 15,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -284,27 +312,39 @@
         },
         {
             "section": "Introduction",
-            "text": "The combination of numerical integrators and the pruning algorithm opens up a large range of potential models and approaches which we have only just begun to explore. It may well be that Gaussian type models provide good approximations in many contexts, however the extent to which this is true will be unknown until we have computational tools for handling richer models."
+            "text": "The combination of numerical integrators and the pruning algorithm opens up a large range of potential models and approaches which we have only just begun to explore. It may well be that Gaussian type models provide good approximations in many contexts, however the extent to which this is true will be unknown until we have computational tools for handling richer models.",
+            "paragraph_rank": 16,
+            "section_rank": 1
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "Phylogenetic models for continuous trait evolution, like those for discrete traits, are specified by the density of trait values at the root and the transition densities along the branches. We use f \u00f0x r jy r \u00de to denote the density for the trait value at the root, where r is a set of relevant model parameters. We use f \u00f0x i jx j ; y i \u00de to denote the transitional density for the value at node i, conditional on the trait value at its parent node j. Here, i represents a bundle of parameters related to node i such as branch length, population size, and mutation rate. All of these parameters can vary throughout the tree."
+            "text": "Phylogenetic models for continuous trait evolution, like those for discrete traits, are specified by the density of trait values at the root and the transition densities along the branches. We use f \u00f0x r jy r \u00de to denote the density for the trait value at the root, where r is a set of relevant model parameters. We use f \u00f0x i jx j ; y i \u00de to denote the transitional density for the value at node i, conditional on the trait value at its parent node j. Here, i represents a bundle of parameters related to node i such as branch length, population size, and mutation rate. All of these parameters can vary throughout the tree.",
+            "paragraph_rank": 17,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "To see how the model works, consider how continuous traits might be simulated. A state X r is sampled from the root density f \u00f0X r jy r \u00de. We now proceed through the phylogeny from the root to the tips, each time visiting a node only after its parent has already been visited. For each node i, we generate the value at that node from the density f \u00f0X i jx j ; y v \u00de, where x j is the simulated trait value at node j, the parent of node i. In this way, we will eventually generate trait values for the tips."
+            "text": "To see how the model works, consider how continuous traits might be simulated. A state X r is sampled from the root density f \u00f0X r jy r \u00de. We now proceed through the phylogeny from the root to the tips, each time visiting a node only after its parent has already been visited. For each node i, we generate the value at that node from the density f \u00f0X i jx j ; y v \u00de, where x j is the simulated trait value at node j, the parent of node i. In this way, we will eventually generate trait values for the tips.",
+            "paragraph_rank": 18,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "We use X 1 , . . ., X n to denote the random trait values at the tips and X n\u00fe1 ; . . . ; X 2n\u00c01 to denote the random trait values at the internal nodes, ordered so that children come before parents. Hence, X 2n\u00c01 is the state assigned to the root. Let E\u00f0T \u00de \u00bc f\u00f0i; j\u00de : node i is a child of node jg \u00f02\u00de denote the set of branches in the tree. The joint density for all trait values, observed and ancestral, is given by multiplying the root density with all of the transition densities"
+            "text": "We use X 1 , . . ., X n to denote the random trait values at the tips and X n\u00fe1 ; . . . ; X 2n\u00c01 to denote the random trait values at the internal nodes, ordered so that children come before parents. Hence, X 2n\u00c01 is the state assigned to the root. Let E\u00f0T \u00de \u00bc f\u00f0i; j\u00de : node i is a child of node jg \u00f02\u00de denote the set of branches in the tree. The joint density for all trait values, observed and ancestral, is given by multiplying the root density with all of the transition densities",
+            "paragraph_rank": 19,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "The probability of the observed trait values x 1 ; . . . ; x n is now determined by integrating out all of the ancestral trait values:"
+            "text": "The probability of the observed trait values x 1 ; . . . ; x n is now determined by integrating out all of the ancestral trait values:",
+            "paragraph_rank": 20,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "In these integrals, the bounds of integration will vary according to the model. The oldest, and most widely used, continuous trait models assume that traits (or transformed gene frequencies) evolve like Brownian motion (Cavalli-Sforza and Edwards 1967;Felsenstein 1973). For these models, the root density f \u00f0x r jy\u00de is Gaussian (normal) with mean 0 and unknown variance s 2 r . The transition densities f \u00f0x i jx j ; y v \u00de are also Gaussian, with mean x j (the trait value of the parent) and variance proportional to branch length. Note that there are identifiability issues which arise with the inference of the root position under this model, necessitating a few tweaks in practice (see the discussion in Chapter 23 of Felsenstein 2004).",
+            "paragraph_rank": 21,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -331,6 +371,8 @@
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "It can be shown that when the root density and transitional densities are all Gaussian, the joint density (4) is multivariate Gaussian. Furthermore, the covariance matrix for this density has a special structure which methods such as the pruning techniques of Felsenstein (1968Felsenstein ( , 1973, Freckleton (2012), and FitzJohn (2012) exploit, as does the top-down approach of Ho and An\u00e9 (2014). This general approach continues to work when Brownian motion is replaced by an OU process (Lande 1976;Felsenstein 1988;Hansen 1997), or indeed to many linear or generalized linear models.",
+            "paragraph_rank": 22,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -385,11 +427,15 @@
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "Gaussian models, and their relatives, are mathematically and computationally convenient, but rely on assumptions which are unrealistic and inappropriate in many contexts. Numerous researchers have implemented models which do not fit into the general Gaussian framework; most have resorted to Monte Carlo computation to carry out their analyses."
+            "text": "Gaussian models, and their relatives, are mathematically and computationally convenient, but rely on assumptions which are unrealistic and inappropriate in many contexts. Numerous researchers have implemented models which do not fit into the general Gaussian framework; most have resorted to Monte Carlo computation to carry out their analyses.",
+            "paragraph_rank": 23,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "Landis et al. (2013) discuss a class of continuous trait models which are based on L\u00e9 vy processes and include jumps. At particular times, as governed by a Poisson process, the trait value jumps to a value drawn from a given density. Examples include a compound Poisson process with Gaussian jumps and a Variance Gamma model given by Brownian motion with time varying according to a gamma process. Both of these processes have analytical transition probabilities in some special cases. Lepage et al. (2006) use the Cox-Ingersoll-Ross (CIR) process to model rate variation across a phylogeny. Like the OU process (but unlike Brownian motion), the CIR process is ergodic. It has a stationary Gamma density which can be used for the root density. The transition density is a particular noncentral chi-squared density and the process only assumes positive values.",
+            "paragraph_rank": 24,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -403,6 +449,8 @@
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "Kutsukake and Innan (2013) examine a family of compound Poisson models, focusing particularly on a model where the trait values make exponentially distributed jumps upwards or downwards. In the case that the rates of upward and downward jumps are the same, the model has jumps that follow a double exponential distribution. Kutsukake and Innan (2013) use approximate Bayesian computation to carry out inference.",
+            "paragraph_rank": 25,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -416,6 +464,8 @@
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "Sir\u00e9 n et al. 2011propose a simple and elegant model for gene frequencies whereby the root value is drawn from a Beta distribution and each transitional density is Beta with appropriately chosen parameters.",
+            "paragraph_rank": 26,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "start": 14,
@@ -427,6 +477,8 @@
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "Trait values at the tips are not always observed directly. A simple, but important, example of this is the threshold model of Wright (1934), explored by Felsenstein (2005). Under this model, the trait value itself is censored and we only observe whether or not the value is positive or negative. A similar complication arises when dealing with gene frequency data as we typically do not observe the actual gene frequency but instead a binomially distributed sample based on that frequency (Sir\u00e9 n et al. 2011).",
+            "paragraph_rank": 27,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -446,15 +498,21 @@
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "If the trait values at the tip are not directly observed we integrate over these values as well. Let p\u00f0z i jx i \u00de denote the probability of observing z i given the trait value x i . The marginalized likelihood is then"
+            "text": "If the trait values at the tip are not directly observed we integrate over these values as well. Let p\u00f0z i jx i \u00de denote the probability of observing z i given the trait value x i . The marginalized likelihood is then",
+            "paragraph_rank": 28,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "Numerical Integration"
+            "text": "Numerical Integration",
+            "paragraph_rank": 29,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "Analytical integration can be difficult or impossible. For the most part, it is unusual for an integral to have an analytical solution and there is no general method for finding it when it does exist. In contrast, numerical integration techniques (also known as numerical quadrature) are remarkably effective and are often easy to implement. A numerical integration method computes an approximation of the integral from function values at a finite number of points. Hence, we can obtain approximate integrals of functions even when we do not have an equation for the function itself. See Cheney and Kincaid (2012) for an introduction to numerical integration, and Dahlquist and Bj\u00f6 rck (2008) and Davis and Rabinowitz (1984) for more comprehensive technical surveys. The idea behind most numerical integration techniques is to approximate the target function using a function which is easy to integrate. In this article, we will restrict our attention to Simpson's method which approximates the original function using piecewise quadratic functions. To approximate an integral R b a f \u00f0x\u00dedx we first determine N + 1 equally spaced points (N even)",
+            "paragraph_rank": 30,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -481,23 +539,33 @@
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "We now divide the integration into N=2 intervals"
+            "text": "We now divide the integration into N=2 intervals",
+            "paragraph_rank": 31,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "Within each interval \u00bdx 2'\u00c02 ; x 2' , there is a unique quadratic function which equals f(x) at each the three points x \u00bc x 2'\u00c02 ; x \u00bc x 2'\u00c01, and x \u00bc x 2' . The integral of this quadratic on the interval"
+            "text": "Within each interval \u00bdx 2'\u00c02 ; x 2' , there is a unique quadratic function which equals f(x) at each the three points x \u00bc x 2'\u00c02 ; x \u00bc x 2'\u00c01, and x \u00bc x 2' . The integral of this quadratic on the interval",
+            "paragraph_rank": 32,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "Summing over ', we obtain the approximation"
+            "text": "Summing over ', we obtain the approximation",
+            "paragraph_rank": 33,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "With a little rearrangement, the approximation can be written in the form"
+            "text": "With a little rearrangement, the approximation can be written in the form",
+            "paragraph_rank": 34,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "where w k \u00bc 4=3 when k is odd and w k \u00bc 2=3 when k is even, with the exception of w 0 and w N which both equal 1/3. Simpson's method is easy to implement and has a convergence rate of O\u00f0N \u00c04 \u00de. Increasing the number of intervals by a factor of 10 decreases the error by a factor of 10 \u00c04 . See Dahlquist and Bj\u00f6 rck (2008) and Davis and Rabinowitz (1984) for further details. It should be remembered, however, that the convergence rate is still only an asymptotic bound, and gives no guarantees on how well the method performs for a specific function and choice of N. Simpson's method, for example, can perform quite poorly when the function being integrated has rapid changes or sharp peaks. We observed this behavior when implementing threshold models, as described below. Our response was to better tailor the integration method for the functions appearing. We noted that the numerical integrations we carried out all had the form Z b a e \u00c0 \u00f0x\u00c0m\u00de 2 2s 2 f \u00f0x\u00dedx \u00f011\u00de",
+            "paragraph_rank": 35,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -517,19 +585,27 @@
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "where and varied. Using the same general approach as Simpson's rule, we approximated f(x), rather than the whole function e \u00c0 \u00f0x\u00c0m\u00de 2 2s 2 f \u00f0x\u00de, by a piecewise quadratic function p(x). We could then use standard techniques and tools to evaluate R b a e \u00c0 \u00f0x\u00c0m\u00de 2 2s 2 p\u00f0x\u00dedx numerically. The resulting integration formula, which we call the \"Gaussian kernel method,\" gives a significant improvement in numerical accuracy."
+            "text": "where and varied. Using the same general approach as Simpson's rule, we approximated f(x), rather than the whole function e \u00c0 \u00f0x\u00c0m\u00de 2 2s 2 f \u00f0x\u00de, by a piecewise quadratic function p(x). We could then use standard techniques and tools to evaluate R b a e \u00c0 \u00f0x\u00c0m\u00de 2 2s 2 p\u00f0x\u00dedx numerically. The resulting integration formula, which we call the \"Gaussian kernel method,\" gives a significant improvement in numerical accuracy.",
+            "paragraph_rank": 36,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "A further complication is that, in models of continuous traits, the trait value often ranges over the whole real line, or at least over the set of positive reals. Hence, we need to approximate integrals of the form"
+            "text": "A further complication is that, in models of continuous traits, the trait value often ranges over the whole real line, or at least over the set of positive reals. Hence, we need to approximate integrals of the form",
+            "paragraph_rank": 37,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
-            "text": "though the methods discussed above only apply to integrals on finite intervals. We truncate these integrals, determining values U and L such that the difference"
+            "text": "though the methods discussed above only apply to integrals on finite intervals. We truncate these integrals, determining values U and L such that the difference",
+            "paragraph_rank": 38,
+            "section_rank": 3
         },
         {
             "section": "Models for Continuous Trait Evolution",
             "text": "between the full integral R 1 \u00c01 f \u00f0x\u00dedx and the truncated integral R U L f \u00f0x\u00dedx can be bounded analytically. Other strategies are possible; see Dahlquist and Bj\u00f6 rck (2008) for a comprehensive review.",
+            "paragraph_rank": 39,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -543,6 +619,8 @@
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
             "text": "Felsenstein has developed pruning algorithms for both continuous and discrete characters (Felsenstein 1981a,b). His algorithm for continuous characters works only for Gaussian processes. Our approach is to take his algorithm for discrete characters and adapt it to continuous characters.",
+            "paragraph_rank": 40,
+            "section_rank": 4,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -554,39 +632,57 @@
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "The (discrete character) pruning algorithm is an application of dynamic programming. For each node i, and each state x, we compute the probability of observing the states for all tips which are descendants of node i, conditional on node i having ancestral state x. This probability is called the partial likelihood at node i given state x. Our algorithm follows the same scheme, with one major difference. Since traits are continuous, we cannot store all possible partial likelihoods. Instead, we store likelihoods for a finite set of values and plug these values into a numerical integration routine."
+            "text": "The (discrete character) pruning algorithm is an application of dynamic programming. For each node i, and each state x, we compute the probability of observing the states for all tips which are descendants of node i, conditional on node i having ancestral state x. This probability is called the partial likelihood at node i given state x. Our algorithm follows the same scheme, with one major difference. Since traits are continuous, we cannot store all possible partial likelihoods. Instead, we store likelihoods for a finite set of values and plug these values into a numerical integration routine.",
+            "paragraph_rank": 41,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "Let i be the index of a node in the tree not equal to the root, let node j be its parent node. We define the partial likelihood, F i \u00f0x j \u00de; to be the likelihood for the observed trait values at the tips which are descendants of node i, conditional on the parent node j having trait value x j . If node i is a tip with observed trait value x i we have"
+            "text": "Let i be the index of a node in the tree not equal to the root, let node j be its parent node. We define the partial likelihood, F i \u00f0x j \u00de; to be the likelihood for the observed trait values at the tips which are descendants of node i, conditional on the parent node j having trait value x j . If node i is a tip with observed trait value x i we have",
+            "paragraph_rank": 42,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "recalling that f \u00f0x i jx j ; y i \u00de is the density for the value of the trait at node i conditional on the value of the trait for its parent. More generally, we may only observe some value z i for which we have the conditional probability p\u00f0z i jx i \u00de conditional on the trait value x i . In this case, the partial likelihood is given by"
+            "text": "recalling that f \u00f0x i jx j ; y i \u00de is the density for the value of the trait at node i conditional on the value of the trait for its parent. More generally, we may only observe some value z i for which we have the conditional probability p\u00f0z i jx i \u00de conditional on the trait value x i . In this case, the partial likelihood is given by",
+            "paragraph_rank": 43,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "Suppose node i is not the root and that it has two children u and v. Since trait evolution is conditionally independent on disjoint subtrees, we obtain the recursive formula"
+            "text": "Suppose node i is not the root and that it has two children u and v. Since trait evolution is conditionally independent on disjoint subtrees, we obtain the recursive formula",
+            "paragraph_rank": 44,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "Finally, suppose that node i is the root and has two children u and v. We evaluate the complete tree likelihood using the density of the trait value at the root,"
+            "text": "Finally, suppose that node i is the root and has two children u and v. We evaluate the complete tree likelihood using the density of the trait value at the root,",
+            "paragraph_rank": 45,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "The bounds of integration in (15)-(17) will vary according to the model."
+            "text": "The bounds of integration in (15)-(17) will vary according to the model.",
+            "paragraph_rank": 46,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "We use numerical integration techniques to approximate (15)-(17) and dynamic programming to avoid an exponential explosion in the computation time. Let N denote the number of function evaluations for each node. In practice, this might vary over the tree, but for simplicity we assume that it is constant. For each node i, we select N + 1 trait values"
+            "text": "We use numerical integration techniques to approximate (15)-(17) and dynamic programming to avoid an exponential explosion in the computation time. Let N denote the number of function evaluations for each node. In practice, this might vary over the tree, but for simplicity we assume that it is constant. For each node i, we select N + 1 trait values",
+            "paragraph_rank": 47,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "How we do this will depend on the trait model and the numerical integration technique. If, for example, the trait values vary between a and b and we are applying Simpson's method with N intervals we would use"
+            "text": "How we do this will depend on the trait model and the numerical integration technique. If, for example, the trait values vary between a and b and we are applying Simpson's method with N intervals we would use",
+            "paragraph_rank": 48,
+            "section_rank": 4
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
             "text": "We traverse the tree starting at the tips and working toward the root. For each nonroot node i and k \u00bc 0; 1; . . . ; N we compute and store an approximation F i \u00bdk of F i \u00f0X j \u00bdk\u00de, where node j is the parent of node i. Note that this is an approximation of F i \u00f0X j \u00bdk\u00de rather than of F i \u00f0X i \u00bdk\u00de since F i \u00f0x\u00de is the partial likelihood conditional on the trait value for the parent of node i. The value approximation F v \u00bdi is computed by applying the numerical integration method to the appropriate integral (15)- 17, where we replace function evaluations with approximations previously computed. See below for a worked example of this general approach.",
+            "paragraph_rank": 49,
+            "section_rank": 4,
             "ref_spans": [
                 {
                     "ref_id": "formula_14",
@@ -598,11 +694,15 @@
         },
         {
             "section": "A Pruning Algorithm for Integrating Continuous Traits",
-            "text": "The numerical integration methods we use run in time linear in the number of points being evaluated. Hence, if n is the number of tips in the tree, the algorithm will run in time O\u00f0nN 2 \u00de. For the integration techniques described above, the convergence rate (in N) for the likelihood on the entire tree had the same order as the convergence rate for the individual onedimensional integrations (see below for a formal proof of a specific model). We have therefore avoided the computational blow-out typically associated with such high-dimensional integrations, and achieve this without sacrificing accuracy."
+            "text": "The numerical integration methods we use run in time linear in the number of points being evaluated. Hence, if n is the number of tips in the tree, the algorithm will run in time O\u00f0nN 2 \u00de. For the integration techniques described above, the convergence rate (in N) for the likelihood on the entire tree had the same order as the convergence rate for the individual onedimensional integrations (see below for a formal proof of a specific model). We have therefore avoided the computational blow-out typically associated with such high-dimensional integrations, and achieve this without sacrificing accuracy.",
+            "paragraph_rank": 50,
+            "section_rank": 4
         },
         {
             "section": "Posterior Densities for Ancestral States",
             "text": "The algorithms we have described compute the joint density of the states at the tips, given the tree, the branch lengths, and other parameters. As with discrete traits, the algorithms can be modified to infer ancestral states for internal nodes in the tree. Here, we show how to carry out reconstruction of the marginal posterior density of a state at a particular node. The differences between marginal and joint reconstructions are reviewed in Yang (2006, p. 121).",
+            "paragraph_rank": 51,
+            "section_rank": 5,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -614,15 +714,21 @@
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "First consider marginal reconstruction of ancestral states at the root. Let u and v be the children of the root. The product F u \u00f0x\u00deF v \u00f0x\u00de equals the probability of the observed character conditional on the tree, branch lengths, parameters, and a state of x at the root. The marginal probability of x, ignoring the data, is given by the root density f \u00f0xjy r \u00de. Integrating the product of F u \u00f0x\u00deF v \u00f0x\u00de and f \u00f0xjy r \u00de gives the likelihood L\u00f0T \u00de, as in (17). Plugging these into Bayes' rule, we obtain the posterior density of the state at the root:"
+            "text": "First consider marginal reconstruction of ancestral states at the root. Let u and v be the children of the root. The product F u \u00f0x\u00deF v \u00f0x\u00de equals the probability of the observed character conditional on the tree, branch lengths, parameters, and a state of x at the root. The marginal probability of x, ignoring the data, is given by the root density f \u00f0xjy r \u00de. Integrating the product of F u \u00f0x\u00deF v \u00f0x\u00de and f \u00f0xjy r \u00de gives the likelihood L\u00f0T \u00de, as in (17). Plugging these into Bayes' rule, we obtain the posterior density of the state at the root:",
+            "paragraph_rank": 52,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "With general time reversible models used in phylogenetics, the posterior distributions at other nodes can be found by changing the root of the tree. Unfortunately, the same trick does not work for many quantitative trait models. Furthermore, recomputing likelihoods for each possible root entails a large amount of unnecessary computation."
+            "text": "With general time reversible models used in phylogenetics, the posterior distributions at other nodes can be found by changing the root of the tree. Unfortunately, the same trick does not work for many quantitative trait models. Furthermore, recomputing likelihoods for each possible root entails a large amount of unnecessary computation.",
+            "paragraph_rank": 53,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
             "text": "Instead, we derive a second recursion, this one starting at the root and working toward the tips. A similar trick is used to compute derivatives of the likelihood function in Felsenstein and Churchill (1996). For a node i and state x we let G i \u00f0x\u00de denote the likelihood for the trait values at tips which are not descendants of node i, conditional on node i having trait value x. If node i is the root r, then G r \u00f0x\u00de is 1 for all x.",
+            "paragraph_rank": 54,
+            "section_rank": 5,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -635,23 +741,33 @@
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Let node i be any node apart from the root, let node j be its parent and let node u be the other child of j (that is, the sibling of node i). We letx denote the trait value at node j. Then G i \u00f0x\u00de can be written"
+            "text": "Let node i be any node apart from the root, let node j be its parent and let node u be the other child of j (that is, the sibling of node i). We letx denote the trait value at node j. Then G i \u00f0x\u00de can be written",
+            "paragraph_rank": 55,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "This integral can be evaluated using the same numerical integrators used when computing likelihoods. Note that f \u00f0xj x; y i \u00de is the conditional density of the parent state given the child state, which is the reverse of the transition densities used to formulate the model. It should be noted that while Brownian motion has reversible transition probabilities, the OU process does not. How G i \u00f0x\u00de is computed will depend on the model and its properties; see below for an implementation of this calculation in the threshold model."
+            "text": "This integral can be evaluated using the same numerical integrators used when computing likelihoods. Note that f \u00f0xj x; y i \u00de is the conditional density of the parent state given the child state, which is the reverse of the transition densities used to formulate the model. It should be noted that while Brownian motion has reversible transition probabilities, the OU process does not. How G i \u00f0x\u00de is computed will depend on the model and its properties; see below for an implementation of this calculation in the threshold model.",
+            "paragraph_rank": 56,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Once G i \u00f0x\u00de has been computed for all nodes, the actual (marginal) posterior densities are computed from Bayes' rule. Letting u, v be the children of node i,"
+            "text": "Once G i \u00f0x\u00de has been computed for all nodes, the actual (marginal) posterior densities are computed from Bayes' rule. Letting u, v be the children of node i,",
+            "paragraph_rank": 57,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Case study: threshold models"
+            "text": "Case study: threshold models",
+            "paragraph_rank": 58,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
             "text": "In this section, we show how the general framework can be applied to the threshold model of Wright (1934) and Felsenstein (2005Felsenstein ( , 2012. Each trait is modeled by a continuously varying \"liability\" which evolves along branches according to a Brownian motion process. While the underlying liability is continuous, the observed data are discrete: at each tip we observe only whether the liability is above or below some threshold. We will use standard notation for Gaussian densities. Let \u00f0xjm; s 2 \u00de denote the density of a Gaussian random variable x with mean and variance s 2 ; let",
+            "paragraph_rank": 59,
+            "section_rank": 5,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -678,91 +794,135 @@
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "denote its cumulative density function, with inverse \u00c8 \u00c01 \u00f0ajm; s 2 \u00de. Let X 1 ; . . . ; X 2n\u00c01 denote the (unobserved) liability values at the n tips and n\u00c01 internal nodes. As above we assume that the i < j whenever node i is a child of node j, so that the root has index 2n \u00c0 1."
+            "text": "denote its cumulative density function, with inverse \u00c8 \u00c01 \u00f0ajm; s 2 \u00de. Let X 1 ; . . . ; X 2n\u00c01 denote the (unobserved) liability values at the n tips and n\u00c01 internal nodes. As above we assume that the i < j whenever node i is a child of node j, so that the root has index 2n \u00c0 1.",
+            "paragraph_rank": 60,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The liability value at the root has a Gaussian density with mean r and variance s 2"
+            "text": "The liability value at the root has a Gaussian density with mean r and variance s 2",
+            "paragraph_rank": 61,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Consider any nonroot node i and let j be the index of its parent. Let t i denote the length of the branch connecting nodes i and j. Then X i has a Gaussian density with mean x j and variance s 2 t v :"
+            "text": "Consider any nonroot node i and let j be the index of its parent. Let t i denote the length of the branch connecting nodes i and j. Then X i has a Gaussian density with mean x j and variance s 2 t v :",
+            "paragraph_rank": 62,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Following Felsenstein (2005), we assume thresholds for the tips are all set at zero. We observe 1 if the liability is positive, 0 if the liability is negative, and ? if data are missing. We can include the threshold step into our earlier framework by defining"
+            "text": "Following Felsenstein (2005), we assume thresholds for the tips are all set at zero. We observe 1 if the liability is positive, 0 if the liability is negative, and ? if data are missing. We can include the threshold step into our earlier framework by defining",
+            "paragraph_rank": 63,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The likelihood function for observed discrete values z 1 ; . . . ; z n is then given by integrating over liability values for all nodes on the tree:"
+            "text": "The likelihood function for observed discrete values z 1 ; . . . ; z n is then given by integrating over liability values for all nodes on the tree:",
+            "paragraph_rank": 64,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The first step toward computing L\u00f0T jz 1 ; . . . ; z n \u00de is to bound the domain of integration so that we can apply Simpson's method. Ideally, we would like these bounds to be as tight as possible, for improved efficiency. For the moment we will just outline a general procedure which can be adapted to a wide range of evolutionary models."
+            "text": "The first step toward computing L\u00f0T jz 1 ; . . . ; z n \u00de is to bound the domain of integration so that we can apply Simpson's method. Ideally, we would like these bounds to be as tight as possible, for improved efficiency. For the moment we will just outline a general procedure which can be adapted to a wide range of evolutionary models.",
+            "paragraph_rank": 65,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The marginal (prior) density of a single liability or trait value at a single node is the density for that liability value marginalizing over all other values and data. With the threshold model, the marginal density for the liability at node i is Gaussian with mean r (like the root) and variance v i equal to the sum of the variance at the root and the transition variances on the path from the root to node i. If P i is the set of nodes from the root to node i, then"
+            "text": "The marginal (prior) density of a single liability or trait value at a single node is the density for that liability value marginalizing over all other values and data. With the threshold model, the marginal density for the liability at node i is Gaussian with mean r (like the root) and variance v i equal to the sum of the variance at the root and the transition variances on the path from the root to node i. If P i is the set of nodes from the root to node i, then",
+            "paragraph_rank": 66,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The goal is to constrain the error introduced by truncating the integrals with infinite domain. Let be the desired bound on this truncation error. Recall that the number of internal nodes in the tree is n\u00c01. Define"
+            "text": "The goal is to constrain the error introduced by truncating the integrals with infinite domain. Let be the desired bound on this truncation error. Recall that the number of internal nodes in the tree is n\u00c01. Define",
+            "paragraph_rank": 67,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "and"
+            "text": "and",
+            "paragraph_rank": 68,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "The bounds L i and U i are chosen so that the (marginal) probability X i lies outside the interval \u00bdL i ; U i is at most =\u00f0n \u00c0 1\u00de. For this model, these are given by the inverse distribution function of a Gaussian; other models would involved different transition densities. By the inclusion-exclusion principle, the joint probability X i 2 \u00bdL i ; U i for any internal node i is at most . We use this fact to bound the contribution of the regions outside these bounds."
+            "text": "The bounds L i and U i are chosen so that the (marginal) probability X i lies outside the interval \u00bdL i ; U i is at most =\u00f0n \u00c0 1\u00de. For this model, these are given by the inverse distribution function of a Gaussian; other models would involved different transition densities. By the inclusion-exclusion principle, the joint probability X i 2 \u00bdL i ; U i for any internal node i is at most . We use this fact to bound the contribution of the regions outside these bounds.",
+            "paragraph_rank": 69,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "We therefore compute values L i , U i for n \u00fe 1 i 2n \u00c0 1 using (28) and (29) repeatedly, and use these bounds when carrying out integration at the internal nodes. We define"
+            "text": "We therefore compute values L i , U i for n \u00fe 1 i 2n \u00c0 1 using (28) and (29) repeatedly, and use these bounds when carrying out integration at the internal nodes. We define",
+            "paragraph_rank": 70,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "for k \u00bc 0; 1; . . . ; N and each internal node i. The next step is to use dynamic programming and numerical integration to compute the approximate likelihood. Let node i be a tip of the tree, let node j be its parent and let z i be the binary trait value at this tip. For each k \u00bc 0; 1; . . . ; N we use standard error functions to compute"
+            "text": "for k \u00bc 0; 1; . . . ; N and each internal node i. The next step is to use dynamic programming and numerical integration to compute the approximate likelihood. Let node i be a tip of the tree, let node j be its parent and let z i be the binary trait value at this tip. For each k \u00bc 0; 1; . . . ; N we use standard error functions to compute",
+            "paragraph_rank": 71,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Here, \u00f0xjm; s 2 \u00de is the density of a Gaussian with mean and variance s 2 . Now suppose that node i is an internal node with parent node j and children u and v. Applying Simpson's rule to the bounds L i , U i to (16) we have for each k \u00bc 0; 1; . . . ; N:"
+            "text": "Here, \u00f0xjm; s 2 \u00de is the density of a Gaussian with mean and variance s 2 . Now suppose that node i is an internal node with parent node j and children u and v. Applying Simpson's rule to the bounds L i , U i to (16) we have for each k \u00bc 0; 1; . . . ; N:",
+            "paragraph_rank": 72,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Suppose node i is the root, and u, v are its children. Applying Simpson's rule to (17) gives an approximate likelihood of"
+            "text": "Suppose node i is the root, and u, v are its children. Applying Simpson's rule to (17) gives an approximate likelihood of",
+            "paragraph_rank": 73,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Pseudocode for the algorithm appears in Algorithm 1. "
+            "text": "Pseudocode for the algorithm appears in Algorithm 1. ",
+            "paragraph_rank": 74,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Let j be the index of the parent of node i"
+            "text": "Let j be the index of the parent of node i",
+            "paragraph_rank": 75,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "For all internal nodes i = n+1, ..., 2n\u22122, excluding the root Let j be the index of the parent of node i Let u, v be the indices of the children of node i"
+            "text": "For all internal nodes i = n+1, ..., 2n\u22122, excluding the root Let j be the index of the parent of node i Let u, v be the indices of the children of node i",
+            "paragraph_rank": 76,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Let u, v be indices of the the children of the root."
+            "text": "Let u, v be indices of the the children of the root.",
+            "paragraph_rank": 77,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Algorithm 1 Pseudo-code of the likelihood approximation algorithm for a single character, under the threshold model. The nodes are numbered in increasing order from tips to the root."
+            "text": "Algorithm 1 Pseudo-code of the likelihood approximation algorithm for a single character, under the threshold model. The nodes are numbered in increasing order from tips to the root.",
+            "paragraph_rank": 78,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Regarding efficiency and convergence we have: Theorem 1 Algorithm 1 runs in O\u00f0nN 2 \u00de time and approximates L(T) with O\u00f0nN \u00c04 \u00de error."
+            "text": "Regarding efficiency and convergence we have: Theorem 1 Algorithm 1 runs in O\u00f0nN 2 \u00de time and approximates L(T) with O\u00f0nN \u00c04 \u00de error.",
+            "paragraph_rank": 79,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "Proof The running time follows from the fact that for each of the O(n) nodes in the tree we carry out O(N) applications of Simpson's method."
+            "text": "Proof The running time follows from the fact that for each of the O(n) nodes in the tree we carry out O(N) applications of Simpson's method.",
+            "paragraph_rank": 80,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
             "text": "Simpson's rule has O\u00f0N \u00c04 \u00de convergence on functions with bounded fourth derivatives (Dahlquist and Bj\u00f6 rck 2008). The root density and each of the transition densities are Gaussians, so individually have bounded fourth derivatives. For each node i, let n i denote the number of tips which are descendants of the node. Using induction on (16), we see that for all nodes i, the fourth derivative of F i \u00f0x\u00de is O\u00f0n i \u00de.",
+            "paragraph_rank": 81,
+            "section_rank": 5,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -776,6 +936,8 @@
         {
             "section": "Posterior Densities for Ancestral States",
             "text": "If we use \u00bc nN \u00c04 in (28) and (29) then replacing the infinite domain integrals with integrals on \u00bdL i ; U i introduces at most nN \u00c04 error. Using a second induction proof on (16) and (37) together with the bound on fourth derivatives, we have that jF i \u00f0X j \u00bdk\u00de \u00c0 F i \u00bdkj is at most O\u00f0n i N \u00c04 \u00de for all nodes i, where node j is the parent of node i. In this way we obtain error bound of O\u00f0n 2n\u00c01 N \u00c04 \u00de \u00bc O\u00f0nN \u00c04 \u00de on the approximation of L\u00f0T jz 1 ; . . . ; z n ; y\u00de: \u00ab We can estimate posterior densities using the recursion (20) followed by equation 21. The conditional density",
+            "paragraph_rank": 82,
+            "section_rank": 5,
             "ref_spans": [
                 {
                     "ref_id": "formula_19",
@@ -787,23 +949,33 @@
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "can be obtained by plugging the transitional density"
+            "text": "can be obtained by plugging the transitional density",
+            "paragraph_rank": 83,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "and the two marginal densities (27)"
+            "text": "and the two marginal densities (27)",
+            "paragraph_rank": 84,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "into the identity f \u00f0xjx; y i \u00de \u00bc f \u00f0xjx; y i \u00de f \u00f0x \u00de f \u00f0x\u00de . We thereby obtain the recursion"
+            "text": "into the identity f \u00f0xjx; y i \u00de \u00bc f \u00f0xjx; y i \u00de f \u00f0x \u00de f \u00f0x\u00de . We thereby obtain the recursion",
+            "paragraph_rank": 85,
+            "section_rank": 5
         },
         {
             "section": "Posterior Densities for Ancestral States",
-            "text": "which we estimate using Simpson's method. Algorithm estimates values of the posterior densities at each node, evaluated using the same set of grid points as used in Algorithm 1. An additional round of numerical integration can be used to obtain posterior means and variances."
+            "text": "which we estimate using Simpson's method. Algorithm estimates values of the posterior densities at each node, evaluated using the same set of grid points as used in Algorithm 1. An additional round of numerical integration can be used to obtain posterior means and variances.",
+            "paragraph_rank": 86,
+            "section_rank": 5
         },
         {
             "section": "Evolutionary Precursors of Plant Extrafloral Nectaries",
             "text": "To study the methods in practice, we reanalyze trait data published by Marazzi et al. (2012), using a fixed phylogeny. Marazzi et al. (2012) introduce and apply a new discrete state model for morphological traits which, in addition to states for presence and absence, incorporates an intermediate \"precursor\" state. Whenever the intermediate state is observed at the tips it is coded as \"absent.\" The motivation behind the model is that the intermediate state represents evolutionary precursors, changes which are necessary for the evolution of a new state but which may not be directly observed. These precursors could explain repeated parallel evolution of a trait in closely related traits (Marazzi et al. 2012). They compiled a data set recording presence or absence of plant EFNs across a phylogeny of 839 species of Fabales, fitting their models to these data. The threshold model also involves evolutionary precursors in terms of changes in ancestral liabilities. We use these models, and our new algorithms to analyze the EFN data set. Our analysis also makes use of the time-calibrated phylogeny inferred by Simon et al. (2009), although unlike Marazzi et al. (2012) we ignore phylogenetic uncertainty.",
+            "paragraph_rank": 87,
+            "section_rank": 6,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -845,6 +1017,8 @@
         {
             "section": "Experimental Protocol",
             "text": "We conduct three separate experiments. For the first experiment, we examine the rate of convergence of the likelihood algorithm as we increase N. This is done for the \"All\" EFN character (Character 1 in Marazzi et al. [2012]) for a range of estimates for the liability variance at the root, s 2 r . The interest in s 2 r stems from its use in determining bounds L i , U i for each node, with the expectation that as s 2 r increases, the convergence of the integration algorithm will slow. The mean liability at the root, r , was determined from the data using Maximum Likelihood estimation.",
+            "paragraph_rank": 88,
+            "section_rank": 7,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -857,11 +1031,15 @@
         },
         {
             "section": "Experimental Protocol",
-            "text": "We also examined convergence of the algorithm on randomly generated characters. We first evolved liabilities according to the threshold model, using the parameter settings obtained above. To examine the difference in performance for non-phylogenetic characters, we also simulated binary characters by simulated coin flipping. Twenty replicates were carried out for each case."
+            "text": "We also examined convergence of the algorithm on randomly generated characters. We first evolved liabilities according to the threshold model, using the parameter settings obtained above. To examine the difference in performance for non-phylogenetic characters, we also simulated binary characters by simulated coin flipping. Twenty replicates were carried out for each case.",
+            "paragraph_rank": 89,
+            "section_rank": 7
         },
         {
             "section": "Experimental Protocol",
             "text": "The second experiment extends the model comparisons carried out in Marazzi et al. (2012) to include the threshold models. For this comparison we fix the transitional variance s 2 at one, since changing this values corresponds to a rescaling of the Brownian process, with no change in likelihood. With only one character, the maximum likelihood estimate of the root variance s 2 r is zero, irrespective of the data. This leaves a single parameter to infer: the value of the liability at the root state. We computed a maximum likelihood estimate for the state at the root, then applied our algorithm with a sufficiently large value of N to be sure of convergence. The Akaike Information Criterion (AIC) was determined and compared with those obtained for the model of Marazzi et al. (2012).",
+            "paragraph_rank": 90,
+            "section_rank": 7,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -881,15 +1059,21 @@
         },
         {
             "section": "Experimental Protocol",
-            "text": "For the third experiment, we determine the marginal posterior densities for the liabilities at internal nodes, using Algorithm 2. Let j be the index of the parent of node i. Let v be the index of the sibling of node i."
+            "text": "For the third experiment, we determine the marginal posterior densities for the liabilities at internal nodes, using Algorithm 2. Let j be the index of the parent of node i. Let v be the index of the sibling of node i.",
+            "paragraph_rank": 91,
+            "section_rank": 7
         },
         {
             "section": "Experimental Protocol",
-            "text": "Algorithm 2 Pseudocode for the algorithm to efficiently compute ancestral posterior densities under the threshold model. At the termination of the algorithm, H i \u00bdk is an estimate of the posterior density at internal node i, evaluated at x \u00bc X i \u00bdk."
+            "text": "Algorithm 2 Pseudocode for the algorithm to efficiently compute ancestral posterior densities under the threshold model. At the termination of the algorithm, H i \u00bdk is an estimate of the posterior density at internal node i, evaluated at x \u00bc X i \u00bdk.",
+            "paragraph_rank": 92,
+            "section_rank": 7
         },
         {
             "section": "Experimental Protocol",
             "text": "These posterior probabilities are then mapped onto the phylogeny, using shading to denote the (marginal) posterior probability that a liability is larger than zero. We therefore obtain a figure analogous to supplementary figure S7, Supplementary Material online, of Marazzi et al. (2012).  ",
+            "paragraph_rank": 93,
+            "section_rank": 7,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -902,11 +1086,15 @@
         },
         {
             "section": "Convergence of the Algorithm",
-            "text": "To examine convergence, we compute the absolute error of each likelihood approximation because the actual likelihood is not available we use the approximation when N = 1,000. Plots of error versus N are given in figure 1, both for Simpson's method (left) and for the modified Gaussian kernel method (right). For larger N, the error in a log-log plot decreases with slope at most \u00c04 (as indicated), corresponding to N \u00c04 convergence of the method. Log-log plots of error versus N for the simulated data are given in figure 2. In each case, the method converges for by N&30."
+            "text": "To examine convergence, we compute the absolute error of each likelihood approximation because the actual likelihood is not available we use the approximation when N = 1,000. Plots of error versus N are given in figure 1, both for Simpson's method (left) and for the modified Gaussian kernel method (right). For larger N, the error in a log-log plot decreases with slope at most \u00c04 (as indicated), corresponding to N \u00c04 convergence of the method. Log-log plots of error versus N for the simulated data are given in figure 2. In each case, the method converges for by N&30.",
+            "paragraph_rank": 94,
+            "section_rank": 9
         },
         {
             "section": "Convergence of the Algorithm",
             "text": "While the level of convergence for both algorithms is correct, the accuracy of the method based on Simpson's method is far worse. When a branch length is short, the transition density becomes highly peaked, as does the function being integrated. Such functions are difficult to approximate with piecewise quadratics, and Simpson's method can fail miserably. Indeed, for N < 50, we would often observe estimated probabilities equal to 0, or estimates greater than 1! (These were omitted from the plots). Although we can always bound estimates computed by the algorithm, a sounder approach is to improve the integration technique. This we did using the Gaussian kernel method, and the result was far improved accuracy for little additional computation. For the remainder of the experiments with this model we used the Gaussian kernel method when carrying out numerical integration.  Marazzi et al. (2012). All likelihoods and AIC values rounded to 1 d.p. Boldface indicates the best fitting model for each trait. A pre-cursor model with one parameter was used for all experiments, except for trait 6 where a two-parameter model gave a better AIC than the one-parameter model (see discussion in Marazzi et al. (2012).  Marazzi et al. (2012) describe AIC comparisons between their precursor model and a conventional binary trait model. We extend this comparison to include the threshold model. This is a one parameter model, the parameter being the value of the liability at the root. We used the MATLAB command fminsearch with multiple starting points to compute the maximum likelihood estimate for this value. The resulting log-likelihood was log?L \u00bc \u00c0240:6, giving an AIC of 483.2. This compares to an AIC of 507.4 for the (two parameter) binary character model and an AIC of 495.4 for the (one parameter) precursor model of Marazzi et al. (2012).",
+            "paragraph_rank": 95,
+            "section_rank": 9,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -941,6 +1129,8 @@
         {
             "section": "Model Comparison",
             "text": "We analyzed the five other EFN traits in the same way, and present the computed AIC values in table 1, together with AIC values for the two parameter binary state model and one parameter precursor model computed by Marazzi et al. (2012) (and the two parameter precursor model for trait 6). We see that the threshold model fits better than either the binary or precursor models for all of the six traits.",
+            "paragraph_rank": 96,
+            "section_rank": 10,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -954,6 +1144,8 @@
         {
             "section": "Model Comparison",
             "text": "It is not clear, a priori, why the threshold model would appear to fit some data better than the precursor model because they appear to capture similar evolutionary phenomena. It would be useful to explore this observation more thoroughly, given the new computational tools, perhaps incorporating phylogenetic error in a manner similar to Marazzi et al. (2012). Figure 3 gives a representation of how the (marginal) posterior liabilities change over the tree. Branches are divided into three classes according to the posterior probability that the liability is positive, with lineages with posterior probability > 0.7 colored red, lineages with posterior probability < 0.3 colored white, and remaining lineages colored pink.  Simon et al. (2009). Lineages with posterior probability > 0.7 colored red, lineages with posterior probability < 0.3 colored white, and remaining lineages colored pink. This diagram can be compared with Marazzi et al. (2012), figure S7. The representations are, on the whole, directly comparable. A positive liability corresponds, roughly, to an ancestral precursor state. Both analyses suggest multiple origins of a precursor state, for example for a large clade of Mimosoidae. Interestingly, there are several clades where the analysis of Marazzi et al. (2012) suggests widespread ancestral distribution of the precursor state whereas our analysis indicates a negative liability at the same nodes.",
+            "paragraph_rank": 97,
+            "section_rank": 10,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -999,11 +1191,15 @@
         },
         {
             "section": "Inferring Ancestral Liabilities",
-            "text": "Once again, our analysis is only preliminary, our goal here simply being to demonstrate what calculations can now be carried out."
+            "text": "Once again, our analysis is only preliminary, our goal here simply being to demonstrate what calculations can now be carried out.",
+            "paragraph_rank": 98,
+            "section_rank": 11
         },
         {
             "section": "Discussion",
             "text": "We have introduced a new framework for the computation of likelihoods from continuous characters, and illustrated the framework using an efficient algorithm for evaluating (approximate) likelihoods under Wright and Felsenstein's threshold model. This framework opens up possibilities in several directions. The numerical integration, or numerical quadrature, literature is vast. In this article, we have focused in on a popular and simple numerical integration method, and our algorithm should be seen as a proof of principle rather than a definitive threshold likelihood method. There is no question that the numerical efficiency of Algorithm 1 could be improved significantly through the use of more sophisticated techniques: better basis functions or adaptive quadrature methods for a start.",
+            "paragraph_rank": 99,
+            "section_rank": 12,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -1016,6 +1212,8 @@
         {
             "section": "Discussion",
             "text": "The connection with Felsenstein's (discrete character) pruning algorithm also opens up opportunities for efficiency gains. Techniques such as storing partial likelihoods, or approximating local neighborhoods, are fundamental to efficient phylogenetic computations on sequence data (Felsenstein 1981a;Larget and Simon 1998;Swofford 2002;Pond and Muse 2004;Stamatakis 2006). These tricks could all be now applied to the calculation of likelihoods from continuous traits.",
+            "paragraph_rank": 100,
+            "section_rank": 12,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -1057,6 +1255,8 @@
         {
             "section": "Discussion",
             "text": "Finally, we stress that the algorithm does not depend on special characteristics of the continuous trait model, beyond conditional independence of separate lineages. Felsenstein's pruning algorithm for continuous characters is limited to Gaussian processes and breaks down if, for example, the transition probabilities are governed by Levy processes (Landis et al. 2013). In contrast, our approach works whenever we can numerically evaluation transition densities, an indeed only a few minor changes would transform our Algorithm 1 to one implementing on a far more complex evolutionary process.",
+            "paragraph_rank": 101,
+            "section_rank": 12,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -1069,20 +1269,30 @@
         },
         {
             "section": "Supplementary Material",
-            "text": "Supplementary material is available at Genome Biology and Evolution online (http://www.gbe.oxfordjournals.org/)."
+            "text": "Supplementary material is available at Genome Biology and Evolution online (http://www.gbe.oxfordjournals.org/).",
+            "paragraph_rank": 102,
+            "section_rank": 13
         },
         {
             "section": "Algorithm 2 :",
-            "text": "Compute posterior densitiesInput:N , t 1 , . . . 2n \u2212 2, \u03bc r , \u03c3 2 r , and \u03c3 2 as in Algorithm 1 Vector p, likelihood L and arrays F i computed in Algorithm 1.Output:Arrays H i for each internal node i. Construct the vectors x, w, {L i : i \u2208 {n + 1, . . . , 2n \u2212 2}}, {U i : i \u2208 {n + 1, . . . , 2n \u2212 2}}, and path lengths p i as in Algorithm 1.G 2n\u22121 [k] \u2190 1 for all k.For all i = 2n\u22122, 2n \u2212 3, . . . , n + 1"
+            "text": "Compute posterior densitiesInput:N , t 1 , . . . 2n \u2212 2, \u03bc r , \u03c3 2 r , and \u03c3 2 as in Algorithm 1 Vector p, likelihood L and arrays F i computed in Algorithm 1.Output:Arrays H i for each internal node i. Construct the vectors x, w, {L i : i \u2208 {n + 1, . . . , 2n \u2212 2}}, {U i : i \u2208 {n + 1, . . . , 2n \u2212 2}}, and path lengths p i as in Algorithm 1.G 2n\u22121 [k] \u2190 1 for all k.For all i = 2n\u22122, 2n \u2212 3, . . . , n + 1",
+            "paragraph_rank": 103,
+            "section_rank": 14
         },
         {
-            "text": "FIG.1.-Log-log plots of error as a function of N for the dynamic programming algorithm with Simpson's method (left) and with the Gaussian kernel method (right). The likelihoods were computed under the threshold model on EFN trait data for an 839 taxon tree. Dotted lines have slope \u00c04 (corresponding to convergence rate of N \u00c04 . Note the difference in scale for the two methods.). Logarithms computed to base 10. Letting h be the height of the tree, the circles in both plots represent errors when s 2 r \u00bc h, the asterisks represent errors when s 2 r \u00bc 0:1h, and the triangles represent errors when s 2 r \u00bc 10h."
+            "text": "FIG.1.-Log-log plots of error as a function of N for the dynamic programming algorithm with Simpson's method (left) and with the Gaussian kernel method (right). The likelihoods were computed under the threshold model on EFN trait data for an 839 taxon tree. Dotted lines have slope \u00c04 (corresponding to convergence rate of N \u00c04 . Note the difference in scale for the two methods.). Logarithms computed to base 10. Letting h be the height of the tree, the circles in both plots represent errors when s 2 r \u00bc h, the asterisks represent errors when s 2 r \u00bc 0:1h, and the triangles represent errors when s 2 r \u00bc 10h.",
+            "paragraph_rank": 104,
+            "section_rank": 15
         },
         {
-            "text": "of log-likelihood values as a function of log \u00f0N\u00de for the two types of data simulated from the fixed EFN tree, computed using our algorithm together with the Gaussian kernel method. Logarithms computed to base 10."
+            "text": "of log-likelihood values as a function of log \u00f0N\u00de for the two types of data simulated from the fixed EFN tree, computed using our algorithm together with the Gaussian kernel method. Logarithms computed to base 10.",
+            "paragraph_rank": 105,
+            "section_rank": 16
         },
         {
             "text": "-Marginal posterior probabilities for the liabilities, for EFN trait 1 ofMarazzi et al. (2012) on the phylogeny inferred by",
+            "paragraph_rank": 106,
+            "section_rank": 17,
             "ref_spans": [
                 {
                     "type": "bibr",
@@ -1095,19 +1305,27 @@
         },
         {
             "section": "Algorithm 1 :",
-            "text": "Compute probability of a threshold character."
+            "text": "Compute probability of a threshold character.",
+            "paragraph_rank": 107,
+            "section_rank": 18
         },
         {
             "section": "Table 1",
-            "text": "Table of Log-Likelihood and AIC Values for the Binary Character, Precursor, and Threshold Models on Six EFN Traits NOTE.-Column k indicates numbers of parameters for each model. Data for the binary and precursor models copied from table 1 in"
+            "text": "Table of Log-Likelihood and AIC Values for the Binary Character, Precursor, and Threshold Models on Six EFN Traits NOTE.-Column k indicates numbers of parameters for each model. Data for the binary and precursor models copied from table 1 in",
+            "paragraph_rank": 109,
+            "section_rank": 19
         },
         {
             "section": "Table 1",
-            "text": "Genome Biol. Evol. 8(5):1338-1350. doi:10.1093/gbe/evw064 Advance Access publication April 6, 2016"
+            "text": "Genome Biol. Evol. 8(5):1338-1350. doi:10.1093/gbe/evw064 Advance Access publication April 6, 2016",
+            "paragraph_rank": 111,
+            "section_rank": 19
         },
         {
             "section": "Acknowledgments",
-            "text": "This research was supported by an Allan Wilson Centre Doctoral Scholarship to G.H., financial support to D.B. from the Allan Wilson Centre, a Marsden grant to D.B., and financial support to all authors from the University of Otago."
+            "text": "This research was supported by an Allan Wilson Centre Doctoral Scholarship to G.H., financial support to D.B. from the Allan Wilson Centre, a Marsden grant to D.B., and financial support to all authors from the University of Otago.",
+            "paragraph_rank": 112,
+            "section_rank": 21
         }
     ]
 }
