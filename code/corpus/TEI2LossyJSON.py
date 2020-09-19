@@ -65,8 +65,12 @@ class TEIContentHandler(xml.sax.ContentHandler):
             self.entity_spans = []
             self.section_rank += 1
         if name == "head":
-            # beginning of paragraph
-            self.section = self.accumulated                
+            # beginning of section header (or section title)
+            #self.section = self.accumulated
+            self.paragraph = ''
+            self.ref_spans = []
+            self.entity_spans = []
+            self.currentOffset = 0
         if name == "p" or name == 'note' or name == 'figDesc':
             # beginning of paragraph
             self.paragraph = ''
@@ -109,6 +113,18 @@ class TEIContentHandler(xml.sax.ContentHandler):
         # print("endElement '" + name + "'")
         if name == "head":
             self.section = self.accumulated  
+            self.paragraph = self.accumulated  
+            local_paragraph = OrderedDict() 
+            local_paragraph['text'] = self.paragraph
+            local_paragraph['section_rank'] = self.section_rank
+            if len(self.ref_spans) > 0:
+                local_paragraph['ref_spans'] = self.ref_spans
+            if len(local_paragraph['text'].strip())>0:
+                if self.abstract:
+                    self.document["abstract"].append(local_paragraph)
+                elif "body_text" in self.document:
+                        self.document["body_text"].append(local_paragraph)
+            self.paragraph = None
         if name == 'div':
             self.section = None
         if (name == "p" or name == "note" or name == 'figDesc') and not self.biblio_section:
