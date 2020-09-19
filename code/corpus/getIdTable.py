@@ -42,6 +42,7 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             self.nb_file += 1
             self.doc_id = None
             self.current_identifier = {}
+            self.origin_file = None
         if name == "fileDesc":
             if attrs.getLength() != 0:
                 if "xml:id" in attrs:
@@ -71,6 +72,12 @@ class TEICorpusHandler(xml.sax.ContentHandler):
             pmcid = ""
             if "PMC" in self.current_identifier:
                 pmcid = self.current_identifier["PMC"]
+            if self.origin_file is None and "origin" in self.current_identifier:
+                self.origin_file = self.current_identifier["origin"]
+            if self.origin_file is None:
+                print("Warning: origin file is missing for doc id", self.doc_id)
+            if self.doc_id is None:
+                print("Warning: doc id is missing for origin file", self.origin_file)
             self.writer.writerow([self.doc_id, self.origin_file, doi, pmid, pmcid])
         if name == 'teiCorpus':
             self.output_file.close()
