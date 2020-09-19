@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "The three-dimensional (3D) configuration of chromosomes within the eukaryotic nucleus is important for several cellular functions including gene regulation and epigenetic pat-terning (1) and is also strongly associated with translocation events and cancer-driving gene fusions (2,3). While visualization of such architecture remains limited to lowresolution, low-throughput, targeted techniques such as fluorescent in situ hybridization (FISH) (4), the ability to infer genome architecture at high resolution has been enabled by recently-devised assays derived from chromosome conformation capture (3C) techniques (5). In particular, when coupled with next generation sequencing, such methods (hereafter termed Hi-C (6,7)) yield an inventory of genome-wide chromatin interactions which, in turn, provide a basis for reconstructing 3D chromatin configuration, as described below. Here, we use such 3D reconstructions to discover 'functional 3D hotspots' in the nucleus (e.g. transcription factories) (8)(9)(10).",
             "paragraph_rank": 3,
@@ -309,6 +313,14 @@
             ]
         },
         {
+            "text": "MATERIALS AND METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Hi-C contact data normalization and 3D reconstruction generation",
+            "section_rank": 3
+        },
+        {
             "section": "Hi-C contact data normalization and 3D reconstruction generation",
             "text": "The S. cerevisiae Hi-C contact data (HindIII, pre-FDR, no masking) from (7) (Supplementary Data) were downloaded from https://noble.gs.washington.edu/proj/yeastarchitecture/sup.html. We performed explicit-factor normalization of this contact data to control for GC content, mappability and fragment length using HiC-Norm (25) genome-wide (chromosome by chromosome) as per (17) and then generated a new 3D reconstruction using the constrained optimization approach (7). The HiCNorm source code was downloaded from http://www.people.fas.harvard.edu/\u223cjunliu/HiCNorm/.",
             "paragraph_rank": 11,
@@ -329,6 +341,10 @@
                     "end": 467
                 }
             ]
+        },
+        {
+            "text": "ChIP-seq data normalization",
+            "section_rank": 4
         },
         {
             "section": "ChIP-seq data normalization",
@@ -382,10 +398,18 @@
             ]
         },
         {
+            "text": "Data superposition",
+            "section_rank": 5
+        },
+        {
             "section": "Data superposition",
             "text": "The 3D genome reconstruction consists of a series of beads spaced along each chromosome; each bead has a genomic position and (X,Y,Z) coordinates. For each ChIP-seq input, we binned its peak height data (i.e. the residuals of the smoothed log 2 -normalized signal) such that each bin was centered on a bead. We then assigned to each bead the most extreme ChIP-seq peak height (positive or negative) from the bin centered on that bead. The result is a 3D chromatin configuration reconstruction overlaid with functional genomic data: each bead now has a genomic position, physical coordinates (X,Y,Z) and a ChIP-seq peak height value. We visualized this superposed 3D reconstruction in MacPy-MOL 1.3 (34) by first converting the data to the Protein Data Bank (PDB) file format (35) with the ChIP-seq peak height value rescaled as the temperature factor (B-factor) in the PDB file.",
             "paragraph_rank": 14,
             "section_rank": 5
+        },
+        {
+            "text": "PRIM",
+            "section_rank": 6
         },
         {
             "section": "PRIM",
@@ -403,6 +427,10 @@
             ]
         },
         {
+            "text": "k-Nearest Neighbor (k-NN) regression",
+            "section_rank": 7
+        },
+        {
             "section": "k-Nearest Neighbor (k-NN) regression",
             "text": "We applied k-NN regression to the ChIP-seq peak height superposed on the 3D reconstruction using the R package 'FNN' (37), where k is the specified number of physically proximal beads to be analyzed together as a grouping. First, we selected 'seed' beads evenly spaced along each chromosome by a bead interval of 0.5*k. Next, for each seed bead, we found its k nearest beads in Euclidean distance via the function knn.index() to create a bead grouping. Finally, we found the mean ChIP-seq peak height of each bead grouping via the function knn.reg() and ranked the list of bead groupings by mean ChIP-seq peak height.",
             "paragraph_rank": 16,
@@ -416,6 +444,14 @@
                     "end": 121
                 }
             ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 8
+        },
+        {
+            "text": "Superposing ChIP-seq data on the 3D reconstruction",
+            "section_rank": 9
         },
         {
             "section": "Superposing ChIP-seq data on the 3D reconstruction",
@@ -519,6 +555,10 @@
             ]
         },
         {
+            "text": "PRIM",
+            "section_rank": 10
+        },
+        {
             "section": "PRIM",
             "text": "PRIM seeks to identify hotspots by sequentially and strategically paring away data regions so that the average out- Figure 1. Swi6 ChIP-seq peak height superposed on the 3D chromatin configuration reconstruction. The 3D reconstruction is colored by (A) chromosome or (B) Swi6 ChIP-seq peak height. For (B), regions are colored red if their log 2 -normalized ChIP-seq peak height is greater than 1; otherwise, they are colored yellow (except for the masked chrXII rDNA repeat region, which is colored blue).",
             "paragraph_rank": 21,
@@ -537,6 +577,10 @@
             "text": "come over the remaining data are elevated. At each iteration, a fraction of the beads (peel alpha) are peeled off the 3D reconstruction by evaluating the extremal slices orthogonal to each of the coordinate axes and removing data from whichever slice results in the highest mean ChIP-seq peak height for the remaining beads. This process is continued until a prescribed minimum number of beads (min beads) remains (we used the smallest setting out of those tested for which inter-chromosomal hotspots could be detected, detailed in 'Methods'). The resultant region can be enlarged to correct potential overshoot by pasting additional beads on to the region (via paste alpha, which is smaller than peel alpha) if that increases the mean ChIP-seq peak height (see 'Methods'). At this point, a PRIM region or 'box' has been identified, which represents a potential 3D hotspot. The beads comprising this box are then excluded and the entire procedure is repeated to identify additional boxes. We performed inference as follows: for each PRIM box, we preserved the beads comprising that box, then permuted ChIPseq peak height values along each chromosome, and computed the mean ChIP-seq peak height of the box with the permuted data to generate a null referent distribution for estimating a P-value (see 'Methods').",
             "paragraph_rank": 22,
             "section_rank": 10
+        },
+        {
+            "text": "The top Swi6 3D hotspot contains known Swi6 target genes on different chromosomes",
+            "section_rank": 11
         },
         {
             "section": "The top Swi6 3D hotspot contains known Swi6 target genes on different chromosomes",
@@ -581,10 +625,18 @@
             ]
         },
         {
+            "text": "> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > MSB2",
+            "section_rank": 12
+        },
+        {
             "section": "> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > MSB2",
             "text": "122 125 chrVIII B < < < < < < < < < < < < < < < < < ERG11 < < < < < < YHR007C < < < < < < < < < < < < < < < < < < SOD2 < < < < < < < < < < < < < < < < < < < < < < < TDA3 515 517 chrXVI C",
             "paragraph_rank": 24,
             "section_rank": 12
+        },
+        {
+            "text": "< < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < <",
+            "section_rank": 13
         },
         {
             "section": "< < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < <",
@@ -637,6 +689,10 @@
             ]
         },
         {
+            "text": "The top Swi6 3D hotspot under PRIM is relatively stable across parameter settings",
+            "section_rank": 14
+        },
+        {
             "section": "The top Swi6 3D hotspot under PRIM is relatively stable across parameter settings",
             "text": "The initial hotspot discovery was performed using the default PRIM tuning parameters (peel alpha = 0.05 and paste alpha = 0.01). As an initial sensitivity assessment of the top Swi6 3D hotspot containing MSB2 and ERG11 to these specifications, we applied PRIM with alternative parameter settings. We tested the six crossed combinations of three values for peel alpha (0.075, 0.05 or 0.025) and two values for paste alpha (0.025 or 0.01). Encouragingly, for five of the six combinations, the 3D hotspot containing MSB2 and ERG11 was ranked first by P-value (of 548 to 717 potential hotspots) ( Supplementary Table S1). For the other combination, it was ranked 22nd (of 503 potential hotspots). Thus, this top Swi6 3D hotspot is relatively stable across PRIM parameter settings. We also evaluated whether the discovery of this top 3D hotspot was specific to the bead interval of the 3D reconstruction to which PRIM was applied. For this purpose, we generated two down-sampled 3D reconstructions by dropping every 3rd bead or every 2nd bead from the original 3D reconstruction. We superposed the Swi6 ChIPseq peak height on to each of these 3D reconstructions (in doing so the ChIP-seq peak height becomes binned at the same interval as the beads) and then applied PRIM. When the min beads parameter was reduced (from 25 to 15)--consistent with the larger bead intervals (and smaller number of beads in the 3D reconstructions)--the 3D hotspot containing MSB2 and ERG11 was ranked 1st (of 754 potential hotspots) for the 3D reconstruction resulting from dropping every 3rd bead, and was ranked 3rd (of 544 potential hotspots) for the 3D reconstruction resulting from dropping every 2nd bead ( Supplementary Table S2). This finding indicates that the top 3D hotspot is stable across 3D reconstructions that have different resolutions.",
             "paragraph_rank": 27,
@@ -684,6 +740,10 @@
             "section_rank": 14
         },
         {
+            "text": "An alternative algorithm identifies the same Swi6 3D hotspot",
+            "section_rank": 15
+        },
+        {
             "section": "An alternative algorithm identifies the same Swi6 3D hotspot",
             "text": "We next applied k-NN regression (21,48), which operates very differently from PRIM and is inherently invariant to 3D reconstruction orientation. Briefly, the k beads nearest (here we use Euclidean distance) a starting seed bead are grouped together and the mean outcome of this group computed, this representing a potential hotspot. This process is repeated at seed beads evenly spaced along each chromosome by a fixed interval, and groups are then ranked by mean outcome (see 'Methods'). Since the 'bottom-up' k-NN regression groups together more genomically adjacent beads than the 'top-down' PRIM, we used the setting k = 2*min beads = 50 to be able to elicit 3D hotspots comprised of more than one genomic region.",
             "paragraph_rank": 31,
@@ -718,6 +778,10 @@
                     "end": 232
                 }
             ]
+        },
+        {
+            "text": "MSB2 and ERG11 are co-localized in other 3D reconstructions",
+            "section_rank": 16
         },
         {
             "section": "MSB2 and ERG11 are co-localized in other 3D reconstructions",
@@ -803,6 +867,10 @@
                     "end": 729
                 }
             ]
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 17
         },
         {
             "section": "DISCUSSION",
@@ -964,10 +1032,18 @@
             ]
         },
         {
+            "text": "Figure 3 .",
+            "section_rank": 18
+        },
+        {
             "section": "Figure 3 .",
             "text": "Swi6 target genes MSB2 (chrVII) and ERG11 (chrVIII) in different 3D chromatin configuration reconstructions. (A)",
             "paragraph_rank": 43,
             "section_rank": 18
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 19
         },
         {
             "section": "Table 1 .",
@@ -976,10 +1052,22 @@
             "section_rank": 19
         },
         {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 21
+        },
+        {
             "section": "ACKNOWLEDGEMENTS",
             "text": "Some computations were performed using the UCSF Biostatistics High Performance Computing System. We thank William Noble and two reviewers for very helpful comments on this manuscript and thank Nelle Varoquaux for providing data. ",
             "paragraph_rank": 46,
             "section_rank": 21
+        },
+        {
+            "text": "FUNDING",
+            "section_rank": 22
+        },
+        {
+            "text": "SUPPLEMENTARY DATA",
+            "section_rank": 24
         },
         {
             "section": "SUPPLEMENTARY DATA",

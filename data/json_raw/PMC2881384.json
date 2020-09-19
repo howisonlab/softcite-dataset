@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "Profile hidden Markov models (HMMs) have been one of the most successful methods to date for recognizing both close and distant homologs of given protein sequences. Popular HMM methods such as HMMER (Eddy et al., 1998a, b) and SAM (Hughey and Krogh, 1996) have been behind the design of databases such as Pfam (Finn et al., 2006), PROSITE (Hulo et al., 2006) and SUPERFAMIILY (Wilson et al., 2007). However, a limitation of these HMMs is, since there is only finite state information about the sequence that can be held in any particular position, HMMs cannot capture dependencies that are far, and variable distance apart, in sequence.",
             "paragraph_rank": 2,
@@ -155,6 +159,10 @@
             ]
         },
         {
+            "text": "APPROACH",
+            "section_rank": 2
+        },
+        {
             "section": "APPROACH",
             "text": "Our approach is based on the simulated evolution paradigm introduced in Kumar and Cowen (2009). The possibility that motif recognition methods could be improved with the addition of artificial training sequences had been previously suggested in the protein design community (Koehl and Levitt, 1999), though the methods of Koehl and Levitt (1999); Larson et al. (2003) and Am Busch et al. (2009) to generate these sequences are much more computationally intensive than the simple sequence-based mutation model of Kumar and Cowen. In particular, Kumar and Cowen created new training sequences by artificially adding point mutations to the original sequences in the training set, using the BLOSUM62 matrix (Eddy, 2004). The HMM training was then used on this larger, augmented training set unchanged.",
             "paragraph_rank": 6,
@@ -285,6 +293,14 @@
             "section_rank": 2
         },
         {
+            "text": "METHOD",
+            "section_rank": 3
+        },
+        {
+            "text": "Datasets",
+            "section_rank": 4
+        },
+        {
             "section": "Datasets",
             "text": "We employed an approach similar to that of Wistrand and Sonnhammer (2004) to pick SCOP families and superfamilies from among those that belong to the 'mainly beta proteins' class in SCOP and train HMMs. First, we chose sequences from SCOP that are <95% identical based on the ASTRAL database version 1.73 (Chandonia et al., 2004). The dataset was then filtered to include only the SCOP families that belonged to 'mainly beta proteins' class and had at least 10 sequences. Another constraint imposed in order to have test sets was to make sure that other SCOP families in the superfamily hierarchy had at least one sequence but not more than 50 sequences. Our test set consisted of all the sequences from the rest of the families in the superfamily and an equal number of decoy sequences chosen at random from different SCOP folds. The dataset is available at: http://bcb.cs.tufts.edu/pairwise/.",
             "paragraph_rank": 15,
@@ -307,10 +323,18 @@
             ]
         },
         {
+            "text": "Multiple sequence alignment",
+            "section_rank": 5
+        },
+        {
             "section": "Multiple sequence alignment",
             "text": "This is the process of aligning the homologous residues in protein sequences into columns and thus generating a multiple sequence alignment (MSA).",
             "paragraph_rank": 16,
             "section_rank": 5
+        },
+        {
+            "text": "Aligning sequences with MUSCLE",
+            "section_rank": 6
         },
         {
             "section": "Aligning sequences with MUSCLE",
@@ -328,6 +352,10 @@
             ]
         },
         {
+            "text": "Aligning sequences with Matt",
+            "section_rank": 7
+        },
+        {
             "section": "Aligning sequences with Matt",
             "text": "For the pairwise augmented training model, and the hybrid model, we used multiple alignment with translations and twists (Matt) (Menke et al., 2008) to align the sequences based on the structure. By allowing local flexibility and allowing small translations and rotations, Matt demonstrates an ability to better align the ends of \u03b1helices and \u03b2-strands. We used Matt in default configuration for aligning the sequences in a family. Alignment based on structure is essential to determine the location of \u03b2-strands in the sequences and thus augment the dataset based on conserved residue pairs in \u03b2-strands.",
             "paragraph_rank": 18,
@@ -343,6 +371,14 @@
             ]
         },
         {
+            "text": "Mutation models",
+            "section_rank": 8
+        },
+        {
+            "text": "Simple mutation model",
+            "section_rank": 9
+        },
+        {
             "section": "Simple mutation model",
             "text": "We used the BLOSUM62 matrix as our simple model of evolutionary mutations (Eddy, 2004). Mutations in a sequence are added by randomly picking a position in the sequence and the replacing the amino acid in that position with a new amino acid based on the BLOSUM62 probability until a desired threshold of s% mutations is reached. For each training sequence, N new mutated sequences with s% mutations are created and added to the training set. Therefore a family with 100 sequences will have 100 + N \u00d7 100 (100 original + N \u00d7 100 mutated) sequences in the training set. In this study, we create training sets with 5, 10, 15, 20 and 25% mutations per the length of sequence and tested several values of N ranging from 10-1000. We picked a value of N at the 20% mutation rate for which the results were stable (see Section 3.5).",
             "paragraph_rank": 19,
@@ -356,6 +392,10 @@
                     "end": 86
                 }
             ]
+        },
+        {
+            "text": "\u03b2-Strand mutation model",
+            "section_rank": 10
         },
         {
             "section": "\u03b2-Strand mutation model",
@@ -399,6 +439,10 @@
             "text": "For each sequence in the training set, M mutated sequences with p% mutations are created and added to the training set. Here 'p' is set not to be proportional to the total length of the entire sequence, but instead to the total length of the \u03b2-strand positions in the alignment. New sequences are created as follows. Residue positions contained in \u03b2-strands are selected uniformly at random. If position 'i' is selected, its pair residue 'j' is found (note that j may appear before or after 'i' in sequence) and i is mutated according to the appropriate pairwise table, conditioned on it being hydrogen bonded to the residue of type in position 'j'. This process is repeated p times and the resulting sequence is added to the augmented training set. At the end of this process, for example, a family with 100 original sequences in the training set will have 100 + M \u00d7 100 (100 original + M \u00d7 100 mutated) sequences in the augmented training set. In this study, we set values of p that would result in training sets with 10-100% mutations (note: we allow sites to mutate more than once, for example some of the positions even a sequence with a 100% mutation rate may not end up mutated) and tested multiple values of M ranging from 10-1000. We picked a value of M at which the results were stable at the 20% mutation rate (see Section 3.5).",
             "paragraph_rank": 22,
             "section_rank": 10
+        },
+        {
+            "text": "Building the HMM",
+            "section_rank": 11
         },
         {
             "section": "Building the HMM",
@@ -494,6 +538,10 @@
             ]
         },
         {
+            "text": "HMM scoring",
+            "section_rank": 12
+        },
+        {
             "section": "HMM scoring",
             "text": "Once an HMM is build from an MSA, a new sequence can be scored by the HMM. The score (S) is the log of the probability of observing the sequence from a HMM divided by the probability of observing the same sequence from the 'null hypothesis' model or HMM.",
             "paragraph_rank": 28,
@@ -536,6 +584,10 @@
             ]
         },
         {
+            "text": "HMM stability",
+            "section_rank": 13
+        },
+        {
             "section": "HMM stability",
             "text": "Because our method for augmenting the training data is randomized there is a legitimate concern that any reported result might vary each time the algorithm is run. While results will in fact vary, in fact the variation decreases as N and M grow larger. We refer to the variation between different runs of the algorithm as the stability of the procedure and we empirically experimented with different values of N and M in order to ensure sufficiently consistent results. We augmented the training set with 10, 50, 100, 200, 500 and 1000 mutated sequences for each original sequence in the training set, for both pointwise and pairwise mutation models. We generated the augmented training set 40 times at 20% mutation rate for each protein family in our  training set with a different random seed and constructed the HMMs as described above. For each HMM, we computed the MEP for each iteration. Figure 2 shows the variation in the SD of the MEP for the single mutation model, and Figure 3 shows the variation in the SD of the MEP for the pairwise mutation model. Based on these results we set N and M to each be 150 in this artilcle.",
             "paragraph_rank": 32,
@@ -556,6 +608,10 @@
                     "end": 987
                 }
             ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 14
         },
         {
             "section": "RESULTS",
@@ -636,6 +692,10 @@
             "section_rank": 14
         },
         {
+            "text": "DISCUSSION",
+            "section_rank": 15
+        },
+        {
             "section": "DISCUSSION",
             "text": "We have shown how pairwise dependencies in \u03b2-sheets can be incorporated into an augmented HMM training set using simulated evolution, resulting in improved recognition of \u03b2-structural motifs. Our datasets, augmented training sets, and our HMMs are all available online at http://bcb.cs.tufts.edu/pairwise/.",
             "paragraph_rank": 36,
@@ -706,10 +766,18 @@
             ]
         },
         {
+            "text": "Fig. 1 .",
+            "section_rank": 16
+        },
+        {
             "section": "Fig. 1 .",
             "text": "Training HMMs by (A) a pointwise mutation model, (B) a pairwise mutation model and (C) combining (A and B).",
             "paragraph_rank": 38,
             "section_rank": 16
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 17
         },
         {
             "section": "Fig. 2 .",
@@ -718,10 +786,18 @@
             "section_rank": 17
         },
         {
+            "text": "Fig. 3 .",
+            "section_rank": 18
+        },
+        {
             "section": "Fig. 3 .",
             "text": "Variation in SD of MEP for HMM training augmented with 10-1000 sequences based on pairwise \u03b2-sheet mutation model.",
             "paragraph_rank": 40,
             "section_rank": 18
+        },
+        {
+            "text": "Fig. 4 .",
+            "section_rank": 19
         },
         {
             "section": "Fig. 4 .",
@@ -730,10 +806,18 @@
             "section_rank": 19
         },
         {
+            "text": "Fig. 5 .",
+            "section_rank": 20
+        },
+        {
             "section": "Fig. 5 .",
             "text": "Median percent AUC improvement with mutation rate for HMMs trained SAM with pairwise mutations. The maximum median improvement is 4.79% at 50% mutation rate.",
             "paragraph_rank": 42,
             "section_rank": 20
+        },
+        {
+            "text": "Fig. 6 .",
+            "section_rank": 21
         },
         {
             "section": "Fig. 6 .",
@@ -742,16 +826,32 @@
             "section_rank": 21
         },
         {
+            "text": "Fig. 7 .",
+            "section_rank": 22
+        },
+        {
             "section": "Fig. 7 .",
             "text": "Distribution of families with improved performance for pointwise mutation model.",
             "paragraph_rank": 44,
             "section_rank": 22
         },
         {
+            "text": "i291Fig. 8 .",
+            "section_rank": 23
+        },
+        {
             "section": "i291Fig. 8 .",
             "text": "Distribution of families with improved performance for pairwise mutation model.",
             "paragraph_rank": 45,
             "section_rank": 23
+        },
+        {
+            "text": "Traditional HMM A. HMM with simulated Evolution",
+            "section_rank": 24
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 26
         },
         {
             "section": "ACKNOWLEDGEMENTS",

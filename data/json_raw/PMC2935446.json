@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "The intrinsically disordered proteins (IDPs), also referred to as unstructured proteins, lack stable tertiary structure under physiological conditions in vitro. The IDPs play a crucial role in transcriptional regulation, translation and cellular signal transduction (Dunker et al., 2008). Their prevalence was also implicated in various human disorders including the neurodegenerative diseases such as Huntington, Parkinson's and Alzheimer's disease (Raychaudhuri et al., 2009). However, the functional role of IDPs is not as well understood when compared with the well-packed proteins. Importantly, the annotations of the disorder lag behind the rapidly accumulating number of known * To whom correspondence should be addressed. protein chains. To compare, the curated DisProt database (Sickmeier et al., 2007) includes little over 500 chains, the PDB database (Berman et al., 2000) that allows finding unstructured segments in the solved tertiary structures (which are assumed to be equivalent to disordered segments) includes \u223c58 000 proteins, while the overall number of known protein chains is >9 million. The disorder is frequently observed in regions with low-sequence complexity and with low content of hydrophobic amino acids, which would often form a core of a folded globular protein (Dyson and Wright, 2005;Uversky et al., 2000). These and other sequence characteristics can be used to differentiate between disordered and ordered regions, which in turn implies that disorder is predictable from the sequence. The past decade observed development of a number of computational models for the prediction of the disordered regions. These methods allow for high-throughput annotations of protein chains which provide a viable solution to close the annotation gap. These predictors could be categorized into four groups: (i) methods based on relative propensity of amino acids to form disorder/ordered regions which include GlobPlot (Linding et al., 2003), IUPred (Doszt\u00e1nyi et al., 2005), FoldIndex (Prilusky et al., 2005) and Ucon (Schlessinger et al., 2007a); (ii) methods built utilizing machine-learning classifiers, such as DISpro (Hecker et al., 2008), DISOPRED (Jones and Ward, 2003) DISOPRED2 (Ward et al., 2004), PrDOS (Ishida and Kinoshita, 2007), POODLE-S (Shimizu et al., 2007a), POODLE-L (Hirose et al., 2007), POODLE-W (Shimizu et al., 2007b), Spritz (Vullo et al., 2006), DisPSSMP (Su et al., 2006), DisPSSMP2 (Su et al., 2007), IUP (Yang and Yang, 2006), NORSnet (Schlessinger et al., 2007b) and OnD-CRFs (Wang and Sauer, 2008); (iii) methods based on a metaapproach which combines predictions from multiple base predictors including recent MD (Schlessinger et al., 2009), metaPrDOS (Ishida and Kinoshita, 2008), GS-metaDisorder (J.Bujnicki, unpublished data) and MULTICOM (Cheng et al., 2005); and (iv) methods based on analysis of predicted 3D structural models, such as DISOclust (McGuffin, 2008). Since 2002, the sequence-based disorder predictors are biannually assessed and compared during the critical assessment of structure prediction (CASP) experiments. Although the prediction quality continues to rise, as shown in the most recent CASP8 (Noivirt-Brik et al., 2009), improved prediction methods are still urgently needed (Schlessinger et al., 2009).",
             "paragraph_rank": 2,
@@ -379,6 +383,14 @@
             "section_rank": 1
         },
         {
+            "text": "METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Datasets",
+            "section_rank": 3
+        },
+        {
             "section": "Datasets",
             "text": "The proposed method was designed and tested on a dataset with 514 protein sequences. These sequences were harvested from the PDB and the DisProt databases. The PDB sequences were filtered using the culled PDB list (Wang and Dunbrack, 1993) to extract a high-quality and low-sequence identity subset. We selected sequences that have structures with R-factor <0.2 and resolution <2.0 \u00c5, and that are characterized by sequence identity <5%. The above follows the selection process used by GS-metaDisorder, one of the leading methods in CASP8. Since most protein chains in PDB are completely ordered, we kept randomly selected 20% of the ordered proteins. We extracted the entire set of 1195 proteins from the current release 4.9 of the DisProt and we merged them with the PDB chains. The combined set was i490 filtered at 25% sequence identity as follows. For a given pair of sequences that share >25% identity, we remove the chain that has fewer disordered residues. Next, we removed any of the remaining 522 sequences that share significant similarity with chains in the CASP8 dataset that is also used to validate our predictions; we removed each sequence that shares >25% identity to any of the CASP8 targets. The resulting dataset, named mixed disorder (MxD) dataset, has 514 protein sequences, with 309 from DisProt and 205 from PDB. Our method is also compared against other solutions using the CASP8 dataset, which contains 122 proteins; details concerning this dataset are given in Noivirt-Brik et al. (2009).",
             "paragraph_rank": 8,
@@ -398,6 +410,10 @@
                     "end": 1514
                 }
             ]
+        },
+        {
+            "text": "Definition of disorder",
+            "section_rank": 4
         },
         {
             "section": "Definition of disorder",
@@ -433,6 +449,10 @@
                     "end": 820
                 }
             ]
+        },
+        {
+            "text": "Evaluation criteria and test procedures",
+            "section_rank": 5
         },
         {
             "section": "Evaluation criteria and test procedures",
@@ -474,6 +494,10 @@
             "text": "We designed the proposed predictor (which includes selection of features that are used to encode the inputs, parameterization of the Support Vector Machine (SVM)-based classifiers and selection of the threshold for the predicted disorder probabilities to obtain binary predictions) using 5-fold cross validation on the MxD dataset. In this test, we divide the dataset into five equal-sized subsets of protein chains. We use four of these subsets to form a training dataset that is utilized to compute the model and the fifth subset constitutes the testing dataset that is used to perform the evaluation. This is repeated five times, each time choosing a different subset to be the test dataset. The test on the CASP 8 was performed using the model trained on the MxD dataset.",
             "paragraph_rank": 12,
             "section_rank": 5
+        },
+        {
+            "text": "Architecture",
+            "section_rank": 6
         },
         {
             "section": "Architecture",
@@ -558,6 +582,10 @@
             ]
         },
         {
+            "text": "Feature space representation",
+            "section_rank": 7
+        },
+        {
             "section": "Feature space representation",
             "text": "The MFDp utilizes four complementary disorder predictors, IUPred LONG (IUPREDL), IUPred SHORT (IUPREDS), DISOPRED2 and DISOclust; the sequence, the PSSM profile (Altschul et al., 1997), the predicted SS, the predicted RSA, the predicted globular domains (IUPREDG), backbone dihedral torsion angles and signal peptides. The predictors were run with their default parameters. The PSSM profiles were generated using the nonredundant (nr) database from NCBI (downloaded on November 19, 2009), which was filtered using PFILT (Jones and Swindells, 2002) to remove low-complexity regions, transmembrane regions and coiled-coil segments.",
             "paragraph_rank": 14,
@@ -592,6 +620,10 @@
             "section_rank": 7
         },
         {
+            "text": "Feature selection and parameterization of SVMs",
+            "section_rank": 8
+        },
+        {
             "section": "Feature selection and parameterization of SVMs",
             "text": "We designed three SVMs using different versions of the MxD dataset. The SVM ALL was designed using the entire MxD dataset, while SVM LONG and SVM SHORT were developed using the MxD dataset where the disorder residues from short (<30 residues) and from long (\u226530 residues) disorder segments were removed, respectively. For each of the three models we used the following procedure. In the 'first step' we remove all highly correlated features within each of the 17 feature categories. For each feature we compute its average biserial correlation (over five correlations computed from the five training subsets of the MxD dataset) with the outcomes, i.e. annotation of ordered and disorder residues. We sort the features in each category according to their average biserial correlations. The set of the selected features is initialized with the feature that has the highest biserial correlation. Next, for each following features we calculate its average correlation (over the five training subsets) with any of the features which were already selected, and we add it to the set of selected features only if the correlation <0.9. We discard the features that were not selected. In the 'second step' we quantify predictive quality of the features selected in the first step using the linear SVMs. We construct feature sets by selecting top t features, according to their average biserial correlations, from each category. We take all features in a given category if their number < t. Next, we run 5-fold cross validation on the MxD dataset where we vary the value of t between 1 and 15, and for each t we parameterize the value of constant C of the linear SVM classifiers. We consider C in consecutive powers of 2 between 2 \u22128 and 2 5 . For each of the prediction models (ALL, LONG and SHORT) t = 1 provides the best values of AUC in the 5-fold cross validation on the MxD dataset. Next, starting from the least correlated feature from the selected 17 features, we removed a given feature if it increases AUC value for the 5-fold cross validation-based prediction on the MxD dataset; this lead to removal of the features related to the annotation of the signal peptides. For the remaining relevant feature categories, we attempt to add additional features which improve predictive quality. For each of the remaining categories, starting with the category with the most correlated feature, we keep adding features (starting with secondbest feature from the category) as long as the addition of a feature increased the AUC value for the 5-fold cross validation on the MxD dataset. For each removal/addition, we tuned the C parameter of the SVM. For the ALL model, we selected 16 features from 11 categories; for the SHORT model, we selected 30 features from 12 categories; and for the LONG model, we have 17 features from 12 categories. The selected features are shown in the Table 1 in the appendix at http://biomine.ece.ualberta.ca/MFDp.html. A significant fraction of the features (27 out of the entire set of 63) are based on the aggregated information, which suggests that our features provide better discriminatory power than the raw values. The selected features consider almost all sources, except for the signal peptides annotations. The entire process, including feature selection and SVM parameterization, was consistently carried using 5-fold cross validation on MxD dataset.",
             "paragraph_rank": 17,
@@ -605,6 +637,14 @@
                     "end": 2877
                 }
             ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 9
+        },
+        {
+            "text": "Comparison with existing predictors",
+            "section_rank": 10
         },
         {
             "section": "Comparison with existing predictors",
@@ -738,6 +778,10 @@
             ]
         },
         {
+            "text": "Predictions of proteins with long-disordered segments",
+            "section_rank": 11
+        },
+        {
             "section": "Predictions of proteins with long-disordered segments",
             "text": "We investigate the quality of our predictions applied to find proteins with long (\u226530 residues)-disordered regions. This binary prediction is motivated by the fact that this information is useful for target selection (Punta et al., 2009;Slabinski et al., 2007) and proteinprotein recognition (Tompa et al., 2009). Similar evaluation was also performed for the MD (Schlessinger et al., 2009). Although \u223c43% of disordered residues in CASP8 are in the long segments (allowing for a relatively robust per-residues evaluations), there are only 15 such segments and thus we did not use this dataset. The results on the MD dataset obtained using 5-fold cross validation for the MFDp and the predictions from the servers for MD, DISOPRED2, IUPred, NORSnet, DISOclust, Ucon and PROFbval are summarized   in Table 4. The corresponding ROC curves are shown in Figure 3 (for 0-0.5-TP-rate range) and in the appendix (for the entire range).",
             "paragraph_rank": 20,
@@ -801,6 +845,10 @@
             ]
         },
         {
+            "text": "Case studies",
+            "section_rank": 12
+        },
+        {
             "section": "Case studies",
             "text": "We selected CASP8 target T0480 (PDBid 2K4X) which was solved with NMR, and CASP8 target T0404 (PDBid 2DFE) which was solved with X-ray crystallography, as our case studies. We compare side-by-side prediction of MFDp, its input predictors DISOPRED2, IUPred, DISOclust, the recent ensemble-based MD, and two topperforming on the CASP8 (with respect to MCC) McGuffin [379] and GeneSilicoMetaServer [297] methods (Fig. 4). For the T0480, which is a small protein with \u223c50% disordered residues located at sequence termini, MFDp finds both disordered segments, achieves below-average MCC of 0.59 and improves over predictions of its ensemble predictors. The MD over-predicts disorder and GeneSilicoMetaServer generates predictions comparable to that of MFDp. The T0404 includes 25% disordered residues with one longer segment away from the termini. Most of the predictors find both disordered segments, and they also incorrectly annotate another disordered segment at the N-terminus, except IUPREDL which predicts only the middle segment. The GeneSilicoMetaServer and MD slightly over-predict disorder, and the segment in the center of the chain is most accurately predicted by MFDp, DISOPRED2 and McGuffin. Although these predictions should not be assumed typical, they demonstrate that the MFDp can outperform all of its input predictors.",
             "paragraph_rank": 22,
@@ -820,6 +868,10 @@
                     "end": 417
                 }
             ]
+        },
+        {
+            "text": "CONCLUSIONS",
+            "section_rank": 13
         },
         {
             "section": "CONCLUSIONS",
@@ -842,10 +894,18 @@
             ]
         },
         {
+            "text": "Fig. 1 .",
+            "section_rank": 14
+        },
+        {
             "section": "Fig. 1 .",
             "text": "Architecture of the MFDp method.",
             "paragraph_rank": 24,
             "section_rank": 14
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 15
         },
         {
             "section": "Fig. 2 .",
@@ -854,10 +914,18 @@
             "section_rank": 15
         },
         {
+            "text": "Fig. 4 .",
+            "section_rank": 16
+        },
+        {
             "section": "Fig. 4 .",
             "text": "trueDDDDDDDDDDDDDDDDDD------------------------------DDDDDDDtrue ---------------------------------------DDDDDDDDDDDDDDDDDD--------------------------------------------DDDDDDDDDMFDp DDDDDDD----------------------------------------DDDDDDDD MFDp DDDDD-----------------------------------DDDDDDDDDDDDDDDDD----------------------------------------------DDDDDDD DP2 DD---------------------------------------------D--DDDDD DP2 DDDD------------------------------------DDDDDDDDDDDDDDD---------------------------------------------------DDDD IUPL -------------------------------------------------------IUPL ---------------------------------------DDDDDDDDDDDDDD--DDDDDD-------------------------------------------------IUPS DDDDDD---------------------------------------------DDDD IUPS DDDDD-------------------------------------DDDDDDDDDDDDDDDDDDD------------------------------------------------D DISOc DD-------------------------------------------DDDDDDDDDD DISOc DDDDDDDDDDD------------------------DDDDDDDDDDDDDDDDDDDDD----------------------------------------------D---DDDD MD DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD MD DDDDDDD---DDDDDD-DDDDD-------------DDDDDDDDDDDDDDDDDDDDDDD--------DDDDD------------------------------DDDDDDDDD 379 DD---------------------------------------------D-DDDDDD 379 DDDD------------------------------------DDDDDDDDDDDDDDD-----------------------------------------------D--DDDDD 297 DDDDDD---------------D-----------------------DDDDDDDDDD 297 DDDDDDDDDD----------------DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD---------------------------------------------DDDD Comparison of predictions from MFDp, DISOPRED2 (DP2), IUPREDL (IUPL), IUPREDS (IUPS) and DISOclust (DISOc), MD; and two CASP8 predictors with the highest MCC, McGuffin",
             "paragraph_rank": 26,
             "section_rank": 16
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 17
         },
         {
             "section": "Table 1 .",
@@ -866,16 +934,28 @@
             "section_rank": 17
         },
         {
+            "text": "Table 2 .",
+            "section_rank": 18
+        },
+        {
             "section": "Table 2 .",
             "text": "Comparison of predictive quality measured on the MxD and CASP8 datasets when considering all disordered regionsWe report the averages and corresponding SDs for bootstrapping with 1000 repetitions of 80% of chains. Underlined methods are used as inputs for MFDp. The methods are sorted by the MCC values and the highest values are shown in bold. Results of tests of significance of the differences between MFDp and the other methods are given in the 'significance' columns. The tests compare average values from 1000 bootstrapping repetitions. The + and -mean that MFDp is statistically significantly better/worse with P < 0.01, and = means that results are not significantly different.",
             "paragraph_rank": 29,
             "section_rank": 18
         },
         {
+            "text": "Table 3 .",
+            "section_rank": 19
+        },
+        {
             "section": "Table 3 .",
             "text": "Comparison of predictive quality measured on the MxD and CASP8 datasets when considering disordered regions that are \u226530-residues longWe report the averages and corresponding SDs for bootstrapping with 1000 repetitions of 80% of chains. Underlined methods are used as inputs for MFDp. The methods are sorted by the MCC values and the highest values are shown in bold. Results of tests of significance of the differences between MFDp and the other methods are given in the 'significance' columns. The tests compare average values from 1000 bootstrapping repetitions. The + and \u2212 mean that MFDp is statistically significantly better/worse with P < 0.01, and = means that results are not significantly different.",
             "paragraph_rank": 31,
             "section_rank": 19
+        },
+        {
+            "text": "Table 4 .",
+            "section_rank": 20
         },
         {
             "section": "Table 4 .",

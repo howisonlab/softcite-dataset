@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "Genome sequencing events have resulted in a rapid accumulation of protein sequences in public databases. As an essential tool in computational sequence analysis, sequence alignment is widely used in similarity searches, structure modeling, functional prediction and phylogenetic analysis (1)(2)(3)(4)(5). Construction of a multiple sequence alignment aims at arranging residues with inferred common evolutionary origin in the same position for a set of sequences (6).",
             "paragraph_rank": 3,
@@ -231,6 +235,14 @@
             ]
         },
         {
+            "text": "MATERIALS AND METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Training and testing datasets of SCOP domain pairs",
+            "section_rank": 3
+        },
+        {
             "section": "Training and testing datasets of SCOP domain pairs",
             "text": "Protein domain sequences and structures were obtained from the ASTRAL database (25) based on SCOP (24) version 1.69. We used the dataset consisting of representatives at the 40% sequence identity threshold (SCOP40). Domains from SCOP classes 1 to 4 [all alpha, all beta, alpha and beta (a/b), alpha and beta (a + b)] were selected. For each domain pair from the same superfamily of SCOP40, we computed a structural alignment using the program DaliLite (26). Alignments with coverage (fraction of aligned region to the length of the shorter sequence) less than 0.6 were removed. The remaining alignments were divided into four datasets corresponding to four sequence identity bins: <10, 10-15, 15-20 and 20-40%. The method for calculating sequence identity that takes into account unaligned regions is described in Supplementary Data. To apply cross validation training and testing, we divided the domain pairs in each identity bin into four subsets at the SCOP fold level, so that no domains belonging to the same SCOP fold were shared by any two subsets. We estimated HMM parameters using alignments in three subsets and tested the programs on representative domain pairs of the remaining fourth subset. This procedure was performed four times corresponding to four ways of partitioning into training and testing datasets. To obtain representative alignments from a subset for testing, we randomly selected one domain pair from each SCOP fold in that subset. The number of domain pairs in each training dataset is larger than 10 000 (Supplementary Table S1).",
             "paragraph_rank": 10,
@@ -251,6 +263,10 @@
                     "end": 1557
                 }
             ]
+        },
+        {
+            "text": "HMMs of pairwise sequence alignment",
+            "section_rank": 4
         },
         {
             "section": "HMMs of pairwise sequence alignment",
@@ -506,6 +522,10 @@
             "section_rank": 4
         },
         {
+            "text": "Multiple sequence alignment procedure",
+            "section_rank": 5
+        },
+        {
             "section": "Multiple sequence alignment procedure",
             "text": "We have developed a progressive multiple sequence alignment program implementing our HMMs (MUMMALS, standing for MUltiple alignment with Multiple MAtch state models of Local Structure). It applies a probabilistic consistency scoring function similar to the one in ProbCons (23). First, a tree is built-in a fast way based on a k-mer count method (10). An initial alignment is built progressively guided by the tree with a simple sum-of-pairs scoring function. A second tree is then built with a UPGMA method based on sequence identities calculated from the initial alignment. We then apply the probabilistic consistency strategy as described by Do et al. (23). For each sequence pair, we calculate the match probabilities of residue pairs using one of the HMMs. These probability matrices are subject to consistency measure, which involves multiplications of the matrices (23). Finally, MUMMALS progressively aligns the sequences guided by the second tree using the consistencybased scoring function.",
             "paragraph_rank": 23,
@@ -562,6 +582,10 @@
                     "end": 359
                 }
             ]
+        },
+        {
+            "text": "Performance assessment of multiple sequence alignment programs",
+            "section_rank": 6
         },
         {
             "section": "Performance assessment of multiple sequence alignment programs",
@@ -630,10 +654,22 @@
             ]
         },
         {
+            "text": "Availability",
+            "section_rank": 7
+        },
+        {
             "section": "Availability",
             "text": "The MUMMALS multiple alignment web server is at: http://prodata.swmed.edu/mummals/, with the source code of MUMMALS available for download.",
             "paragraph_rank": 28,
             "section_rank": 7
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 8
+        },
+        {
+            "text": "Complex HMMs with local structural information improve pairwise alignments",
+            "section_rank": 9
         },
         {
             "section": "Complex HMMs with local structural information improve pairwise alignments",
@@ -733,6 +769,10 @@
                     "end": 847
                 }
             ]
+        },
+        {
+            "text": "MUMMALS and multiple sequence alignment tests",
+            "section_rank": 10
         },
         {
             "section": "MUMMALS and multiple sequence alignment tests",
@@ -882,6 +922,10 @@
             ]
         },
         {
+            "text": "Secondary structure prediction and alignment quality",
+            "section_rank": 11
+        },
+        {
             "section": "Secondary structure prediction and alignment quality",
             "text": "Model HMM_1_3_1 has hidden secondary structuredependent match states that are used in alignment construction. However, secondary structure predictions are not explicitly generated and remain 'hidden' in the alignment process. A posterior decoding technique can be applied to this model to output explicit secondary structure predictions (see Supplementary Data for details). The prediction accuracy is 60% on representative SCOP domains ( Supplementary  Table S6). This prediction accuracy is lower than many advanced methods, such as PSI-PRED (43), which use homologs from database searches to enhance the secondary structure signal of a single sequence. Our HMM-based prediction of secondary structure corresponds to a single sequence predictor, since position-specific information from multiple homologs is not used. The prediction accuracy of model HMM_1_3_1 is comparable to other methods that generate predictions based on a single sequence (44).",
             "paragraph_rank": 36,
@@ -938,6 +982,10 @@
             ]
         },
         {
+            "text": "Evaluation of programs with reference-independent scores",
+            "section_rank": 12
+        },
+        {
             "section": "Evaluation of programs with reference-independent scores",
             "text": "All previously described tests are based on comparison with reference alignments that are treated as 'gold standards'. It is unclear how the quality of reference 'gold' alignments influences the ranking of alignment programs (45). Several examples from BAliBASE3.0 show some problems with referencedependent evaluation. Since the structures of all domains in our testing datasets are known, we can evaluate the quality of a test alignment using reference-independent scores that reflect the similarity between two structures after they are superimposed according to aligned residues in the test alignment. The structural scores we have used are: DALI Z-score, TM-score, GDT-TS score, 3D-score and two LiveBench contact scores. From Table 3, it is clear that MUMMALS with the best-performing models (HMM_1_3_1 and HMM_3_3_1) produces higher average referenceindependent structural scores than other programs for divergent domain pairs (identity below 20%), suggesting that our HMM models produce potentially more useful alignments in terms of structure modeling. Interestingly, MUMMALS does not produce the highest reference-independent sequencebased similarity scores (sequence identity and BLOSUM62 scores of aligned residue pairs). This result suggests that minimization of these sequence similarity measures alone does not lead to better alignment quality for divergent sequences. Our experiments with reference-independent evaluation shows good correlation with reference-dependent results described above, thus rendering a 'gold standard' reference unnecessary for alignment evaluation.",
             "paragraph_rank": 38,
@@ -957,6 +1005,10 @@
                     "end": 739
                 }
             ]
+        },
+        {
+            "text": "Pairwise comparisons of multiple sequence aligners",
+            "section_rank": 13
         },
         {
             "section": "Pairwise comparisons of multiple sequence aligners",
@@ -979,6 +1031,14 @@
                     "end": 1697
                 }
             ]
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 14
+        },
+        {
+            "text": "Comparison of multiple sequence alignment programs",
+            "section_rank": 15
         },
         {
             "section": "Comparison of multiple sequence alignment programs",
@@ -1038,6 +1098,10 @@
             ]
         },
         {
+            "text": "Time complexity of HMMs and MUMMALS",
+            "section_rank": 16
+        },
+        {
             "section": "Time complexity of HMMs and MUMMALS",
             "text": "The trade-off for improvement of alignment quality with more complex model structures is more time for computation Table 3. Assessment of multiple sequence alignment programs using reference-independent sequence and structural similarity scores on 1207 representative SCOP40 domain pairs with identity <20% a MUMMALS with this model is statistically better than the best of other programs according to Wilcoxon signed-rank test (P < 0.01).",
             "paragraph_rank": 43,
@@ -1050,6 +1114,10 @@
                     "end": 122
                 }
             ]
+        },
+        {
+            "text": "Method",
+            "section_rank": 17
         },
         {
             "section": "Method",
@@ -1084,6 +1152,10 @@
                     "end": 1692
                 }
             ]
+        },
+        {
+            "text": "Methods for alignment quality evaluation",
+            "section_rank": 18
         },
         {
             "section": "Methods for alignment quality evaluation",
@@ -1162,6 +1234,10 @@
             ]
         },
         {
+            "text": "Multiple sequence alignment: still an unsolved problem",
+            "section_rank": 19
+        },
+        {
             "section": "Multiple sequence alignment: still an unsolved problem",
             "text": "Despite several percentage points' improvement in alignments provided by MUMMALS, alignment quality for divergent sequences (sequence identity <15%) is still not high, since only 50% or even less residue pairs on average are aligned correctly according to reference alignments (Table 2). Although the best programs (MUMMALS, MAFFT and ProbCons) have limited differences in terms of average alignment quality score, they can produce quite different alignments for some sequence pairs (Table 4). It can be a good practice to use several aligners to generate alignments for divergent sequences. Manual examination of these alignments can be helpful in making expert judgments. Exploration of the consensus among programs is fruitful as well and is frequently used in meta-servers for structure prediction (52)(53)(54). Results of the meta-aligner M-COFFEE (46) as well as ours (data not shown, MUMMALS package contains a meta-program similar to M-COFFEE) suggest that combining different multiple sequence aligners can give significant but limited improvement of alignment quality.",
             "paragraph_rank": 49,
@@ -1234,10 +1310,18 @@
             ]
         },
         {
+            "text": "( a )",
+            "section_rank": 20
+        },
+        {
             "section": "( a )",
             "text": "Structure-based alignment and hidden state paths",
             "paragraph_rank": 51,
             "section_rank": 20
+        },
+        {
+            "text": "Figure 1",
+            "section_rank": 21
         },
         {
             "section": "Figure 1",
@@ -1249,6 +1333,10 @@
             "text": "Our program is named MUMMALS, standing for MUltiple alignment with Multiple MAtch state models of Local Structure. MUMMALS was compared to several other programs, such as ProbCons (23), MAFFT (11), MUSCLE (10)",
             "paragraph_rank": 53,
             "section_rank": 22
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 23
         },
         {
             "section": "Table 1 .",
@@ -1263,6 +1351,10 @@
             "section_rank": 23
         },
         {
+            "text": "Table 2 .",
+            "section_rank": 24
+        },
+        {
             "section": "Table 2 .",
             "text": "Average alignment scores in tests of multiple sequence alignment programs",
             "paragraph_rank": 56,
@@ -1275,16 +1367,28 @@
             "section_rank": 24
         },
         {
+            "text": "Table 4 .",
+            "section_rank": 25
+        },
+        {
             "section": "Table 4 .",
             "text": "Number of large Q-score or TM-score differences (no less than 0.1) among the multiple sequence alignment programs on 1207 representative SCOP40 domain pairs with identityThe first five methods are MUMMALS implementing different HMMs. The format of the HMM names ('HMM_solv_ss_u') is explained in",
             "paragraph_rank": 58,
             "section_rank": 25
         },
         {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 27
+        },
+        {
             "section": "ACKNOWLEDGEMENTS",
             "text": "The authors would like to thank Bong-Hyun Kim for the program to calculate reference-independent sequence and structural scores and Dr Kazutaka Katoh for providing the HOMSTRAD datasets. The authors would also like to thank Lisa Kinch, James Wrabl and anonymous referees for helpful comments. Funding to pay the Open Access publication charges for this article was provided by Howard Hughes Medical Institute. This work was supported in part by NIH grant GM67165 to NVG.",
             "paragraph_rank": 60,
             "section_rank": 27
+        },
+        {
+            "text": "SUPPLEMENTARY DATA",
+            "section_rank": 29
         },
         {
             "section": "SUPPLEMENTARY DATA",

@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "The advancement of high-throughput sequencing has opened up many important areas of applications, one of which is epigenome sequencing. DNA methylation may repress or activate transcription, and is known to be involved in embryogenesis, genomic imprinting and tumorigenesis in mammals, and transposon silencing in plants (Bestor, 2000;Li et al., 1992;Lippman et al., 2004;Rhee et al., 2002;Zhang et al., 2006;Zilberman et al., 2007). To understand the regulation and dynamics of DNA methylation, the locations of the modified cytosines need to be identified. The first single-base resolution mappings of DNA methylation were produced for the whole Arabidopsis thaliana genome (Cokus et al., 2008;Lister et al., 2008) and for selected subsets of sites in the mouse genome (Meissner et al., 2008) using various bisulfite sequencing technologies. DNA methylation is the modification of DNA base cytosine (methylcytosine). A map of DNA methylation at single-base resolution is referred to as methylome or epigenome.",
             "paragraph_rank": 2,
@@ -209,6 +213,10 @@
             "section_rank": 1
         },
         {
+            "text": "A MIXTURE MODEL FOR HETEROGENEOUS EPIGENOMES",
+            "section_rank": 2
+        },
+        {
             "section": "A MIXTURE MODEL FOR HETEROGENEOUS EPIGENOMES",
             "text": "In bisulfite sequencing experiments, DNA fragments are treated with sodium bisulfite. The process converts unmethylated cytosines into uracils. The sequence of nucleotides (reads) in the converted fragments are subsequently determined by a sequencer. The reads produced by the sequencer are aligned to a reference genome. Usually only uniquely mapped reads are retained. As a result, what we have is a set of reads that are most similar in sequence to their respective mapped locations in the reference genome, which are presumably the genomic origins of the fragments that produced the reads. In addition, each cytosine on every mapped read is labeled as either methylated or unmethylated. The methylation level of a particular cytosine is computed as follows: if there are x reads that map to the position, and y out of the x reads have at this position a methylcytosine, then the methylation level is y/x. Note that if the read depth at a cytosine position is below a certain threshold, which is determined by the allowed false positive rate, the methylation is not called, i.e. y = 0. (Lister et al., 2008) If the original sample is composed of a mixture of epigenomes, be it from a set of different cell types, tissues or alleles, the mapped reads will reflect the mixture. Our goal is to infer the original makeup of the mixture from the mapped reads. It should be noted that the attainment of the goal depends on whether the original epigenomes are sufficiently heterogeneous so that we may distinguish them.",
             "paragraph_rank": 8,
@@ -318,10 +326,18 @@
             "section_rank": 2
         },
         {
+            "text": "DETECTION OF ASM",
+            "section_rank": 3
+        },
+        {
             "section": "DETECTION OF ASM",
             "text": "In this section, we describe how the model is used to detect allele-specific methylated regions in a diploid organism. Notice that ASM is not a precisely defined term. It generally refers to a significant difference between the methylation levels of the two alleles. First, the methylome of a diploid individual is scanned for partially methylated regions (PMRs) as candidates for further analysis. Second, for each candidate region, the reads that align to this region are computationally assigned to the two alleles and the methylation levels of individual cytosines from each allele are estimated. Last, regions are classified to allele-specific or nonspecific methylated regions, based on read assignments and the predicted methylation levels from the previous step. A synthetic methylome is used to test the model and to illustrate the details of each step. We remark that determining whether a read along with its methylcytosines has a higher probability to originate from one allele or the other relies on the differences between the reads, i.e. the methylation states of the cytosines on the reads. The density of methylcytosines of a genome relative to the read length in a sequencing experiment is therefore critical. For instance, if, on average, a read covers at most one methylcytosine, then there is very little hope to deconvolve the allelic methylation states without additional information. While anticipating the rapid growth of the read length in high-throughput sequencing technology, we first tested our method on Arabidopsis thaliana, which has a reasonably high methylation density. The median genomic distance, for instance, between consecutive methylcytosines on Chromosome 1 of A. thaliana Col-0 is 15, while the typical read length of an Illumina sequencer is between 100 and 150 bp presently.",
             "paragraph_rank": 22,
             "section_rank": 3
+        },
+        {
+            "text": "Identify PMRs as candidates",
+            "section_rank": 4
         },
         {
             "section": "Identify PMRs as candidates",
@@ -375,6 +391,10 @@
             ]
         },
         {
+            "text": "Predict allelic methylation levels",
+            "section_rank": 5
+        },
+        {
             "section": "Predict allelic methylation levels",
             "text": "For each PMR, the algorithm described in Section 2 is applied with k = 2. For each sample of the synthetic methylome, the reads from the two individual methylomes are mixed together.",
             "paragraph_rank": 27,
@@ -402,6 +422,10 @@
             ]
         },
         {
+            "text": "Classify candidate regions with a support vector machine classifier",
+            "section_rank": 6
+        },
+        {
             "section": "Classify candidate regions with a support vector machine classifier",
             "text": "Once the methylation levels of individual methylcytosines in each allele are estimated and the membership of reads predicted by the model, what remains is to characterize and classify each region based on the estimations. Recall that we used a rather simplistic rule to automatically label the samples in the synthetic methylome when preparing the training and testing samples. The labels are derived from the knowledge of the two individual methylomes making up the synthetic methylome, and therefore are independent of the predictions made by the mixture model. One option is to use the same rule to classify a region from predicted methylation levels. We hope to capture more characteristics of the two classes, however, so multiple measures are employed for this task when it is applied to the real epigenome. We also use the synthetic methylome to train a support vector machine (SVM) classifier that is later used for a real single cell methylome. Notice that the value a rj gives the probability that the read r is from allele j. If a read needs to be assigned to a single allele, it should be assigned to the j that has the larger value of a rj , or formally, to cluster j r = argmax j (a rj ). The features for SVM are extracted from the estimated methylation levels (M ) and allele frequencies (C). A total of nine features are used (details omitted due to exigencies of space). Both linear and radial basis function (RBF) kernels are tested; the latter yield better performance. Five-fold cross-validation is used to select the best parameters for the kernel function from each training set. The testing results are shown in Table 2. In some of the false positive (FP) samples, both cells have completely unmethylated reads and these reads are clustered together in the synthetic methylome, which are then classified as allele-specific (cell-specific). We hypothesize that these regions have ASM in both individual cell types.   ",
             "paragraph_rank": 30,
@@ -415,6 +439,14 @@
                     "end": 1643
                 }
             ]
+        },
+        {
+            "text": "i166",
+            "section_rank": 7
+        },
+        {
+            "text": "Identify ASM regions with multiple filters",
+            "section_rank": 8
         },
         {
             "section": "Identify ASM regions with multiple filters",
@@ -448,6 +480,10 @@
                     "end": 62
                 }
             ]
+        },
+        {
+            "text": "DETECT ASM REGIONS FOR ARABIDOPSIS EPIDERMIS METHYLOME",
+            "section_rank": 9
         },
         {
             "section": "DETECT ASM REGIONS FOR ARABIDOPSIS EPIDERMIS METHYLOME",
@@ -543,6 +579,10 @@
             ]
         },
         {
+            "text": "CONCLUSION AND DISCUSSION",
+            "section_rank": 10
+        },
+        {
             "section": "CONCLUSION AND DISCUSSION",
             "text": "We have described a computational model for resolving distinct epigenomes from a heterogeneous sample. In particular, we applied this model to identify allele-specific methylated regions. The reads from potentially multiple epigenomes are mapped to a common reference genome. The goal is essentially to infer the distinct methylation patterns from the mapped reads. Our approach is different from previous attempts in that it does not rely on SNPs, which are few and far between when compared with methylcytosines. The model was tested on a synthetic methylome. The classification based on the mixture model in conjunction with an SVM classifier yielded an accuracy of 87.5%. Even though the SVM approach is not always applicable to real methylomes, since all the features are derived from the predicted methylation levels and cluster frequencies, the test results reflect the reliability of the predictions made by the model. Additional multiple filters for ASMs may further reduce the number of false positives.",
             "paragraph_rank": 37,
@@ -565,6 +605,10 @@
             "text": "More complicated heterogeneous epigenome samples may arise from a mixture of various cell types, or a mixture of cancerous cells at various stages, which present yet more and greater challenges than the allelic methylations of a diploid cell. Such samples will enable an ultimate test for the power of the methods. The initial steps are to develop scenarios and criteria for validation as it becomes less obvious what defines cell-specific methylations in the context of multiple cell types.",
             "paragraph_rank": 40,
             "section_rank": 10
+        },
+        {
+            "text": "APPENDIX A",
+            "section_rank": 11
         },
         {
             "section": "APPENDIX A",
@@ -593,10 +637,18 @@
             ]
         },
         {
+            "text": "Fig. 1 .",
+            "section_rank": 12
+        },
+        {
             "section": "Fig. 1 .",
             "text": "Experimental (a and b) versus predicted (c and d) methylation levels of the synthetic methylome. Experimental methylation levels from Wer+ are shown in circles, Scr+ in stars. Two symbols in the bottom figures (c and d) indicate two predicted individual methylomes for the synthetic methylome. The left (a and c) is of an allele-specific region: chromosome 1: [7313026, 7313482] on forward strand. The region contains 50 methylcytosines (mC); 160 reads are aligned to this region. The right (b and d) is of a non-specific region: chromosome 3: [12698733, 12699133] on forward strand. The region contains 42 mC; 367 reads are aligned to the region follows: for r \u2208 R, j = 1..",
             "paragraph_rank": 43,
             "section_rank": 12
+        },
+        {
+            "text": "Fig. 2 .Fig. 3 .",
+            "section_rank": 13
         },
         {
             "section": "Fig. 2 .Fig. 3 .",
@@ -610,10 +662,18 @@
             "section_rank": 14
         },
         {
+            "text": "Table 1 .",
+            "section_rank": 15
+        },
+        {
             "section": "Table 1 .",
             "text": "Samples of partially methylated regions for classification",
             "paragraph_rank": 46,
             "section_rank": 15
+        },
+        {
+            "text": "Table 2 .",
+            "section_rank": 16
         },
         {
             "section": "Table 2 .",
@@ -622,10 +682,18 @@
             "section_rank": 16
         },
         {
+            "text": "Table 3 .",
+            "section_rank": 17
+        },
+        {
             "section": "Table 3 .",
             "text": "Classes based on differential averaged methylation",
             "paragraph_rank": 50,
             "section_rank": 17
+        },
+        {
+            "text": "Table 4 .",
+            "section_rank": 18
         },
         {
             "section": "Table 4 .",
@@ -634,16 +702,28 @@
             "section_rank": 18
         },
         {
+            "text": "Table 6 .",
+            "section_rank": 19
+        },
+        {
             "section": "Table 6 .",
             "text": "Predicted ASM regions, group (2) inTable 4",
             "paragraph_rank": 54,
             "section_rank": 19
         },
         {
+            "text": "Table 7 .",
+            "section_rank": 20
+        },
+        {
             "section": "Table 7 .",
             "text": "Annotation summary of all ASM regions inTable 4",
             "paragraph_rank": 56,
             "section_rank": 20
+        },
+        {
+            "text": "Table 8 .",
+            "section_rank": 21
         },
         {
             "section": "Table 8 .",
@@ -656,6 +736,10 @@
             "text": "A subtlety here concerns the ordering of the clusters at the end of each run. The details are omitted.",
             "paragraph_rank": 60,
             "section_rank": 21
+        },
+        {
+            "text": "ACKNOWLEDGEMENT",
+            "section_rank": 23
         },
         {
             "section": "ACKNOWLEDGEMENT",

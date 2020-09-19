@@ -3,50 +3,80 @@
     "level": "sentence",
     "abstract": [
         {
-            "text": "Motivation: Resampling methods, such as permutation and bootstrap, have been widely used to generate an empirical distribution for assessing the statistical significance of a measurement. "
+            "text": "Motivation: Resampling methods, such as permutation and bootstrap, have been widely used to generate an empirical distribution for assessing the statistical significance of a measurement. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "However, to obtain a very low P-value, a large size of resampling is required, where computing speed, memory and storage consumption become bottlenecks, and sometimes become impossible, even on a computer cluster. "
+            "text": "However, to obtain a very low P-value, a large size of resampling is required, where computing speed, memory and storage consumption become bottlenecks, and sometimes become impossible, even on a computer cluster. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "Results: We have developed a multiple stage P-value calculating program called FastPval that can efficiently calculate very low (up to 10 \u22129) P-values from a large number of resampled measurements. "
+            "text": "Results: We have developed a multiple stage P-value calculating program called FastPval that can efficiently calculate very low (up to 10 \u22129) P-values from a large number of resampled measurements. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "With only two input files and a few parameter settings from the users, the program can compute P-values from empirical distribution very efficiently, even on a personal computer. "
+            "text": "With only two input files and a few parameter settings from the users, the program can compute P-values from empirical distribution very efficiently, even on a personal computer. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "When tested on the order of 10 9 resampled data, our method only uses 52.94% the time used by the conventional method, implemented by standard quicksort and binary search algorithms, and consumes only 0.11% of the memory and storage. "
+            "text": "When tested on the order of 10 9 resampled data, our method only uses 52.94% the time used by the conventional method, implemented by standard quicksort and binary search algorithms, and consumes only 0.11% of the memory and storage. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "Furthermore, our method can be applied to extra large datasets that the conventional method fails to calculate. "
+            "text": "Furthermore, our method can be applied to extra large datasets that the conventional method fails to calculate. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "The accuracy of the method was tested on data generated from Normal, Poison and Gumbel distributions and was found to be no different from the exact ranking approach. "
+            "text": "The accuracy of the method was tested on data generated from Normal, Poison and Gumbel distributions and was found to be no different from the exact ranking approach. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
         },
         {
-            "text": "Availability: The FastPval executable file, the java GUI and source code, and the java web start server with example data and introduction, are available at"
+            "text": "Availability: The FastPval executable file, the java GUI and source code, and the java web start server with example data and introduction, are available at",
+            "paragraph_rank": 2,
+            "section_rank": 0
         }
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "text": "Permutation and bootstrap are resampling procedures to assess the statistical significance of a measurement. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
         },
         {
             "text": "They are non-parametric statistical tests that can convert a measurement (score) into an empirical P-value, even when the distribution of the measurements is unknown. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
         },
         {
             "text": "Since resampling does not assume known distribution of the data, and biological data are usually complex, it has been widely used in the bioinformatics field, such as transcription factor binding site searching, pathway analysis and genome-wide association studies. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
         },
         {
             "text": "* To whom correspondence should be addressed.",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
         },
         {
             "text": "Finding transcription factor binding sites (TFBSs) in the promoter region of a gene is important to understand gene regulation (Zhang et al., 2007). ",
             "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "start": 127,
@@ -60,6 +90,8 @@
         {
             "text": "TFBS of a particular transcription factor are usually represented by a computational model known as the position weight matrix (PWM) (Pape et al., 2008). ",
             "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "start": 133,
@@ -72,31 +104,45 @@
         },
         {
             "text": "To search for a putative binding site, we use the PWM to score DNA sequences with a sliding window approach. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "For each window, we obtain a score. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "By comparing this score with the distribution of the scores from the background, we can obtain the statistical significance (empirical P-value) of this score. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "The empirical background score distribution is obtained by scoring a large set of random sequences from the intergenic regions in the genome with the same PWM. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "We then sort the background scores and save them for later usage. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "When we convert a new score into a P-value, we load the background into the memory and search for the score. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
         },
         {
             "text": "The ranking of the score is then converted to a P-value (Hannenhalli, 2008).",
             "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "start": 56,
@@ -109,39 +155,57 @@
         },
         {
             "text": "This empirical approach of calculating P-values is very powerful since it does not assume any distribution of the data. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "However, the significance of the P-value is limited by the size of the background we sample. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "To obtain a very low P-value, we have to sample a very large dataset from the background. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "The large dataset causes three limitations: ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "(i) sorting and searching in a large dataset are time consuming; ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "(ii) storage of the sorted background scores requires a large amount of hard disk space; and ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "(iii) processing of the sorted array requires a great deal of memory, which is not usually feasible on a personal computer.",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
         },
         {
             "text": "Efficient methods have been developed to relieve the computational burden resulting from large-scale resampling. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
         },
         {
             "text": "For example, Jensen et al. (2009) developed a Bayesian approach to dynamically assign resamples for multiple testing problems. ",
             "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1,
             "ref_spans": [
                 {
                     "start": 13,
@@ -154,79 +218,121 @@
         },
         {
             "text": "For microarray expression data, they assume that each gene has a different null distribution, and allocate more resamples to the genes with P-values close to the classification threshold. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
         },
         {
             "text": "But for the P-values that are far lower or far higher than the threshold and the decisions that are easy to make, they allocate much fewer resamples than the traditional method. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
         },
         {
             "text": "The dynamic resampling allocation strategy has improved the computing efficiency, particularly when the number of tests is large.",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
         },
         {
             "text": "While the above mentioned method deals with the efficiency of multiple tests, assuming each test has a different null distribution, P-value calculation from resampling based on a single test, or multiple tests assuming the same null distribution, is still hampered by computing, memory and storage limitations.",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1
         },
         {
             "text": "We have developed an efficient program to calculate the empirical P-value for a single test, or multiple tests assuming the same null distribution. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
         },
         {
             "text": "This program separates the background distribution into multiple parts, according to user specified cutoffs. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
         },
         {
             "text": "The scores in the less significant part are highly condensed into one table and the P-values are calculated less exactly, while the scores in the more significant part are put into other tables and the P-values are calculated more accurately. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
         },
         {
             "text": "Our experiments showed that this algorithm is more time efficient, and uses much less storage and memory. ",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
         },
         {
             "text": "It can be used widely in resampling based P-value calculation, either as standalone software or as a plug-in module.",
-            "section": "INTRODUCTION"
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
+        },
+        {
+            "text": "METHODS",
+            "section_rank": 2
         },
         {
             "text": "For simplicity, here we illustrate our method in a two-stage approach and use the right tail of the distribution to calculate the statistics. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "In the first stage, we randomly sample a subset N from the original large dataset O. N is usually less than one-hundredth of the size of O, thus saving processing time. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "We sort N and obtain a cutoff score S c representing the top P portion of N. Both N and P are parameters specified by the users, and are set to N = 100 000 and P = 0.001 by the default. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "We then scan the original set and put scores greater than S c into our second subset M, and we obtain the maximum score S m in M. The two subsets N and M are sorted, saved, and serve as our two models (M1 and M2). ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "To calculate the P-value for a new score S, we compare S with S c . ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "If S \u2264 S c , we will find its P-value in M1. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "Otherwise we use M2. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "If S > S m , indicating S is out of our resampling score range, we use theoretical distribution to calculate its P-value or simply set the P-value to 0, at the user's preference. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "The parameters of two theoretical distributions, normal and extreme value distributions, were obtained from dataset N.",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 9,
+            "section_rank": 2
         },
         {
             "text": "To evaluate the performance of our method, we compared FastPval with the traditional approach (named Exact) on a linux machine (Intel Xeon CPU E5410 2.33 GHz; 16 G of memory, SuSE linux 10.1). ",
             "section": "METHODS",
+            "paragraph_rank": 10,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 55,
@@ -273,11 +379,15 @@
         },
         {
             "text": "In the 'Exact' approach, we used quicksort and binary search in c programming. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 10,
+            "section_rank": 2
         },
         {
             "text": "FastPval used the same sorting and searching algorithms for M1 and M2.",
             "section": "METHODS",
+            "paragraph_rank": 10,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 0,
@@ -293,6 +403,8 @@
         {
             "text": "To evaluate the accuracy of FastPval, we compared the calculated P-values with the original P-values in three different distributions: Normal, Poisson and Gumbel. ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 28,
@@ -307,11 +419,15 @@
         },
         {
             "text": "For each distribution, we tested the P-values in the \u2212log 10 (P-value) ranged from 0 to 9 (corresponding P-value range from 1 to 10 \u22129 , exclusively). ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2
         },
         {
             "text": "We took 162 P-values (termed theoretical P-values) evenly distributed in each of the nine ranges (Supplementary Table S1). ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "ref_spans": [
                 {
                     "start": 112,
@@ -324,6 +440,8 @@
         {
             "text": "We converted these P-values into scores with the build-in functions in the R platform, using parameters for each distribution as shown in Supplementary Table S2. ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 75,
@@ -337,11 +455,15 @@
         },
         {
             "text": "Under the same parameter setting, we randomly sampled one billion data points. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2
         },
         {
             "text": "We used FastPval to build models M1 and M2 from these data. ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 8,
@@ -357,6 +479,8 @@
         {
             "text": "Finally, we used FastPval to convert these 162 scores into P-values (termed FastPval P-values) with the models. ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 17,
@@ -381,6 +505,8 @@
         {
             "text": "The \u2212log 10 (FastPval P-values) were plotted against the \u2212log 10 (theoretical P-values) on a Log-Log QQ plot. ",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 13,
@@ -396,6 +522,8 @@
         {
             "text": "The Kolmogorov-Smirnov test was also used to compare the FastPval P-values with theoretical P-values.",
             "section": "METHODS",
+            "paragraph_rank": 11,
+            "section_rank": 2,
             "entity_spans": [
                 {
                     "start": 57,
@@ -410,15 +538,25 @@
         },
         {
             "text": "were plotted against the \u2212log 10 (theoretical P-values) on a Log-Log QQ plot. ",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 12,
+            "section_rank": 2
         },
         {
             "text": "The Kolmogorov-Smirnov test was also used to compare the FastPval P-values with theoretical P-values.",
-            "section": "METHODS"
+            "section": "METHODS",
+            "paragraph_rank": 12,
+            "section_rank": 2
+        },
+        {
+            "text": "RESULTS AND DISCUSSION",
+            "section_rank": 3
         },
         {
             "text": "As shown in Table 1, FastPval shows significant improvement over the 'Exact' approach. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "start": 12,
@@ -442,6 +580,8 @@
         {
             "text": "Tested on 1 billion resampling data, FastPval only used 0.11% of the memory and storage and 52.94% of model building and searching times. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 37,
@@ -456,11 +596,15 @@
         },
         {
             "text": "When we increased the dataset size to 5 billion, the 'Exact' method failed to load due to the large memory requirement, while our method was able to calculate P-values successfully. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3
         },
         {
             "text": "FastPval has speed, memory and storage consumption approximately linear to resembling size. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 0,
@@ -476,6 +620,8 @@
         {
             "text": "The accuracies of FastPval calculated P-values from three different distributions were compared with the theoretical P-values. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 18,
@@ -491,6 +637,8 @@
         {
             "text": "The results are shown in the form of Log-Log QQ plots Supplementary Fig. S1a-c). ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "start": 54,
@@ -503,6 +651,8 @@
         {
             "text": "In all three tested distributions, the FastPval calculated P-values and the theoretical P-values are highly matched, forming a 45 degree line in the Log-Log QQ plots. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 39,
@@ -517,11 +667,15 @@
         },
         {
             "text": "The Kolmogorov-Smirnov tests showed the P-value = 1.000 for Normal and Poisson distributions, and 0.998 for Gumbel distribution, indicating that the calculated P-values did not deviate from the original distribution. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3
         },
         {
             "text": "We therefore conclude thatFastPval is accurate for calculating P-values for data from a variety of distributions.",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 13,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 26,
@@ -537,6 +691,8 @@
         {
             "text": "The Java GUI interface of FastPval is shown in Supplementary Figure S2a-c. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3,
             "ref_spans": [
                 {
                     "start": 47,
@@ -560,6 +716,8 @@
         {
             "text": "In the 'Method' field, the user can either choose 'FastPval' or the traditional 'Exact' method to calculate P-values. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 51,
@@ -575,6 +733,8 @@
         {
             "text": "When the resembling size is greater than 10 million, FastPval is the only suitable choice. ",
             "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3,
             "entity_spans": [
                 {
                     "start": 53,
@@ -589,83 +749,127 @@
         },
         {
             "text": "In the 'Step' field, the user can either 'Generate model', or 'Calculate P-value' or 'Do both'. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The 'Generate model' step allows the user to generate M1 and M2 models from the background dataset O; the 'Calculate P-value' step allows the user to calculate P-values for all the scores saved in a text file. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The interface changes according to the user's selection. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "In the 'Generate model' step, the user has to specify the background file and directory to save two models, by clicking on 'Background file' and 'Output folder', respectively. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The user also needs to select two parameters, the 'Sampling size' (N) and 'P-value cutoff' (P). ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The selections of P and N are affected by the balance of accuracy and speed. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "Bigger Ns and Ps will give more accurate P-values but will be less efficient. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "We recommend N = 100 000 and P = 0.001. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "N * P should be within the range of 10 to 1000, preferably 100. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "After the models are generated, the program will automatically change to the 'Calculate P-value' step, with default model files selected. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The user will need to specify the file with scores for P-value calculation, by clicking on 'Sample file'. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "For scores that are out of the boundary of both models, the user can choose either 'Extreme distribution' or 'Normal distribution' in the 'Assumed distribution' field to calculate the P-value, or simply select 'No distribution' to assign the P-value to 0. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The parameters of both distributions were calculated from the fitting of the dataset N.",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 14,
+            "section_rank": 3
         },
         {
             "text": "The program can be run in a command line mode, which is suitable for large-scale batch processing. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 15,
+            "section_rank": 3
         },
         {
             "text": "We provide both 32-bit and 64-bit executable GUI programs, in both linux and windows platforms. ",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 15,
+            "section_rank": 3
         },
         {
             "text": "The source code of the program is provided in our companion website.",
-            "section": "RESULTS AND DISCUSSION"
+            "section": "RESULTS AND DISCUSSION",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 4
         },
         {
             "text": "Comparison of FastPval and Exact method in memory, storage consumptions and running time",
-            "section": "Table 1 ."
+            "section": "Table 1 .",
+            "paragraph_rank": 16,
+            "section_rank": 4
         },
         {
             "text": "a Model loading + searching time.b Sizes of first model + second model.c Exact method failed to load due to large size of the dataset.",
-            "section": "Table 1 ."
+            "section": "Table 1 .",
+            "paragraph_rank": 17,
+            "section_rank": 4
         },
         {
             "text": "Funding: Internal funds from the CRCG and the Genomic SRT of the University of Hong Kong; GRF 778609M and AoE M-04/04 from the Research Grants Council of Hong Kong.",
-            "section": "Table 1 ."
+            "section": "Table 1 .",
+            "paragraph_rank": 18,
+            "section_rank": 6
         },
         {
             "text": "Conflict of Interest: none declared.",
-            "section": "Table 1 ."
+            "section": "Table 1 .",
+            "paragraph_rank": 19,
+            "section_rank": 6
         }
     ]
 }

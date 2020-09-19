@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "Until recently RNA was thought to have only two functions: (i) primarily as an information transmitter between DNA and proteins in the form of a messenger RNA (mRNA) and (ii) as a catalyser or an information decoder in protein synthesis in the form of a ribosomal RNA (rRNA) or a transfer RNA (tRNA). The discovery that RNA molecules can regulate gene expression completely altered this simplistic picture (1). This important discovery, in particular the discovery of RNA interference (RNAi), the post-transcriptional silencing of gene expression via interactions between mRNAs and their antisense RNAs (by A. Fire and C. Mello) was awarded with the 2006 Nobel Prize for Physiology or Medicine.",
             "paragraph_rank": 3,
@@ -123,6 +127,10 @@
             ]
         },
         {
+            "text": "alteRNA: AN RNA SECONDARY STRUCTURE PREDICTION TOOL BASED ON AN ALTERNATIVE THERMODYNAMIC APPROACH",
+            "section_rank": 2
+        },
+        {
             "section": "alteRNA: AN RNA SECONDARY STRUCTURE PREDICTION TOOL BASED ON AN ALTERNATIVE THERMODYNAMIC APPROACH",
             "text": "Input and output alteRNA requires a sequence in FASTA format, where the sequence is represented as a string of characters from the alphabet AE \u00bc {A,C,G,U,T} (the characters are case insensitive). The length of the input RNA sequence is limited by 500 nt. There are two user-specified parameters, s and b, which will be explained in detail later.",
             "paragraph_rank": 12,
@@ -165,6 +173,10 @@
             ]
         },
         {
+            "text": "Methods",
+            "section_rank": 3
+        },
+        {
             "section": "Methods",
             "text": "It has been shown in (3) that delocalizing the thermodynamic cost of forming an RNA substructure can be achieved by consideration of the energy density of the substructure, which, in return, can improve the secondary structure prediction of several ncRNA families. This alternative thermodynamic approach which we call Densityfold (3) aims to minimize the linear combination of the total free energy and total energy density of all substructures in the RNA molecule. Given an RNA secondary structure, the energy density of a basepair is defined as the free energy of the substructure that starts with the basepair, normalized by the length of the underlying sequence. The energy density of an unpaired base is then defined to be the energy density of the closest basepair that encloses it. Densityfold thus aims to minimize ED(n) \u00fe s\u00c1E(n), where ED(n) is the total energy density of paired and unpaired bases, E(n) is the total free energy and n is the length of the RNA sequence. Here s determines the weight of the contribution of the total free energy in the optimization function. As s approaches to 1, the predicted secondary structure gets closer to that implied by the standard thermodynamic approach (employed by Mfold). We have observed that s \u00bc 5 generally gives the most accurate prediction, in terms of structure edit distance (13), however in some RNA sequences, different s values can outperform s \u00bc 5.",
             "paragraph_rank": 16,
@@ -190,6 +202,10 @@
             "text": "Here a, b, c are constants in thermodynamic model, l s is the number of unpaired bases, l d is the number of base pairs and ddG stack is the free energy of each branch in the loop. The default setting for b, the coefficient for the number unpaired bases, is 0 in Mfold; this implies that there will be no penalty for the unpaired bases. However, when used with Densityfold, this setting seems to produce large stretches of unpaired bases in multibranch loops. In order to counter this effect we suggest the user to set b to a small positive value less than 1. alteRNA, our web-based tool for RNA secondary structure prediction via the Densityfold approach allows the user to specify any positive value for s and b. The default values of s and b are 5 and 0, respectively and the folding temperature is fixed at 378C.",
             "paragraph_rank": 18,
             "section_rank": 3
+        },
+        {
+            "text": "inteRNA: A Web-Based Tool For RNA-RNA Interaction Prediction",
+            "section_rank": 4
         },
         {
             "section": "inteRNA: A Web-Based Tool For RNA-RNA Interaction Prediction",
@@ -223,6 +239,10 @@
                     "end": 86
                 }
             ]
+        },
+        {
+            "text": "Method",
+            "section_rank": 5
         },
         {
             "section": "Method",
@@ -273,6 +293,10 @@
             ]
         },
         {
+            "text": "Method",
+            "section_rank": 6
+        },
+        {
             "section": "Method",
             "text": "At the heart of pRuNA we have a lookup table of size 1024 \u00c2 1024, which represents every possible pair of 5-mer motifs from the 4-letter RNA alphabet. Each entry in the lookup table maintains a pointer to every occurrence of the respective 5-mer motif pair in the loop sequences of the ncRNA structures in the Rfam database. For querying the index, pRuNA first identifies the loop sequences from the mRNA, based on the given secondary structure information. It then extracts each pair of non-overlapping 5-mer motifs from the mRNA loop sequences and checks the lookup table for its reverse complement. The union of the set of ncRNAs that include each motif pair are retained by pRuNA, whereas the remainder of the ncRNAs in the database are eliminated. We have observed that many of the motif pairs in the lookup table occur very frequently in ncRNA sequences and thus have limited information content. We omitted the 5-mer pairs which occur in more than the number (14) of ncRNAs that include a 'typical' motif pair. This increased our pruning efficiency substantially yet had no effect on the quality of the results: we have tested pRuNA mRNAs that are known to be regulated by an ncRNA available through the NPInter database (15). For all 24 of these mRNAs, pRuNA was able to return the known regulatory ncRNA among the set of potential regulators, while achieving a pruning efficiency of 86% on the average. If the search is restricted to E. coli ncRNAs, the pruning efficiency for the 22 mRNAs regulated by these ncRNAs go up to 91% on the average. Further details on pRuNA (including the method and experimental results) can be found in (10).",
             "paragraph_rank": 28,
@@ -302,6 +326,10 @@
             ]
         },
         {
+            "text": "DISCUSSION",
+            "section_rank": 7
+        },
+        {
             "section": "DISCUSSION",
             "text": "taveRNA is a web application implemented in html/php; the underlying algorithms are all implemented in C/C\u00fe\u00fe. Our server is hosted on a Linux machine with 16 GB RAM and 4 AMD Opteron 2200 processors. On an RNA sequence with length n, the running time of alteRNA is O(n 4 ) and the memory requirement is O(n 4 ). On two input RNA sequences S and R, where |S| \u00bc n and |R| \u00bc m, the running time of inteRNA is O(n 3 m 3 ) and the memory requirement is O(n 2 m 2 ). It is possible to improve the running time using the loop model to where k is the maximum independent structure size. The running time of pRuNA is linear with the input sequence length and the result set. Because of the large running-time requirements of inteRNA and alteRNA, taveRNA has an e-mail notification option.",
             "paragraph_rank": 29,
@@ -312,6 +340,10 @@
             "text": "taveRNA has been developed by the Lab for Computational Biology at Simon Fraser University and it is accessible from http://compbio.cs.sfu.ca/taverna.",
             "paragraph_rank": 30,
             "section_rank": 7
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 8
         },
         {
             "section": "Figure 1 .",
@@ -326,10 +358,18 @@
             "section_rank": 10
         },
         {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 11
+        },
+        {
             "section": "ACKNOWLEDGEMENTS",
             "text": "Funding to pay the Open Access publication charges for this article was provided by NSERC, CIRC Program, CFI, MITACS and MSFHR.",
             "paragraph_rank": 33,
             "section_rank": 11
+        },
+        {
+            "text": "SUPPLEMENTARY DATA",
+            "section_rank": 13
         },
         {
             "section": "SUPPLEMENTARY DATA",

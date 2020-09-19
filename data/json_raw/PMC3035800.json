@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "Capturing the motility of cells using time-lapse microscopy has become an important approach to understanding processes such as the cell cycle (Harder et al., 2009), neuronal division and migration (Norden et al., 2009), immune response (Cahalan and Parker, 2008) or the development of cancer (Ianzini et al., 2009). Based on phase-contrast, confocal or two-photon microscopy, such live cell imaging protocols are now commonly established and corresponding equipment is commonly available. This has triggered the need for computational methods to quantitatively analyze timelapse microscopy data. In this context, identifying individual cells and tracking their identities over time is one of the basic ingredients for computational analysis. Hence, cell tracking algorithms have attracted considerable attention in recent years (Meijering et al., 2006;Miura, 2005). Here, we introduce a novel algorithm for cell tracking that allows to track cells, in particular zebrafish microglia, in 3D two-photon image sequences over time.",
             "paragraph_rank": 3,
@@ -362,6 +366,14 @@
             "section_rank": 1
         },
         {
+            "text": "METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Computational methods",
+            "section_rank": 3
+        },
+        {
             "section": "Computational methods",
             "text": "Our algorithm is based on representing each image F 1 ,...,F N by its component tree (Jones, 1999). The component tree of an image I is obtained by considering the connected components of the thresholded versions I \u03b8 of I under all possible thresholds \u03b8. The set of all connected components under all thresholds is obviously hierarchically ordered by subset inclusion. This hierarchical order defines the component tree, which can be computed in linear time (Najman and Couprie, 2004). For examples of 1D images and their component trees refer to Figure 2. Figure 3 illustrates the basic steps of our cell tracking algorithm. The outline of the algorithm is as follows: we start with computing and pruning component trees for each time frame. Then, tree assignments between each pair of consecutive component trees are computed. The tree assignments can be turned into segmentations of the original images. This produces two segmentations of each image, requiring computation of a consensus segmentation. The resulting unique segmentation of each image then requires a standard bipartite matching between consecutive time frames to track cell identities over time. Details of the individual steps are provided in the following paragraphs.",
             "paragraph_rank": 11,
@@ -577,6 +589,10 @@
             ]
         },
         {
+            "text": "Comparison with other approaches",
+            "section_rank": 4
+        },
+        {
             "section": "Comparison with other approaches",
             "text": "While a quantitative comparison with other methods is subject of Section 3, there are noteworthy commonalities and differences with other approaches on a qualitative level as summarized below:",
             "paragraph_rank": 31,
@@ -625,6 +641,10 @@
             ]
         },
         {
+            "text": "Implementation",
+            "section_rank": 5
+        },
+        {
             "section": "Implementation",
             "text": "We implemented component trees, tree-assignments and the complete cell tracking algorithm, in C++ using lp_solve 1 for solving both the tree assignment and the weighted bipartite matching (integer) linear programs, all of which is compiled in the ct3d command line tool. Cell tracking results can be further explored using at3d, which allows the user to select and extract specific cells identified by the cell tracking procedure, and derive their motility parameters such as velocity and deformation. The at3d tool is implemented using the qt framework for graphical user interfaces. Input and output of image series is designed to be compatible with other visualization software, most notably v3d (Peng et al., 2010) for producing rendered visualizations of the output.",
             "paragraph_rank": 35,
@@ -638,6 +658,10 @@
                     "end": 718
                 }
             ]
+        },
+        {
+            "text": "Experimental materials and methods",
+            "section_rank": 6
         },
         {
             "section": "Experimental materials and methods",
@@ -660,6 +684,10 @@
                     "end": 644
                 }
             ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 7
         },
         {
             "section": "RESULTS",
@@ -708,6 +736,10 @@
                     "end": 944
                 }
             ]
+        },
+        {
+            "text": "Evaluation on synthetic data",
+            "section_rank": 8
         },
         {
             "section": "Evaluation on synthetic data",
@@ -782,6 +814,10 @@
             ]
         },
         {
+            "text": "Tracking microglia in vivo",
+            "section_rank": 9
+        },
+        {
             "section": "Tracking microglia in vivo",
             "text": "Under the given experimental protocol, the phenomenon of overdetection, i.e. the recognition of segments that are not microglia, is inevitable. This is due to the limited specificity of the apoE-GFP gene, which is also expressed in cells other than microglia in the surrounding tissue, often at comparably high levels as in microglia. Yet, ct3d identifies microglia as segments that can be visually distinguished from non-microglia segments by a human observer due to their characteristic shape or motion patterns. The To assess the quality of tracking results, we derived the number of identified cells, the voxel recall, i.e. what percentage of all ground truth object voxels was recovered in the tracking result, as well as the error rate defined as the ratio between the cardinality of the symmetric difference between tracking result and ground truth and the total number of voxels in the ground truth dataset. Left columns: each dataset displayed three cells with different intensities I o above different levels of noise I b , displaying different types of background inhomogeneities (see text). Middle columns: the three cells were correctly recovered under all settings by ct3d. Right columns: segmentation using the active contour approach by Chan and Vese (2001) is highly reliable in the absence of background inhomogeneity. With increasing level of inhomogeneity, voxel recall decreases, while the error rate increases. Supplementary Figure 1 displays some of the results summarized here.",
             "paragraph_rank": 42,
@@ -850,6 +886,10 @@
                     "end": 1145
                 }
             ]
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 10
         },
         {
             "section": "DISCUSSION",
@@ -941,10 +981,18 @@
             ]
         },
         {
+            "text": "Fig. 2 .",
+            "section_rank": 11
+        },
+        {
             "section": "Fig. 2 .",
             "text": "Tree assignment of two (pruned) component trees for two 1D images I and J. Vertices not eliminated by the second pruning step are indicated by circles. All other non-branching vertices are eliminated in the pruning step. The tree assignment indicated by the dashed arrows is A ={(a,c),(b,d),(e,f )} with a weight of w a,c +w b,d +w e,f .",
             "paragraph_rank": 50,
             "section_rank": 11
+        },
+        {
+            "text": "Fig. 3 .",
+            "section_rank": 12
         },
         {
             "section": "Fig. 3 .",
@@ -958,10 +1006,18 @@
             "section_rank": 13
         },
         {
+            "text": "Fig. 6 .",
+            "section_rank": 14
+        },
+        {
             "section": "Fig. 6 .",
             "text": "Top: visualization of trajectories obtained by manual annotation (blue lines) with trajectories obtained using ct3d (orange lines) for microglia in activated state, see (a) and (b), as well as resting state, see (c) and (d). Bottom: quantitative comparison of trajectories obtained by ct3d and the active contour approach from",
             "paragraph_rank": 53,
             "section_rank": 14
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 15
         },
         {
             "section": "Table 1 .",
@@ -980,6 +1036,10 @@
             "text": "Results were computed for parameters \u00b5 = 1, \u03bd = 0.7, \u03bb 1 = 1, \u03bb 2 = 2, t = 0.8 running 100 iterations.",
             "paragraph_rank": 57,
             "section_rank": 15
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 17
         },
         {
             "section": "ACKNOWLEDGEMENTS",

@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "For a gene set, the functional coherence is a measure of the strength of the relatedness of the functions associated with the genes, which can be used to differentiate a set of genes performing coherently related functions from ones consisting of randomly grouped genes. It is commonly evaluated by analyzing the genes' functional annotations, which are almost invariably in the form of the controlled vocabulary from the Gene Ontology (GO; Ashburner et al., 2000;Brown et al., 2000;Huang et al., 2009;Khatri and Dr\u0203ghici, 2005;Mateos et al., 2002). The vocabulary terms are organized as a graph, with concepts ranging from very general to very specific.",
             "paragraph_rank": 2,
@@ -226,6 +230,14 @@
             ]
         },
         {
+            "text": "METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Constructing GO-based graphs",
+            "section_rank": 3
+        },
+        {
             "section": "Constructing GO-based graphs",
             "text": "For each organism considered in the study (Saccharomyces cerevisiae, Mus musculus and Homo sapiens), a specific gene-GO association file was downloaded from the website of the GO Annotation project of the European Bioinformatics Institute (August 13, 2009) from http://www .geneontology.org/GO.current.annotations.shtml. Additionally, on the same Fig. 1. Conceptual overview of graph-based functional coherence evaluation. (A) A graph representation of the GO is constructed and referred to as a GOGeneGraph, in which a node is a GO term or a gene, and an edge reflects the semantic relationship between a pair of GO terms or geneterm relationship. (B) A GOI is produced by high-throughput technology or other methods. (C) A GO Steiner tree is extracted and several types of network statistics of the GO Steiner tree are collected. (D) Through simulation experiments, the distributions of the network statistics from randomly grouped gene sets are estimated. (E) The hypothesis that the GOI belongs to the population of the random gene sets is tested and a P-value is returned. In addition, users may choose from several visualization tools to discover more about the functional relationships between the GOI. day an ontology file was downloaded from http://archive.geneontology.org/ latest-termdb/go_daily-termdb.obo-xml.gz. The definition file was also downloaded from the GO website and it was used to construct a DAG in the biological process subspace. We have developed a Python library with a set of application programming interfaces for building different GOrelated graphs and performing various queries (Muller et al., 2009). This library is based on the Python package NetworkX (Hagberg et al., 2008). In a graph representation of the GO, referred to as GOGraph, each node (vertex) represents a GO term and each directed edge corresponds to the IS_A relationship between a parent-child GO term pair. The directed edges between terms represent their semantic relationship such that the concept of a parent node subsumes those of its children nodes. Hence, the constructed GOGraph obeys the 'true path rule' or in other words the pathway from a child term to the most top-level parent is always true. Then, genes are added as another type of node to the GOGraph via an edge to its associated GO term(s) to create the GOGeneGraph. The GOGeneGraph is further modified by the addition of edges between terms that share the same gene annotations. Associating GO terms with the genes they annotate enables the calculation of semantic distance for edges from a GOGraph using the established methods, see Section 2.2 for details. After initialization of the edge distances, the graph is further transformed into a weighted, undirected graph, so that the functional coherence of list of GO terms can be reflected by connectivity and distances among the terms rather than the directionality. The algorithm for constructing a GOGeneGraph is detailed in Supplementary Algorithm 1.",
             "paragraph_rank": 8,
@@ -252,6 +264,10 @@
                     "end": 1710
                 }
             ]
+        },
+        {
+            "text": "Semantic distance",
+            "section_rank": 4
         },
         {
             "section": "Semantic distance",
@@ -308,6 +324,10 @@
             "section_rank": 4
         },
         {
+            "text": "Extracting a GO Steiner tree",
+            "section_rank": 5
+        },
+        {
             "section": "Extracting a GO Steiner tree",
             "text": "Given a gene set, the GO terms associated with the genes, referred to as seed terms, are identified in the GOGeneGraph. To investigate the relationship among the seed terms, we extract a subgraph connecting the seed terms, including both inherited term-term and augmented term-term edges [see Equations (2) and (3)], such that the sum of all edge lengths for the subgraph is minimized for all possible subgraphs connecting the terms. The problem of finding such a subgraph is known as the Steiner-tree problem in computer science (Gilbert and Pollak, 1968). We refer to the Steiner tree subgraph of a GOGeneGraph as a GO Steiner tree (T st ). In this study, Kou's algorithm (Kou et al., 1981) is adopted to extract a GO Steiner tree from a GOGeneGraph. The heuristic algorithm for obtaining T st is summarized in Supplementary Algorithm 2.",
             "paragraph_rank": 13,
@@ -330,10 +350,18 @@
             ]
         },
         {
+            "text": "Graph-based functional coherence metrics",
+            "section_rank": 6
+        },
+        {
             "section": "Graph-based functional coherence metrics",
             "text": "Three metrics were devised based on the topological properties of GO Steiner trees in order to reflect the functional coherence of a gene set. Building on the concept of enrichment, we define the number of genes associated with a seed term as seed degree (k s ) and the averaged seed degree of a tree, is denoted as k s , which reflects a global measure of enrichment for the GO terms in the gene set. To integrate the semantic relationships between terms, we define the sum of the lengths of all edges within a tree as the total length (l) of a GO Steiner tree, which reflects the overall relatedness of the functions. We also define k rs = ks l as a measure of relative seed degree, which combines the above two aspects of functional coherence. The GO Steiner-tree metrics k s and l are produced by summing a number of variables, in proportion to the size of a gene set n and with respect to a given n they tend to be Gaussian distributed, with estimable parameters \u00b5 n and \u03c3 2 n .",
             "paragraph_rank": 14,
             "section_rank": 6
+        },
+        {
+            "text": "Non-parametric regression",
+            "section_rank": 7
         },
         {
             "section": "Non-parametric regression",
@@ -390,6 +418,14 @@
             ]
         },
         {
+            "text": "RESULTS",
+            "section_rank": 8
+        },
+        {
+            "text": "Capturing the functional relationships of genes with GO-based graphs",
+            "section_rank": 9
+        },
+        {
             "section": "Capturing the functional relationships of genes with GO-based graphs",
             "text": "In this research, we studied the functional coherence of gene sets through the investigation of the relationships between constituent genes in GO graph space. To this end, we first constructed a GOGraph, which consists of only GO terms (nodes) and their ontology relationships (edges) as defined by the GO. Then, we added all annotated genes as nodes to the GOGraph, based on the instances specified in the GO database, leading to a graph consisting of both types of nodes, which is referred to as a GOGeneGraph. During the process, we further augmented the GOGeneGraph by adding edges between pairs of GO nodes that were used to co-annotate one or more genes. After augmentation, a GOGeneGraph was further transformed into a weighted, undirected graph, of which an edge's length was calculated according to the semantic distance between a pair of GO terms. More details about the graph construction are available in Section 2 and in a report on the utilized software package (Muller et al., 2009). The motivation for augmenting a GOGeneGraph is that co-annotation by a pair of GO terms, whether semantically close or remote, is generally biologically meaningful. Table 1 provides examples of co-annotation instances in yeast. For example, co-annotation of 25 genes by the two semantically remote terms, cell death and oxidation reduction, may be puzzling at first glance, but it is less surprising when one understands that many of the genes involved in oxidation reduction are also involved in the process of programmed cell death. On the other hand, coannotation by the terms with closely related semantic meanings is understandable as the genes themselves are likely closely related in function. In both cases, taking co-annotation into account during functional coherence analysis will reflect the biological relationships between GO terms that are not explicitly considered in most previous GO-based function analysis methods.",
             "paragraph_rank": 21,
@@ -410,6 +446,10 @@
                     "end": 1171
                 }
             ]
+        },
+        {
+            "text": "Comparing GO graphs across species",
+            "section_rank": 10
         },
         {
             "section": "Comparing GO graphs across species",
@@ -469,6 +509,10 @@
             ]
         },
         {
+            "text": "Metrics for capturing functional coherence",
+            "section_rank": 11
+        },
+        {
             "section": "Metrics for capturing functional coherence",
             "text": "Given a set of genes, we extract a subgraph of GOGeneGraph, which connects the genes through their function annotations to reflect how genes are functionally related to each other. We further constrain the subgraph to have the shortest total semantic distance among all possible subgraphs connecting the genes, which leads to a subgraph commonly referred to as Steiner tree (see Section 2). In a GO Steiner tree, in addition to the GO terms directly associated to the genes, seed terms, more terms (nodes) may be included to provide connections among all seed terms. A GO Steiner tree not only reflects how genes are annotated but also represents how the functions of the genes are related to each other. Thus, the properties of a GO Steiner tree can be used to evaluate both aspects of functional coherencethe enrichment of functional annotations and the relatedness of the distinct annotations.",
             "paragraph_rank": 23,
@@ -522,6 +566,10 @@
                     "end": 1579
                 }
             ]
+        },
+        {
+            "text": "Statistical testing and discriminative analysis",
+            "section_rank": 12
         },
         {
             "section": "Statistical testing and discriminative analysis",
@@ -596,6 +644,10 @@
             ]
         },
         {
+            "text": "Robustness of the metrics",
+            "section_rank": 13
+        },
+        {
             "section": "Robustness of the metrics",
             "text": "It is inevitable that results from high-throughput approaches contain noise of varying degrees. To evaluate the robustness of the metrics against noise, we performed a noise simulation experiment by replacing different percentages of the genes from KEGG pathways with randomly selected ones, followed by the evaluation of the metrics' discriminative power. As an example, we studied the discriminative power of the unified metric ( k rs ) tested with contaminated data for all three species (Fig. 4). With a P-value threshold at 0.05, we examined the percent of KEGG pathways that were classified as coherent after introducing different degrees of noise. The results are plotted as a function of the percent of noise in Figure 4A. Our metric classified the majority of the lightly contaminated (noise <30%) KEGG gene sets as coherent and the heavily contaminated (noise >60%) ones as non-coherent. The ROC curves in the presence of different amounts of noise for S.cerevisiae, M.musculus and H.sapiens are shown in Figure 4B-D, respectively. Overall, the figure shows that k rs retains a high degree of discriminative power, even with a relatively large amount of noise under these simulation conditions.",
             "paragraph_rank": 28,
@@ -623,6 +675,10 @@
                     "end": 1024
                 }
             ]
+        },
+        {
+            "text": "Application to microarray gene expression analysis",
+            "section_rank": 14
         },
         {
             "section": "Application to microarray gene expression analysis",
@@ -752,6 +808,10 @@
             ]
         },
         {
+            "text": "A B",
+            "section_rank": 15
+        },
+        {
             "section": "A B",
             "text": "For example, our graph-based evaluation correctly called a cluster of genes rich with ribosomal proteins as coherent gene set, thus conforming with well-documented knowledge that the expressions of these genes are significantly and coordinately repressed during various cellular stresses (Gasch and Werner-Washburne, 2002). Overall, the results demonstrate the ability of this method to filter through large amounts of potentially interesting gene sets in order to focus on those of relevant biological interest.",
             "paragraph_rank": 32,
@@ -765,6 +825,10 @@
                     "end": 322
                 }
             ]
+        },
+        {
+            "text": "Visualization",
+            "section_rank": 16
         },
         {
             "section": "Visualization",
@@ -843,6 +907,10 @@
             ]
         },
         {
+            "text": "DISCUSSION",
+            "section_rank": 17
+        },
+        {
             "section": "DISCUSSION",
             "text": "The main goal of this study was to introduce functional coherence metrics with high levels of discriminative power, based on the currently available GO annotations. Moreover, the method was intentionally developed independent of data types that are used to generate the gene set of interest (GOI). Two graph-based metrics, k s and l, were developed, where the former measures the enrichment of functional annotations, and the latter summarizes the relatedness of the annotations. Furthermore, k rs was devised so that both aspects of functional coherence can be evaluated with a unified metric. In addition to quantitative evaluation, we have also provided tools to visualize GO Steiner trees as a means to further assess the results by inspecting how genes and annotations are organized, rather than solely relying on P-values. In the real world application, the metrics returned biologically sensible calls. The advantages of these metrics include but are not necessarily limited to the following: (i) by incorporating semantic and biological relationships in the evaluation, our methods treat genes annotated with semantically close GO terms as functionally similar; (ii) providing an global evaluation method for proteins/gene sets, rather than treating each function annotation of genes as independent; and (iii) addressing the multiple testing problem by reducing the number of tests. However, like all GO-based evaluation methods, the metrics are dependent on how well genes are annotated. Therefore, the utilities of the metrics are limited when considering species that have less comprehensive annotations, and the metrics may reflect potential annotation biases from the databases. This is likely to hold true for localized areas of the GOGraph as well.",
             "paragraph_rank": 36,
@@ -855,10 +923,18 @@
             "section_rank": 17
         },
         {
+            "text": "Fig. 2 .",
+            "section_rank": 18
+        },
+        {
             "section": "Fig. 2 .",
             "text": "Comparison of GOGraph network topology of different species.",
             "paragraph_rank": 38,
             "section_rank": 18
+        },
+        {
+            "text": "Fig. 3 .",
+            "section_rank": 19
         },
         {
             "section": "Fig. 3 .",
@@ -867,10 +943,18 @@
             "section_rank": 19
         },
         {
+            "text": "Fig. 4 .",
+            "section_rank": 20
+        },
+        {
             "section": "Fig. 4 .",
             "text": "Testing for metric robustness. In a noise simulation experiment, Pvalues derived from the k rs method were used to evaluate the robustness of the metrics in the presence of different amounts of simulated noise. (A) With the P \u2264 0.05 as the threshold, the percent of KEGG pathways classified as coherent in the presence of noise was plotted against the percent of simulated noise. The line colors indicate the species. (B-D) The ROC curves using k rs in presence of different degrees of noise are shown for S.cerevisiae, M.musculus and H.sapiens, respectively. Specifically, the AUCs for curves with 0-60% (increasing by 20%) are presented.",
             "paragraph_rank": 40,
             "section_rank": 20
+        },
+        {
+            "text": "Fig. 5 .",
+            "section_rank": 21
         },
         {
             "section": "Fig. 5 .",
@@ -879,16 +963,28 @@
             "section_rank": 21
         },
         {
+            "text": "Table 1 .",
+            "section_rank": 22
+        },
+        {
             "section": "Table 1 .",
             "text": "Examples of term-term co-annotation in S.cerevisiae",
             "paragraph_rank": 42,
             "section_rank": 22
         },
         {
+            "text": "Table 2 .",
+            "section_rank": 23
+        },
+        {
             "section": "Table 2 .",
             "text": "A comparison of AUC values with the addition of augmented edges and without. The differences between the methods are most noticeable in the M.musculus and H.sapiens organisms. The column of AUC values with the addition of co-annotation edges corresponds to the curves inFigure 3D-F.",
             "paragraph_rank": 44,
             "section_rank": 23
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 25
         },
         {
             "section": "ACKNOWLEDGEMENTS",
@@ -901,6 +997,10 @@
             "text": "Funding: National Institutes of Health of the United States (grants R01LM009153, 5R01LM010144 to X.L., T15LM07438 to X.L. and A.J.R., 2P20RR107677 to X.L. and R01EY13520 to B.R.).",
             "paragraph_rank": 47,
             "section_rank": 25
+        },
+        {
+            "text": "Conflict of Interest: none declared.",
+            "section_rank": 26
         }
     ]
 }

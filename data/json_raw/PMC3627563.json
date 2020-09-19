@@ -9,6 +9,10 @@
     ],
     "body_text": [
         {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
             "section": "INTRODUCTION",
             "text": "Recent advent of high-throughput sequencing technologies enabled the completion of sequencing effort in >1000 species, most of which are prokaryotes. This achievement has brought new opportunities to many research areas in biological sciences, especially in reconstructing the phylogeny of those species. Traditional methods in phylogenetic analysis are based on alignment of genes or segments. For prokaryotes, the 16S ribosomal RNA gene (or 16S rDNA) is the sequence of choice for phylogenetic analysis given that it exists in almost all prokaryotic organisms, and it rarely undergoes horizontal gene transfer. However, 16S rDNA is highly conserved, so that it provides a limited resolution for closely related species. This problem could be possibly circumvented by selecting less conserved genes, but individual genes may reveal inconsistent and sometimes biased phylogenies.",
             "paragraph_rank": 3,
@@ -205,6 +209,14 @@
             "section_rank": 1
         },
         {
+            "text": "MATERIALS AND METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Key concepts in the proposed model",
+            "section_rank": 3
+        },
+        {
             "section": "Key concepts in the proposed model",
             "text": "Let us first briefly review the process of the sequences alignment. At the beginning of sequences alignment process, all seed matches between the whole query and subject sequences are found and then extended into longer alignments using dynamic programming. The seed match could be an exact match (consecutive seed) or an approximate match (spaced seed). Ma, Tromp and Li proposed using a 0-1 string to describe a seed model where a 1-site represents required match, and 0-site is 'don't care'. For example, if a seed 1110111 is used, then 'actgact' versus 'acttact' and 'actgact' versus 'actgact' are seed matches (19). We can now introduce several new concepts used in our context-object model.",
             "paragraph_rank": 9,
@@ -220,6 +232,10 @@
             ]
         },
         {
+            "text": "Structure",
+            "section_rank": 4
+        },
+        {
             "section": "Structure",
             "text": "A structure S of the seed (or just structure) is the formula C a1,a2,..an O b1,b2,..bn-1 , where a i (i from 1 to n) and b i (i from 1 to n \u00c0 1) are the lengths of the i th consecutive 1s segment and the i th consecutive 0s segment, respectively. For example, the seed 1110111 has a structure S = C 3,3 O 1 . It is clear that the C part of the structure S has a length L(C S ) = P n i\u00bc1 a i and that the O part has a length L(O S ) = 00A0 P n\u00c01 i\u00bc1 b i . The length of the structure (or the seed) is L(S) = L(C S )+L(O S ) = P n i\u00bc1 a i + P n\u00c01 i\u00bc1 b i (Figure 1a).",
             "paragraph_rank": 10,
@@ -233,6 +249,10 @@
                     "end": 563
                 }
             ]
+        },
+        {
+            "text": "C-gram and O-gram",
+            "section_rank": 5
         },
         {
             "section": "C-gram and O-gram",
@@ -265,6 +285,10 @@
             ]
         },
         {
+            "text": "Context and object",
+            "section_rank": 6
+        },
+        {
             "section": "Context and object",
             "text": "Given a structure S and a genome G, we have a k-tuple (k = L(S) set H L(S),G . For an arbitrary C-gram c in the genome G, its objects, denoted by object G,S (c), are the set {O S (w): w2H L(S),G and C S (w) = c}, which, namely, consists of all the O-grams of the L(S)-tuples from G whose C-grams are c. The C-gram c is a context if and only if the set object G,S (c) has only one element ( Figure  1d). For example, given S = C 3,3 O 1 , suppose genome G = '. . . AGGTCCCTGGA . . . AGGGCCCTGGA . . .', then the C-gram 'AGGCCC' is not a context because it has two objects 'T' and 'G', whereas the C-gram 'CCCGG A' is a potential context because it has an unique object 'T'. For convenience, we use the notation C S (G) to denote the set of all of the contexts in G, and S(G) to denote the set of all of the context-object pairs in G.",
             "paragraph_rank": 13,
@@ -278,6 +302,10 @@
                     "end": 400
                 }
             ]
+        },
+        {
+            "text": "Context-object distance",
+            "section_rank": 7
         },
         {
             "section": "Context-object distance",
@@ -308,6 +336,10 @@
                     "end": 151
                 }
             ]
+        },
+        {
+            "text": "The algorithm co-phylog and its complexity",
+            "section_rank": 8
         },
         {
             "section": "The algorithm co-phylog and its complexity",
@@ -347,6 +379,10 @@
             ]
         },
         {
+            "text": "The assessment methods, datasets and benchmarks",
+            "section_rank": 9
+        },
+        {
             "section": "The assessment methods, datasets and benchmarks",
             "text": "The proposed co-phylog algorithm was first assessed using only assembled genomes to explore the proper parameters and the acceptable working range of the algorithm. The algorithm was then assessed on the unassembled wholegenome sequencing data, using the phylogenies based on the corresponding assembled genomes as benchmarks.",
             "paragraph_rank": 18,
@@ -368,10 +404,18 @@
             ]
         },
         {
+            "text": "Robustness testing by varying context/object lengths on Brucella 13 genomes",
+            "section_rank": 10
+        },
+        {
             "section": "Robustness testing by varying context/object lengths on Brucella 13 genomes",
             "text": "We first assessed if the co-phylog method is robust to different context and object lengths. For convenience, we used the simple structures C a,a O n with context and object lengths that could be adjusted by choosing different values for a and n, and we only choose a ! 8 for test, which allowed the majority [>99%, according to Supplementary Equation (S2) in Supplementary Data] of the C-grams to be the contexts. The co-phylog trees were constructed using seven different structures, . The resulting trees were then compared with the benchmark tree constructed using the same dataset. The benchmark tree comes from the work of Foster et al., in which they first created all pairwise wholegenome alignments using MUMmer and then grouped the SNPs by shared locations to compare across all taxa. Foster et al. (21) next analyzed the SNPs multiple alignment using the best substitution model as selected by ModelTest, and finally constructed a phylogenetic tree using the NJ method and verified the tree using different methods.",
             "paragraph_rank": 20,
             "section_rank": 10
+        },
+        {
+            "text": "Tests on the Escherichia/Shigella 26 genomes",
+            "section_rank": 11
         },
         {
             "section": "Tests on the Escherichia/Shigella 26 genomes",
@@ -405,6 +449,10 @@
             "text": "The benchmark p-distances were generated by an in-house Perl script, using the web file 40 way Escherichia/Shigella genomes alignment (http://www .biotorrents.net/details.php?id=87), which includes all the Escherichia/Shigella 26 genomes. This alignment was previously produced by the MSA tool progressiveMauve (24) (http://gel.ahabs.wisc.edu/mauve/).",
             "paragraph_rank": 24,
             "section_rank": 11
+        },
+        {
+            "text": "Tests on Enterobacteriaceae 63 genomes and Gammaproteobacteria 70 genomes",
+            "section_rank": 12
         },
         {
             "section": "Tests on Enterobacteriaceae 63 genomes and Gammaproteobacteria 70 genomes",
@@ -455,6 +503,10 @@
             "section_rank": 12
         },
         {
+            "text": "Tests on simulated NGS datasets",
+            "section_rank": 13
+        },
+        {
             "section": "Tests on simulated NGS datasets",
             "text": "We first evaluated that how large of a proportion of the genome had to be sequenced to create a faithful tree using co-phylog by in silico sequencing on the 'sequencing sample genomes'. Supplementary Equation (S1) (see Supplementary Data) suggests that the proportion of the genome sequenced by perfect in silico sequencing could be adjusted through specifying either the mean reads length or the number of reads (or sequencing depth). For convenience, we generated five perfect NGS datasets that only varied in sequencing depth (depth = 2\u00c2, 6\u00c2, 16\u00c2, 30\u00c2 and 50\u00c2) using an in-house Perl script and the Brucella 13 genomes as the 'sequencing sample genomes'. This means that each of the five test NGS datasets consists of 13 unassembled counterparts (G 0 1 , G 0 2 ,., G 0 13 ) at the same depth for the Brucella 13 genomes (G 1 , G 2 ,., G 13 ). All of the reads simulated in the perfect NGS datasets were 75 bp, error-free and uniformly distributed, which allowed us exclude any variation introduced by the sequencing experiment itself. The corresponding co-phylog (with S = C 15,15 O 1 ) tree was constructed using each of the five perfect NGS datasets as input, and the benchmark tree was constructed using the 'sequencing sample genomes' as input. The minimal proportion P of the genome that was required by co-phylog was estimated by finding the depth at which the tree generated begins to be identical to the benchmark tree.",
             "paragraph_rank": 30,
@@ -475,6 +527,10 @@
             "section_rank": 13
         },
         {
+            "text": "Tests on real NGS datasets",
+            "section_rank": 14
+        },
+        {
             "section": "Tests on real NGS datasets",
             "text": "Next, we applied co-phylog to the real NGS datasets. By retrieving the NCBI Short Reads Archive database, we collected 29 Escherichia coli organisms for which the NGS raw data and assembled genomes were both available (see Supplementary Table S1). A co-phylog tree constructed using the real NGS dataset for the 29 E. coli organisms was compared with the tree constructed using the respective assembled genomes. We also attempted the co-phylog tool on large diploid genomes to see if co-phylog is computationally affordable to the large size analyses and the additional complication of diploidy. Five mammalian organisms (including four primates, Otolemur garnetii, Saimiri boliviensis, Gorilla gorllia and Homo sapiens, and a out-group Bos grunniens mutus), all of which have abandon NGS data (average sequencing depth % 80\u00c2), were used for phylogenomic analysis by co-phylog. Then the space and time consumption were analyzed.",
             "paragraph_rank": 32,
@@ -490,6 +546,14 @@
             ]
         },
         {
+            "text": "RESULTS",
+            "section_rank": 15
+        },
+        {
+            "text": "Performance of co-phylog with varied context/object lengths",
+            "section_rank": 16
+        },
+        {
             "section": "Performance of co-phylog with varied context/object lengths",
             "text": "The comparison shows that the co-phylog tree and the benchmark tree are nearly identical (Figure 2), illustrating the accuracy of co-phylog method on closely related organisms. It also shows, using S = C a,a O n with varied a and n, the co-phylog trees constructed have nearly identical shape, suggesting that co-phylog is robust at different context/object lengths when applied on closely related organisms. However, larger n produces trees with longer branch lengths, and this is because co-phylog method creates a 'micro-alignment' between two genomes compared (see 'Discussion' section) and estimates the average nucleotide substitution rate that measured by substitutions per n sites, therefore larger n would result in higher substitution rate calculated.",
             "paragraph_rank": 33,
@@ -503,6 +567,10 @@
                     "end": 98
                 }
             ]
+        },
+        {
+            "text": "Performance on Escherichia/Shigella 26 genomes",
+            "section_rank": 17
         },
         {
             "section": "Performance on Escherichia/Shigella 26 genomes",
@@ -568,6 +636,10 @@
             ]
         },
         {
+            "text": "Performance on Enterobacteriaceae and Gammaproteobacteria",
+            "section_rank": 18
+        },
+        {
             "section": "Performance on Enterobacteriaceae and Gammaproteobacteria",
             "text": "The comparisons on the phylogenies of the Enterobacteriaceae 63 genomes show that the 16S rDNA tree and the co-phylog tree agreed well in general. However, the genera Enterobacter and Citrobacter are polyphyletic groups, and the genus Yersinia is a paraphyletic group Figure 3. (a) The benchmark tree constructed based on multiple genomes alignment and the trees constructed by the three methods, co-phylog (S = C 9,9 O 1 ), CVtree and Kr, on the Escherichia/Shigella 26 genomes. The number near the node represents the bootstrap value (see Doc. S1 for details). And (b) the symmetric differences of the benchmark tree against the trees constructed by the three methods, co-phylog, CVtree and Kr. (c) Correlation analyses between the p-distance and each of the three distances, co-distance, CVtree-distance and Kr-distance. These four types of distances are generated from the pairwise comparisons of the Escherichia coli/Shigella 26 genomes, using multiple genomes alignment, co-phylog, CVtree and Kr, respectively. in the 16S rDNA tree, while all these genera formed a single clade in the co-phylog tree, illustrating that co-phylog has a much higher resolution than the 16S rDNA tree at the family level (Figure 4). However, when co-phylog is applied to Gammaproteobacteria 70 genomes, the accuracy of the constructed tree significantly diminishes. Co-phylog tree showed that Enterobacteriales, Xanthomonadales, Pasteurellales and Thiotrichales still formed a clade, whereas the other orders formed paraphyletic or polyphyletic groups (Supplementary Figure S1). The performance on taxonomy levels higher than class were also tested but were found to be even worse than at the class level (data not show). This exercise demonstrates the limits of co-phylog in phylogeny construction.",
             "paragraph_rank": 37,
@@ -596,6 +668,10 @@
             ]
         },
         {
+            "text": "The optimal working range of co-phylog as determined by in silico evolution",
+            "section_rank": 19
+        },
+        {
             "section": "The optimal working range of co-phylog as determined by in silico evolution",
             "text": "The in silico evolution experiment showed that the co-distance varied significantly starting at the 90th run, which corresponds to a divergence of 0.90 substitutions per site between the two evolved genomes ( Figure 5). The major genomic variation introduced in the 90th evolution was a gLGT event that copied 10 genes from one genome to another; the same gLGT event also occurred at the 80th, 74th, 65th and several other previous runs. However, those occurrences did not significantly affect the computed co-distance. The reason is obvious; the sequences 'copied' to the genome by the recent gLGT are nearly identical with the original ones on another genome, which causes the co-distance between the two genomes to be underestimated. When two genomes are closely related, there are many common contexts between them; the new common contexts that occurred due to the 10 genes gLGT only affected the co-distance weakly, but two distant genomes have few common contexts (e.g. <5000), and the new common contexts that occurred owing to a 10 genes gLGT ($10 000 common contexts) would make up the majority of the common contexts, thus significantly biasing the computed co-distance. This experiment indicates that when the common context count >150 000 (corresponding to a co-distance <0.12 or a real divergence of <0.8 substitution per site if S = C 9,9 O 1 ), the two genomes being compared are close enough to guarantee the stability of the computed co-distance. If using S = C 12,12 O 1 , then 'close enough' genomes should satisfy the criteria of the divergence being <0.58 substitution per site and have a co-distance <0.09, indicating that using long contexts loses more distant homologies. Therefore, when the criteria given in Supplementary Equation (S2) (see Supplementary Data) are satisfied, it is better to choose shorter contexts when applying co-phylog to more distant genomes. This estimation may be different when taking into account more frequent, recent gLGTs. Fortunately, relevant research has suggested that recent gLGTs in two distant genomes are rare (about 7 genes) (28), making the conclusions from our 10-gene gLGT simulation more reliable.",
             "paragraph_rank": 38,
@@ -608,6 +684,10 @@
                     "end": 217
                 }
             ]
+        },
+        {
+            "text": "Performance on simulated NGS datasets",
+            "section_rank": 20
         },
         {
             "section": "Performance on simulated NGS datasets",
@@ -696,6 +776,10 @@
             ]
         },
         {
+            "text": "Performance on real NGS datasets",
+            "section_rank": 21
+        },
+        {
             "section": "Performance on real NGS datasets",
             "text": "The co-phylog (S = C 9,9 O 1 , qualities control threshold F = 10) tree constructed using the NGS raw dataset of the 29 E. coli organisms is almost identical to the tree built using the corresponding assembled genomes ( Figure 6). Given the accuracy of the co-phylog method based on assembled genomes has been proved previously, this test illustrates that co-phylog could be used in the phylogenetic analysis of unassembled NGS data. And as these NGS raw data came from all three popular sequencing platforms (454, Illumina and SOLID) ( Supplementary Table S1), co-phylog is robust to the choice of sequencing platforms. The co-phylog tree (using S = C 12,12 O 1 , according to Supplementary Equation (S2) and F = 10) constructed on the NGS dataset from the five large diploid organisms matched well with the known taxonomy ( Supplementary Figure S3), illustrating that the tool co-phylog can handle large size analyses and the complication of diploidy.",
             "paragraph_rank": 44,
@@ -727,6 +811,10 @@
             "text": "The time and memory consumption of co-phylog program (coded in C) were tested on a platform equipped with Intel Xeon X5650 2.67 GHz cpu (only one cpu was used for this test) and SUSE Linux Enterprise Server 10 SP2 (\u00c286_64). For real NGS dataset from the E. coli 29, which have an average sequencing depth of 95\u00c2, co-phylog took 160M memory and 19 min completing the whole computing, including 14 min converting all NGS data into corresponding context-object sets and 5 min computing all pairwise co-distances. For the five mammalian organisms, co-phylog took 60G memory and 20 h completing the whole computing, including 17 h converting all NGS data into corresponding context-object sets and 3 h computing all pairwise co-distances.",
             "paragraph_rank": 45,
             "section_rank": 21
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 22
         },
         {
             "section": "DISCUSSION",
@@ -763,6 +851,10 @@
                     "end": 177
                 }
             ]
+        },
+        {
+            "text": "Comparison against alignment-free methods",
+            "section_rank": 23
         },
         {
             "section": "Comparison against alignment-free methods",
@@ -818,6 +910,10 @@
             "section_rank": 23
         },
         {
+            "text": "XY",
+            "section_rank": 24
+        },
+        {
             "section": "XY",
             "text": ", while a nucleotide substitution event could decrement only a few common k-tuples, the changes in min\u00f0n,m\u00de \u00c0 k+1 are obviously not proportional with that of C i XY , thereby the F(X,Y) or d F (X, Y) computed do not represent the rate of any evolutionary event. There is no unified evolution model for all of the types of genomic variations; therefore, the alignment-free distance metric, which do not distinguish between different types of genome variations cannot be accurate.",
             "paragraph_rank": 53,
@@ -830,10 +926,18 @@
             "section_rank": 24
         },
         {
+            "text": "Figure 1 .",
+            "section_rank": 25
+        },
+        {
             "section": "Figure 1 .",
             "text": "The algorithm overview. (a) Some examples of structure S. (b) The k-tuple sets H k,G1 and H k,G2 that generated from genome G 1 and genome G 2 , respectively, given a structure S = C 2,2 O 1 . (c) C-gram-O-gram pairs generated from the corresponding k-tuple sets. (d) Context-object pairs generated from the corresponding C-gram-O-gram pairs. (e) Shared Context and their corresponding objects in G 1 and G 2 . (f) The computing of context-object distance between G 1 and G 2 .",
             "paragraph_rank": 55,
             "section_rank": 25
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 26
         },
         {
             "section": "Figure 2 .",
@@ -842,10 +946,18 @@
             "section_rank": 26
         },
         {
+            "text": "Figure 4 .",
+            "section_rank": 27
+        },
+        {
             "section": "Figure 4 .",
             "text": "Comparison between the 16S rDNA tree and the co-phylog tree, constructed on the Enterobacteriaceae 63 genomes. The number near the node represents the bootstrap value (see Supplementary Data for details).",
             "paragraph_rank": 57,
             "section_rank": 27
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 28
         },
         {
             "section": "Table 1 .",
@@ -854,16 +966,28 @@
             "section_rank": 28
         },
         {
+            "text": "Table 2 .",
+            "section_rank": 29
+        },
+        {
             "section": "Table 2 .",
             "text": "The extents of co-distance biases due to sequencing error, PCR and contamination",
             "paragraph_rank": 60,
             "section_rank": 29
         },
         {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 31
+        },
+        {
             "section": "ACKNOWLEDGEMENTS",
             "text": "The authors thank Dr. Qiang Li   ",
             "paragraph_rank": 62,
             "section_rank": 31
+        },
+        {
+            "text": "SUPPLEMENTARY DATA",
+            "section_rank": 33
         },
         {
             "section": "SUPPLEMENTARY DATA",
