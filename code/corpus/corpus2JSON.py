@@ -173,11 +173,13 @@ class TEICorpusHandler(xml.sax.ContentHandler):
                         candidate_string = signature(candidate_text["text"])
                         if local_text_simplified == candidate_string:
                             ind = 0
+                        '''
                         if ind == -1:
                             try:
                                 ind = local_text_simplified.index(candidate_string)
                             except:
                                 ind = -1
+                        '''
                         if ind == -1:
                             try:
                                 ind = candidate_string.index(local_text_simplified)
