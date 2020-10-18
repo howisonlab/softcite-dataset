@@ -184,7 +184,7 @@ Annotations are added with `"resp": "whitelist"` following this method.
 
 Using the service method, after having started the software-mention recognizer service:
 
-> python3 enrichJSON.py --method service --json-repo --json-repo ../../data/json_raw/ --output ../../data/json_service  
+> python3 enrichJSON.py --method service --json-repo ../../data/json_raw/ --output ../../data/json_service  
 
 Annotations are added with `"resp": "service"` following this method.
 
