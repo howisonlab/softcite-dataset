@@ -1,0 +1,521 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Machine learning has proven to be an indispensable tool in the selection of interesting events in high energy physics. Such technologies will become increasingly important as detector upgrades are introduced and data rates increase by orders of magnitude. We propose a toolkit to enable the creation of a drone classifier from any machine learning classifier, such that different classifiers may be standardised into a single form and executed in parallel. We demonstrate the capability of the drone neural network to learn the required properties of the input neural network without the use of any labels from the training data, only using appropriate questioning of the input neural network.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "Data-collection rates in high energy physics (HEP) experiments, particularly those at the Large Hadron Collider (LHC), are a continuing challenge and resulting datasets require large amounts of computing power to process. For example, the LHCb experiment [1] processes an event rate of 1 MHz in a software-based trigger [2]. The purpose of this trigger is to reduce the output data rate to manageable levels, i.e. to fit in the available storage resources offline. This amounts to a reduction from 60 GB per second to an output data rate of 0.6 GB per second. In order to accomplish such a remarkable real-time data reduction in the software based trigger, novel ideas have been introduced, such as the real-time alignment and calibration of the detector [3], in addition to the concept of real-time analysis [4], whereby a subset of the particles from the proton collisions need only be saved, and not the raw data from the sub-detectors. The aforementioned data-reduction strategy is similar across all LHC experiments, where software based selections are applied in low-latency environments.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 255,
+                    "text": "[1]",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 320,
+                    "text": "[2]",
+                    "end": 323
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 755,
+                    "text": "[3]",
+                    "end": 758
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 809,
+                    "text": "[4]",
+                    "end": 812
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Machine learning (ML) is becoming an increasingly important tool to filter datasets, be it with the identification of interesting event topologies, or the distinction between individual particle species. For the case of LHCb data-taking, over 600 unique signatures are searched for in parallel in real time, each with its own set of requirements. However only a handful at present make use of machine learning.",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "A large ecosystem is available for analysts to create machine learning classifiers; the TMVA [5] and Neurobayes [6] tools being among the most widely used. More recent examples gaining popularity include Scikit-Learn [7] and Keras [8]. It has been proven in many LHC analyses that ML classifiers account for differences in the correlations of training variables between signal and background events, therefore enabling more powerful data reduction. Despite this, the majority of searches for Email address: sean.benson@nikhef.nl (Sean Benson) interesting signatures are performed without the use of ML classifiers. Often the reason for this is the relative difficulty in the implementation of a preferred ML classifier to the C++/Python combination of event selection frameworks [9]. Another reason is the required algorithm speed. Methods such as Bonsai Boosted Decision Trees (BBDTs) [10] have been developed in order to enable the quick evaluation of models. The BBDT approach relies on the discretization of inputs such that all possible combinations along with the associated classifier response is known before the model is evaluated. One potential drawback of the BBDT approach is that the number of input variables is limited in order to limit the number of possible combinations.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 93,
+                    "text": "[5]",
+                    "end": 96
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 112,
+                    "text": "[6]",
+                    "end": 115
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 217,
+                    "text": "[7]",
+                    "end": 220
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 231,
+                    "text": "[8]",
+                    "end": 234
+                },
+                {
+                    "type": "table",
+                    "start": 529,
+                    "text": "(Sean Benson)",
+                    "end": 542
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 779,
+                    "text": "[9]",
+                    "end": 782
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 886,
+                    "text": "[10]",
+                    "end": 890
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "We present in this article a package that allows an analyst to train a drone neural network that learns the important features of a given ML learning classifier from any chosen package such as SciKit-Learn or Keras. The resulting parameters are then fed into a C++ algorithm that performs execution in HEP production environments. The details of the drone training are provided in Sec. 2. This is followed by real examples using simulated data in Sec. 3. The advantages of the approach are discussed in Sec. 4 and a summary is provided in Sec. 5.",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Drone learning",
+            "section_rank": 3
+        },
+        {
+            "section": "Drone learning",
+            "text": "The training of the drone network requires that the original network is extensively probed in the parameter space in which accuracy is desired. The principle utilised in the training of the drone is that sufficient approximation of the original network is achieved with sufficient expansion of the hyperparameter space of the drone, and that the same global minimum of the loss function can be found, as reported in Ref. [11]. The ability of a neural network with a continuous, bounded, non-constant activation function to approximate functions to an arbitrary degree has been indeed known since the early 1990s [12].",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 421,
+                    "text": "[11]",
+                    "end": 425
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 612,
+                    "text": "[12]",
+                    "end": 616
+                }
+            ]
+        },
+        {
+            "text": "Initial drone structure and corresponding training",
+            "section_rank": 4
+        },
+        {
+            "section": "Initial drone structure and corresponding training",
+            "text": "The drone chosen for use in this article is initialised as a neural network with a single intermediate (hidden) layer of 5 nodes using a standard sigmoid activation function. The network has the number of inputs determined from the number of desired characteristics of the decay signature. A single output is taken from the network and a linear model is used to relate layers.",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "section": "Initial drone structure and corresponding training",
+            "text": "The model is made to approximate the original classifier through a supervised learning technique, though not in the traditional sense. Instead of a label as signal or background taken from the training data, the output of the original classifier is used as a label. This means that the loss function is defined as",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "section": "Initial drone structure and corresponding training",
+            "text": "where F( x i ) and G( x i ) are the outputs of the original and drone models on datapoint i of the mini-batch, respectively. The advantage of such a loss function is per-event equivalence of the original and drone model, in addition to equivalence of performance. For the drone training detailed in this article, standard mini-batch stochastic gradient descent is used. A feature of this method is that the drone classifier does not see the labels of the training data, but rather learns the same properties from the original classifier. This is therefore a neural network that learns from another neural network in an empirical manner.",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Model morphing during the learning phase",
+            "section_rank": 5
+        },
+        {
+            "section": "Model morphing during the learning phase",
+            "text": "In order to keep the hyperparameter space to the minimum required level, additional degrees of freedom are added only when required. This removes the possibility of choosing an incorrect size of the drone network. During the learning phase, the following conditions are required to trigger the extension of the hidden layer in the j th epoch:",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "section": "Model morphing during the learning phase",
+            "text": "where \u03ba is the required threshold, \u03c3 is the required minimum improvement of the loss function andL is the value of the loss function when the hidden layer was last extended. The required improvement starts from a minimum at n, increases with epoch number after previous extensiont and steepness b until a maximum at m. The precise values of the parameters \u03ba, n, m, b are not of particular importance. Rather, the topology described by eqs. 2 and 3 is crucial. The relative loss function improvement, \u03b4 j , can never realistically be larger than 1 and the limit, \u03ba, at which no significant improvement occurs is acceptably set at 0.02 (smaller than 2\u03c3 standard deviations). The descent in loss space,L \u2212 L j , is further required to be significantly large, minimizing the chance of getting stuck in isolated local minima. The function, \u03c3 j , is chosen to increase this requirement with each epoch for two reasons -it is bounded and can approach its asymptote arbitrarily fast. It scales \u03b4 j such that the loss descent must be significant before an update is triggered. Since \u03b4 j is expected to decrease with epoch number, the minumum and maximum values of \u03c3 j are chosen as such:",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "section": "Model morphing during the learning phase",
+            "text": "The steepness, b, is chosen such that the transition from the minimum to maximum takes on average 50 epochs. This ensures a change cannot be triggered immediately after a previous one and the learning can still proceed if more freedom is indeed required. Also, it allows the network to stabilize after a big change.",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "section": "Model morphing during the learning phase",
+            "text": "When the conditions in eqs. 2 and 3 are met, the linear model is updated to extend the weights matrices and bias vectors to accommodate the layer addition. The associated neurons are initialised with a zero weight to ensure continuity of the loss function value.",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "High energy physics applications",
+            "section_rank": 6
+        },
+        {
+            "section": "High energy physics applications",
+            "text": "3.1. B physics",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "Data sample",
+            "section_rank": 7
+        },
+        {
+            "section": "Data sample",
+            "text": "In order to demonstrate the functionality of the toolkit, data samples generated from the RapidSim package [13] are used. The interesting signal is chosen to be the B 0 s \u2192 J/\u03c8 (\u2192 \u00b5\u00b5)\u03c6(\u2192 KK) decay, and the background is the D 0 \u2192 \u03c0\u03c0\u03c0\u03c0 decay. A total of 10000 candidates is generated for each decay.",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 107,
+                    "text": "[13]",
+                    "end": 111
+                }
+            ]
+        },
+        {
+            "text": "Training of the original classifier",
+            "section_rank": 8
+        },
+        {
+            "section": "Training of the original classifier",
+            "text": "The machine learning classifier, using the Keras framework [8,14], is constructed as a locally connected first layer (in which filters are applied to different regions in contrast to a full convolution layer), followed by a pooling layer, and a standard dense layer. The exact definition can be found below. The neural network is trained using kinematic properties of the respective decays. These include the pseudorapidity, \u03b7, and momentum transverse to the direction of the input proton beams, p T , of the decaying particle. In addition, the minimum and maximum p T and \u03b7 of the final state particles is used. The signal and background distributions of the input variables are shown in Fig. 1.",
+            "paragraph_rank": 17,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 59,
+                    "text": "[8,",
+                    "end": 62
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 62,
+                    "text": "14]",
+                    "end": 65
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 689,
+                    "text": "Fig. 1",
+                    "end": 695
+                }
+            ]
+        },
+        {
+            "section": "Training of the original classifier",
+            "text": "In the training of the original classifier, half of the data is reserved in order to test for overtraining. ",
+            "paragraph_rank": 18,
+            "section_rank": 8
+        },
+        {
+            "text": "Jet separation",
+            "section_rank": 9
+        },
+        {
+            "text": "Data sample",
+            "section_rank": 10
+        },
+        {
+            "section": "Data sample",
+            "text": "A further demonstration is provided demonstrating a classifiers ability to separate different kinds of jets. The data sample to show this has been generated from Pythia [15] simulating pp collisions at 14 TeV. The jets themselves are reconstructed in the Rivet analysis framework [16] and are created using the FastJet [17] package using the K t algorithm [18] (the definition of the K t variable and a review of jet reconstruction algorithms may be found in Refs [19] and [20] respectively). A jet p T requirement of 20 GeV is imposed on all jets. All other parameters remain at the default values for Rivet version 2.5.4. The signal sample is chosen to correspond to a qg \u2192 Wq type of interaction, whereas the background is chosen to correspond to a gg \u2192 gg type. These correspond to the Rivet analyses named MC WJETS and MC QCD, respectively. Jets that originate from gluons in the final state form a background to many analyses, therefore efficient rejection of such processes is important in making measurements [21].",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 169,
+                    "text": "[15]",
+                    "end": 173
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 280,
+                    "text": "[16]",
+                    "end": 284
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 319,
+                    "text": "[17]",
+                    "end": 323
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 356,
+                    "text": "[18]",
+                    "end": 360
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 464,
+                    "text": "[19]",
+                    "end": 468
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 473,
+                    "text": "[20]",
+                    "end": 477
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 1017,
+                    "text": "[21]",
+                    "end": 1021
+                }
+            ]
+        },
+        {
+            "text": "Training of the original classifier",
+            "section_rank": 11
+        },
+        {
+            "section": "Training of the original classifier",
+            "text": "The machine learning classifier chosen is also a Keras-based convolutional neural net, constructed in an similar way as described in Sec 3. The training data is based around the properties of the measured jets. The list of features taken consists of the azimuthal angle, \u03c6, \u03b7 of the jet; the spread of neutral and hadronic contributions to the jet in the \u03c6, \u03b7 variables, along with average and energy weighted kinematic variables. In total 17 different features are used. The signal and background distributions of the input variables are shown in Fig. 2.",
+            "paragraph_rank": 20,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 548,
+                    "text": "Fig. 2",
+                    "end": 554
+                }
+            ]
+        },
+        {
+            "text": "Drone conversions",
+            "section_rank": 12
+        },
+        {
+            "section": "Drone conversions",
+            "text": "The drone neural networks are trained following the procedure outlined in Sec. 2, In total, 300 epochs are used with the learning rate of the stochastic gradient descent set to 0.05. The value of \u03ba is chosen to be 0.02, the value of b is chosen to be 0.04 and the value of m is chosen to be 50.",
+            "paragraph_rank": 21,
+            "section_rank": 12
+        },
+        {
+            "section": "Drone conversions",
+            "text": "The loss history of the drone approximations are shown in Fig. 3 as a function of epoch number. The convergence is also shown in Fig. 4, which shows the difference in the value of the loss function with respect to the previous epoch. The epochs that trigger an increase in the number of hyperparameters are also overlaid. In total for the case of B decays and for the case of the jet separation classifier, an increase was triggered 10 times. The total number of parameters in the final drone neural networks are therefore 121 and 286 for the B decay drone and the jet separation drone, respectively. It is interesting to note that with the algorithm design of Sec. 2, the introduction of the new parameter space causes the drone networks to learn faster, as evidenced by increases in Fig. 4 with continuing descent of   ",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 58,
+                    "text": "Fig. 3",
+                    "end": 64
+                },
+                {
+                    "type": "figure",
+                    "start": 129,
+                    "text": "Fig. 4",
+                    "end": 135
+                },
+                {
+                    "type": "figure",
+                    "start": 785,
+                    "text": "Fig. 4",
+                    "end": 791
+                }
+            ]
+        },
+        {
+            "text": "Drone storage and transferability and suitability for lowlatency environments",
+            "section_rank": 13
+        },
+        {
+            "section": "Drone storage and transferability and suitability for lowlatency environments",
+            "text": "The hyperparameters and structure of the drone are required to be portable and easily stored for later usage. For this the JSON format was chosen as mediator. It is human-readable and easily accessible in the Python and C++ environments commonly used in HEP. Thus, it is readily deployable in both personal and production environments.",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "section": "Drone storage and transferability and suitability for lowlatency environments",
+            "text": "Provided is a tool to export and save a drone neural network to a JSON formatted file which preserves the input & output structure, the layers and nodes, all hyperparameters and activation functions. The drone configuration is later read in by an equivalent tool into the production software framework, which then constructs a class object based on the Keras model. The C++ class implements a flexible member structure that is capable of completely reproducing the original drone. The production implementation may be used for all data reduction levels, be it in the form of a low-latency trigger for example up to the latest stages of data handling and output.",
+            "paragraph_rank": 24,
+            "section_rank": 13
+        },
+        {
+            "section": "Drone storage and transferability and suitability for lowlatency environments",
+            "text": "A major advantage of this method is that analysts and users have the full freedom of latest developments of industry standards, but need only to support a more manageable implementation in the low-latency software. This is further aided by projects such as ONNX [22], which enable classifiers from a wider range of software packages to be converted to a framework in which an approximation converter is available.",
+            "paragraph_rank": 25,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 262,
+                    "text": "[22]",
+                    "end": 266
+                }
+            ]
+        },
+        {
+            "section": "Drone storage and transferability and suitability for lowlatency environments",
+            "text": "The identical performance show in Fig. 5 is clearly the ideal scenario, even though such good agreement is not always required to give better results than other low-latency methods. However it is worth noting that the drones created in the examples of Sec. 3 are faster to evaluate. The comparison of the time taken for each model evaluation, determined from a desktop using a Intel Core i5-7267U processor is shown in Table 2.",
+            "paragraph_rank": 26,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 34,
+                    "text": "Fig. 5",
+                    "end": 40
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 419,
+                    "text": "Table 2",
+                    "end": 426
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 14
+        },
+        {
+            "section": "Summary",
+            "text": "It has been demonstrated that for the case of a high energy physics event selection application, a drone neural network is able to accurately approximate and learn the features of a neural network with a different structure. The proposed algorithm design allows the drone to learn the aforementioned features without ever having access to the training data, or indeed any data, but only with appropriate questioning of the original model.",
+            "paragraph_rank": 27,
+            "section_rank": 14
+        },
+        {
+            "section": "Summary",
+            "text": "The equivalency of the outputs of the drone and original model enables an analyst to treat both the original and the drone in the same way. The creation of a drone in a standardised form permits an analyst to use any desired machine-learning package to isolate a decay signature, and from this create a classifier guaranteed to be suitable for execution in the C++ real-time data selection frameworks. ",
+            "paragraph_rank": 28,
+            "section_rank": 14
+        },
+        {
+            "text": "classifier = Sequential() classifier.add(LocallyConnected1D( filters = 90, kernel_size = 2, activation = 'sigmoid', input_shape = (len(setTrain[0]), 1))) classifier.add(GlobalMaxPooling1D()) classifier.add(Dense(30, activation = 'sigmoid')) classifier.add(Dense(1, activation = 'sigmoid')) classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy' , metrics = ['accuracy'])",
+            "paragraph_rank": 29,
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 16
+        },
+        {
+            "section": "Figure 1 :",
+            "text": "Figure 1: Comparison of the signal and background distributions used to train the Keras B decay classifier.",
+            "paragraph_rank": 30,
+            "section_rank": 16
+        },
+        {
+            "text": "1 . 2",
+            "section_rank": 17
+        },
+        {
+            "section": "1 . 2",
+            "text": "classifier = Sequential() classifier.add(LocallyConnected1D( filters = 90, kernel_size = 2, activation = 'sigmoid', input_shape = (len(setTrain[0]), 1))) classifier.add(GlobalMaxPooling1D()) classifier.add(Dense(30, activation = 'sigmoid')) classifier.add(Dense(1, activation = 'sigmoid')) classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy' , metrics = ['accuracy'])",
+            "paragraph_rank": 31,
+            "section_rank": 17
+        },
+        {
+            "text": "\u00d7 10 \u22124 s 4.8 \u00d7 10 \u22125 s jet separation 4.79 \u00d7 10 \u22124 s 6.2 \u00d7 10 \u22125 s the loss functions. The performance of the original classifiers compared to the drone classifiers are shown in Figure 5.",
+            "paragraph_rank": 32,
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 2 :Figure 3 :Figure 4 :Figure 5 :",
+            "section_rank": 19
+        },
+        {
+            "section": "Figure 2 :Figure 3 :Figure 4 :Figure 5 :",
+            "text": "Figure 2: Comparison of the signal and background distributions used to train the Keras jet separation classifier.",
+            "paragraph_rank": 33,
+            "section_rank": 19
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 20
+        },
+        {
+            "section": "Table 1 :",
+            "text": "Hyperparameter number comparisons of the original models and drone approximations for the HEP examples.",
+            "paragraph_rank": 34,
+            "section_rank": 20
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 21
+        },
+        {
+            "section": "Table 2 :",
+            "text": "Processing time comparisons of the original models and drone approximations for the HEP examples.",
+            "paragraph_rank": 35,
+            "section_rank": 21
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 23
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "We acknowledge support from the NWO (The Netherlands) and STFC (United Kingdom). We are indebted to the communities behind the multiple open source software packages on which we depend. This project has received funding from the European Union's Horizon 2020 research and innovation programme under the Marie Sk\u0142odowska-Curie grant agreement No 676108.",
+            "paragraph_rank": 36,
+            "section_rank": 23
+        }
+    ]
+}

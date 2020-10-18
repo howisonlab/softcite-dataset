@@ -1,0 +1,1719 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "A software tool, computing observed and expected upper limits on Poissonian process rates using a hybrid frequentist-Bayesian CL s method, is presented. This tool can be used for simple counting experiments where only signal, background and observed yields are provided or for multi-bin experiments where binned distributions of discriminating variables are provided. It allows the combination of several channels and takes into account statistical and systematic uncertainties, as well as correlations of systematic uncertainties between channels. It has been validated against other software tools and analytical calculations, for several realistic cases.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "In a physics experiment, the result must sometimes be interpreted in terms of upper limits on the rate of a particular physical process of interest, dubbed signal. OpTHyLiC 1 offers an easy-to-use hybrid frequentist-Bayesian solution to set upper limits for an arbitrary number of channels and backgrounds, using the CL s method. It can be used for simple counting experiments where only signal, background and observed yields are provided as well as for multi-bin experiments where binned distributions of discriminating variables are provided. Statistical and systematic uncertainties are taken into account in a Bayesian way, and correlations of systematic uncertainties across backgrounds and channels are properly accounted for. OpTHyLiC can be downloaded from [1].",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 766,
+                    "text": "[1]",
+                    "end": 769
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Other tools such as McLimit [2] or RooStats [3] provide the ability to compute limits using the hybrid method. However, OpTHyLiC was specifically optimized for this method: it is lightweight, simple and faster than the tools most often used currently (even in complex cases with many backgrounds, channels and nuisance parameters, limits are typically computed in one minute or less). Furthermore, it provides several options to configure the treatment of statistical and systematic uncertainties. OpTHyLiC does not support profiling of uncertainties; the motivations for this choice are discussed in the next section.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 28,
+                    "text": "[2]",
+                    "end": 31
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The document is organized as follows. Typical situations in which OpTHyLiC can be used are described in Sec. 2. The notations used in this paper are introduced in Sec. 3. The statistical method implemented in OpTHyLiC is described in Sec. 4. The software is described in Sec. 5 and its validation in Sec. 6.",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Purpose of the software",
+            "section_rank": 3
+        },
+        {
+            "section": "Purpose of the software",
+            "text": "The OpTHyLiC software was written in order to provide users with a lightweight, simple and fast tool to compute upper limits. It should be seen as a complementary tool to the several existing ones. Because of the absence of profiling, it does not provide the best upper limits in cases where data capable of strongly constraining nuisance parameters exist. In such cases, users should prefer other tools like pure frequentist ones (which implement profiling of uncertainties) or pure Bayesian ones. OpTHyLiC is more specifically dedicated to situations where no such data exist or to situations where pure frequentist or pure Bayesian tools are too slow for the users' needs. In the former situation, it is often observed that pure frequentist, pure Bayesian and hybrid approaches yield similar limits. It can therefore be advantageous to use OpTHyLiC rather than tools that are more complicated to handle and slower. The latter situation occurs for example when the expected number of events is small and asymptotic properties of the profile likelihood ratio can't be used to speed up pure frequentist calculations (in this case pseudoexperiments must be drawn in order to perform the hypothesis tests which can be very time consuming when profiling a large number uncertainties). It can also occur when the aim is rather to perform an optimisation of the analysis (to determine the best event selection criteria or the best histogram binning for instance) than to compute final limits. Such optimisation studies often do not require high accuracy and can be extremely time consuming or even impossible to do with profiling.",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "section": "Purpose of the software",
+            "text": "OpTHyLiC can be used by physicists needing a tool relatively easy to master that provides reliable results taking into account several analysis channels and/or systematic uncertainties. It can for example be useful to perform phenomenological sensitivity studies or to recast published searches with newer theoretical models.",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "section": "Purpose of the software",
+            "text": "OpTHyLiC can also be used by beginners in statistics willing to perform limit calculations in realistic cases for the first time without having to understand first all the details and subtleties of profiling in pure frequentist calculations. Those aiming at understanding the details and subtleties of pure frequentist calculations can also use OpTHyLiC as an intermediate step towards that final objective. Many of the quantities, definitions and concepts presented in this paper and used in OpTHyLiC are indeed also used by tools like HistFactory and RooStats to perform pure frequentist calculations. Even though OpTHyLiC was originally designed for high energy physics it can also be used in other fields such as nuclear measurements or medical physics. Many measurements performed in such fields are poissonian and can be modelled with the OpTHyLiC statistical model. OpTHyLiC can therefore be used to perform statistical inference and gain valuable informations about physics parameters relevant in those fields too.",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Notations and definitions",
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "The following notations will be used throughout the document:",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 \u00b5: signal strength modifier, defined as the tested signal rate divided by a fixed reference signal rate value (such as obtained from a theoretical prediction);",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 \u00b5 up : upper limit on the signal strength modifier;",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 n: number of channels;",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 s c\u03b8 : event yield for signal process in channel c (c \u2208 [1, n]) and bin \u03b8;",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 s nom c\u03b8 : nominal reference event yield for signal process in channel c and bin \u03b8;",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 \u03c3 cl : absolute systematic uncertainty for signal process in channel c and bin \u03b8, due to the finite size of the control sample;",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 b ci\u03b8 : event yield for type i background process in channel c and bin \u03b8;",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 b nom ci\u03b8 : nominal event yield for type i background process in channel c and bin \u03b8;",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 b nom c\u03b8 = i\u2208backgrounds b nom ci\u03b8 : total nominal yield for background processes in channel c and bin \u03b8;",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 \u03c3 ci\u03b8 : absolute systematic uncertainty for type i background process in channel c and bin \u03b8, due to the finite size of the control sample;",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 N c\u03b8 : event yield in channel c and bin \u03b8;",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "\u2022 N obs c\u03b8 : event yield actually observed in the data or the pseudo-data in channel c and bin \u03b8.",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "section": "Notations and definitions",
+            "text": "A channel corresponds to a region enriched in signal events (also called signal region). In the case of multi-bin experiments, the user must provide binned distributions (or histograms) for each channel, background and signal. Bins of these distributions are referred to by the index \u03b8. For counting experiments, only yields for each background and signal in each channel are needed. In this case, the index \u03b8 is irrelevant and is discarded.",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "Method description",
+            "section_rank": 5
+        },
+        {
+            "section": "Method description",
+            "text": "OpTHyLiC implements the CL s method [4]. Pseudo-experiments are generated and the distribution of a test statistic is determined under both signal plus background and background only hypotheses. From these distributions, CL s is computed and the upper limit on the signal strength modifier \u00b5 up is found by solving the equation",
+            "paragraph_rank": 23,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 36,
+                    "text": "[4]",
+                    "end": 39
+                }
+            ]
+        },
+        {
+            "section": "Method description",
+            "text": "for a fixed value of \u03b1 which is set depending on the chosen confidence level 1 \u2212 \u03b1. For 95% confidence level upper limits, \u03b1 = 0.05. The test statistic used is the ratio of likelihoods under signal plus background and background only hypotheses:",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "section": "Method description",
+            "text": "The general form of the likelihood is discussed in Sec. 4.1. The statistical and systematic uncertainties are included by the use of nuisance parameters, as detailed in Sec. 4.2 and 4.3, respectively. These uncertainties are accounted for in a Bayesian way: the inference of the observed upper limit is performed from pseudo-experiments using the distribution of the likelihood marginalised over the nuisance parameters, as explained in Sec. 4.4. The procedure for calculating the expected limits is summarised in Sec. 4.5.",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "Statistical model",
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "The full likelihood, including all nuisance parameters, is given by:",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "where:",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "\u2022 the index c runs over the channels;",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "\u2022 the index i runs over the backgrounds;",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "\u2022 the index \u03b8 runs over the bins;",
+            "paragraph_rank": 30,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "\u2022 the index j runs over the systematic uncertainties;",
+            "paragraph_rank": 31,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "In OpTHyLiC, the signal always adds to the background (\u00b5s c\u03b8 is always positive). Cases where the searched signal causes a deficit of events with respect to the background only hypothesis therefore can't be treated with OpTHyLiC.",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical model",
+            "text": "The set of nuisance parameters {s c\u03b8 , b ci\u03b8 , \u03b7 j } can be divided into two categories. The first ones, {s c\u03b8 , b ci\u03b8 }, account for the systematic uncertainties due to the finite size of the control samples used to estimate the signal and background nominal yields s nom c\u03b8 and b nom ci\u03b8 , respectively. Such uncertainties are referred to as \"statistical uncertainties\" in this paper. These nuisance parameters are constrained by the functions f . The second ones, {\u03b7 j }, account for the systematic uncertainties. They are constrained by the functions g. The variation of the signal and background yields under the effect of the systematic uncertainties are described by the functions k syst c\u03b8 ({\u03b7 j }) and k syst ci\u03b8 ({\u03b7 j }), respectively. Bins of discriminating variable histograms are treated as channels: the drawing of Poisson random numbers and the statistical uncertainties on the yield of each process in each bin are independent, but a given systematic uncertainty may affect the yields in a correlated way. It is therefore equivalent to run a counting experiment with N channels and a binned experiment with N bins where the yields and uncertainties in each bin match those in the channels.",
+            "paragraph_rank": 33,
+            "section_rank": 6
+        },
+        {
+            "text": "Treatment of statistical uncertainties",
+            "section_rank": 7
+        },
+        {
+            "section": "Treatment of statistical uncertainties",
+            "text": "The nuisance parameters s c and b ci , accounting for the statistical uncertainties on the nominal signal and background yields, are constrained by probability density functions (p. d. f.) f of the form:",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "section": "Treatment of statistical uncertainties",
+            "text": "where y is the nuisance parameter, y nom the nominal yield and \u03c3 the statistical uncertainty, which can be the square root of summed squared weights (e.g. when y nom is estimated from a mixture of normalised simulated samples). In OpTHyLiC, five different p. d. f. can be used as constraints: a normal distribution, a log-normal distribution, or three different types of gamma distributions.",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "Normal and log-normal constraints",
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "The parameters of the normal and log-normal p. d. f. are chosen so that the average and the standard deviation of these distributions are equal to y nom and \u03c3, respectively. The normal distribution has the form:",
+            "paragraph_rank": 36,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "and the log-normal distribution has the form:",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "with:",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "The normal distribution can be defined for any real y values, including nonphysical negative event yields. On the contrary, the log-normal distribution is defined only for y > 0.",
+            "paragraph_rank": 39,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "In the log-normal case, the nominal yield y nom and statistical uncertainty \u03c3 estimated by users are interpreted as the average and standard deviation of the distribution, respectively. However, a different interpretation is possible. For example, if the statistical uncertainty results from a maximum likelihood estimate on some auxiliary dataset, y nom corresponds to the mode of the likelihood and \u03c3 to the uncertainty as measured from the curvature of the log-likelihood around the mode (\u03c3 = \u22121/ (ln f L ) (y = y nom )). The parameters a and b of the log-normal distribution should therefore be equal to:",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "This can be achieved in OpTHyLiC by setting input parameters to: ",
+            "paragraph_rank": 41,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "with a and b given by Eq. 8, rather than to y nom and \u03c3, respectively. ",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "where a and b are the rate and shape parameters respectively. As for the lognormal, the gamma distributions are defined for any strictly positive value of y.",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "This p. d. f. can be seen as the posterior distribution obtained from an auxiliary measurement accounting for the Poissonian nature of the statistical uncertainty. Accounting for this nature is not straightforward since events are in general weighted. A popular approach (used for example in Hist-Factory [5]) is to consider an imaginary auxiliary measurement in which all events have unit weight (which can therefore be described by a Poisson distribution) and in which the relative statistical uncertainty is equal to that used in the main measurement (\u03c3/y nom ).",
+            "paragraph_rank": 44,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 305,
+                    "text": "[5]",
+                    "end": 308
+                }
+            ]
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "Let N aux be the number of events observed in this auxiliary measurement. The auxiliary measurement likelihood is:",
+            "paragraph_rank": 45,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "where \u03bb is the (unknown) nuisance parameter. It can be written as:",
+            "paragraph_rank": 46,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "where N nom aux is the nominal value of N aux and \u03b3 the nuisance parameter affecting the yield in the main measurement -the product of Poisson terms in Eq. 3 -in a multiplicative way: y = \u03b3 y nom . N nom aux is found by imposing that the relative statistical uncertainty is the same in the auxiliary and main measurements:",
+            "paragraph_rank": 47,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "The auxiliary measurement likelihood can then be written as follows:",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "From this likelihood, posterior distributions for \u03b3 can be determined for various prior distributions \u03c0 (\u03b3):",
+            "paragraph_rank": 49,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "These posterior distributions can then be translated into posterior distributions for the yield y (hereafter denoted as f (y; y nom , \u03c3), using the same notation as in Eq. 4).",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "Three prior distributions are considered; in each case, the posterior distribution for y is a gamma distribution with the general form given by Eq. 10:",
+            "paragraph_rank": 51,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "\u2022 \u03c0 (\u03b3) \u221d 1 (uniform prior); in this case, the posterior distribution is: f (y; y nom , \u03c3) = f G y; a = y nom /\u03c3 2 , b = (y nom /\u03c3) 2 + 1 ;",
+            "paragraph_rank": 52,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "(16a)",
+            "paragraph_rank": 53,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "\u2022 \u03c0 (\u03b3) \u221d 1/ \u221a \u03b3 (Jeffreys prior 2 ); in this case, the posterior distribution is:",
+            "paragraph_rank": 54,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "\u2022 \u03c0 (\u03b3) \u221d 1/\u03b3 (hyperbolic prior); in this case, the posterior distribution is:",
+            "paragraph_rank": 55,
+            "section_rank": 8
+        },
+        {
+            "section": "Normal and log-normal constraints",
+            "text": "The three gamma constraints available in OpTHyLiC correspond to the three posteriors given in Eq. 16a, 16b and 16c. Their parameters are summarized in Tab. 1. ",
+            "paragraph_rank": 56,
+            "section_rank": 8
+        },
+        {
+            "text": "Comparison of the constraint functions",
+            "section_rank": 9
+        },
+        {
+            "section": "Comparison of the constraint functions",
+            "text": "The five available constraint functions -normal, log-normal and the three gamma distributions -are compared for three different values of y nom and \u03c3 in Fig. 1. When \u03c3 is small with respect to y nom , the distributions are very close to each other. Otherwise, the differences between the distributions can be significant. 2 We recall that Jeffreys prior is \u03c0 (\u03b3) \u221d I(\u03b3), where the Fisher information is I(\u03b3) = E \u2202 log P (Naux;\u03b3) \u2202\u03b3 2 . Injecting Eq. 14 in this expression leads to \u03c0 (\u03b3) \u221d 1/ \u221a \u03b3.    Care should be taken when statistical uncertainties are large compared with the nominal yields or when nominal yields are equal to zero. When statistical uncertainties are large, constraint p. d. f. can be truncated at zero in the normal case. In such cases, log-normal and gamma should be preferred. When nominal yields are equal to zero, log-normal and gamma are undefined. In such cases, OpTHyLiC automatically selects a normal constraint truncated at zero. In general, users are encouraged to study the stability of the limit calculations depending on the assumptions made in such circumstances.",
+            "paragraph_rank": 57,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 153,
+                    "text": "Fig. 1",
+                    "end": 159
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 322,
+                    "text": "2",
+                    "end": 323
+                }
+            ]
+        },
+        {
+            "text": "Treatment of systematic uncertainties",
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "Systematic uncertainties on nominal yields s nom c\u03b8 and b nom ci\u03b8 are accounted for by including the set of nuisance parameters {\u03b7 j }. They are assumed to be either 100% correlated or completely uncorrelated. The total number of nuisance parameters is therefore equal to the total number of independent systematic uncertainties, including all channels, backgrounds and signals. The correlation factor between two nuisance parameters \u03b7 j and \u03b7 k is given by the Kronecker symbol \u03b4 jk . The term constraining nuisance parameters in the likelihood can thus be factorized into the product of individual constraint terms. In Eq. 3, the nuisance parameter for each systematic uncertainty of index j is constrained by a standard normal p. d. f. g of the form:",
+            "paragraph_rank": 58,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "As stated in Sec. 4.1, the effect of systematic uncertainties on the yield is described by relations of the form:",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "where y is the varied yield, y nom the nominal yield and k syst ({\u03b7 j }) the function describing the variation of the yield with the set of nuisance parameters {\u03b7 j }. OpTHyLiC provides two different solutions for combining the effect of multiple nuisance parameters:",
+            "paragraph_rank": 60,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 additive:",
+            "paragraph_rank": 61,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 multiplicative:",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "In Eq. 19a and 19b, h syst j (\u03b7 j ) is the function describing the variation of the yield with nuisance parameter j. In both cases, when the effect of only one nuisance parameter is considered, k syst (\u03b7 j ) = h syst j (\u03b7 j ) as it should. For each systematic uncertainty j, the corresponding nuisance parameter \u03b7 j is chosen such that \u03b7 j = 0 corresponds to no variation, \u03b7 j = +1 to a +1\u03c3 variation, and \u03b7 j = \u22121 to a \u22121\u03c3 variation. The main issue associated to systematic uncertainties is the choice of the function h syst j (\u03b7 j ) that relates the effect of the systematic uncertainty to its associated nuisance parameter. Usually, h syst j is known, for each systematic, for \u03b7 j = 0, \u22121 and +1. The value of h sys j for \u03b7 j = 0 is by definition equal to 1: it corresponds to the case y = y nom . Let h \u2191 j (h \u2193 j ) be the relative variation of the yield when systematic j is varied by +1 (\u22121) \u03c3. Thus, for all j:",
+            "paragraph_rank": 63,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "The problem consists in finding continuous functions h syst j (\u03b7 j ), interpolating for \u03b7 j \u2208 [\u22121, +1] and extrapolating for \u03b7 j > +1 and \u03b7 j < \u22121, and such that Eqs. 20 are satisfied -at least approximately. Four choices are currently available in OpTHyLiC, and are represented in Fig. 2:",
+            "paragraph_rank": 64,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 282,
+                    "text": "Fig. 2",
+                    "end": 288
+                }
+            ]
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 piece-wise linear interpolation and extrapolation, defined in Sec. 4.3.1;",
+            "paragraph_rank": 65,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 piece-wise exponential interpolation and extrapolation, defined in Sec. 4.3.2;",
+            "paragraph_rank": 66,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 polynomial interpolation and exponential extrapolation, defined in Sec. 4.3.3;",
+            "paragraph_rank": 67,
+            "section_rank": 10
+        },
+        {
+            "section": "Treatment of systematic uncertainties",
+            "text": "\u2022 \"McLimit\" interpolation and extrapolation, defined in Sec. 4.3.4 and corresponding to the choice followed in the McLimit program.",
+            "paragraph_rank": 68,
+            "section_rank": 10
+        },
+        {
+            "text": "Piece-wise linear interpolation and extrapolation",
+            "section_rank": 11
+        },
+        {
+            "section": "Piece-wise linear interpolation and extrapolation",
+            "text": "The piece-wise linear interpolation and extrapolation is defined as follows: From this definition, it appears that h syst j can be negative if h \u2191 j or h \u2193 j is negative. This unphysical behaviour is dealt with in OpTHyLiC by setting h syst j to zero when it occurs.",
+            "paragraph_rank": 69,
+            "section_rank": 11
+        },
+        {
+            "text": "Piece-wise exponential interpolation and extrapolation",
+            "section_rank": 12
+        },
+        {
+            "section": "Piece-wise exponential interpolation and extrapolation",
+            "text": "The piece-wise exponential interpolation and extrapolation is defined as follows:",
+            "paragraph_rank": 70,
+            "section_rank": 12
+        },
+        {
+            "section": "Piece-wise exponential interpolation and extrapolation",
+            "text": "From this definition, it appears that h syst j can be negative if h \u2191 j or h \u2193 j is lower than -1. This unphysical behaviour is dealt with in OpTHyLiC by applying a linear interpolation and extrapolation instead (see Sec. 4.3.1) when it occurs. If both h \u2191 j and h \u2193 j are greater than -1, h syst j is positive for all \u03b7 j values.",
+            "paragraph_rank": 71,
+            "section_rank": 12
+        },
+        {
+            "text": "Polynomial interpolation and exponential extrapolation",
+            "section_rank": 13
+        },
+        {
+            "section": "Polynomial interpolation and exponential extrapolation",
+            "text": "The polynomial interpolation and exponential extrapolation is defined as follows:",
+            "paragraph_rank": 72,
+            "section_rank": 13
+        },
+        {
+            "section": "Polynomial interpolation and exponential extrapolation",
+            "text": "where the coefficients a i are chosen such that h syst j (\u03b7 j ) and its first and second derivatives are continuous at |\u03b7 j | = 1 and \u03b7 j = 0.",
+            "paragraph_rank": 73,
+            "section_rank": 13
+        },
+        {
+            "text": "\"McLimit\" interpolation and extrapolation",
+            "section_rank": 14
+        },
+        {
+            "section": "\"McLimit\" interpolation and extrapolation",
+            "text": "The \"McLimit\" interpolation and extrapolation is defined as follows:",
+            "paragraph_rank": 74,
+            "section_rank": 14
+        },
+        {
+            "section": "\"McLimit\" interpolation and extrapolation",
+            "text": "where:",
+            "paragraph_rank": 75,
+            "section_rank": 14
+        },
+        {
+            "section": "\"McLimit\" interpolation and extrapolation",
+            "text": "This definition ensures that the first derivative of h syst j at \u03b7 j = 0 is continuous and that h syst j > 0 for all \u03b7 j values. Equation 20b (20c) is exactly satisfied when h \u2191 j > 0 (h \u2193 j > 0) but only to first order when h \u2191 j < 0 (h \u2193 j < 0). Indeed, the following relations hold:",
+            "paragraph_rank": 76,
+            "section_rank": 14
+        },
+        {
+            "section": "\"McLimit\" interpolation and extrapolation",
+            "text": "Also, when the effect of the considered uncertainty is symmetric (h \u2191 j = \u2212h \u2193 j ), this interpolation/extrapolation scheme is equivalent to the piece-wise linear one (see Sec. 4.3.1) for \u03b7 j > 0 if h \u2191 \u2265 0 or \u03b7 j < 0 if h \u2193 \u2265 0.",
+            "paragraph_rank": 77,
+            "section_rank": 14
+        },
+        {
+            "text": "Inference of observed upper limit \u00b5 up",
+            "section_rank": 15
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "The observed upper limit on the signal strength \u00b5 up is derived from the CL s method using q \u00b5 (Eq. 2) as test statistic. q \u00b5 is computed using the nominal likelihood:",
+            "paragraph_rank": 78,
+            "section_rank": 15
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "It thus reduces to the following simple form:",
+            "paragraph_rank": 79,
+            "section_rank": 15
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "where q c\u03b8 \u00b5 is the test for channel c and bin \u03b8 given by:",
+            "paragraph_rank": 80,
+            "section_rank": 15
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "The distributions of q \u00b5 under signal plus background and background only hypotheses (hereafter denoted as p(q \u00b5 |\u00b5) and p(q \u00b5 |0) respectively) are determined by generating pseudo-experiments from the marginal likelihood:",
+            "paragraph_rank": 81,
+            "section_rank": 15
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "In practice, this is done by first generating nuisance parameter values from their constraint p. d. f. and by then generating N c\u03b8 using the nuisance parameter values obtained in the first step. Typical distributions produced by OpTHyLiC are shown in Fig. 3.",
+            "paragraph_rank": 82,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 251,
+                    "text": "Fig. 3",
+                    "end": 257
+                }
+            ]
+        },
+        {
+            "section": "Inference of observed upper limit \u00b5 up",
+            "text": "Once p(q \u00b5 |\u00b5) and p(q \u00b5 |0) have been determined, CL s is computed by using: ",
+            "paragraph_rank": 83,
+            "section_rank": 15
+        },
+        {
+            "text": "Computation of expected limits",
+            "section_rank": 16
+        },
+        {
+            "section": "Computation of expected limits",
+            "text": "OpTHyLiC can also be used to compute expected limits on the signal strength, under the background only hypothesis. Five expected limit quantiles are available: median, \u22122\u03c3, \u22121\u03c3, +1\u03c3 and +2\u03c3. The last four ones are defined using the standard normal distribution. Denoting these quantiles by Z and the corresponding probability by p, one has:",
+            "paragraph_rank": 84,
+            "section_rank": 16
+        },
+        {
+            "section": "Computation of expected limits",
+            "text": "where \u03a6 is the cumulative distribution function of the standard normal distribution. The values of probabilities for the quantiles available in OpTHyLiC are given in Tab. 3. Two methods are provided to compute expected limits. In the first one, the distribution of \u00b5 up is determined by generating pseudo-experiments under the background-only hypothesis. Expected limits are then given by the quantiles (as defined above) of this distribution. In the second one, expected Z -2 -1 0 (median) +1 +2 p 0.0228 0.1587 0.5 0.8413 0.9772 Both methods are equivalent from the statistical point of view but different in terms of implementation and computing time. In most cases, the second method performs much faster than the first one and should therefore be preferred. The first method can be used for cross-checks or if the distribution of \u00b5 up is needed.",
+            "paragraph_rank": 85,
+            "section_rank": 16
+        },
+        {
+            "section": "Computation of expected limits",
+            "text": "However, when using the second method, quantiles are not computed from a single distribution as in the first method: each quantile is computed in a separate job. Therefore, due to statistical fluctuations, the expected values may not be sorted as they should (for example, the \u22122\u03c3 expected value can be higher than the \u22121\u03c3 expected value). In such cases it is recommended to increase the number of pseudo-experiments.",
+            "paragraph_rank": 86,
+            "section_rank": 16
+        },
+        {
+            "text": "Software description",
+            "section_rank": 17
+        },
+        {
+            "text": "Structure and prerequisites",
+            "section_rank": 18
+        },
+        {
+            "section": "Structure and prerequisites",
+            "text": "OpTHyLiC is written in C++ and uses the ROOT library [6]. The code is separated in different classes. Their definitions and implementations are separated into different files which are placed in the main OpTHyLiC directory. Once compiled, the libraries can either be used dynamically by using a macro interpreted with the ROOT interpreter (CINT and CLING for version 5 and 6 of ROOT, respectively), or by using a C++ program compiled into an executable with a software like gcc. Two simple examples, working for both cases, are available in the examples sub-directory.",
+            "paragraph_rank": 87,
+            "section_rank": 18
+        },
+        {
+            "section": "Structure and prerequisites",
+            "text": "As the statistical method relies on pseudo-experiments, pseudo-random number generators are used. ROOT provides in its TRandom3 class an implementation of the MT19937 Mersenne twister [7]. The C++ standard library in its recent C++11 standard [8] also provides various pseudo-random number engines, which generate numbers distributed with the various probability distributions mentioned in this paper. Therefore, if the available compiler or ROOT version makes the use of the C++11 standard possible, the user has the possibility to chose these pseudo-random engines instead of the TRandom3 class. Thanks to relevant preprocessor directives, the portions of the code specific to the C++11 standard are ignored, either by the interpreter or by the compiler, when its use is not possible.",
+            "paragraph_rank": 88,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 184,
+                    "text": "[7]",
+                    "end": 187
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 243,
+                    "text": "[8]",
+                    "end": 246
+                }
+            ]
+        },
+        {
+            "section": "Structure and prerequisites",
+            "text": "If used as a compiled executable, the examples have been tested to be fully functional with gcc version 4.8.2 (4.3.0) or newer, with ROOT version 5.28/00b, when C++11 features are (are not) used. If used as interpreted macros, the examples have been tested to be fully functional with ROOT versions as old as 6.02/03 (5.28/00b), when C++11 features are (are not) used. Older versions of gcc and ROOT may also be used but have not been tested. Other compilers than gcc could also have been chosen, but have not been considered in the installation procedure described below.",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "section": "Structure and prerequisites",
+            "text": "The usage instructions given below corresponds to version 2.00 of OpTHyLiC.",
+            "paragraph_rank": 90,
+            "section_rank": 18
+        },
+        {
+            "text": "Installation and examples",
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "OpTHyLiC is installed in three steps:",
+            "paragraph_rank": 91,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "1. running the INSTALL script to prepare the compilation by creating a",
+            "paragraph_rank": 92,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "Makefile which structure depends on how OpTHyLiC is intended to be used; 2. running make to compile the shared libraries according to the Makefile; 3. running the setup.",
+            "paragraph_rank": 93,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "[c]sh script created in the first step, to update the LD_LIBRARY_PATH environment variable with the directory where the shared libraries are available.",
+            "paragraph_rank": 94,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "The INSTALL shell script is in the main directory. Using INSTALL --help (or INSTALL -h) displays a help detailing the different options, which allows the user to configure the Makefile:",
+            "paragraph_rank": 95,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 --executable (or -e) to compile executables with gcc; if this option is not used, two ROOT macros, Compile.C and examples/load.C, needed for the compilation and for loading the shared libraries, are created in addition to the Makefile;",
+            "paragraph_rank": 96,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 --C++11 (or -C) to enable the C++11 features; in this case, the script checks if the gcc or ROOT versions are recent enough to do so;",
+            "paragraph_rank": 97,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 --permissive to override the check of the gcc or ROOT versions when using the previous option.",
+            "paragraph_rank": 98,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "If no option is used, the libraries will be compiled by ROOT to be used with an interpreted macro, without the C++11 features. Once installed, OpTHyLiC can be used from any location when opening a new shell, by running the script setup.",
+            "paragraph_rank": 99,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "[c]sh. Two examples of programs using OpTHyLiC, runLimits.C and runSignificance.C, are provided in the examples sub-directory, together with examples of input files \"input1.dat\", \"input2.dat\", \"inputHistos.dat\" and \"inputHistosAlternativeSyntax.dat\", the syntax of which is detailed in Sec. 5.3 (\"input1.dat\" and \"input2.dat\" illustrate the syntax for counting experiments and \"inputHistos.dat\" and \"inputHistosAlternativeSyntax.dat\" for multi-bin experiments). The example runLimits.C illustrates the calculation of expected and observed limits, while runSignificance.C shows how to plot the test statistic distribution under the background only and signal plus background hypotheses and calculate the observed and expected p-values and significances. The syntax of the main functions used in both examples is explained in Sec. 5.4.",
+            "paragraph_rank": 100,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "These example programs can be run using the following syntax:",
+            "paragraph_rank": 101,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 root -l load.C 'runLimits.C(\"input1.dat\", \"input2.dat\")' when used as a ROOT macro;",
+            "paragraph_rank": 102,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 ./runLimits.exe --files input1.dat input2.dat when used as an executable.",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "Here, files for counting experiments are provided. Files for multi-bin experiments are provided using exactly the same syntax (OpTHyLiC automatically recognises what type of input files are provided by the user and applies the right treatment in each case). The input files don't have to be of the same type. For example, it is possible to provide one file using the counting experiment syntax and another file using the multi-bin experiment syntax :",
+            "paragraph_rank": 104,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 root -l load.C 'runLimits.C(\"input1.dat\", \"inputHistosAlternativeSyntax.dat\")' ;",
+            "paragraph_rank": 105,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "\u2022 ./runLimits.exe --files input1.dat inputHistosAlternativeSyntax.dat",
+            "paragraph_rank": 106,
+            "section_rank": 19
+        },
+        {
+            "section": "Installation and examples",
+            "text": "In these examples, preprocessor directives are used to allow their use in both modes, or to enable the C++11 features. In the first mode, these examples can also be run from any location, if the load.C macro written to load the shared libraries is run before. In the second mode, the executable can be moved to any location; furthermore, any program located in the examples sub-directory would be compiled when running the make command, as long as its name is of the form run*.C.",
+            "paragraph_rank": 107,
+            "section_rank": 19
+        },
+        {
+            "text": "Input file format",
+            "section_rank": 20
+        },
+        {
+            "section": "Input file format",
+            "text": "The input file format depends on the type of experiment. The format for counting experiments is described in Sec. 5.3.1 and the one for multi-bin experiments is described in Sec. 5.3.2. In both cases, users must create one input file per channel.",
+            "paragraph_rank": 108,
+            "section_rank": 20
+        },
+        {
+            "text": "Counting experiment",
+            "section_rank": 21
+        },
+        {
+            "section": "Counting experiment",
+            "text": "The general structure of the files is shown if Fig. 4.  The block starting with the +sig tag defines the signal sample. Blocks starting with the +bg tag define the background samples. Finally, the observation is defined with the +data tag. Systematic uncertainties are declared using the .syst tag. Fields <name> define the names for signal, backgrounds and systematic uncertainties. Fields <yield> define the nominal yields for signal and backgrounds and the observed yield for data. Fields <stat> define the absolute statistical uncertainty for signal and backgrounds. Fields <up> and <down> define h \u2191 and h \u2193 for each systematic uncertainty. When systematics for different samples (signal or backgrounds) or different channels have the same name they are supposed 100% correlated (i.e. they are described by a unique nuisance parameter \u03b7 j ). Otherwise they are treated as uncorrelated. Lines starting with # are not interpreted. The order in which the signal, background and data block appear does not matter.",
+            "paragraph_rank": 109,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 47,
+                    "text": "Fig. 4",
+                    "end": 53
+                }
+            ]
+        },
+        {
+            "section": "Counting experiment",
+            "text": "LaTeX tables summarizing yields and uncertainties can be produced (see Sec. 5.4.2 for instructions on how to do this). By default, the sample and systematic names used in these tables are the ones specified in the input files in the <name> fields. The user can change background sample names by adding .nameLaTeX tags in background sample blocks. Systematic names can be changed by creating a dictionnary file mapping names as specified in the <name> fields to names used for LaTeX tables. Channel names used for LaTeX tables can also be specified by adding +nameLaTeX tags in the input files.  sance parameters \u03b7 j ) is 4. The one called Syst1 in the input files (JES in the LaTeX tables) affects the background yield of the first channel and signal yields of the two channels. LaTeX tables produced by OpTHyLiC for this example are shown in Tab. 4, 5, 6 and 7, including captions that are generated automatically. Tab. 4 gives the observed yields in all channels. Expected nominal yields together with their statistical and total systematic uncertainties for all samples are also given. Expected nominal yields and statistical uncertainties are those given by the user in the input files. The total systematic uncertainties are given by the squared sum of the systematic uncertainties provided by the user in the input files. Table. 5 also gives observed and expected yields with uncertainties for all samples in all channels. However, expected yields and their uncertainties are now computed from quantiles of the marginal distribution of the yield (where the marginalization is performed over all nuisance parameters, statistical and systematic). The expected yields are given by the medians of the marginal distributions and the intervals between the lower and upper uncertainty are the 1\u03c3 confidence level interval.     Table 7: List of relative systematic uncertainties (in %) for channel \u00b5\u00b5.",
+            "paragraph_rank": 110,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 1328,
+                    "text": "Table.",
+                    "end": 1334
+                },
+                {
+                    "type": "table",
+                    "start": 1826,
+                    "text": "Table 7",
+                    "end": 1833
+                }
+            ]
+        },
+        {
+            "text": "Multi-bin experiment",
+            "section_rank": 22
+        },
+        {
+            "section": "Multi-bin experiment",
+            "text": "Two syntaxes can be used. Both are similar to that for counting experiments, except that ROOT files containing histograms are provided instead of numbers. Only differences with respect to the syntax described in Sec. 5.3.1 are therefore described.",
+            "paragraph_rank": 111,
+            "section_rank": 22
+        },
+        {
+            "section": "Multi-bin experiment",
+            "text": "Syntax 1:. This syntax can be used only if all ROOT files are in the same directory and all histograms inside them have the same name. The general structure of the files is shown in Fig. 7. An example of such a file is \"inputHistos.dat\" in the examples sub-directory.  The block starting with the +setup tag defines the fields that are common to all samples declared in the file (signal, backgrounds and data). Field <dir> defines the directory containing all the ROOT files. Field <hname> defines the name of the histograms inside the ROOT files. Fields <root-file> define the names of the ROOT files located in the <dir> directory containing the nominal histograms. Bin uncertainties are used for absolute statistical uncertainties. Therefore, care must be taken in the case of histograms filled with weighted entries. Fields <root-file up> and <root-file down> define the names of the ROOT files located in the <dir> directory containing the varied histograms when systematic uncertainties are shifted by +1\u03c3 and \u22121\u03c3 respectively. These histograms must contain yields in each bin (that is, as opposed to the counting experiment case, yields after systematic variation are provided rather than relative variations). In addition, bin uncertainties for systematic histograms are not used and can be set to 0 or any other value.",
+            "paragraph_rank": 112,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 182,
+                    "text": "Fig. 7",
+                    "end": 188
+                }
+            ]
+        },
+        {
+            "text": "+setup",
+            "section_rank": 23
+        },
+        {
+            "text": "Syntax 2:",
+            "section_rank": 24
+        },
+        {
+            "section": "Syntax 2:",
+            "text": ". This syntax can be used in all cases, even if all ROOT files aren't in the same directory and all histograms inside them don't have the same name. The general structure of the files is shown in Fig. 8. An example of such file is \"inputHistosAlternativeSyntax.dat\" in the examples subdirectory.",
+            "paragraph_rank": 113,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_9",
+                    "start": 196,
+                    "text": "Fig. 8",
+                    "end": 202
+                }
+            ]
+        },
+        {
+            "section": "Syntax 2:",
+            "text": "+sig <sig_name> <root-file>(<hname>) .syst <sys1_name> <root-file up>(<hname>) <root-file down>(<hname>) .syst <sys2_name> <root-file up>(<hname>) <root-file down>(<hname>) +bg <bkg1_name> <root-file>(<hname>) .syst <sys1_name> <root-file up>(<hname>) <root-file down>(<hname>) .syst <sys2_name> <root-file up>(<hname>) <root-file down>(<hname>) +bg <bkg2_name> <root-file>(<hname>) .syst <sys1_name> <root-file up>(<hname>) <root-file down>(<hname>) .syst <sys2_name> <root-file up>(<hname>) <root-file down>(<hname>) # ... # add as many backgrounds as needed # ... Fields <root-file>, <root-file up> and <root-file down> define the full path names of the ROOT files containing the nominal and varied histograms. Fields <hname> define the names of the histograms inside the ROOT files. They must be between parentheses with no blank space between the left parenthesis and the ROOT file name.",
+            "paragraph_rank": 114,
+            "section_rank": 24
+        },
+        {
+            "text": "+data <root file>(<hname>)",
+            "section_rank": 25
+        },
+        {
+            "text": "Running the software 5.4.1. Configuration",
+            "section_rank": 26
+        },
+        {
+            "section": "Running the software 5.4.1. Configuration",
+            "text": "In order to use the software, users need to load the OpTHyLiC library, instantiate an object of type OpTHyLiC and add channels. This can be done interactively in a ROOT session as follows:",
+            "paragraph_rank": 115,
+            "section_rank": 26
+        },
+        {
+            "section": "Running the software 5.4.1. Configuration",
+            "text": "gSystem->Load(\"OpTHyLiC_C\"); OpTHyLiC oth(OTH::SystMclimit, OTH::StatNormal,OTH::TR3,0, OTH::CombAutomatic); oth.addChannel(\"channel 1 name\",file1); oth.addChannel(\"channel 2 name\",file2); ... In addition, three optional parameters can be provided. The first one is the type of pseudo-random number engine: the possible values are OTH::TR3 (used by default), and, if C++11 features are available, OTH::STD_ followed by the name of one of the nine engines implemented in the C++11 standard library (mt19937, mt19937_64, minstd_rand, minstd_rand0, ranlux24_base, ranlux48_base, ranlux24, ranlux48, knuth_b). The second one is the seed of this engine; the default value 0 has the effect of setting a randomly generated seed. The third one is the chosen solution for the combination of systematic uncertainties, as described in Sec. 4.3: the possible values are OTH::CombAdditive, OTH::CombMultiplicative, or OTH::CombAutomatic (used by default), the latter requesting additive (multiplicative) combination when the OTH::SystLinear or OTH::SystMclimit (OTH::SystExpo or OTH::SystPolyexpo) options is used for the interpolation/extrapolation method.",
+            "paragraph_rank": 116,
+            "section_rank": 26
+        },
+        {
+            "section": "Running the software 5.4.1. Configuration",
+            "text": "The addChannel member function takes three parameters. The first two ones are of std::string type and correspond to the name of the channel and the name of the input file (see Sec. 5.3) respectively. The third one, used only in the case of multi-bin experiments, is a boolean set by default to true. In the case of multi-bin experiments, OpTHyLiC converts the input file and ROOT files provided by the user into multiple counting experiment files (written using the syntax described in Sec. 5.3.1). More precisely, OpTHyLiC creates one counting experiment file per bin of discriminating variable (only bins containing either a non-zero yield or a non-zero statistical uncertainty for the signal and total background are considered). If the third parameter is set to false, counting experiment files created by OpTHyLiC are dumped on disk, in the same directory as the input file. Their names are of the form fileName_bin\u03b8.ext, where fileName is the name of the input file, ext its extension and \u03b8 is the bin index. These files can be useful for debugging or for running OpTHyLiC over a subset of bins.",
+            "paragraph_rank": 117,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 181,
+                    "text": "5",
+                    "end": 182
+                }
+            ]
+        },
+        {
+            "section": "Running the software 5.4.1. Configuration",
+            "text": "As mentioned in Sec. 4.1, for multi-bin experiments the histogram bins are treated in the same way as channels in counting experiments. Therefore, in the rest of this paper the term \"channel\" refers in such case to a bin of the discriminating variable distribution in one channel, reflecting the software structure.",
+            "paragraph_rank": 118,
+            "section_rank": 26
+        },
+        {
+            "text": "LaTeX tables production",
+            "section_rank": 27
+        },
+        {
+            "section": "LaTeX tables production",
+            "text": "LaTeX tables are produced as follows:",
+            "paragraph_rank": 119,
+            "section_rank": 27
+        },
+        {
+            "section": "LaTeX tables production",
+            "text": "ofstream ofs(filename); int precision = -1; int NpseudoExps = 1000000; oth.createInputYieldTable(ofs,precision); oth.createGeneratedYieldTable(ofs, precision,NpseudoExps); oth.createSysteTables(ofs,\"systDict.txt\", precision);",
+            "paragraph_rank": 120,
+            "section_rank": 27
+        },
+        {
+            "section": "LaTeX tables production",
+            "text": "These three methods take as first parameter an output stream, which can be the standard output (std::cout). The functions createInputYieldTable and createGeneratedYieldTable produce tables of expected and observed yields. In the first case, the total uncertainty for each process is evaluated by summing in quadrature all uncertainties without taking into account the correlations, while in the second case the total uncertainty is assessed by using pseudo-experiments (the number of pseudo-experiments is given as the facultative third parameter). An example of such tables are shown in Tab. 4 and 5. The precision of the numbers in these tables can be adjusted to a fixed value (given as the second parameter) or to be automatically adjusted depending on the size of the uncertainties (when the precision parameter is set to -1, which is the default value).",
+            "paragraph_rank": 121,
+            "section_rank": 27
+        },
+        {
+            "section": "LaTeX tables production",
+            "text": "The function createSysteTables creates one table for each channel which summarises all the systematic uncertainties. Examples of such tables are shown in Tab. 6 and 7. The second parameter of createSysteTables is a string specifying the dictionary file. An example of such a file is given in Fig. 6.",
+            "paragraph_rank": 122,
+            "section_rank": 27,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 292,
+                    "text": "Fig. 6",
+                    "end": 298
+                }
+            ]
+        },
+        {
+            "text": "Observed limit computation",
+            "section_rank": 28
+        },
+        {
+            "section": "Observed limit computation",
+            "text": "Observed limits are computed as follows: double cls; double limit=oth.sigStrengthExclusion( OTH::LimObserved,nbExp,cls);",
+            "paragraph_rank": 123,
+            "section_rank": 28
+        },
+        {
+            "section": "Observed limit computation",
+            "text": "The first parameter of function sigStrengthExclusion defines the limit type (here observed). Other types can be used for expected limits (see Sec. 5.4.4).",
+            "paragraph_rank": 124,
+            "section_rank": 28
+        },
+        {
+            "section": "Observed limit computation",
+            "text": "The second parameter (nbExp) is the number of pseudo-experiments and the third parameter the final CL s value (corresponding to the exclusion). An optional fourth parameter may be provided and corresponds to a hint of the observed limit. This value does not affect the result of the computation but only its speed: giving a hint that is rather close to the final value would most probably speed up the process. Finally, an optional fifth parameter may be used to determine which method to use for the computation. The default value (OTH::MethDichotomy) is the most accurate one. The other possibility is to use an extrapolation method (OTH::MethExtrapol) that is faster but sometimes less accurate. By default, the computed limits are for a 95% confidence level. It is possible to modify this confidence level as follows:",
+            "paragraph_rank": 125,
+            "section_rank": 28
+        },
+        {
+            "section": "Observed limit computation",
+            "text": "oth.setConfLevel(0.9); for example for a 90% confidence level.",
+            "paragraph_rank": 126,
+            "section_rank": 28
+        },
+        {
+            "text": "Expected limits computation",
+            "section_rank": 29
+        },
+        {
+            "section": "Expected limits computation",
+            "text": "Two methods are provided to compute expected limits as described in Sec. 4.5.",
+            "paragraph_rank": 127,
+            "section_rank": 29
+        },
+        {
+            "text": "Significance computation",
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "In addition to observed and expected upper limits, OpTHyLiC can be used to compute the significance of an observation using: std::pair<double, double> r = oth.significance(type,nbExp,mu);",
+            "paragraph_rank": 128,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "where type is the type of significance, nbExp the number of pseudoexperiments and mu the signal strength (set by default to 1 if not specified).",
+            "paragraph_rank": 129,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "The possible values for type are OTH::SignifObserved, OTH::SignifExpectedP2sig, OTH::SignifExpectedP1sig, OTH::SignifExpectedMed, OTH::SignifExpectedM1sig, OTH::SignifExpectedM2sig.",
+            "paragraph_rank": 130,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "If OTH::SignifObserved is used, the observed significance is computed. Otherwise, expected significances under the signal plus background hypothesis are computed.",
+            "paragraph_rank": 131,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "The significance method returns a std::pair<double, double>. The first element of the pair corresponds to the p-value given by:",
+            "paragraph_rank": 132,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "and the second one to the significance z in units of normal distribution standard deviation. It is given by:",
+            "paragraph_rank": 133,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "5.4.7. Access to histograms During the limit computation, several histograms are produced. After the computation, some of these histograms are available.",
+            "paragraph_rank": 134,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "The final q \u00b5 distributions can be accessed using the following commands:",
+            "paragraph_rank": 135,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "oth.getHistoLLRb()->Draw(); oth.getHistoLLRsb()->Draw(\"same\");",
+            "paragraph_rank": 136,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "In the case of the alternative expected limit computation, the q \u00b5 distributions are not accessible but two other histograms are available:",
+            "paragraph_rank": 137,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "oth.getDistrExpMu()->Draw(); oth.getDistrCLs()->Draw();",
+            "paragraph_rank": 138,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "where the first one is the expected distribution of \u00b5 up from which the expected limits are derived and the last one is the full distribution of computed CL s (that should peak at 1-confidence level).",
+            "paragraph_rank": 139,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "Other interesting distributions are channel dependent, therefore the user must first access a specific channel. There are two ways to do so:",
+            "paragraph_rank": 140,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "\u2022 oth.getChannel(\"name\") where name is the name of the channel,",
+            "paragraph_rank": 141,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "\u2022 oth.getChannel(index) where index is the index of the channel returned by the addChannel function.",
+            "paragraph_rank": 142,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "In the case of multi-bin experiment, \"name\" should be of the form channelName_bin\u03b8, where channelName is the name of the channel specified by the user (first parameter of the addChannel method) and \u03b8 is the bin index. The final q \u00b5 distributions for a single channel can be accessed using the following commands:",
+            "paragraph_rank": 143,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "oth.getChannel(index) ->getHistoLLRb()->Draw(); oth.getChannel(index) ->getHistoLLRsb()->Draw(\"same\");",
+            "paragraph_rank": 144,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "as well as the distributions of number of events:",
+            "paragraph_rank": 145,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "oth.getChannel(index) ->getHisto(OTH::Channel::hDistrBg) ->Draw(); oth.getChannel(index) ->getHisto(OTH::Channel::hDistrSB) ->Draw(\"same\");",
+            "paragraph_rank": 146,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "Other interesting histograms are the distributions of the systematic uncertainties, for example:",
+            "paragraph_rank": 147,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "oth.getChannel(index) ->getSigSystDistr(\"Syst1\") ->Draw(); oth.getChannel(index) ->getBkgSystDistr(\"Bkg\",\"Syst2\") ->Draw();",
+            "paragraph_rank": 148,
+            "section_rank": 30
+        },
+        {
+            "section": "Significance computation",
+            "text": "where the last parameter is the name of the systematic uncertainty and the first parameter of the getBkgSystDistr function is the name of the background.",
+            "paragraph_rank": 149,
+            "section_rank": 30
+        },
+        {
+            "text": "Single channel computations",
+            "section_rank": 31
+        },
+        {
+            "section": "Single channel computations",
+            "text": "To compute the limits for a single channel, not combining with the others, the following function is available: where the second one is the expected \u00b5 up as a function of the number of observed events. It is also possible to study the distribution of the yields after the statistical and systematic variations. In order to generate these distributions, the following function must be called: where the first function gives the distribution for the signal, the second one for a single background sample, and the third one is the distribution for the total background. These distributions are also available after a call to createGeneratedYieldTable.",
+            "paragraph_rank": 150,
+            "section_rank": 31
+        },
+        {
+            "text": "Test statistic distribution and derived quantities",
+            "section_rank": 32
+        },
+        {
+            "section": "Test statistic distribution and derived quantities",
+            "text": "The test statistic distributions under background and signal plus background hypotheses for a desired value of the signal strength \u00b5 can be computed as follows:",
+            "paragraph_rank": 151,
+            "section_rank": 32
+        },
+        {
+            "section": "Test statistic distribution and derived quantities",
+            "text": "oth.setSigStrength(mu); oth.generateDistrLLR(nbExp);",
+            "paragraph_rank": 152,
+            "section_rank": 32
+        },
+        {
+            "section": "Test statistic distribution and derived quantities",
+            "text": "where mu is the desired \u00b5 value and nbExp is the number of pseudoexperiments. Once this is done, distributions can be accessed as described in Sec. 5.4.7. The p-value of the observation under the background hypothesis and the CL s can be computed as follows: where nObs is the observed yield. For a single channel, the user can also compute the excluded yield for the chosen \u00b5 value using:",
+            "paragraph_rank": 153,
+            "section_rank": 32
+        },
+        {
+            "section": "Test statistic distribution and derived quantities",
+            "text": "int yield=oth.getChannel(index) ->findObsExclusion(); 5.5. Improvement of the software performance Thanks to the absence of profiling, the computation of the pseudoexperiments could be optimised to minimise the number of random numbers that need to be drawn. Moreover, when searching for the signal strength that corresponds to a given CL s , it is possible to use a simple extrapolation from two pairs of (CL s ,\u00b5) values, that is much faster than a real scan, but has a larger uncertainty on the result. For a more precise but slower result, dichotomy is used, optimised by taking into account the logarithmic dependence between the CL s and the signal strength.",
+            "paragraph_rank": 154,
+            "section_rank": 32
+        },
+        {
+            "section": "Test statistic distribution and derived quantities",
+            "text": "As will be shown in Sec. 6.2, even with the dichotomy choice, observed and expected limits are in general computed very fast with OpTHyLiC compared to other software tools. Speedups well over a factor of 10 have for example been achieved with respect to McLimit.",
+            "paragraph_rank": 155,
+            "section_rank": 32
+        },
+        {
+            "text": "Software validation",
+            "section_rank": 33
+        },
+        {
+            "section": "Software validation",
+            "text": "The computation of upper limits and observation significances with OpTHyLiC involves many calculations of different types: generation of random numbers, calculation of p-values (CL s+b and CL b ), scanning over \u00b5 values to solve Eq. 1, combination of channels, interpolation and extrapolation of systematic uncertainties, marginalization of statistical and systematic uncertainties, calculation of quantiles for expected limits, etc. Several studies have been performed in order to validate these calculations. OpTHyLiC is compared either to a theoretical solution in situations where such a solution exists, to Bayesian calculations in situations where they are equivalent to the hybrid CL s under interest or to results obtained with the McLimit software which is equivalent to OpTHyLiC when specific choices for the interpolation/extrapolation of systematics and constraints for statistical uncertainties are made. These studies are summarized in the following sections.",
+            "paragraph_rank": 156,
+            "section_rank": 33
+        },
+        {
+            "text": "Validation of calculations without uncertainties",
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "OpTHyLiC has first been validated in the simplest situation where signal and background yields have no uncertainties (neither systematic nor statistical), both in the single and multiple channels cases.",
+            "paragraph_rank": 157,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "In the single channel case, an analytical solution for \u00b5 up exists. Indeed, CL s+b and CL b are given by:",
+            "paragraph_rank": 158,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "e \u2212(\u00b5s nom +b nom ) = 1 \u2212 F \u03c7 2 2 (\u00b5s nom + b nom ) ; 2 N obs + 1",
+            "paragraph_rank": 159,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "and:",
+            "paragraph_rank": 160,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "where F \u03c7 2 (x; d) is the cumulative distribution function of the chi-squared distribution with d degrees of freedom at x. Eq. 1 then yields:  In the multiple channels case, two validations were made. In the first one, upper limits calculated with several channels were compared to upper limits calculated with a single channel in situations where the two are expected to give identical results. Such situations occur when yields in the various channels are related to each other by a simple multiplicative factor. For example, the same limits should be obtained in these two cases:",
+            "paragraph_rank": 161,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "\u2022 n channels each with:",
+            "paragraph_rank": 162,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "background yield=b nom /n signal yield=s nom /n observed yield=N obs /n",
+            "paragraph_rank": 163,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "\u2022 a single channel with:",
+            "paragraph_rank": 164,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "It has been checked for several values of s nom , b nom , N obs and n that OpTHyLiC indeed finds the same limits in both cases. In the second one, the general case where yields in the various channels can't be related to each other by a simple multiplicative factor has been considered. It can be seen from Eq. 30 and Eq. 31 that the upper limit can be computed using the following test:",
+            "paragraph_rank": 165,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "In the asymptotic limit, N c is normally distributed. Thus:",
+            "paragraph_rank": 166,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "under the signal plus background hypothesis and:",
+            "paragraph_rank": 167,
+            "section_rank": 34
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "under the background only hypothesis (N (a, b) is the normal distribution with mean a and variance b). CL s is therefore given by:",
+            "paragraph_rank": 168,
+            "section_rank": 34,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 37,
+                    "text": "(N (a, b)",
+                    "end": 46
+                }
+            ]
+        },
+        {
+            "section": "Validation of calculations without uncertainties",
+            "text": "where \u03a6 is the cumulative distribution function of the standard normal distribution. Eq. 1 with Eq. 43 can easily be solved by dichotomy. This result has been used to validate the channel combination procedure implemented in OpTHyLiC against the asymptotic limit.  As can be seen from Fig. 10, OpTHyLiC converges, as expected, to the asymptotic result as the number of events increases.",
+            "paragraph_rank": 169,
+            "section_rank": 34,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 285,
+                    "text": "Fig. 10",
+                    "end": 292
+                }
+            ]
+        },
+        {
+            "text": "Validation of calculations with statistical and systematic uncertainties",
+            "section_rank": 35
+        },
+        {
+            "section": "Validation of calculations with statistical and systematic uncertainties",
+            "text": "Several other studies have been performed in order to validate the treatment of statistical and systematic uncertainties in OpTHyLiC. As already explained, OpTHyLiC treats uncertainties in a Bayesian way by marginalizing the likelihood. A simple check of the marginalization procedure has been performed in the single channel case by comparing marginal distributions of the yield as computed by OpTHyLiC to analytical distributions in the case where a single background affected by a statistical uncertainty constrained with a gamma p. d. f. contributes to the expected yield. Indeed, it is known that, in this case, the marginal distribution of the yield, given by the compound of a Poisson and a gamma distribution, is negative binomial:",
+            "paragraph_rank": 170,
+            "section_rank": 35
+        },
+        {
+            "section": "Validation of calculations with statistical and systematic uncertainties",
+            "text": "where N is the observed yield, b is the background yield, b nom its nominal value, \u03c3 its statistical uncertainty, P (N = n|b) the Poisson distribution with parameter b, f (b; b nom , \u03c3) the gamma distribution for b with mean b nom and standard deviation \u03c3 (given by Eq. 16c) and P (N = n|b nom , \u03c3) the marginal (negative binomial) distribution of the yield N . Fig. 11 shows that the agreement between Eq. 44 and marginal distributions calculated by OpTHyLiC is very good. Excellent agreement has also been observed for the two other gamma definitions available in OpTHyLiC (Eq. 16a and 16b).",
+            "paragraph_rank": 171,
+            "section_rank": 35,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 362,
+                    "text": "Fig. 11",
+                    "end": 369
+                }
+            ]
+        },
+        {
+            "section": "Validation of calculations with statistical and systematic uncertainties",
+            "text": "In order to validate not only the treatment of statistical uncertainties but also that of systematic uncertainties, upper limits calculated with OpTHyLiC have been compared to upper limits calculated using a Bayesian method. It can indeed be shown that, in the single channel case, the hybrid CL s method implemented in OpTHyLiC is equivalent to the Bayesian method when a uniform prior on the signal strength \u00b5 is used and when the signal has no uncertainties (neither statistical nor systematic) associated to it [9]. This equivalence holds for any number of background sources, any number of statistical and systematic uncertainties associated to them and any type of correlation between systematic uncertainties across background sources. This result is used to complete the validation of the treatment of statistical uncertainties and to validate the treatment of systematic uncertainties. In order to perform this validation, an independent Bayesian software, based on RooStats, has been developed. This software implements exactly the same likelihood as OpTHyLiC and takes as input the same files, hence allowing direct comparison to OpTHyLiC. Several comparisons between OpTHyLiC and Bayesian results have been performed by changing the number of background sources and the number of systematic and statistical uncertainties. One such comparison has been performed using the configuration given in Fig. 12, with L = 1, . . . , 7. The result is shown in Fig. 13. This example has been chosen because uncertainties are large and their effect on upper limits is very pronounced (as can be seen by comparing plots on the left and right of Fig. 13). Thus, any mis-treatment of uncertainties in OpTHyLiC should be visible. Very good agreement between OpTHyLiC and the Bayesian calculation with uniform prior is found for this example. Similar agreements are found in other cases. Rigorously, these comparisons validate only the treatment of statistical and systematic uncertaintes for backgrounds. However, signal uncertainties are treated by the same code as background uncertainties. Signal uncertainties are therefore expected to be treated properly. As will be seen below, the comparison between McLimit and OpTHyLiC gives confidence that signal uncertainties are indeed treated properly.  The last validation compares observed and expected (-2\u03c3, -1\u03c3, median, +1\u03c3 and +2\u03c3) upper limits calculated with OpTHyLiC to upper limits calculated with McLimit. McLimit, as OpTHyLiC, is a hybrid frequentist-Bayesian tool, using the interpolation/extrapolation described in Sec. 4.3.4 and normal constraints for statistical uncertainties. When configured appropriately, OpTHyLiC is therefore expected to give the same upper limits as McLimit 3 . For this comparison, typical inputs from high energy physics analysis have been used. Fig. 14   function of the mass of a hypothetical new particle obtained by combining three channels. Six mass points have been considered and seven background processes contribute to the yield in each channel. Signal and background processes are all affected by statistical and systematic uncertainties. For each mass, the total number of nuisance parameters is 51 (27 are associated to systematic uncertainties and 24 to statistical uncertainties). In both cases, 50 000 pseudo-experiments are used. Limits found with OpTHyLiC are in good agreement with those found with McLimit. The main difference between the two programs is the computing time. For example, on the same computer, it took 25 minutes (8 seconds) to calculate the observed limit for the 1 TeV point with McLimit (OpTHyLiC). The full plot is produced in less than 6 minutes with OpTHyLiC while it takes several hours with McLimit.",
+            "paragraph_rank": 172,
+            "section_rank": 35,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 515,
+                    "text": "[9]",
+                    "end": 518
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 1406,
+                    "text": "Fig. 12",
+                    "end": 1413
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 1461,
+                    "text": "Fig. 13",
+                    "end": 1468
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 1643,
+                    "text": "Fig. 13",
+                    "end": 1650
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 2828,
+                    "text": "Fig. 14",
+                    "end": 2835
+                }
+            ]
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 36
+        },
+        {
+            "section": "Conclusion",
+            "text": "A tool computing observed and expected limits has been presented. This tool, named OpTHyLiC, is written in C++ and uses the ROOT library. It implements the hybrid frequentist-Bayesian CL s method for hypothesis testing. It can be used with an arbitrary number of channels and both for counting and multi-bin experiments. Statistical and systematic uncertainties are accounted for as well as correlations between systematic uncertainties. Several types of interpolation/extrapolation for systematic uncertainties and constraint terms for statistical uncertainties are provided. OpTHyLiC has been validated by comparing it to known analytical and Bayesian results and to McLimit in situations where they are expected to give identical limits. Very good agreement has been found in all cases, hence validating the software.",
+            "paragraph_rank": 173,
+            "section_rank": 36
+        },
+        {
+            "section": "Conclusion",
+            "text": "One of the main advantages of OpTHyLiC is its speed. Even in realistic cases with dozens of nuisance parameters and several channels and bins, the duration of limits computation remains of the order a few minutes or less.",
+            "paragraph_rank": 174,
+            "section_rank": 36
+        },
+        {
+            "text": "a+ b 2 2 and e a+ b 2 2 e b 2",
+            "section_rank": 37
+        },
+        {
+            "section": "a+ b 2 2 and e a+ b 2 2 e b 2",
+            "text": "\u2212 1 ,",
+            "paragraph_rank": 175,
+            "section_rank": 37
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 38
+        },
+        {
+            "section": "Figure 1 :",
+            "text": "Figure 1: Comparison of normal, log-normal and gamma probability density functions used for statistical uncertainties for three values of y nom and \u03c3.",
+            "paragraph_rank": 176,
+            "section_rank": 38
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 39
+        },
+        {
+            "section": "Figure 2 :",
+            "text": "Figure 2: Illustration of interpolation and extrapolation functions implemented in OpTHyLiC for h \u2193 j = \u22120.03 and h \u2191 j = 0.5 (top left), h \u2193 j = \u22120.5 and h \u2191 j = 0.5 (top right), h \u2193 j = 0.2 and h \u2191 j = \u22120.5 (bottom left) and h \u2193 j = \u22120.5 and h \u2191 j = \u22120.5 (bottom right).",
+            "paragraph_rank": 177,
+            "section_rank": 39
+        },
+        {
+            "text": "Figure 3 :",
+            "section_rank": 40
+        },
+        {
+            "section": "Figure 3 :",
+            "text": "Figure 3: Example of distributions of q \u00b5 under signal+background (\u00b5 = \u00b5) and background only hypotheses (\u00b5 = 0).",
+            "paragraph_rank": 178,
+            "section_rank": 40
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 41
+        },
+        {
+            "section": "Figure 4 :",
+            "text": "Figure 4: General structure of OpTHyLiC's input files for counting experiments.",
+            "paragraph_rank": 179,
+            "section_rank": 41
+        },
+        {
+            "text": "Fig. 5",
+            "section_rank": 42
+        },
+        {
+            "section": "Fig. 5",
+            "text": "and 6 show an example of what could be the two files in an analysis combining two channels and the dictionnary file defining systematic names for LaTeX tables. +nameLaTeX $e\\mu$ +bg Bkg1 0.8 0.1 .nameLaTeX $t\\bar{t}$ .syst Syst1 -0.05 0.12 .syst Syst2 0.04 -0",
+            "paragraph_rank": 180,
+            "section_rank": 42
+        },
+        {
+            "text": "Figure 5 :Figure 6 :",
+            "section_rank": 43
+        },
+        {
+            "section": "Figure 5 :Figure 6 :",
+            "text": "Figure 5: Example of input text files for a two channels combination.",
+            "paragraph_rank": 181,
+            "section_rank": 43
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 44
+        },
+        {
+            "section": "Figure 7 :",
+            "text": "Figure 7: General structure of OpTHyLiC's input files for multi-bin experiments using syntax 1.",
+            "paragraph_rank": 182,
+            "section_rank": 44
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 45
+        },
+        {
+            "section": "Figure 8 :",
+            "text": "Figure 8: General structure of OpTHyLiC's input files for multi-bin experiments using syntax 2.",
+            "paragraph_rank": 183,
+            "section_rank": 45
+        },
+        {
+            "text": "The constructor requires at least two parameters. The first one is the interpolation/extrapolation method: the possible values are OTH::SystLinear, OTH::SystExpo, OTH::SystPolyexpo, and OTH::SystMclimit, corresponding to the four possibilities described in Sec. 4.3. The second one is the type of constraint for statistical uncertainties: the possible values are OTH::StatNormal, OTH::StatLogN, OTH::StatGammaHyper, OTH::StatGammaUni, and OTH::StatGammaJeffreys, corresponding to the five possibilities described in Sec. 4.2.",
+            "paragraph_rank": 184,
+            "section_rank": 46
+        },
+        {
+            "text": "double limit=oth.getChannel(index) ->sigStrengthExclusion(OTH::LimObserved, nbExp,cls); After this call, channel dependent histograms (as described in the previous section) are available. For the alternative expected limit computation, the following function may be invoked: double limit=oth.getChannel(index) ->expectedSigStrengthExclusion(nbMu,nbExp); In this case, all previous histograms are available as well as a few more: oth.getChannel(index) ->getDistrExpMu()->Draw(); oth.getChannel(index) ->getExpMuVsObs()->Draw(\"alp\"); oth.getChannel(index) ->getDistrCLs()->Draw();",
+            "paragraph_rank": 185,
+            "section_rank": 47
+        },
+        {
+            "text": "oth.getChannel(index)->generateDistrYield(nbExp);then, the generated distributions are available:oth.getChannel(index) ->getSigYieldDistr() ->Draw(); oth.getChannel(index) ->getBkgYieldDistr(\"Bkg\") ->Draw(); oth.getChannel(index) ->getHisto(OTH::Channel::hYieldBg) ->Draw();",
+            "paragraph_rank": 186,
+            "section_rank": 48
+        },
+        {
+            "text": "double pvalue=oth.pValueData(); double cls=oth.computeCLsData(); The p-value under the background hypothesis and the CL s for a single channel can be computed using: double pvalue=oth.getChannel(index) ->pValue(nObs); double cls=oth.getChannel(index) ->computeCLs(nObs);",
+            "paragraph_rank": 187,
+            "section_rank": 49
+        },
+        {
+            "text": "Fig. 9",
+            "section_rank": 50
+        },
+        {
+            "section": "Fig. 9",
+            "text": "shows a comparison between this analytical result and OpTHyLiC for b nom = 0.82 \u00d7 L, s nom = 2.49 \u00d7 L and N obs = 1 \u00d7 L, with L = 1, . . . , 7. Excellent agreement is found. Other tests have been performed with other values of b nom , s nom and N obs , always leading to the same conclusion.",
+            "paragraph_rank": 188,
+            "section_rank": 50
+        },
+        {
+            "text": "Figure 9 :",
+            "section_rank": 51
+        },
+        {
+            "section": "Figure 9 :",
+            "text": "Figure 9: Upper limit \u00b5 up as a function of L computed with OpTHyLiC and from the analytical result (Eq. 39) for b nom = 0.82 \u00d7 L, s nom = 2.49 \u00d7 L and N obs = 1 \u00d7 L.",
+            "paragraph_rank": 189,
+            "section_rank": 51
+        },
+        {
+            "text": "Fig. 10 shows a comparison of this asymptotic result with OpTHyLiC in the three channels example defined by \u2022 channel 1: s nom = 5.18 \u00d7 L, b nom = 2.22 \u00d7 L and N obs = 3 \u00d7 L \u2022 channel 2: s nom = 3.05 \u00d7 L, b nom = 1.61 \u00d7 L and N obs = 4 \u00d7 L \u2022 channel 3: s nom = 4.45 \u00d7 L, b nom = 2.95 \u00d7 L and N obs = 2 \u00d7 L",
+            "paragraph_rank": 190,
+            "section_rank": 52
+        },
+        {
+            "text": "Figure 10 :",
+            "section_rank": 53
+        },
+        {
+            "section": "Figure 10 :",
+            "text": "Figure 10: Upper limit \u00b5 up as a function of L computed with OpTHyLiC and from the asymptotic result (Eq. 43) for the three channels example defined in the text.",
+            "paragraph_rank": 191,
+            "section_rank": 53
+        },
+        {
+            "text": "Figure 11 :",
+            "section_rank": 54
+        },
+        {
+            "section": "Figure 11 :",
+            "text": "Figure 11: Marginal distribution of the yield under the background only hypothesis in the case where the background has a statistical uncertainty constrained by a gamma p. d. f. with mean b nom = 15 and three different values of standard deviation: \u03c3 = 2, 7 and 14.",
+            "paragraph_rank": 192,
+            "section_rank": 54
+        },
+        {
+            "text": "+bgFigure 12 :",
+            "section_rank": 55
+        },
+        {
+            "section": "+bgFigure 12 :",
+            "text": "Figure 12: One of the examples used to validate the treatment of uncertainties in OpTHyLiC.",
+            "paragraph_rank": 193,
+            "section_rank": 55
+        },
+        {
+            "text": "Figure 13 :",
+            "section_rank": 56
+        },
+        {
+            "section": "Figure 13 :",
+            "text": "Figure 13: Upper limit \u00b5 up as a function of L without (left) and with (right) statistical and systematic uncertainties. It has been computed using exponential interpolation and extrapolation for systematic uncertainties and normal constraint terms for statistical uncertainty.",
+            "paragraph_rank": 194,
+            "section_rank": 56
+        },
+        {
+            "text": "Figure 14 :",
+            "section_rank": 57
+        },
+        {
+            "section": "Figure 14 :",
+            "text": "Figure 14: Comparison of observed and expected upper limits calculated with McLimit and OpTHyLiC in a realistic case (see text).",
+            "paragraph_rank": 195,
+            "section_rank": 57
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 58
+        },
+        {
+            "section": "Table 1 :",
+            "text": "Summary of the three gamma constraints available in OpTHyLiC. The constants a and b are parameters of the posterior distribution whose general form is given in Eq. 10.",
+            "paragraph_rank": 196,
+            "section_rank": 58
+        },
+        {
+            "text": "Table 2 compares",
+            "section_rank": 59
+        },
+        {
+            "section": "Table 2 compares",
+            "text": "the mode, the expectation and standard deviation for the five available constraint functions. For the normal and log-normal distribution, the expectation and standard deviation are equal to the nominal yield and statistical uncertainty (see Sec. 4.2.1). For the gamma distributions the expectation and standard deviation are equal to the nominal yield and statistical uncertainty only for the hyperbolic prior \u03c0 (\u03b3) \u221d 1/\u03b3. For the gamma constraints with the uniform and Jeffreys priors, it is not the case, but the difference vanishes in the asymptotic limit.",
+            "paragraph_rank": 197,
+            "section_rank": 59
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 60
+        },
+        {
+            "section": "Table 2 :",
+            "text": "Comparison of the mode, expectation, and standard deviation for the five constraints available in OpTHyLiC.",
+            "paragraph_rank": 198,
+            "section_rank": 60
+        },
+        {
+            "text": "Table 3 :",
+            "section_rank": 61
+        },
+        {
+            "section": "Table 3 :",
+            "text": "Values of probabilities associated to the quantiles available in OpTHyLiC for the calculation of expected limits. limits are calculated in the same way as observed ones (see Sec. 4.4) replacing the observed CL s by median, \u22122\u03c3, \u22121\u03c3, +1\u03c3 and +2\u03c3 quantiles of the CL s distribution under background only hypothesis.",
+            "paragraph_rank": 199,
+            "section_rank": 61
+        },
+        {
+            "text": "Table 4 :",
+            "section_rank": 62
+        },
+        {
+            "section": "Table 4 :",
+            "text": "Observed yields and nominal expected yields. For each nominal expected yield, the first quoted uncertainty represent the statistical uncertainty, while the second is an approximation of the total systematic uncertainty, without taking into account the correlations between them.",
+            "paragraph_rank": 200,
+            "section_rank": 62
+        },
+        {
+            "text": "Table 5 :",
+            "section_rank": 63
+        },
+        {
+            "section": "Table 5 :",
+            "text": "Observed yields and median expected yields. For each median expected yield, derived with pseudo-experiments, the quoted uncertainty is a combination of the statistical and systematic uncertainties, taking into account the correlations between systematics.",
+            "paragraph_rank": 201,
+            "section_rank": 63
+        },
+        {
+            "text": "Table 6 :",
+            "section_rank": 64
+        },
+        {
+            "section": "Table 6 :",
+            "text": "List of relative systematic uncertainties (in %) for channel e\u00b5.",
+            "paragraph_rank": 202,
+            "section_rank": 64
+        },
+        {
+            "text": "shows a comparison of upper limits as a",
+            "paragraph_rank": 203,
+            "section_rank": 65
+        },
+        {
+            "text": "Profiling of uncertainties has been turned off in McLimit so as to allow direct comparison to OpTHyLiC.",
+            "paragraph_rank": 204,
+            "section_rank": 65
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 67
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "The authors would like to thank R. Madar and L. Val\u00e9ry for the fruitful discussions that helped improve the quality of this document. They also would like to thank J. Linnemann for drawing their attention to the possibility of changing parameters of the log-normal distribution, extending the variety of priors that can be considered for statistical uncertainties. Part of this work was supported by the regional council of Auvergne through the \"nouveau chercheur\" research funding program, and by the french \"Agence Nationale de la Recherche\".",
+            "paragraph_rank": 205,
+            "section_rank": 67
+        },
+        {
+            "text": "Like in Sec. 5.4.3, it is possible to provide a hint of the expected limit and to use the extrapolation method when speed is preferred to accuracy.",
+            "paragraph_rank": 206,
+            "section_rank": 69
+        },
+        {
+            "text": "With the alternative method, all expected (median, \u22122\u03c3, \u22121\u03c3, +1\u03c3 and +2\u03c3) limits are computed at the same time using:",
+            "paragraph_rank": 207,
+            "section_rank": 69
+        },
+        {
+            "text": "oth.expectedSigStrengthExclusion(nbMu,nbExp);",
+            "paragraph_rank": 208,
+            "section_rank": 69
+        },
+        {
+            "text": "where nbMu and nbExp are the number of entries in the \u00b5 up distribution (see Sec. 4.5) and the number of pseudo-experiments, respectively.",
+            "paragraph_rank": 209,
+            "section_rank": 69
+        },
+        {
+            "text": "Scan of CL s as a function of the signal strength",
+            "section_rank": 70
+        },
+        {
+            "section": "Scan of CL s as a function of the signal strength",
+            "text": "It is possible to perform a scan of the CL s value for several values of the signal strength, using:",
+            "paragraph_rank": 210,
+            "section_rank": 70
+        },
+        {
+            "section": "Scan of CL s as a function of the signal strength",
+            "text": "oth.scanCLsVsMu(min,max,steps,nbExp, OTH::LimExpectedMed); oth.getCLsVsMu()->Draw(\"alp\");",
+            "paragraph_rank": 211,
+            "section_rank": 70
+        },
+        {
+            "section": "Scan of CL s as a function of the signal strength",
+            "text": "The first three parameters define the signal strength range to be scanned, steps being the number of values to be scanned. The parameter nbExp is the number of pseudo-experiments to compute each CL s .",
+            "paragraph_rank": 212,
+            "section_rank": 70
+        },
+        {
+            "section": "Scan of CL s as a function of the signal strength",
+            "text": "The last parameter defines the type of observed value to be used, within the list OTH::LimExpectedM2sig, OTH::LimExpectedM1sig, OTH::LimExpectedMed, OTH::LimExpectedP1sig or OTH::LimExpectedP2sig and OTH::LimObserved.",
+            "paragraph_rank": 213,
+            "section_rank": 70
+        },
+        {
+            "section": "Scan of CL s as a function of the signal strength",
+            "text": "By fitting the returned graph, the user may compute the corresponding limit, alternatively to the methods presented in Sec. 5.4.3 and 5.4.4.",
+            "paragraph_rank": 214,
+            "section_rank": 70
+        }
+    ]
+}

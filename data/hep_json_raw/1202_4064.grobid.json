@@ -1,0 +1,960 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "We present a determination of the gluon polarisation \u2206g/g in the nucleon, based on the longitudinal double-spin asymmetry of DIS events with a pair of large transverse-momentum hadrons in the final state. The data were obtained by the COMPASS experiment at CERN using a 160 GeV/c polarised muon beam scattering off a polarised 6 LiD target. The gluon polarisation is evaluated by a Neural Network approach for three intervals of the gluon momentum fraction x g covering the range 0.04 < x g < 0.27 . The values obtained at leading order in QCD do not show any significant dependence on x g . Their average is \u2206g/g = 0.125 \u00b1 0.060 (stat.) \u00b1 0.063 (syst.) at x g = 0.09 and a scale of \u00b5 2 = 3 (GeV/c) 2 .",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "The spin structure of the nucleon has been studied in polarised Deep Inelastic lepton-nucleon Scattering (DIS) for many years. The experimental observation by EMC [1] that only a small fraction of the nucleon spin is carried by quark spins has strongly influenced more recent developments of spin physics. Several experiments were performed to confirm this result [2][3][4][5][6][7][8]. More measurements are in progress and/or in the data analysis phase: HERMES at DESY, STAR and PHENIX at RHIC, a number of experiments at JLAB, and COMPASS at CERN. Several theoretical ideas were proposed [9] to explain this observation. In order to investigate the origin of the nucleon spin, it is essential to determine the spin fraction carried by gluons. Information about this quantity can be obtained indirectly from scaling violations in the structure function g 1 (see Refs. [8,10,11] and references therein) or from a direct measurement of the gluon polarisation (see Refs. [12][13][14][15][16][17][18]).",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 163,
+                    "text": "[1]",
+                    "end": 166
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 364,
+                    "text": "[2]",
+                    "end": 367
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 367,
+                    "text": "[3]",
+                    "end": 370
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 370,
+                    "text": "[4]",
+                    "end": 373
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 373,
+                    "text": "[5]",
+                    "end": 376
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 376,
+                    "text": "[6]",
+                    "end": 379
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 379,
+                    "text": "[7]",
+                    "end": 382
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 382,
+                    "text": "[8]",
+                    "end": 385
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 591,
+                    "text": "[9]",
+                    "end": 594
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 870,
+                    "text": "[8,",
+                    "end": 873
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 873,
+                    "text": "10,",
+                    "end": 876
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 876,
+                    "text": "11]",
+                    "end": 879
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 970,
+                    "text": "[12]",
+                    "end": 974
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 974,
+                    "text": "[13]",
+                    "end": 978
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 978,
+                    "text": "[14]",
+                    "end": 982
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 982,
+                    "text": "[15]",
+                    "end": 986
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 986,
+                    "text": "[16]",
+                    "end": 990
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 990,
+                    "text": "[17]",
+                    "end": 994
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 994,
+                    "text": "[18]",
+                    "end": 998
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Leading order virtual photon absorption (LP) does not provide direct access to the gluon distribution since the virtual photon does not couple directly to the gluon. However, the observation of higher order processes opens a way to determine the gluon helicity distribution. Of particular interest is the Photon-Gluon Fusion (PGF) process shown together with leading-order photon absorption and QCD Compton scattering in Fig. 1. These processes are of first order in the strong coupling constant \u03b1 S , so their contributions to the DIS cross-section are comparable, but smaller than the virtual photon absorption contribution.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 421,
+                    "text": "Fig. 1",
+                    "end": 427
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The cleanest way to tag the PGF process is via open charm production, i.e. by selecting charmed mesons in the final state [18]. For this process the contribution from the leading order diagram is small because, in the COMPASS kinematic domain, the charm quark content in the nucleon is negligible. Due to the large mass of the charm quark, the contribution from fragmentation processes is also small. However, for the same reason, charm pair production in PGF is suppressed, so that the statistical precision on the gluon polarisation obtained in this way is limited. A way to overcome this limitation is to tag the PGF process leading to light quark pair production by detecting final state hadrons with large transverse momentum, p T , with respect to the virtual photon direction.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 122,
+                    "text": "[18]",
+                    "end": 126
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In the leading-order process, the hadron transverse momentum p T is due to the intrinsic transverse momentum k T of quarks in the nucleon [19] and to the fragmentation process, both resulting in small transverse momenta. A different situation occurs for QCDC and PGF processes, in which hadrons mainly acquire transverse momentum from the partons produced in the hard process. For this reason the requirement of observing two hadrons with large transverse momentum enhances the contribution of the PGF process in the selected sample [20]. We present hereafter an analysis using this approach for the enhancement of PGF events in light quark production [21,22]. 3 DETERMINATION OF \u2206G/G FROM MEASURED ASYMMETRIES",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 138,
+                    "text": "[19]",
+                    "end": 142
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 533,
+                    "text": "[20]",
+                    "end": 537
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 652,
+                    "text": "[21,",
+                    "end": 656
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 656,
+                    "text": "22]",
+                    "end": 659
+                }
+            ]
+        },
+        {
+            "text": "Experimental set-up and data sample",
+            "section_rank": 3
+        },
+        {
+            "section": "Experimental set-up and data sample",
+            "text": "The experiment uses the naturally polarised muon beam at CERN. The experimental set-up consists of two major components: a polarised target and a magnetic spectrometer. A detailed description of the experiment can be found elsewhere [23]. A major upgrade of the COMPASS spectrometer was performed in 2005. For this analysis the most relevant improvement was a new target magnet which extended the angular acceptance.",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 233,
+                    "text": "[23]",
+                    "end": 237
+                }
+            ]
+        },
+        {
+            "section": "Experimental set-up and data sample",
+            "text": "The average beam muon momentum is 160 GeV/c and the average beam polarisation is P b = \u22120.80 \u00b1 0.04 . The target consists of two cells in 2002-2004 and of three cells in 2006, located along the beam one after the other and filled with 6 LiD. Lithium-6 can be regarded as a quasi-free deuteron and a helium-4 core. The average deuteron polarisation |P t | is about 0.5 and the average dilution factor of the target f is 0.36. The latter is the ratio of the cross-section for all polarisable nucleons in the target material (deuterons) to that for all nucleons and includes radiative corrections. The relative uncertainties of |P t | and f are 5% and 2%, respectively.",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 235,
+                    "text": "6",
+                    "end": 236
+                }
+            ]
+        },
+        {
+            "section": "Experimental set-up and data sample",
+            "text": "The data were collected during four years: 2002 to 2004 and in 2006. Selected events have an interaction vertex located in the target fiducial volume and contain both a beam muon and a scattered muon. The DIS region is selected by the requirement Q 2 > 1 (GeV/c) 2 and by a selection depending on the energy fraction y carried by the exchanged virtual photon, which leads to an invariant mass squared of the hadron system of W 2 > 5 (GeV/c) 2 . Events with y < 0.1 and with y > 0.9 are rejected because the former are more sensitive to experimental biases, while the latter are strongly affected by radiative effects. The above requirements define the inclusive sample. At least two additional charged hadrons associated with the vertex are required for the high-p T sample. In the analysis the two hadrons with the highest p T are selected and the following requirements are applied: p T 1 > 0.7 GeV/c for the leading hadron, p T 2 > 0.4 GeV/c for the sub-leading hadron, x F > 0 for the Feynman variables of both hadrons and z 1 + z 2 < 0.95, where z 1,2 is the ratio of the hadron energy to the virtual photon energy. The cut on z removes events originating from exclusive processes. After all cuts, a sample of about 7.3 million events is used in the present analysis.",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 263,
+                    "text": "2",
+                    "end": 264
+                }
+            ]
+        },
+        {
+            "text": "Determination of \u2206g/g from measured asymmetries",
+            "section_rank": 4
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "The longitudinal double-spin asymmetry for the production of two high-p T hadrons in the DIS regime can be expressed as a function of the Bjorken scaling variable x B j :",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "and all other variables are integrated over the experimental kinematic domain. The leading order (LO) inclusive asymmetry A LO 1 is given by the ratio of spin-dependent and spin-averaged quark distribution functions (PDFs), weighted by the squared quark electric charges; R i is the fraction of process i and a i LL the corresponding analysing power (i.e. the asymmetry of the partonic cross-section) [24]. The labels LP, QCDC and PGF refer to the processes presented in Fig. 1. The depolarisation factor D is the fraction of the muon beam polarisation transferred to the virtual photon and depends mainly on y. The variables x B j , x g and x C are the quark momentum fraction, the gluon momentum fraction in the PGF process and the quark momentum fraction in the QCDC process, respectively. Equation (1) is valid at LO in QCD assuming spin independent fragmentation. A possible spin dependence of fragmentation discussed in Ref. [25] can be neglected in the COMPASS kinematic region.",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 401,
+                    "text": "[24]",
+                    "end": 405
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 471,
+                    "text": "Fig. 1",
+                    "end": 477
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 931,
+                    "text": "[25]",
+                    "end": 935
+                }
+            ]
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "The evaluation of \u2206g/g from the experimental asymmetry A 2h LL using Eq. (1) is possible only when the contributions from background processes (LP, QCDC) can be computed and subtracted. In this analysis, the fractions R i and the analysing powers a i LL are extracted from Monte Carlo (MC). Therefore, the analysis requires a precise MC description of the data, so that R i and a i LL can be calculated reliably. The asymmetry A LO 1 can be evaluated from the spin-dependent and spin-averaged PDFs extracted from global fits or by using directly the measured inclusive lepton-nucleon asymmetry A incl LL . In the present analysis we use the second option, which is less dependent on QCD analyses and related assumptions. As there are two unknowns in Eq. (1), A LO 1 (x B j ) and A LO 1 (x C ), the asymmetry A incl LL has to be known for these two values of x and can be decomposed in a similar way as A 2h LL :",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 761,
+                    "text": "LO",
+                    "end": 763
+                }
+            ]
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "Combining Eqs. 1and 2and neglecting small terms (note that the fractions R PGF and R QCDC are much smaller for the inclusive sample than for the high-p T sample), one obtains the following expression, which allows us to extract \u2206g/g:",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_0",
+                    "start": 15,
+                    "text": "1",
+                    "end": 16
+                },
+                {
+                    "ref_id": "formula_1",
+                    "start": 20,
+                    "text": "2",
+                    "end": 21
+                }
+            ]
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "Here Eq. 2was used twice, once as given and once with the replacements",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_1",
+                    "start": 9,
+                    "text": "2",
+                    "end": 10
+                }
+            ]
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "Due to the fact that \u2206g/g is present in Eq. (3) at two different x g values (denoted x g and x \u2032 g ), the extraction of \u2206g/g requires a new definition of the averaged x g at which the result is obtained:",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "section": "Determination of \u2206g/g from measured asymmetries",
+            "text": "Equation 4relies on the assumption of a linear dependence of \u2206g/g upon x g . The impact of the possible differences between x g and x \u2032 g as well as between x C and x \u2032 C on the final \u2206g/g result is taken into account in the systematic uncertainty.",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_4",
+                    "start": 9,
+                    "text": "4",
+                    "end": 10
+                }
+            ]
+        },
+        {
+            "text": "The final relation between the gluon polarisation and A 2h",
+            "section_rank": 5
+        },
+        {
+            "section": "The final relation between the gluon polarisation and A 2h",
+            "text": "LL can be written as:",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "section": "The final relation between the gluon polarisation and A 2h",
+            "text": "In the extraction of \u2206g/g we use a method similar to the one used in Ref. [26]. Data from different cells j = u, d, u \u2032 , d \u2032 are combined so that beam flux, apparatus acceptance and spinaveraged cross-section cancel. The gluon polarisation is measured by solving the second order equation:",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 74,
+                    "text": "[26]",
+                    "end": 78
+                }
+            ]
+        },
+        {
+            "section": "The final relation between the gluon polarisation and A 2h",
+            "text": "where p j is the sum of event weights w in sample j and A corr j w and \u039b j w are weighted means of f P b P t a corr and f P b P t (\u03bb 1 \u2212 \u03bb 2 ), respectively. The weight w in the current analysis is defined as w = f P b (\u03bb 1 \u2212 \u03bb 2 ). In this way, \u2206g/g(x av g ) is directly obtained, without going through the intermediate step of extracting the A 2h",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "section": "The final relation between the gluon polarisation and A 2h",
+            "text": "LL (x B j ) asymmetry. In previous analyses of high-p T events [13,17] only mean values of R i and a i LL /D for the three processes were used and the contribution of the leading process was suppressed by requiring the presence of two hadrons with high transverse momenta. Unfortunately, these requirements lead to a severe loss of statistics. In the present analysis, a Bayesian driven Neural Network (NN) approach for the extraction of \u2206g/g is used. It allows the use of loose p T cuts by dealing simultaneously with the three processes. The NN, trained on a MC sample, assigns to each event a probability to originate from one of these processes, which is then included in the weight w. Events more likely originating from processes other than PGF are kept with a small weight. For a given event, different NNs provide not only the probabilities to originate from a particular process but also the corresponding analysing powers and the momentum fractions x C and x g . This approach makes optimal use of the data and avoids biases which may arise from correlations between analysing power and kinematic quantities used to evaluate the asymmetries. The statistical uncertainty of \u2206g/g is reduced by a factor of three comparing with the method used in [13].",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 63,
+                    "text": "[13,",
+                    "end": 67
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 67,
+                    "text": "17]",
+                    "end": 70
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 1254,
+                    "text": "[13]",
+                    "end": 1258
+                }
+            ]
+        },
+        {
+            "text": "Monte Carlo optimisation and Neural Network training",
+            "section_rank": 6
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "In the present analysis the NN package from Ref. [27] is used. Many results derived from a Neural Network approach strongly depend on the Monte Carlo sample on which the NN is trained. Thus, a good description of the experimental data by MC simulations is essential for the analysis.",
+            "paragraph_rank": 21,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 49,
+                    "text": "[27]",
+                    "end": 53
+                }
+            ]
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "The LEPTO event generator [28] (version 6.5) is used to generate both an inclusive DIS sample and a sample which already contains at least two high-p T hadrons. The generated events were processed by the detector simulation program COMGEANT and reconstructed in the same way as real events by the reconstruction program CORAL. Finally, the same requirements are used in the analysis of real and MC events.",
+            "paragraph_rank": 22,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 26,
+                    "text": "[28]",
+                    "end": 30
+                }
+            ]
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "Prior to the MC generator studies, an extensive effort was made to improve the detector simulation in COMGEANT. The MSTW08 PDF parametrisation [29] is used in the analysis as it gives reasonable agreement with F 2 measured in the COMPASS kinematic range [30] and is valid down to Q 2 = 1 (GeV/c) 2 . Also the F L function option from LEPTO is used, which improves data-to-MC agreement in the high-y region. Finally, a correction for radiative effects as described in Ref. [31] was introduced.",
+            "paragraph_rank": 23,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 143,
+                    "text": "[29]",
+                    "end": 147
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 254,
+                    "text": "[30]",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 472,
+                    "text": "[31]",
+                    "end": 476
+                }
+            ]
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "The description of lepton variables was found to be satisfactory at this stage. For the hadron variables, the Parton Shower (PS) option in LEPTO had to be enabled to improve their description. However, this procedure introduces some inconsistency, since PS simulates higher order effects while the expression of \u2206g/g is derived at LO. The impact of this discordance will be taken into account in the evaluation of systematic uncertainties. In order to further improve the agreement with data for the hadron variables, some parameters describing the fragmentation process in LEPTO were tuned (high-p T tuning in Table 1). They correspond to the width of the gaussian p T distribution (PARJ 21), the shape of the non-gaussian tail (PARJ 23, PARJ 24) and the symmetric Lund fragmentation function (PARJ 41, PARJ 42).  For the lepton variables the comparison of the high-p T data sample to the MC sample is shown in Fig. 2 both for default LEPTO tuning and high-p T tuning. Figure 3 displays the corresponding comparison for the hadron variables (total and transverse momenta p 1 , p T 1 of the leading and the sub-leading hadron p 2 , p T 2 and the hadron multiplicity. One observes that MC with high-p T tuning yields a satisfactory description of all distributions justifying its use to parametrise process fractions and analysing powers.",
+            "paragraph_rank": 24,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "start": 611,
+                    "text": "Table 1",
+                    "end": 618
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 912,
+                    "text": "Fig. 2",
+                    "end": 918
+                },
+                {
+                    "type": "figure",
+                    "start": 970,
+                    "text": "Figure 3",
+                    "end": 978
+                }
+            ]
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "Several NNs are used to parametrise all needed quantities. For a set of input parameters, the NN is trained to output the corresponding expectation value for a given quantity X . For the inclusive sample the input parameter space is spanned by x B j and Q 2 , while for the high-p T sample the transverse and longitudinal momenta of the leading and sub-leading hadrons p T 1 , p T 2 , p L 1 , and p L 2 are used in addition.",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "section": "Monte Carlo optimisation and Neural Network training",
+            "text": "An example of the quality of the NN parametrisation is given in Fig. 4. For the same MC sample it shows the probability for LP, QCDC and PGF events as a function of \u2211 p 2 T once as generated and once as obtained from the NN. The NN training was performed on a statistically independent MC sample. A good agreement is observed. While the LP probability reduces with increasing p T (p T 1 , p T 2 and \u2211 p 2 T ), QCDC and PGF become the dominant contributions rising with similar strength.",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 64,
+                    "text": "Fig. 4",
+                    "end": 70
+                }
+            ]
+        },
+        {
+            "text": "Systematic studies",
+            "section_rank": 7
+        },
+        {
+            "section": "Systematic studies",
+            "text": "The main contribution to the systematic uncertainty comes from the dependence of the analysis on the MC. In total seven MC samples were prepared with different combinations of fragmentation parameters tuning (default LEPTO or high-p T ), 'PS on' or 'PS off', different choices of the PDFs (MSTW08 or CTEQ5L [32]) and F L from LEPTO or from the R = \u03c3 L /\u03c3 T parametrisation of Ref. [33]. In addition to what was already discussed, it is worth mentioning that for 'PS on' and 'PS off' different so-called cut- off schemes were used to prevent divergences in the cross-section calculations in LEPTO (see Ref. [28]). These schemes and their parameters are quite important since their choice does not affect the data-to-MC comparison but changes the fraction of, e.g. PGF events. So, while keeping the default cut-off parameters proposed by the authors of Ref. [28], we tested various cut-off schemes. A small RMS value of 0.020 was found for the \u2206g/g values obtained from these seven MC samples. However, it turned out that the asymmetry A 2h",
+            "paragraph_rank": 27,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 307,
+                    "text": "[32]",
+                    "end": 311
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 381,
+                    "text": "[33]",
+                    "end": 385
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 606,
+                    "text": "[28]",
+                    "end": 610
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 856,
+                    "text": "[28]",
+                    "end": 860
+                }
+            ]
+        },
+        {
+            "text": "SYSTEMATIC STUDIES",
+            "section_rank": 8
+        },
+        {
+            "section": "SYSTEMATIC STUDIES",
+            "text": "LL is very small, and so the above RMS may underestimate the systematic uncertainty related to MC. In order to avoid this, we consider in addition how the statistical uncertainty of \u2206g/g changes for various MC tunings. This leads to \u03b4 (\u2206g/g) MC = 0.045 .",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "section": "SYSTEMATIC STUDIES",
+            "text": "The uncertainties of \u2206g/g due to the choice of the A d 1 parametrisation and to the NN stability were found to be small, \u03b4 (\u2206g/g) A d 1 = 0.015 and \u03b4 (\u2206g/g) NN = 0.010. The uncertainties of f , P b , and P t have an even smaller impact on the final result: \u03b4 (\u2206g/g) f ,P b ,P t = 0.004 . The HERMES results [34] suggest that for heavier nuclei the dilution factor depends upon the transverse momentum of hadrons. Tests were performed to check the dN/d p T 1 dependence for the 6 LiD target as compared to helium, the medium in which the target material is immersed. No such dependence is observed.",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 53,
+                    "text": "d",
+                    "end": 54
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 307,
+                    "text": "[34]",
+                    "end": 311
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 477,
+                    "text": "6",
+                    "end": 478
+                }
+            ]
+        },
+        {
+            "section": "SYSTEMATIC STUDIES",
+            "text": "False asymmetries appear if the acceptance ratio of neighbouring target cells is different for the data taken before and after field reversal. They were searched for in a sample in which the event selection cuts were relaxed to to p T 1,2 > 0.35 GeV/c and Q 2 > 0.7 (GeV/c) 2 . This leads to a large increase in statistics and allows for more precise studies of the spectrometer stability. No false asymmetries exceeding the statistical uncertainty were found. Taking the statistical uncertainty as limit for the false asymmetries one obtains \u03b4 (\u2206g/g) false = 0.019 .",
+            "paragraph_rank": 30,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 274,
+                    "text": "2",
+                    "end": 275
+                }
+            ]
+        },
+        {
+            "text": "The two different values x C and x \u2032",
+            "section_rank": 9
+        },
+        {
+            "section": "The two different values x C and x \u2032",
+            "text": "C appearing in Eq. 3were assumed to be equal. Two tests were done to check the systematic effect of this assumption. In the first one, x \u2032 C = 1.6 \u2022 x C was assumed, the value 1.6 being an estimate taken from MC. In the second one, the NN parametrisation of x C was used with the previously obtained x C as input parameter instead of x B j . This leads to an uncertainty in \u2206g/g of 0.035 . Similar tests performed for x g and x \u2032",
+            "paragraph_rank": 31,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 19,
+                    "text": "3",
+                    "end": 20
+                }
+            ]
+        },
+        {
+            "section": "The two different values x C and x \u2032",
+            "text": "g changed x av g by less than 0.01 . The expression used for the calculation of a LL assumes that the quarks are massless. This assumption is not valid for strange quarks. Tests were performed excluding kaons from the data sample, or making a parametrisation of the NN based on events with pions only. The final results are found to be stable within statistical fluctuations. The impact of resolved photon processes on the extracted value of \u2206g/g was studied using the RAPGAP generator [35]. It was found that events originating from resolved photons are expected to have very different kinematic distributions with respect to our standard high-p T sample. It was checked whether adding an admixture of events originating from resolved photon processes would change the MC description of the data. The results show that the contribution from resolved photons in our kinematic range is negligible.",
+            "paragraph_rank": 32,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 486,
+                    "text": "[35]",
+                    "end": 490
+                }
+            ]
+        },
+        {
+            "section": "The two different values x C and x \u2032",
+            "text": "The contributions to the systematic uncertainty and their quadratic sum are presented in Table 2. They were also evaluated separately in the three x g bins of Table 3. The total systematic uncertainty of the overall \u2206g/g result is obtained as 0.063, which is slightly larger than the statistical uncertainty.",
+            "paragraph_rank": 33,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 89,
+                    "text": "Table 2",
+                    "end": 96
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "start": 159,
+                    "text": "Table 3",
+                    "end": 166
+                }
+            ]
+        },
+        {
+            "text": "Results and conclusions",
+            "section_rank": 10
+        },
+        {
+            "section": "Results and conclusions",
+            "text": "The values of \u2206g/g provided by Eq. (6) were extracted for every spin configuration separately 1 in order to reduce systematic uncertainties. A correction for the probability of the deuteron to be in a D-wave state [36] was applied. The mean values for each year of data taking are shown in Fig. 5. They are ",
+            "paragraph_rank": 34,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 214,
+                    "text": "[36]",
+                    "end": 218
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 290,
+                    "text": "Fig. 5",
+                    "end": 296
+                }
+            ]
+        },
+        {
+            "section": "Results and conclusions",
+            "text": "at x av g = 0.09 and a scale of \u00b5 2 = 3 (GeV/c) 2 . The data cover the range 0.04 < x g < 0.27 and were divided into three statistically independent subsamples in x g as given by the NN. The correlation between the generated x g and the one obtained from the NN is about 62%. The results do not show any significant dependence of \u2206g/g on x g (Table 3).",
+            "paragraph_rank": 35,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "start": 342,
+                    "text": "(Table 3",
+                    "end": 350
+                }
+            ]
+        },
+        {
+            "section": "Results and conclusions",
+            "text": "These results are compared with previous LO evaluations of \u2206g/g based on high-p T hadron events in Fig. 6. The value taken from Ref. [17] is also derived from COMPASS data, however in the quasi-real photoproduction process instead of DIS. The hard scale and the range of gluon momentum are almost the same as in the present analysis and the two values of \u2206g/g are compatible within their statistical uncertainties. The \u2206g/g value obtained in the LO open-charm analysis [37] at a higher scale \u00b5 2 = 13 (GeV/c) 2 is also shown. The SMC results from high-p T hadron pairs with Q 2 > 1 (GeV/c) 2 [13] and the HERMES results from high-p T single hadrons using all Q 2 [14] are compatible with the present results.",
+            "paragraph_rank": 36,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 99,
+                    "text": "Fig. 6",
+                    "end": 105
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 133,
+                    "text": "[17]",
+                    "end": 137
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 469,
+                    "text": "[37]",
+                    "end": 473
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 592,
+                    "text": "[13]",
+                    "end": 596
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 663,
+                    "text": "[14]",
+                    "end": 667
+                }
+            ]
+        },
+        {
+            "section": "Results and conclusions",
+            "text": "The \u2206g/g curves shown in Fig. 6 are the results of global fits to spin asymmetries in inclusive and semiinclusive DIS [38,39]. They were obtained at NLO in QCD and are thus not directly comparable with the LO result of the present analysis. It is however interesting to note that they all point to low values of \u2206g/g for x g \u2264 0.20 .  (see text); the NLO curves are from Refs. [38,39].",
+            "paragraph_rank": 37,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 25,
+                    "text": "Fig. 6",
+                    "end": 31
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 118,
+                    "text": "[38,",
+                    "end": 122
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 122,
+                    "text": "39]",
+                    "end": 125
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 377,
+                    "text": "[38,",
+                    "end": 381
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 381,
+                    "text": "39]",
+                    "end": 384
+                }
+            ]
+        },
+        {
+            "text": "g/g \u2206",
+            "section_rank": 11
+        },
+        {
+            "section": "g/g \u2206",
+            "text": "A direct measurement of the gluon polarisation, extracted in the leading order approximation, was performed on all COMPASS data taken with a longitudinally polarised 6 LiD target. The gluon polarisation \u2206g/g is extracted from a large sample of DIS events with Q 2 > 1 (GeV/c) 2 including a pair of highp T hadrons. A novel method using neural networks reduced the statistical uncertainty of the result and allowed for the first time an evaluation of the gluon polarisation in three bins of the gluon momentum fraction x g .",
+            "paragraph_rank": 38,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 166,
+                    "text": "6",
+                    "end": 167
+                }
+            ]
+        },
+        {
+            "text": "Fig. 1 :",
+            "section_rank": 12
+        },
+        {
+            "section": "Fig. 1 :",
+            "text": "Fig. 1: Feynman diagrams considered for \u03b3 * N scattering: a) Leading order process (LP), b) gluon radiation (QCD Compton scattering), c) photon-gluon fusion (PGF).",
+            "paragraph_rank": 39,
+            "section_rank": 12
+        },
+        {
+            "text": "The target cells are labelled u, d for upstream and downstream. For 2006 the label u refers to the two outer cells and d to the central cell. The material in u and d cells is polarised in opposite directions. Spin orientations are reversed three times per day in 2002-2004 and once per day in 2006 by rotation of the target magnetic 4 MONTE CARLO OPTIMISATION AND NEURAL NETWORK TRAINING field by 180 \u2022 . Data from before (u, d) and after such a rotation (u \u2032 , d \u2032 ) are combined in a so-called spin configuration, where nucleon spins in u and d \u2032 (d and u \u2032 ) have the same orientation.",
+            "paragraph_rank": 40,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 2 :",
+            "section_rank": 14
+        },
+        {
+            "section": "Fig. 2 :",
+            "text": "Fig. 2: Comparison between data (histogram) and MC simulations using high-p T tuning (full squares) and default LEPTO tuning (open circles): distributions and Data/MC ratios for the lepton variables, Q 2 , x B j and y, normalised to the number of events.",
+            "paragraph_rank": 41,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 3 : 2 ( 1 PGFFig. 4 :",
+            "section_rank": 15
+        },
+        {
+            "section": "Fig. 3 : 2 ( 1 PGFFig. 4 :",
+            "text": "Fig. 3: Comparison between data (histogram) and MC simulations using high-p T tuning (full squares) and default LEPTO tuning (open circles): distributions and Data/MC ratios for the hadron variables, p T 1 , p T 2 , p 1 , p 2 and the hadron multiplicity, normalised to the number of events.",
+            "paragraph_rank": 42,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 5 :",
+            "section_rank": 16
+        },
+        {
+            "section": "Fig. 5 :",
+            "text": "Fig. 5: Year by year \u2206g/g result and final average value.",
+            "paragraph_rank": 43,
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 6 :",
+            "section_rank": 17
+        },
+        {
+            "section": "Fig. 6 :",
+            "text": "Fig. 6: Comparison of the final \u2206g/g with previous results (see text); the NLO curves are from Refs.[38,39].",
+            "paragraph_rank": 44,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 100,
+                    "text": "[38,",
+                    "end": 104
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 104,
+                    "text": "39]",
+                    "end": 107
+                }
+            ]
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 18
+        },
+        {
+            "section": "Table 1 :",
+            "text": "Default and tuned values of the LEPTO parameters describing the fragmentation process.",
+            "paragraph_rank": 45,
+            "section_rank": 18
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 19
+        },
+        {
+            "section": "Table 2 :",
+            "text": "Summary of the contributions to the systematic uncertainty of \u2206g/g.",
+            "paragraph_rank": 46,
+            "section_rank": 19
+        },
+        {
+            "text": "Table 3 :",
+            "section_rank": 20
+        },
+        {
+            "section": "Table 3 :",
+            "text": "Summary of the \u2206g/g results. 0.125 \u00b1 0.060 0.147 \u00b1 0.091 0.079 \u00b1 0.096 0.185 \u00b1 0.165 compatible within their statistical uncertainties and average to \u2206g/g = 0.125 \u00b1 0.060 (stat.) \u00b1 0.063 (syst.)",
+            "paragraph_rank": 47,
+            "section_rank": 20
+        },
+        {
+            "section": "Table 3 :",
+            "text": "One configuration usually corresponds to 16h (2 days) of data taking in2002-2004 (2006).",
+            "paragraph_rank": 48,
+            "section_rank": 20
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 22
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "We gratefully acknowledge the support of the CERN management and staff and the skill and effort of the technicians of our collaborating institutes. Special thanks go to V. Anosov and V. Pesaro for their technical support during the installation and the running of this experiment. This work was made possible thanks to the financial support of our funding agencies.",
+            "paragraph_rank": 49,
+            "section_rank": 22
+        }
+    ]
+}

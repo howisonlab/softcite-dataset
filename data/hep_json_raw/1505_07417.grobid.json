@@ -1,0 +1,244 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "During LHC Run 1, the LHCb experiment recorded around 10 11 collision events. This paper describes Event Index -an event search system. Its primary function is to quickly select subsets of events from a combination of conditions, such as the estimated decay channel or number of hits in a subdetector. Event Index is essentially Apache Lucene [1] optimized for read-only indexes distributed over independent shards on independent nodes.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "The LHCb experiment records millions of proton collision events every second. Most of them are not needed for further analysis and are discarded by a sophisticated multi-layer trigger system [2]. What is left amounts to 10 11 events in Run 1. Before physics analysis takes place, the number of events is further reduced by a factor of around 10. This \"stripping\" process takes place after the full reconstruction of the events, and produces a set of a dozen \"streams\" of the analysis dataset. [3]. Those streams contain candidate events for different processes -identified by \"stripping lines.\" Events that passed the stripping process are indexed by Event Index.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 191,
+                    "text": "[2]",
+                    "end": 194
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 493,
+                    "text": "[3]",
+                    "end": 496
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Along the stripping lines some other information is indexed -global activity counters (such as total number of tracks and hits in individual subdetectors), logical file names (LFNs) on the GRID, and run conditions database tags.",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Architecture",
+            "section_rank": 3
+        },
+        {
+            "section": "Architecture",
+            "text": "Event Index consists of four primary parts: backend, which hosts the indexes and processes the queries; frontend, which interacts with the user; the GRID collector for downloading events from the GRID; and an indexer for compiling the indexes. Their relationship is expressed on the figure 1.",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Backend",
+            "section_rank": 4
+        },
+        {
+            "section": "Backend",
+            "text": "The principle component that stores events and handles queries is a 7-node cluster. Each node hosts several shards. A shard is an Apache Lucene index. Indexes are build from .root files using MapReduce with events being evenly distributed between the nodes. Event Index is optimized for read-only indexes on a static hardware configuration. Cluster expansion is still possible and can be accomplished in two ways. First, if both new data and new nodes are available, the data can be indexed on these nodes without changes to the existing structure. This approach may be suboptimal, as the best performance is only achieved when the data is evenly distributed among the nodes. Second, if only nodes are added, we must either redistribute the existing shards between nodes or reindex the dataset to include them into the cluster. Index splitting is possible but constitutes a highly experimental [4] procedure with computational costs similar to that of reindexing.",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "section": "Backend",
+            "text": "Requests are handled by a Java application as follows. Any node can become a master node by virtue of initiating a request.",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "section": "Backend",
+            "text": "\u2022 Search request: A master node receives a query, sends it to all the nodes, each in turn sends it to its shards, shards run the query, and cache the resulting bitset. \u2022 Partial search results retrieval: A master node receives a query, asks all the nodes for the results counts, determines the nodes to send the request to. Nodes receiving the following request do the same with shards. The master node then gathers the responses and forwards them to the user. \u2022 Field value aggregation: A master node receives a query, sends it to all the nodes, each in turn sends it to its shards, each shard aggregates the field values from the matching events. The master node aggregates the results and returns them to the user. \u2022 Histogram calculation: A master node receives a query, sends it to all the nodes, each in turn sends it to its shards, each shard counts unique values of the requested fields, and returns them to the master node, which computes the resulting histogram.",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "section": "Backend",
+            "text": "Queries are transformed into Lucene Filters using a simple top-down parser for context-free grammar. It consists of two parts: the tokenizer and the parser itself. The tokenizer transforms a query string into a list of tokens (=, ! =, >=, <=, (, ),AND, OR, HAS) and values. The parser uses the list to build the solution tree, using prefix notation to handle parentheses and substituting HAS and AND for missing unary and binary operators. It then converts the tree into a Lucene Filter.  The backend response times for various requests can be seen in Figure 2. This response was within 20 seconds for the majority of requests. The outliers are currently being investigated.",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 552,
+                    "text": "Figure 2",
+                    "end": 560
+                }
+            ]
+        },
+        {
+            "text": "Frontend",
+            "section_rank": 5
+        },
+        {
+            "section": "Frontend",
+            "text": "All user interaction is done through the web interface, protected by CERN Single Sign-On [5]. Queries can either be typed manually or constructed with the help of an interactive wizard. Example searches:",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 89,
+                    "text": "[5]",
+                    "end": 92
+                }
+            ]
+        },
+        {
+            "section": "Frontend",
+            "text": "\u2022 For a specific stripping line:",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "section": "Frontend",
+            "text": "\"HAS StrippingB02D0D0KSLLBeauty2CharmLineDecision AND AND stripping=20r1\" \u2022 By file location:",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "section": "Frontend",
+            "text": "\"lfn=LFN:/lhcb/LHCb/Collision11/CHARMTOBESWUM.DST/ 00022760/0002/00022760 00029252 1.CharmToBeSwum.dst AND stripping=20r1\" \u2022 Stripping line and nPVs value:",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "section": "Frontend",
+            "text": "\"HAS StrippingB2D0KD2HHBeauty2CharmLineDecision AND stripping=21 AND nPVs> 4\"",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "section": "Frontend",
+            "text": "Event Index can compile a list of logical file names (LFN) containing the search results. If there are less than 1000 results, Event Index can fetch them from GRID as a .root file and display them in the web browser using Event Display [6]. Users can also plot histograms for the global activity counters.",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 236,
+                    "text": "[6]",
+                    "end": 239
+                }
+            ]
+        },
+        {
+            "text": "The GRID collector",
+            "section_rank": 6
+        },
+        {
+            "section": "The GRID collector",
+            "text": "The GRID collector handles the .root file download requests. It resides on a dedicated server at CERN. It uses LHCb DIRAC [7] for retrieving event locations on the GRID. Then it launches parallel Gaudi [8] jobs for events retrieval and format conversion for Event Display. The source code is available on https://gitlab.cern.ch/YSDA/grid_collector.",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 122,
+                    "text": "[7]",
+                    "end": 125
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 202,
+                    "text": "[8]",
+                    "end": 205
+                }
+            ]
+        },
+        {
+            "text": "Status",
+            "section_rank": 7
+        },
+        {
+            "section": "Status",
+            "text": "Event Index is deployed into production on https://eindex.cern.ch/ 1 . Data from strippnigs 20, 20r1, 21, 21r1 is available.",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "Future works",
+            "section_rank": 8
+        },
+        {
+            "section": "Future works",
+            "text": "We are currently studying the needs of different groups in LHCb to make Event Index a better tool. Plans include Python API, MC and turbo stream [9] indexing, and free form query processing.",
+            "paragraph_rank": 17,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 145,
+                    "text": "[9]",
+                    "end": 148
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 9
+        },
+        {
+            "section": "Summary",
+            "text": "Event Index allows selection of events and viewing of histograms of basic properties in a matter of seconds. This is much faster than the current use of GRID, which can take hours. Event Indexs core architecture will allow it to scale with data and be used for different datasets.",
+            "paragraph_rank": 18,
+            "section_rank": 9
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 10
+        },
+        {
+            "section": "Figure 1 .",
+            "text": "Figure 1. Event Index architecture",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "2. 2 .",
+            "section_rank": 11
+        },
+        {
+            "section": "2. 2 .",
+            "text": "Performance Indexing 10 10 events took three days and 0.5 Tb of hard drive space per node.",
+            "paragraph_rank": 20,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 12
+        },
+        {
+            "section": "Figure 2 .",
+            "text": "Figure 2. Backend response times for various request types. Data is taken from the live instance at https://eindex.cern.ch",
+            "paragraph_rank": 21,
+            "section_rank": 12
+        }
+    ]
+}

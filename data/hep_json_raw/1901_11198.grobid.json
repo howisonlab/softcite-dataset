@@ -1,0 +1,907 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "We present a particle vertex fitting method designed for B factories. The presented method uses a Kalman Filter to solve a least squares estimate to globally fit decay chains, as opposed to traditional methods that fit each vertex at a time. It allows for the extraction of particle momenta, energies, vertex positions and flight lengths, as well as the uncertainty estimates of these quantities. Furthermore, it allows for the precise extraction of vertex parameters in complex decay chains containing neutral final state particles, such as \u03b3 or K 0 L , which cannot properly be tracked due to limited spatial resolution of longitudinally segmented single-layer crystal calorimeters like the Belle II ECL. The presented technique can be used to suppress combinatorial background and improve resolutions on measured parameters. We present studies using Monte Carlo simulations of collisions in the Belle II experiment, where modes with neutrals are crucial to the physics analysis program.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "Particle vertex fitting techniques are widely used in particle and nuclear physics. Beyond the suppression of background, applications range from the improvement of particle momentum resolution (under the assumption they originate from some vertex point), to the determination of the presence of intermediate particles and the precision determination of decay vertex positions. One can, for example, combine the measurements of two charged pion tracks originating from the decay of a K 0 S to extract the decay vertex position, flight length and four-vector and their uncertainties. By performing a kinematic fit, one obtains an improvement of the pion track momenta and can use the \u03c7 2 probability of the fit result to suppress background. In order to construct more complex decay topologies, one usually combines cascades of these fits starting with long lived stable particles such as electrons, muons, pions and photons, forming intermediate resonances and finally the full decay of interest. For example, in the decay B 0 \u2192 J/\u03a8K 0 S , where J/\u03a8 \u2192 \u00b5 + \u00b5 \u2212 and K 0 S \u2192 \u03c0 + \u03c0 \u2212 , one would first fit the J/\u03a8 and K 0 S candidates and then use these to construct the B 0 candidates, as depicted in Fig. 1a and Fig. 1b. However, this only works well if the final state particles are charged and leave traces in the tracking detectors. Neutral particles can not be tracked; they are only measured by their energy deposition in the calorimeter. Single layer crystal calorimeters do not offer directional information on where the particle associated to an energy deposition originated from. This means that the decay vertex can not be extracted from the fit. In order to obtain the momentum vector, it has to be assumed that the particle originates from the primary interaction point and travels directly into the cluster's center of gravity. This can introduce a large bias on the momentum components. Consider, for example, the decay B 0 \u2192 J/\u03a8K 0 S , where the kaon instead decays to neutral final states, K 0 S \u2192 \u03c0 0 \u03c0 0 , and the pions decay, \u03c0 0 \u2192 \u03b3\u03b3, as displayed in S have relatively long flight lengths, up to 15 cm for K 0 S at Belle II. Thus for a neutral particle in such a particle decay chain, the assumption that it originates from the primary e + e \u2212 collision is not sufficient.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 1198,
+                    "text": "Fig. 1a",
+                    "end": 1205
+                },
+                {
+                    "type": "figure",
+                    "start": 1210,
+                    "text": "Fig. 1b",
+                    "end": 1217
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The method we present in this paper overcomes these issues by globally fitting the entire decay tree in a single fit, taking into account all intermediate particles, extracting all involved particle's four-momenta, vertex positions, flight lengths and their covariance matrices, using a Kalman Filter as described in Ref. [1]. We use the software environment of Belle II and rely on the C ++ template library EIGEN [2] for matrix operations, which provides a fast execution time for the fit algorithm. We furthermore present physics applications of the fitter with Belle II Monte Carlo samples.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 322,
+                    "text": "[1]",
+                    "end": 325
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 415,
+                    "text": "[2]",
+                    "end": 418
+                }
+            ]
+        },
+        {
+            "text": "The Belle II Experiment",
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "The algorithm described in this paper was developed for the analysis software framework of Belle II. The Belle II experiment takes place at the asymmetric e + e \u2212 collider, SuperKEKB. SuperKEKB provides a beam energy slightly above the mass of the \u03a5(4S) resonance (10.58 GeV/c 2 ) at an instantaneous luminosity of 8 \u2022 10 35 cm \u22122 s \u22121 . The \u03a5(4S) resonance decays into pairs of B-mesons just above production threshold, hence this type of experiment is referred to as a B-factory. The asymmetric beam energy gives the B-meson a relativistic boost along a direction close to the detector's axis of symmetry, increasing its flight length in the lab frame, which makes it easier to study the time evolution of B decays -a key observable in the study of CP symmetry violation.",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "The red lines show the track helix approximations obtained from the tracking detectors, the blue dashed lines show the decaying particle momentum vectors found by the fit. Since the decay length of the J/\u03a8 is too short to be seen in the detector, its decay vertex is taken to be the one of the",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "Measured track helices do not necessarily overlap in three dimensions. The depicted length ratios are not to scale.",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "Depiction of a the decay B 0 \u2192 K 0 S J/\u03a8 . The red lines show the track helix approximations obtained by the tracking detectors, the blue dashed lines show the composite particle momentum vectors found by the fit. The dashed black lines depict the photon momenta found by the fit. Note that these can only be extrapolated by the fit as the directional information of the calorimeter is not sufficient. The initial guess is that they point from the interaction point towards the calorimeter cluster. The decay lengths of the J/\u03a8 and \u03c0 0 are too short to be seen in the detector therefore the vertex positions are taken from the particle above them in the hierarchy.",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "The Belle II detector has a cylindrical structure designed to study the decays of B-and D-mesons, \u03c4 -leptons and other processes produced in e + e \u2212 collisions.",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "section": "The Belle II Experiment",
+            "text": "Six layers of silicon vertex detectors (2 layers of silicon pixels (PXD), and 4 layers of double sided silicon detectors (SVD)) are located in the central volume of the detector, designed to accurately track the flight paths of charged particles. The following layers are, a central drift chamber (CDC) used to measure track trajectories within a solenoid magnetic field, Cherenkov light based particle identification devices surrounding the CDC in the barrel (TOP) and forward regions (ARICH), followed by the CsI(Tl) electromagnetic calorimeter (ECL). The outermost layers are composed of, a magnet solenoid, a K 0 L and muon detector system (KLM), which is also used as the flux return yoke of the magnet. The magnetic field is aligned along the detector's axis of symmetry. For a more detailed description of the detector see Ref. [3]. Fig. 3 and Fig. 4 show an event display depicting simulated particles traversing the Belle II detector. In the decay \u03a5(4S) \u2192B 0 B 0 , one meson decays asB 0 \u2192 D\u03c9\u03c0\u03c0, and the other as Fig. 3, depicts the full detector geometry and Fig. 4 shows a close-up of the inner vertex detectors. In this example we show that the decay vertex of the K 0 S can be very displaced.",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 835,
+                    "text": "[3]",
+                    "end": 838
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 840,
+                    "text": "Fig. 3",
+                    "end": 846
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 851,
+                    "text": "Fig. 4",
+                    "end": 857
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1022,
+                    "text": "Fig. 3",
+                    "end": 1028
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1069,
+                    "text": "Fig. 4",
+                    "end": 1075
+                }
+            ]
+        },
+        {
+            "text": "Extended Kalman Filter",
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "Vertex fitting is a least squares minimization problem. The best least squares estimator (LSE) is the solution to this problem. The computational challenge in finding a LSE lies in matrix inversions, which naively scale as O(n 3 ), where n is the dimension of the matrix. In a naive approach, this is equal to the number of parameters extracted in the fit. A Kalman Filter is an iterative approach to find the LSE by defining a series of constraints (knowledge of parameters from measurements and symmetries) on a hypothesis (a set of particle parameters in this case). The hypothesis has different states during the stages of the filtering process. The filtering process is an iterative algorithm applying the constraints sequentially and updating the state with respect to the constraints.",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "The sequence is repeated until convergence is reached or divergence is observed. In the case of convergence, the last state describes the best hypothesis for the parameters that can be found. We use an Extended Kalman Filter in the gain matrix formulation [4,5,1] in our algorithm. The state vector x holds the particle parameters to be optimized by the fit. The parameters depend on the type of particle. The most general parametrization takes the form",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 256,
+                    "text": "[4,",
+                    "end": 259
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 259,
+                    "text": "5,",
+                    "end": 261
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 261,
+                    "text": "1]",
+                    "end": 263
+                }
+            ]
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "where vertex coordinates of the i-th particle are denoted as {x i , y i , z i }, its decay length is denoted as \u03b8 i and the four momentum is {p x,i , p y,i , p z,i , E i }, and n is the number of particles in the fitted topology. This implies that n \u2248 8 \u00d7 number of particles. The problem is split into k constraints given by measurements and other knowledge of parameters (see Sec. 3 for the definitions Figure 3: Event display projected onto the x \u2212 y plane depicting the process of\u0113 + e \u2212 \u2192 \u03a5(4S) \u2192B 0 B 0 , withB 0 \u2192 D\u03c9\u03c0\u03c0 and B 0 \u2192 K S J/\u03a8, where J/\u03a8 \u2192 \u00b5 + \u00b5 \u2212 and K 0 S \u2192 \u03c0 0 \u03c0 0 with \u03c0 0 \u2192 \u03b3\u03b3. All particles of the signal B 0 decay are indicated by black lines. The rest of the event correspond to the decay of theB 0 . All distances are measured in centimetres. For a close-up of the vertex detector see Fig. 4. of the measurement m and hypothesis h for each of the different constraints). The minimized \u03c7 2 can be expressed as a weighted sum of k sets of equations, which are the constraints. For a given iteration, \u03b1, of the Kalman Filter, one can write",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 405,
+                    "text": "Figure 3",
+                    "end": 413
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 811,
+                    "text": "Fig. 4",
+                    "end": 817
+                }
+            ]
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "using the measurement covariance matrix",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "transported to the m \u2212 h system as a weight, such that the hypothesis of each constraint k depends on the outcome of the previous constraint.",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "Minimizing Eq. 3 yields a rule to find a new state x \u03b1 k for the current iteration and constraint, that is",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "where K is a gain matrix, which will be defined below. However, we first define the residual r as the distance between measurement and hypothesis",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "The hypothesis h k (x \u03b1 ) can be linearised around a reference state of the previous iteration x \u03b1\u22121 using the Jacobian",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "such that",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "Eq. 5 thus becomes",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "The gain matrix is calculated for every constraint in every iteration and is defined as",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "The only matrix to be inverted is of the dimension of the constraint and not the dimension of the statespace. The current state's covariance matrix is obtained via propagation of uncertainties",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "The covariance matrix of the residual system can be found to be",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "For constraints where no measurement is available, for example the mass constraint, we set V k = 0.",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "section": "Extended Kalman Filter",
+            "text": "Linearising the hypothesis around a reference state, see Eq. 7, makes the fits more stable than a normal Kalman Filter and reduces the overall number of signal candidates for which the fit diverges. In this formulation of the LSE problem, the update of the covariance matrix, Eq. 10, is the computational bottleneck, as it is a dense m \u00d7 m matrix with the dimension of the state vector m and must be calculated and filled k times for each iteration.",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "text": "Parametrising and constraining the decay chain",
+            "section_rank": 5
+        },
+        {
+            "section": "Parametrising and constraining the decay chain",
+            "text": "To parametrise the decay chain, we use a set of parameters that describe the properties of the particles. We perform a number of reductions on these properties to reduce the dimensionality of the problem. For final state particles, we only save the momenta, as they do not have decay vertices. For their production vertices we use the decay vertices of their respective composite particles, later referred to as \"mothers\". The energy of each each final state particle is calculated using the momenta and it's nominal mass hypotheses, taking the mass values provided by the particle data group (PDG) [6]. Intermediate particles are classified in two categories: particles that decay dominantly via the strong force and via the weak force. Strongly decaying particles with a lifetime of less than 10 \u221214 s, which corresponds to boosted flight lengths of the order of less than 1 \u00b5m, are treated as if they instantly decay (the detector has a vertex position resolution in the x-y plane for charged particles of 20 \u2212 30 \u00b5m). The hypothesised quantities are their energy and momenta, while the production and decay vertices coincide and are taken from their mother particle's decay vertex. For weakly decaying particles, we additionally measure a decay vertex and a flight length, defined as the distance between the production and decay vertices in three dimensions.",
+            "paragraph_rank": 25,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 599,
+                    "text": "[6]",
+                    "end": 602
+                }
+            ]
+        },
+        {
+            "text": "Parametrising the constraints",
+            "section_rank": 6
+        },
+        {
+            "section": "Parametrising the constraints",
+            "text": "Constraints are defined by Eq. 7. The resulting Jacobians take the form of m \u00d7 n matrices where m is the dimension of the state vector and n is the dimension of the respective constraint. Thus, only few of its elements are nonzero. For example, for a three dimensional point constraint k, the hypothesis of particle number j with h j = {x j , y j , z j } and x as in Eq. 2, only the j-th diagonal block is non-zero",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "section": "Parametrising the constraints",
+            "text": "The blocks filled with zero correspond to the parameters of particle",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "section": "Parametrising the constraints",
+            "text": "We will omit the columns filled with zeros throughout this section, for brevity. In the following we list the definitions of constraints that have been implemented in the Belle II software, based on the specific geometry of Belle II.",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "Reconstructed track",
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "A track can be parametrised with a five parameter helix. In Belle II it was chosen to use a perigee-parametrised helix, such that the helix is defined at the perigee, the point of closest approach of the helix to the origin of the coordinate system. The corresponding transformations to transport a helix to that point are discussed in Ref. [7]. A description of the parameters can be found in Table 1, and a depiction of the helix is in Fig. 5. We parametrise tracks such that we can express the model's dependence on Cartesian parameters as",
+            "paragraph_rank": 29,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 341,
+                    "text": "[7]",
+                    "end": 344
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "start": 394,
+                    "text": "Table 1",
+                    "end": 401
+                },
+                {
+                    "type": "figure",
+                    "start": 438,
+                    "text": "Fig. 5",
+                    "end": 444
+                }
+            ]
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Where atan2 refers to the phi domain corrected inverse tangent function. We use the same parametrisation for the hypothesis and the measurement. We label the measurement quantities with the index m. The residuals of iteration \u03b1 then become",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "We define the Jacobian block A := \u2202h/\u2202x as the derivatives with respect to the vertex position, and B := \u2202h/\u2202p as the derivatives with respect to momentum. The positions of these blocks in the Jacobian depend on the topology fitted and the particle represented by the track. We choose to order the state vector hierarchically. This means that the decay vertex parameters come before its momentum, followed by the daughter particle's parameters. The full Jacobian H then takes the following form",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "For the non-zero elements of the Jacobian blocks, denoted by \u2202d 0 /\u2202x = A d0,x , we derive the spatial components as The pivotal point is the perigee that is the POCA. tan \u03bb",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "The angle of the momentum at the POCA with respect to the x \u2212 y plane.",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Angle of the x \u2212 y plane to the helix.",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Quantities used to transport the coordinate system, such that {x, y, z} points to the perigee.",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Angle between the x \u2212 y plane and the helix.",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Momenta along the x, y, z axes. q",
+            "paragraph_rank": 37,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Charge of the particle.",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Magnetic field strength in the z direction divided by the speed of light.",
+            "paragraph_rank": 39,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Transverse momentum.",
+            "paragraph_rank": 40,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Pseudo transverse momentum.",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Pseudo momentum along the y direction.",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstructed track",
+            "text": "Radius squared. \u03b2 = 1 + pt0 pt Quantity used for reading convenience. Figure 5: The perigee parametrisation of the track helix, depiction adapted from [8]. A description of the parameters can be found in Tab. 1.",
+            "paragraph_rank": 43,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 70,
+                    "text": "Figure 5",
+                    "end": 78
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 151,
+                    "text": "[8]",
+                    "end": 154
+                }
+            ]
+        },
+        {
+            "text": "+x",
+            "section_rank": 8
+        },
+        {
+            "section": "+x",
+            "text": "and for the momenta and",
+            "paragraph_rank": 44,
+            "section_rank": 8
+        },
+        {
+            "text": "Reconstructed photon",
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "For photons we measure the position of the calorimeter cluster and its energy and can infer the vertex parameters. The geometry, depicted in Fig. 6, gives",
+            "paragraph_rank": 45,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 141,
+                    "text": "Fig. 6",
+                    "end": 147
+                }
+            ]
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "substituting \u03b4 = \u03c4 \u2022 p and inserting the energy relation, we get",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "where {u x , u y , u z } are the production vertex coordinates, {p x , p y , p z } are the parameters of the momentum vector pointing from the production vertex to the calorimeter cluster, {m x , m y , m z , E m } are the position and measured energy of the corresponding ECL cluster. The parameter \u03c4 is the decay time, which can be eliminated when writing down the residual to reduce the dimensionality of the equation system and avoid a trivial local minimum of r \u03b3 at \u03c4 = 0 when taking {u x , u y , u z } = 0 as the starting point of the first iteration. Since the geometry of the detector is cylindrical, we can not simply eliminate any of the dimensions as this could introduce a pole in the residual equations. Thus, we sort the momenta and eliminate the dimension with the highest momentum.",
+            "paragraph_rank": 47,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "Such that we get a 3-dimensional equation system",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "where the indices i, j, k indicate the dimensions by order of increasing momentum p k \u2265 p i \u2265 p j . We define A i,u k := \u2202h i /\u2202u k and B i,p k := \u2202h i /\u2202p k with the hypothesis of the reduced system r . Thus, the non-zero entries are",
+            "paragraph_rank": 49,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "The full Jacobian then takes the form",
+            "paragraph_rank": 50,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "We must transform the covariance matrix of the measurement into the reduced system. For that, we use",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "with the transport matrix F = \u2202r /\u2202m, which depends on the sorting of the momenta such that the non-zero entries are",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "We do not parametrise this constraint in p t in order to keep the derivatives in Eq. 22 as computationally simple as possible.",
+            "paragraph_rank": 53,
+            "section_rank": 9
+        },
+        {
+            "section": "Reconstructed photon",
+            "text": "We treat K 0 L in the same way as photons, except that we use the nominal mass provided by the PDG in the energy calculation. The KLM detector is used for the cluster position measurement instead of the calorimeter. It cannot provide a precise energy measurement. Instead, it extrapolates the energy deposited by a particle as E = c \u2022 n, where n is the number of hit cells in the cluster and c is a constant with the units GeV. This approach makes the energy measurement for K 0 L much less resolved than for photons.",
+            "paragraph_rank": 54,
+            "section_rank": 9
+        },
+        {
+            "text": "Kinematic constraint",
+            "section_rank": 10
+        },
+        {
+            "section": "Kinematic constraint",
+            "text": "The kinematic constraint enforces four-momentum conservation, meaning it fits the four-momentum of the mother as the sum of the daughter momenta",
+            "paragraph_rank": 55,
+            "section_rank": 10
+        },
+        {
+            "section": "Kinematic constraint",
+            "text": "The Jacobian for a particle with two daughters, which in this example are taken to be stable particles, can be defined",
+            "paragraph_rank": 56,
+            "section_rank": 10
+        },
+        {
+            "section": "Kinematic constraint",
+            "text": "with the blocks A, B as",
+            "paragraph_rank": 57,
+            "section_rank": 10
+        },
+        {
+            "section": "Kinematic constraint",
+            "text": "and",
+            "paragraph_rank": 58,
+            "section_rank": 10
+        },
+        {
+            "section": "Kinematic constraint",
+            "text": "Note that the energy row of B i depends on how the particle is parametrised, composite particles, for example, are parametrised with an energy variable in the state vector, resulting in B = \u22121 4 , while for stable particles Eq. 29 is used.",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "Geometric constraint",
+            "section_rank": 11
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "The geometric constraint fits the decay length parameter \u03b8 for composite particles, see Fig. 6. Accounting for the geometry we have",
+            "paragraph_rank": 60,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 88,
+                    "text": "Fig. 6",
+                    "end": 94
+                }
+            ]
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "Instead of directly extracting a flight vector \u2206, we use the unit vector of the momentum as it is well constrained by the previously filtered kinematic constraints, substituting \u2206 = \u03b8 \u2022 p/|p|, allows for a more accurate estimation of \u03b8.",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "Thus we define the residual as",
+            "paragraph_rank": 62,
+            "section_rank": 11
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "using",
+            "paragraph_rank": 63,
+            "section_rank": 11
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "and",
+            "paragraph_rank": 64,
+            "section_rank": 11
+        },
+        {
+            "section": "Geometric constraint",
+            "text": "such that",
+            "paragraph_rank": 65,
+            "section_rank": 11
+        },
+        {
+            "text": "Mass constraint",
+            "section_rank": 12
+        },
+        {
+            "section": "Mass constraint",
+            "text": "The mass constraint requires a particle four-vector to be consistent with its nominal mass. We treat the particle as a measurement with infinite precision and use the mass value provided by PDG such that",
+            "paragraph_rank": 66,
+            "section_rank": 12
+        },
+        {
+            "section": "Mass constraint",
+            "text": "with",
+            "paragraph_rank": 67,
+            "section_rank": 12
+        },
+        {
+            "section": "Mass constraint",
+            "text": "3.1.7. Beam spot constraint B-mesons have a short lifetime and decay very close the beam spot, therefore it is useful to constrain the reconstructed particles to a volume within that region. The constraint is implemented by considering the initial e + e \u2212 collision as an abstract mother particle with the parameters and uncertainties of the beam spot, thus constraining the production vertex position of its daughters to an area within the beam spot's three dimensional uncertainty region using",
+            "paragraph_rank": 68,
+            "section_rank": 12
+        },
+        {
+            "section": "Mass constraint",
+            "text": "with the Jacobian",
+            "paragraph_rank": 69,
+            "section_rank": 12
+        },
+        {
+            "section": "Mass constraint",
+            "text": "Here s denotes the beam spot position vector and h production is the fitted production vertex of the particle. The beam spot is determined as part of the detector calibration, by averaging the x, y and z positions of the e + e \u2212 collisions over many interactions. The decay vertex can be constrained similarly.",
+            "paragraph_rank": 70,
+            "section_rank": 12
+        },
+        {
+            "text": "Custom Origin constraint",
+            "section_rank": 13
+        },
+        {
+            "section": "Custom Origin constraint",
+            "text": "Similar to the beam spot constraint, one can construct another geometric constraint by defining a custom vertex position and an associated uncertainty to be the origin of the decay chain. This can be very useful when the decay chain contains particles that can not be detected, for example, neutrinos or long lived dark matter particles. In these decay chains it is not useful to fit the full chain, because the missing particle's four momentum makes the kinematic constraint of the mother particle an incorrect assumption. However, knowing that the particle originates from a B-meson decay, one can define a geometric constraint corresponding to the volume where B-mesons decay on average.",
+            "paragraph_rank": 71,
+            "section_rank": 13
+        },
+        {
+            "section": "Custom Origin constraint",
+            "text": "A beam energy constraint is not needed, as one can mass constrain the \u03a5(4S) particle, since all four-vectors in e + e \u2212 \u2192 \u03a5(4S) are well known.",
+            "paragraph_rank": 72,
+            "section_rank": 13
+        },
+        {
+            "text": "Fitting complex decay topologies and extracting parameters from the fit",
+            "section_rank": 14
+        },
+        {
+            "section": "Fitting complex decay topologies and extracting parameters from the fit",
+            "text": "In this section we present two use cases of the algorithm containing one and two \u03c0 0 -mesons in a decay chain, respectively. There are numerous channels where the phase space is large enough to add \u03c0 0 to a vertex with two charged tracks, which makes this a very common structure in decay trees and therefore an interesting target to fit in a wide spectrum of analyses. We use Monte Carlo samples from the Belle II experiment and evaluate background rejection and signal resolution improvements, as well as the extraction of various other parameters. The selection criteria used for all analyses in this section are listed in Table 2. We use implicit charge conjugation, meaning that charged particles appearing in the decay chains imply including the opposite charges. We abbreviate decays x \u2192 yz as x(yz).",
+            "paragraph_rank": 73,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 626,
+                    "text": "Table 2",
+                    "end": 633
+                }
+            ]
+        },
+        {
+            "text": "Fitting decay chains containing a neutral particle",
+            "section_rank": 15
+        },
+        {
+            "section": "Fitting decay chains containing a neutral particle",
+            "text": "The first mode, with a single \u03c0 0 , is B 0 \u2192 D * + (D 0 (K \u2212 \u03c0 + \u03c0 0 )\u03c0 + )\u03c0 \u2212 . This channel is of interest as it is the most common D 0 decay modes. We use the fitter in this example to suppress background. If we reject combinations for which the fit failed -i.e. those with a p-value \u2264 0 -we are able to reject about 20% of the background while rejecting only about 4% signal, as displayed in Fig. 7a. Note that since some of the constraints are nonlinear, the \u03c7 2 which is used to calculate the p-values can be degenerate, where the effective number of degrees of freedom is smaller than the theoretical one used to calculate the p-values. As a result, the p-values can have non-flat shapes [9].",
+            "paragraph_rank": 74,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 396,
+                    "text": "Fig. 7a",
+                    "end": 403
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 695,
+                    "text": "[9]",
+                    "end": 698
+                }
+            ]
+        },
+        {
+            "text": "Fitting ill-defined decay vertices",
+            "section_rank": 16
+        },
+        {
+            "section": "Fitting ill-defined decay vertices",
+            "text": "We study the decay chain B 0 \u2192 K 0 S (\u03c0 0 (\u03b3\u03b3)\u03c0 0 (\u03b3\u03b3))J/\u03a8(\u00b5 + \u00b5 \u2212 ). By performing the fit a large amount of the background can be removed by requiring that it passes the fit, see Fig. 8a. The only well defined vertex in this chain is given by the J/\u03a8 \u2192 \u00b5 + \u00b5 \u2212 decay. The other vertices are ill-defined, the best assumption that can be made for the production vertex position of the four  Table 2.",
+            "paragraph_rank": 75,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 181,
+                    "text": "Fig. 8a",
+                    "end": 188
+                },
+                {
+                    "type": "table",
+                    "start": 391,
+                    "text": "Table 2",
+                    "end": 398
+                }
+            ]
+        },
+        {
+            "section": "Fitting ill-defined decay vertices",
+            "text": "photons is that they originate from the interaction point. This assumption biases the reconstructed mass of the K 0 S . Performing a fit with mass constrained \u03c0 0 -mesons improves the extracted mass of the K 0 S , so that after the fit, it is centred around the true value, as depicted in Fig. 8b. It is then possible to further reject background outside the nominal mass window and improve the signal purity when analysing this channel. We perform this study on B 0 \u2192 D * + (D 0 (K \u2212 \u03c0 + )\u03c0 + )\u03c0 \u2212 decays and extract the decay length of the D 0 -meson. The results are depicted in Fig. 9. Since D * + -mesons decay almost instantly, we will use the three dimensional distance between the B 0 and the D 0 decay vertices. To improve the resolution on the B 0 vertex we apply a beam-spot constraint.",
+            "paragraph_rank": 76,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 289,
+                    "text": "Fig. 8b",
+                    "end": 296
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 582,
+                    "text": "Fig. 9",
+                    "end": 588
+                }
+            ]
+        },
+        {
+            "text": "Using a custom origin constraint to improve the",
+            "section_rank": 17
+        },
+        {
+            "section": "Using a custom origin constraint to improve the",
+            "text": "In some scenarios one can not fit the entire decay chain e.g. in semileptonic decays B 0 \u2192 D * \u00b5\u03bd \u00b5 , where the neutrino escapes detection. Since the neutrino's four vector is unknown it is not possible to use a kinematic constraint to fit the B-meson. To circumvent this problem, one can omit fitting the B 0 , and instead account for its presence with a geometric constraint. In Count (normalised)    Figure 10: Resolution (= measured -generated) of the D * + decay vertex position extraction without (a) and with (b) a custom origin constraint. The vertex position and uncertainties for the origin used in this example are extracted from B 0 decays. Table 2: Selection criteria used in the analyses in this section. All particles use the same criteria if appearing in the decay chains. The invariant mass is obtained by summing the particle's daughter four-momenta before performing the fit. The particle ID for K + /\u03c0 + is defined as the likelihood ratio LR(K + (\u03c0 + )) = L(K + (\u03c0 + ))/(L(\u03c0 + ) + L(K + )) and the beam energy constrained mass m bc [10].",
+            "paragraph_rank": 77,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 403,
+                    "text": "Figure 10",
+                    "end": 412
+                },
+                {
+                    "type": "table",
+                    "start": 653,
+                    "text": "Table 2",
+                    "end": 660
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 1052,
+                    "text": "[10]",
+                    "end": 1056
+                }
+            ]
+        },
+        {
+            "section": "Using a custom origin constraint to improve the",
+            "text": "particle pre selection applied \u03b3 E \u03b3 > 0.075 GeV \u03c0 0 0.145 GeV > m(\u03b3\u03b3) > 0.125 GeV \u03c0 + LR(\u03c0 + ) > 0.5 K + LR(K + ) > 0.5 D 0",
+            "paragraph_rank": 78,
+            "section_rank": 17
+        },
+        {
+            "section": "Using a custom origin constraint to improve the",
+            "text": "1.9 GeV > m(K \u2212 \u03c0 + \u03c0 0 ) > 1.7 GeV D * \u2206m(D * \u2212 D 0 ) < 0.155 GeV B 0 m bc = E 2 beam /4 \u2212 p 2 > 5.27 GeV depicted in Fig. 10. This technique can improve the resolution on the D * + vertex position.",
+            "paragraph_rank": 79,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 119,
+                    "text": "Fig. 10",
+                    "end": 126
+                }
+            ]
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 18
+        },
+        {
+            "section": "Conclusion",
+            "text": "We presented a versatile fitting tool tailored for the environment of B factories with a cylindrical detector geometry. It can be used for various purposes, such as the extraction of particle production and decay vertices, decay lengths, particle four-momenta and rejection of backgrounds, as well as the extraction of the respective uncertainties for all parameters involved in three dimensions. This global fitting technique is particularly powerful in fitting and reducing background in modes that contain neutral particles, and will be very important for the Belle II physics analysis program. As a future extension of the fitter we are looking into the possibility to map the residuals found by the Kalman Filter to a scalar signal probability f : r \u2192 p. Such a probability may outperform methods using a p-value derived from the fit \u03c7 2 for the purpose of signal-background-separation.",
+            "paragraph_rank": 80,
+            "section_rank": 18
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 19
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "This work was made possible by the Belle II collaboration and funding from ARC (Australia), ARRS (Slovenia), BMBF (Germany), EXC153 (Germany), HGF (Germany), INFN (Italy), MSMT (Czech Republic), NSERC (Canada) and U.S. DOE. We would like to thank Wouter Hulsbergen for his original paper, the discussion and sharing his code.",
+            "paragraph_rank": 81,
+            "section_rank": 19
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 20
+        },
+        {
+            "section": "Fig. 2 .",
+            "text": "Weakly decaying intermediate particles such as K 0",
+            "paragraph_rank": 82,
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 21
+        },
+        {
+            "section": "Figure 4 :",
+            "text": "Figure 4: Close-up ofFig. 3. In this event, theK 0 S travels until the edge of the vertex detectors before decaying.",
+            "paragraph_rank": 83,
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 6 :",
+            "section_rank": 22
+        },
+        {
+            "section": "Figure 6 :",
+            "text": "Figure 6: (a) The photon constraint, Eq. 21, reduced to two dimensions for simplicity. The vector \u03b4 is defined as pointing from the photon's production vertex to the measured calorimeter cluster, indicated with the photons mother's coordinate vector u and measurement vector m. (b) Geometric constraint, Eq. 31. The vector \u2206 is defined pointing from the particles decay and production vertex, indicated with the particle's and its mother's coordinate vector u.",
+            "paragraph_rank": 84,
+            "section_rank": 22
+        },
+        {
+            "text": "B 0 \u2192Figure 7 :",
+            "section_rank": 23
+        },
+        {
+            "section": "B 0 \u2192Figure 7 :",
+            "text": "Figure 7: P-value distributions of fits to B 0 \u2192 D * + (D 0 (K \u2212 \u03c0 + \u03c0 0 )\u03c0 + )\u03c0 \u2212 . The background and signal rejection properties of the p-value are insensitive to the number of DOF. The preselection criteria are listed inTable 2.",
+            "paragraph_rank": 85,
+            "section_rank": 23
+        },
+        {
+            "text": "4. 3 .",
+            "section_rank": 24
+        },
+        {
+            "section": "4. 3 .",
+            "text": "Extracting the decay length of D 0 -mesons from D * + decays using a beamspot constraint The geometric constraints allow for the extraction of all the production and decay vertices of all particles in the decay chain. This allows for the extraction of flight lengths and thus lifetimes of intermediate particles such as D 0 -mesons.",
+            "paragraph_rank": 86,
+            "section_rank": 24
+        },
+        {
+            "text": "we use a custom origin constraint to constrain the D * + production vertices to a volume around the median B-meson decay vertex position obtained from Monte Carlo simulations. The results are",
+            "paragraph_rank": 87,
+            "section_rank": 25
+        },
+        {
+            "text": "J/\u03a8(\u00b5 + \u00b5 \u2212 ) K 0 S (\u03c0 0 \u03c0 0 )",
+            "paragraph_rank": 88,
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 27
+        },
+        {
+            "section": "Figure 8 :",
+            "text": "Figure 8: a) P-value of the fits to B 0 \u2192 J/\u03c8K 0 S . b) Fitted mass of the K 0 S (green) and the mass before the fit (black). The mass distribution is centred around the true value after performing the fits with a \u03c0 0 mass constraint. The resolution has slightly improved as well.",
+            "paragraph_rank": 89,
+            "section_rank": 27
+        },
+        {
+            "text": "Figure 9 :D",
+            "section_rank": 28
+        },
+        {
+            "section": "Figure 9 :D",
+            "text": "Figure 9: a) The extracted decay length (green) and the generated decay length (black). The negative tail of the extracted decay length is due to the detectors resolution function. b) Pull (measured \u2212 generated/uncertainty) of the decay length distribution.",
+            "paragraph_rank": 90,
+            "section_rank": 28
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 29
+        },
+        {
+            "section": "Table 1 :",
+            "text": "Definitions of the Belle II helix parametrisation and their dependencies.",
+            "paragraph_rank": 91,
+            "section_rank": 29
+        }
+    ]
+}

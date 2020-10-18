@@ -1,0 +1,1132 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "We investigate the performance of a jet identification algorithm based on interaction networks (JEDI-net) to identify all-hadronic decays of high-momentum heavy particles produced at the LHC and distinguish them from ordinary jets originating from the hadronization of quarks and gluons. The jet dynamics are described as a set of one-to-one interactions between the jet constituents. Based on a representation learned from these interactions, the jet is associated to one of the considered categories. Unlike other architectures, the JEDI-net models achieve their performance without special handling of the sparse input jet representation, extensive preprocessing, particle ordering, or specific assumptions regarding the underlying detector geometry. The presented models give better results with less model parameters, offering interesting prospects for LHC applications.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "Jets are collimated cascades of particles produced at particle accelerators. Quarks and gluons originating from hadron collisions, such as the proton-proton collisions at the CERN Large Hadron Collider (LHC), generate a cascade of other particles (mainly other quarks or gluons) that then arrange themselves into hadrons. The stable and unstable hadrons' decay products are observed by large particle detectors, reconstructed by algorithms that combine the information from different detector components, and then clustered into jets, using physics-motivated sequential recombination algorithms such as those described in Refs. [1][2][3]. Jet identification, or tagging, algorithms are designed to identify the nature of the particle that initiated a given cascade, inferring a e-mail: javier.mauricio.duarte@cern.ch it from the collective features of the particles generated in the cascade.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 628,
+                    "text": "[1]",
+                    "end": 631
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 631,
+                    "text": "[2]",
+                    "end": 634
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 634,
+                    "text": "[3]",
+                    "end": 637
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Traditionally, jet tagging was meant to distinguish three classes of jets: light flavor quarks q = u, d, s, c, gluons g, or bottom quarks (b). At the LHC, due to the large collision energy, new jet topologies emerge. When heavy particles, e.g. W, Z, or Higgs (H) bosons or the top quark, are produced with large momentum and decay to all-quark final states, the resulting jets are contained in a small solid angle. A single jet emerges from the overlap of two (for bosons) or three (for the top quark) jets, as illustrated in Fig. 1. These jets are characterized by a large invariant mass (computed from the sum of the four-momenta of their constituents) and they differ from ordinary quark and gluon jets, due to their peculiar momentum flow around the jet axis.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 526,
+                    "text": "Fig. 1",
+                    "end": 532
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Several techniques have been proposed to identify these jets by using physics-motivated quantities, collectively referred to as \"jet substructure\" variables. A review of the different techniques can be found in Ref. [4]. As discussed in the review, approaches based on deep learning (DL) have been extensively investigated (see also Sect. 2), processing sets of physics-motivated quantities with dense layers or raw data representations (e.g. jet images or particle feature lists) with more complex architectures (e.g. convolutional or recurrent networks).",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 216,
+                    "text": "[4]",
+                    "end": 219
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In this work, we compare the typical performance of some of these approaches to what is achievable with a novel jet identification algorithm based on an interaction network (JEDI-net). Interaction networks [5] (INs) were designed to decompose complex systems into distinct objects and relations, and reason about their interactions and dynamics. One of the first uses of INs was to predict the evolution of physical systems under the influence of internal and external forces, for example, to emulate the effect of gravitational interactions Fig. 1 Pictorial representations of the different jet categories considered in this paper. Left: jets originating from quarks or gluons produce one cluster of particles, approximately cone-shaped, developing along the flight direction of the quark or gluon that started the cascade. Cen-ter: when produced with large momentum, a heavy boson decaying to quarks would result in a single jet, made of 2 particle clusters (usually referred to as prongs). Right: a high-momentum t \u2192 Wb \u2192 qq b decay chain results in a jet composed of three prongs in n-body systems. The n-body system is represented as a set of objects subject to one-on-one interactions. The n bodies are embedded in a graph and these one-on-one interaction functions, expressed as trainable neural networks, are used to predict the post-interaction status of the n-body system. We study whether this type of network generalizes to a novel context in high energy physics. In particular, we represent a jet as a set of particles, each of which is represented by its momentum and embedded as a vertex in a fully-connected graph. We use neural networks to learn a representation of each one-on-one particle interaction 1 in the jet, which we then use to define jet-related high-level features (HLFs). Based on these features, a classifier associates each jet to one of the five categories shown in Fig. 1.",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 206,
+                    "text": "[5]",
+                    "end": 209
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 542,
+                    "text": "Fig. 1",
+                    "end": 548
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 1899,
+                    "text": "Fig. 1",
+                    "end": 1905
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "For comparison, we consider other classifiers based on different architectures: a dense neural network (DNN) [6] receiving a set of jet-substructure quantities, a convolutional neural network (CNN) [7][8][9] receiving an image representation of the transverse momentum ( p T ) flow in the jet, 2 and a recurrent neural network (RNN) with gated recurrent units [10] (GRUs), which process a list of particle features. These models can achieve state-of-the-art performance although they require additional ingredients: the DNN model requires processing the constituent particles to pre-compute HLFs, the GRU model assumes an ordering criterion for the input particle feature list, and the CNN model requires representing the jet as a rectangular, regular, pixelated image. 1 Here, we refer to the abstract message-passing interaction represented by the edges of the graph and not the physical interactions due to quantum chromodynamics, which occur before the jet constituents emerge from the hadronization process. 2 We use a Cartesian coordinate system with the z axis oriented along the beam axis, the x axis on the horizontal plane, and the y axis oriented upward. The x and y axes define the transverse plane, while the z axis identifies the longitudinal direction. The azimuthal angle \u03c6 is computed from the x axis. The polar angle \u03b8 is used to compute the pseudorapidity \u03b7 = \u2212 log(tan(\u03b8/2)). We use natural units such that c =h = 1 and we express energy in units of electronVolt (eV) and its prefix multipliers.",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 109,
+                    "text": "[6]",
+                    "end": 112
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 198,
+                    "text": "[7]",
+                    "end": 201
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 201,
+                    "text": "[8]",
+                    "end": 204
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 204,
+                    "text": "[9]",
+                    "end": 207
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 294,
+                    "text": "2",
+                    "end": 295
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 360,
+                    "text": "[10]",
+                    "end": 364
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 770,
+                    "text": "1",
+                    "end": 771
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1013,
+                    "text": "2",
+                    "end": 1014
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Any of these aspects can be handled in a reasonable way (e.g. one can use a jet clustering metric to order the particles), sometimes sacrificing some detector performance (e.g., with coarser image pixels than realistic tracking angular resolution, in the case of many models based on CNN). It is then worth exploring alternative solutions that could reach stateof-the-art performance without making these assumptions. In particular, it is interesting to consider architectures that directly takes as input jet constituents and are invariant for their permutation. This motivated the study of jet taggers based on recursive [11], graph networks [12,13], and energy flow networks [14]. In this context, we aim to investigate the potential of INs.",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 623,
+                    "text": "[11]",
+                    "end": 627
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 644,
+                    "text": "[12,",
+                    "end": 648
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 648,
+                    "text": "13]",
+                    "end": 651
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 678,
+                    "text": "[14]",
+                    "end": 682
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "This paper is structured as follows: we provide a list of related works in Sect. 2. In Sect. 3, we describe the utilized data set. The structure of the JEDI-net model is discussed in Sect. 4 together with the alternative architectures considered for comparison. Results are shown in Sect. 5. Sections 6 and 7 discuss what the JEDI-net learns when processing the graph and quantify the amount of resources needed by the tagger, respectively. We conclude with a discussion and outlook for this work in Sect. 8. \"Appendix A\" describes the design and optimization of the alternative models.",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Related work",
+            "section_rank": 3
+        },
+        {
+            "section": "Related work",
+            "text": "Jet tagging is one of the most popular LHC-related tasks to which DL solutions have been applied. Several classification algorithms have been studied in the context of jet tagging at the LHC [15][16][17][18][19][20][21][22] using DNNs, CNNs, or physicsinspired architectures. Recurrent and recursive layers have been used to construct jet classifiers starting from a list of reconstructed particle momenta [11][12][13]. Recently, these different approaches, applied to the specific case of top quark jet identification, have been compared in Ref. [23]. While many of these studies focus on data analysis, work is underway to apply these algorithms in the early stages of LHC realtime event processing, i.e. the trigger system. For example, Ref. [24] focuses on converting these models into firmware for field programmable gate arrays (FPGAs) optimized for low latency (less than 1 \u00b5s). If successful, such a program could allow for a more resource-efficient and effective event selection for future LHC runs.",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 191,
+                    "text": "[15]",
+                    "end": 195
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 195,
+                    "text": "[16]",
+                    "end": 199
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 199,
+                    "text": "[17]",
+                    "end": 203
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 203,
+                    "text": "[18]",
+                    "end": 207
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 207,
+                    "text": "[19]",
+                    "end": 211
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 211,
+                    "text": "[20]",
+                    "end": 215
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 215,
+                    "text": "[21]",
+                    "end": 219
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 219,
+                    "text": "[22]",
+                    "end": 223
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 406,
+                    "text": "[11]",
+                    "end": 410
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 410,
+                    "text": "[12]",
+                    "end": 414
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 414,
+                    "text": "[13]",
+                    "end": 418
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 547,
+                    "text": "[23]",
+                    "end": 551
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 745,
+                    "text": "[24]",
+                    "end": 749
+                }
+            ]
+        },
+        {
+            "section": "Related work",
+            "text": "Graph neural networks have also been considered as jet tagging algorithms [25,26] as a way to circumvent the sparsity of image-based representations of jets. These approaches demonstrate remarkable categorization performance. Motivated by the early results of Ref. [25], graph networks have been also applied to other high energy physics tasks, such as event topology classification [27,28], particle tracking in a collider detector [29], pileup subtraction at the LHC [30], and particle reconstruction in irregular calorimeters [31].",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 74,
+                    "text": "[25,",
+                    "end": 78
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 78,
+                    "text": "26]",
+                    "end": 81
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 265,
+                    "text": "[25]",
+                    "end": 269
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 383,
+                    "text": "[27,",
+                    "end": 387
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 387,
+                    "text": "28]",
+                    "end": 390
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 433,
+                    "text": "[29]",
+                    "end": 437
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 469,
+                    "text": "[30]",
+                    "end": 473
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 529,
+                    "text": "[31]",
+                    "end": 533
+                }
+            ]
+        },
+        {
+            "text": "Data set description",
+            "section_rank": 4
+        },
+        {
+            "section": "Data set description",
+            "text": "This study is based on a data set consisting of simulated jets with an energy of p T \u2248 1 TeV, originating from light quarks q, gluons g, W and Z bosons, and top quarks produced in \u221a s = 13 TeV proton-proton collisions. The data set was created using the configuration and parametric description of an LHC detector described in Refs. [24,32], and is available on the Zenodo platform [33][34][35][36].",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 333,
+                    "text": "[24,",
+                    "end": 337
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 337,
+                    "text": "32]",
+                    "end": 340
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 382,
+                    "text": "[33]",
+                    "end": 386
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 386,
+                    "text": "[34]",
+                    "end": 390
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 390,
+                    "text": "[35]",
+                    "end": 394
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 394,
+                    "text": "[36]",
+                    "end": 398
+                }
+            ]
+        },
+        {
+            "section": "Data set description",
+            "text": "Jets are clustered from individual reconstructed particles, using the anti-k T algorithm [3,37] with jet-size parameter R = 0.8. Three different jet representations are considered:",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 89,
+                    "text": "[3,",
+                    "end": 92
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 92,
+                    "text": "37]",
+                    "end": 95
+                }
+            ]
+        },
+        {
+            "section": "Data set description",
+            "text": "-A list of 16 HLFs, described in Ref. [24], given as input to a DNN. The 16 distributions are shown in Fig. 2 for the five jet classes. -An image representation of the jet, derived by considering a square with pseudorapidity and azimut distances \u0394\u03b7 = \u0394\u03c6 = 2R, centered along the jet axis. The image is binned into 100 \u00d7 100 pixels. Such a pixel size is comparable to the cell of a typical LHC electromagnetic calorimeter, but much coarser than the typical angular resolution of a tracking device for the p T values relevant to this task. Each pixel is filled with the scalar sum of the p T of the particles in that region. These images are obtained by considering the 150 highestp T constituents for each jet. This jet representation is used to train a CNN classifier. The average jet images for the five jet classes are shown in Fig. 3. For comparison, a randomly chosen set of images is shown in Fig. 4. -A constituent list for up to 150 particles, in which each particle is represented by 16 features, computed from the particle four-momenta: the three Cartesian coordinates of the momentum ( p x , p y , and p z ), the absolute energy E, p T , the pseudorapidity \u03b7, the azimuthal angle \u03c6, the distance \u0394R = \u0394\u03b7 2 + \u0394\u03c6 2 from the jet center, the relative energy E rel = E particle /E jet and relative transverse momentum",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 38,
+                    "text": "[24]",
+                    "end": 42
+                },
+                {
+                    "type": "figure",
+                    "start": 103,
+                    "text": "Fig. 2",
+                    "end": 109
+                },
+                {
+                    "type": "figure",
+                    "start": 830,
+                    "text": "Fig. 3",
+                    "end": 836
+                },
+                {
+                    "type": "figure",
+                    "start": 898,
+                    "text": "Fig. 4",
+                    "end": 904
+                }
+            ]
+        },
+        {
+            "section": "Data set description",
+            "text": "defined as the ratio of the particle quantity and the jet quantity, the relative coordinates \u03b7 rel = \u03b7 particle \u2212 \u03b7 jet and \u03c6 rel = \u03c6 particle \u2212 \u03c6 jet defined with respect to the jet axis, cos \u03b8 and cos \u03b8 rel where \u03b8 rel = \u03b8 particle \u2212 \u03b8 jet is defined with respect to the jet axis, and the relative \u03b7 and \u03c6 coordinates of the particle after applying a proper Lorentz transformation (rotation) as described in Ref. [38]. Whenever less than 150 particles are reconstructed, the list is filled with zeros. The distributions of these features considering the 150 highestp T particles in the jet are shown in Fig. 5 for the five jet categories. This jet representation is used for a RNN with a GRU layer and for JEDI-net.",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 415,
+                    "text": "[38]",
+                    "end": 419
+                },
+                {
+                    "type": "figure",
+                    "start": 605,
+                    "text": "Fig. 5",
+                    "end": 611
+                }
+            ]
+        },
+        {
+            "text": "JEDI-net",
+            "section_rank": 5
+        },
+        {
+            "section": "JEDI-net",
+            "text": "In this work, we apply an IN [5] architecture to learn a representation of a given input graph (the set of constituents in a jet) and use it to accomplish a classification task (tagging the jet). One can see the IN architecture as a processing algorithm to learn a new representation of the initial input. This is done replacing a set of input features, describing each individual vertex of the graph, with a set of engineered features, specific of each vertex but whose values depend on the connection between the vertices in the graph.",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 29,
+                    "text": "[5]",
+                    "end": 32
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "The starting point consists of building a graph for each input jet. The N O particles in the jet are represented by the vertices of the graph, fully interconnected through directional edges, for a total of",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "section": "JEDI-net",
+            "text": "edges. An example is shown in Fig. 6 for the case of a three-vertex graph. The vertices and edges are labeled for practical reasons, but the network architecture ensures that the labeling convention plays no role in creating the new representation.",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 30,
+                    "text": "Fig. 6",
+                    "end": 36
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "Once the graph is built, a receiving matrix (R R ) and a sending matrix (R S ) are defined. Both matrices have dimensions N O \u00d7 N E . The element (R R ) i j is set to 1 when the i th vertex receives the j th edge and is 0 otherwise. Similarly, the element (R S ) i j is set to 1 when the i th vertex sends the j th edge and is 0 otherwise. In the case of the graph of Fig. 6, the two matrices take the form: The input particle features are represented by an input matrix I . Each column of the matrix corresponds to one of the graph vertices, while the rows correspond to the P features used to represent each vertex. In our case, the vertices are the particles inside the jet, each represented by its array of features (i.e., the 16 features shown in Fig. 5). Therefore, the I matrix has dimensions P \u00d7 N O .",
+            "paragraph_rank": 19,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 368,
+                    "text": "Fig. 6",
+                    "end": 374
+                },
+                {
+                    "type": "figure",
+                    "start": 752,
+                    "text": "Fig. 5",
+                    "end": 758
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "The I matrix is processed by the IN in a series of steps, represented in Fig. 7. The I matrix is multiplied by the R R and R S matrices and the two resulting matrices are then concatenated to form the B matrix, having dimension 2P \u00d7 N E :",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 73,
+                    "text": "Fig. 7",
+                    "end": 79
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "Each column of the B matrix represents an edge, i.e. a particle-to-particle interaction.  A final classifier \u03c6 C takes as input the elements of the O matrix and returns the probability for that jet to belong to each of the five categories. This is done in two ways: (i) in one case, we define the quantities O i = j O i j , where j is the index of the vertex in the graph (the particle, in our case), and the i \u2208 In our case, we rank the input particles in descending order by p T .",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "section": "JEDI-net",
+            "text": "The trainable functions f O , f R , and \u03c6 C consist of three DNNs. Each of them has two hidden layers, the first (second) having N 1 n (N 2 n = N 1 n /2 ) neurons. The model is implemented in PyTorch [39] and trained using an NVIDIA GTX1080 GPU. The training (validation) data set consists of 630,000 (240,000) examples, while 10,000 events are used for testing purposes.",
+            "paragraph_rank": 22,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 200,
+                    "text": "[39]",
+                    "end": 204
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "The architecture of the three trainable functions is determined by minimizing the loss function through a Bayesian optimization, using the GpyOpt library [40], based on Gpy [41]. We consider the following hyperparameters: -The activation function for the hidden and output layers of the f R network: ReLU [42], ELU [43], or SELU [44] functions. -The activation function for the hidden and output layers of the f O network: ReLU, ELU, or SELU. -The activation function for the hidden layers of the \u03c6 C network: ReLU, ELU, or SELU. -The optimizer algorithm: Adam [45] or AdaDelta [46].",
+            "paragraph_rank": 23,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 154,
+                    "text": "[40]",
+                    "end": 158
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 173,
+                    "text": "[41]",
+                    "end": 177
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 305,
+                    "text": "[42]",
+                    "end": 309
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 315,
+                    "text": "[43]",
+                    "end": 319
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 329,
+                    "text": "[44]",
+                    "end": 333
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 561,
+                    "text": "[45]",
+                    "end": 565
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "start": 578,
+                    "text": "[46]",
+                    "end": 582
+                }
+            ]
+        },
+        {
+            "section": "JEDI-net",
+            "text": "In addition, the output neurons of the \u03c6 C network are activated by a softmax function. A learning rate of 10 \u22124 is used. For a given network architecture, the network parameters are optimized by minimizing the categorical cross entropy. The Bayesian optimization is repeated four times. In each case, the input particles are ordered by descending p T value and the first 30, 50, 100, or 150 particles are considered. The parameter optimization is performed on the training data set, while the loss for the Bayesian optimization is estimated on the validation data set. Tables 1 and 2 summarize the result of the Bayesian optimization for the JEDI-net architecture with and without the sum over the columns of the O matrix, respectively. The best result of each case, highlighted in bold, is used as a reference for the rest of the paper.   applying GRUs on the same input list used for JEDI-net. The three benchmark models are optimized through a Bayesian optimization procedure, as done for the INs. Details of these optimizations and the resulting best models are discussed in \"Appendix A\". Figure 8 shows the receiver operating characteristic (ROC) curves obtained for the optimized JEDI-net tagger in each of the five jet categories, compared to the corresponding curves for the DNN, CNN, and GRU alternative models. The curves are derived by fixing the network architectures to the optimal values based on Table 2 and \"Appendix A\" and performing a k-fold cross-validation training, with k = 10. The solid lines represent the average ROC curve, while the shaded bands quantify the \u00b11 RMS dispersion. The area under the curve Fig. 7 A flowchart illustrating the interaction network scheme (AUC) values, reported in the figure, allow for a comparison of the performance of the different taggers. The algorithm's tagging performance is quantified computing the true positive rate (TPR) values for two given reference false positive rate (FPR) values (10% and 1%). The comparison of the TPR values gives an assessment of the tagging performance in a realistic use case, typical of an LHC analysis. Table 3 shows the corresponding FPR values for the optimized JEDI-net taggers, compared to the corresponding values for the benchmark models. The largest TPR value for each class is highlighted in bold. As shown in Fig. 8 and Table 3, the two JEDI-net models outperform the other architectures in almost all cases. The only notable exception is the tight working point of the top-jet tagger, for which the DNN model gives a TPR higher by about 2%, while the CNN and GRU models give much worse performance.",
+            "paragraph_rank": 24,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 570,
+                    "text": "Tables 1 and 2",
+                    "end": 584
+                },
+                {
+                    "type": "figure",
+                    "start": 1094,
+                    "text": "Figure 8",
+                    "end": 1102
+                },
+                {
+                    "type": "table",
+                    "start": 1412,
+                    "text": "Table 2",
+                    "end": 1419
+                },
+                {
+                    "type": "figure",
+                    "start": 1630,
+                    "text": "Fig. 7",
+                    "end": 1636
+                },
+                {
+                    "type": "table",
+                    "start": 2099,
+                    "text": "Table 3",
+                    "end": 2106
+                },
+                {
+                    "type": "figure",
+                    "start": 2314,
+                    "text": "Fig. 8",
+                    "end": 2320
+                },
+                {
+                    "type": "table",
+                    "start": 2325,
+                    "text": "Table 3",
+                    "end": 2332
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 6
+        },
+        {
+            "section": "Results",
+            "text": "The TPR values for the two JEDI-net models are within 1%. The only exception is observed for the tight working points of the W and Z taggers, for which the model using the O sums shows a drop in TPR of \u223c 4%. In this respect, the model using summed O features is preferable (despite this small TPR loss), given the reduced model complexity (see Sect. 7) and its independence on the labeling convention for the particles embedded in the graph and for the edges connecting them.",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "What did JEDI-net learn?",
+            "section_rank": 7
+        },
+        {
+            "section": "What did JEDI-net learn?",
+            "text": "In order to characterize the information learned by JEDInet, we consider the O sums across the N O vertices of the graph (see Sect. 4) and we study their correlations to physics motivated quantities, typically used when exploiting jet substructure in a search. We consider the HLF quantities used for the DNN model and the N -subjettiness variables \u03c4 Not all the O sums exhibit an obvious correlation with the considered quantities, i.e., the network engineers high-level features that encode other information than what is used, for instance, in the DNN model.",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "section": "What did JEDI-net learn?",
+            "text": "Nevertheless, some interesting correlation pattern between the physics motivated quantities and the O i sums is observed. The most relevant examples are given in Fig. 9, where the 2D histograms and the corresponding linear correlation coefficient (\u03c1) are shown. The correlation between O 1 and the particle multiplicity in the jet is not completely unexpected. As long as the O quantities aggregated across the graph have the same order of magnitude, the corresponding sum O would be proportional to jet-constituent multiplicity.",
+            "paragraph_rank": 27,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 162,
+                    "text": "Fig. 9",
+                    "end": 168
+                }
+            ]
+        },
+        {
+            "section": "What did JEDI-net learn?",
+            "text": "The strong correlation between the O 4 and \u03c4 (\u03b2=2) 1",
+            "paragraph_rank": 28,
+            "section_rank": 7
+        },
+        {
+            "section": "What did JEDI-net learn?",
+            "text": "(with \u03c1 values between 0.69 and 0.97, depending on the jet class) is much less expected. The \u03c4 \u03b2 1 quantities assume small values when the jet constituents can be arranged into a single sub-jet inside the jet. Aggregating information from the constituent momenta across the jet, the JEDI-net model based on the O quantities learns to build a quantity very close to \u03c4 . The two O sums considered are correlated to the corresponding substructure quantities, but with smaller (within 0.48 and 0.77) correlation coefficients. Table 4 shows a comparison of the computational resources needed by the different models discussed in this paper. The best-performing JEDI-net model has more than twice the number of trainable parameters than the DNN and GRU model, but approximately a factor of 6 less parameters than the CNN model. The JEDI-net model based on the summed O features achieves comparable performance with about a Fig. 8 ROC curves for JEDI-net and the three alternative models, computed for gluons (top-left), light quarks (top-right), W (center-left) and Z (center-right) bosons, and top quarks (bottom). The solid lines represent the average ROC curves derived from 10 k-fold trainings of each model. The shaded bands around the average lines are represent one standard deviation, computed with the same 10 k-fold trainings factor of 4 less parameters, less than the DNN and GRU models. While being far from expensive in terms of number of parameters, the JEDI-net models are expensive in terms of the number of floating point operations (FLOP). The simple model based on O sums, using as input a sequence of 150 particles, uses 458 MFLOP. The increase is mainly due to the scaling with the number of vertices in the graph. Many of these operations are the 0\u00d7 and 1\u00d7 products involving the elements of the R R and R S matrices. The cost of these operations could be reduced with an IN implementation optimized for inference, e.g., through an efficient sparse-matrix representation.",
+            "paragraph_rank": 29,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 522,
+                    "text": "Table 4",
+                    "end": 529
+                },
+                {
+                    "type": "figure",
+                    "start": 917,
+                    "text": "Fig. 8",
+                    "end": 923
+                }
+            ]
+        },
+        {
+            "text": "Resource comparison",
+            "section_rank": 8
+        },
+        {
+            "section": "Resource comparison",
+            "text": "In addition, we quote in Table 4 the average inference time on a GPU. The inference time is measured applying  Table 4 Resource comparison across models. The quoted number of parameters refers only to the trainable parameters for each model. The inference time is measured by applying the model to batches of 1000 events 100 times: the 50% median quantile is quoted as central value and the 10%-90% semi-distance is quoted as the uncertainty. The GPU used is an NVIDIA GTX 1080 with 8 GB memory, mounted on a commercial desktop with an Intel Xeon CPU, operating at a frequency of 2.60GHz. The tests were executed in Python 3.7 with no other concurrent process running on the machine the model to 1000 events, as part of a Python application based on TensorFlow [48]. To this end, the JEDI-net models, implemented and trained in PyTorch, are exported to ONNX [49] and then loaded as TensorFlow graph. The quoted time includes loading the data, which occurs for the first inference and is different for different event representations, that is smaller for the JEDI-net models than for the CNN models. The GPU used is an NVIDIA GTX 1080 with 8 GB memory, mounted on a commercial desktop with an Intel Xeon CPU, operating at a frequency of 2.60 GHz. The tests were executed in Python 3.7, with no other concurrent process running on the machine. Given the larger number of operations, the GPU inference time for the two IN models is much larger than for the other models. The current IN algorithm is costly to deploy in the online selection environment of a typical LHC experiment. A dedicated R&D effort is needed to reduce the resource consumption in a realistic environment in order to benefit from the improved accuracy that INs can achieve. For example, one could trade model accuracy for reduced resource needs by applying neural network pruning [50,51], reducing the numerical precision [52,53], and limiting the maximum number of particles in each jet representation.",
+            "paragraph_rank": 30,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 25,
+                    "text": "Table 4",
+                    "end": 32
+                },
+                {
+                    "type": "table",
+                    "start": 111,
+                    "text": "Table 4",
+                    "end": 118
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 761,
+                    "text": "[48]",
+                    "end": 765
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "start": 858,
+                    "text": "[49]",
+                    "end": 862
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 1848,
+                    "text": "[50,",
+                    "end": 1852
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b50",
+                    "start": 1852,
+                    "text": "51]",
+                    "end": 1855
+                },
+                {
+                    "type": "bibr",
+                    "start": 1890,
+                    "text": "[52,",
+                    "end": 1894
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b51",
+                    "start": 1894,
+                    "text": "53]",
+                    "end": 1897
+                }
+            ]
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 9
+        },
+        {
+            "section": "Conclusions",
+            "text": "This paper presents JEDI-net, a jet tagging algorithm based on interaction networks. Applied to a data set of jets from light-flavor quarks, gluons, vector bosons, and top quarks, this algorithm achieves better performance than models based on dense, convolutional, and recurrent neural networks, trained and optimized with the same procedure on the same data set. As other graph networks, JEDI-net offers several practical advantages that make it particularly suitable for deployment in the data-processing workflows of LHC experiments: it can directly process the list of jet constituent features (e.g. particle four-momenta), it does not assume specific properties of the underlying detector geometry, and it is insensitive to any ordering principle applied to the input jet constituents. For these reasons, the implementation of this and other graph networks is an interesting prospect for future runs of the LHC. On the other hand, the current implementation of this model demands large computational resources and a large inference time, which make the use of these models problematic for real-time selection and calls for a dedicated program to optimize the model deployment on typical L1 and HLT environments.",
+            "paragraph_rank": 31,
+            "section_rank": 9
+        },
+        {
+            "section": "Conclusions",
+            "text": "The quantities engineered by one of the trained IN models exhibit interesting correlation patterns with some of the jet substructure quantities proposed in literature, showing that the model is capable of learning some of the relevant physics in the problem. On the other hand, some of the engineered quantities do not exhibit striking correlation patterns, implying the possibility of a non trivial insight to be gained by studying these quantities.",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2212 4 . 5 \u03a3zlogFig. 2 Fig. 3",
+            "section_rank": 10
+        },
+        {
+            "section": "\u2212 4 . 5 \u03a3zlogFig. 2 Fig. 3",
+            "text": "Fig. 2Distributions of the 16 high-level features used in this study, described in Ref.[24] ",
+            "paragraph_rank": 33,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 87,
+                    "text": "[24]",
+                    "end": 91
+                }
+            ]
+        },
+        {
+            "text": "At this stage, each column of the C matrix represents a constituent in the jet, expressed as a (P + D E )-dimensional feature vector, containing the P input features and the D E hidden features representing the combined effect of the interactions with all the connected particles. A trainable function f O : R P+D E \u2192 R D O is used to build a post-interaction representation of each jet constituent. The function f O is applied to each column of C to build the post-interaction matrix O with dimensions D O \u00d7 N O .",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "2 Fig. 4",
+            "section_rank": 12
+        },
+        {
+            "section": "2 Fig. 4",
+            "text": "Fig. 4 Example of 100 \u00d7 100 images for the five jet classes considered in this study: q (top-left), g (top-right), W (center-left), Z (center-right), and top jets (bottom). The temperature map represents the amount of",
+            "paragraph_rank": 35,
+            "section_rank": 12
+        },
+        {
+            "text": "-",
+            "section_rank": 13
+        },
+        {
+            "section": "-",
+            "text": "The number of output neurons of the f R network, D E (between 4 and 14). -The number of output neurons of the f O network, D O (between 4 and 14). -The number of neurons N 1 n in the first hidden layer of the f O , f R , and \u03c6 C network (between 5 and 50).",
+            "paragraph_rank": 36,
+            "section_rank": 13
+        },
+        {
+            "text": "1 Fig. 5 Fig. 6",
+            "section_rank": 14
+        },
+        {
+            "section": "1 Fig. 5 Fig. 6",
+            "text": "Fig. 5 Distributions of kinematic features described in the text for the 150 highestp T particles in each jet",
+            "paragraph_rank": 37,
+            "section_rank": 14
+        },
+        {
+            "text": "computed with angular exponent \u03b2 = 1, 2.",
+            "paragraph_rank": 38,
+            "section_rank": 15
+        },
+        {
+            "text": "(\u03b2=2) 1 .",
+            "section_rank": 16
+        },
+        {
+            "section": "(\u03b2=2) 1 .",
+            "text": "The last two rows of Fig. 9 show two intermediate cases: the correlation between O 2 and \u03c4",
+            "paragraph_rank": 39,
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 9 1 , O 2 and \u03c4 (\u03b2=1) 3 ,",
+            "section_rank": 17
+        },
+        {
+            "section": "Fig. 9 1 , O 2 and \u03c4 (\u03b2=1) 3 ,",
+            "text": "Fig. 9 Two-dimensional distributions between (top to bottom) O 1 and constituents multiplicty, O 4 and \u03c4 (\u03b2=2) 1 , O 2 and \u03c4 (\u03b2=1) 3 , O 9 and \u03c4 (\u03b2=2) 3 , for jets originating from (right to left) gluons, light flavor quarks,W",
+            "paragraph_rank": 40,
+            "section_rank": 17
+        },
+        {
+            "text": "The 2P elements of each column are the features of the sending and receiving vertices for that edge. Using this information, a D E -dimensional hidden representation of the interaction edge is created through a trainable function f",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "R : R 2P \u2192 R D E . This gives a matrix E with dimensions D E \u00d7 N E .The cumulative effects of the interactions received by a given vertex are gathered by summing the D E hidden features over the edges arriving to it. This is done by computing E = E R R with dimensions D E \u00d7 N O , which is then appended to the initial input matrix I :",
+            "paragraph_rank": 42,
+            "section_rank": 18
+        },
+        {
+            "text": "Table 1 Table 2",
+            "section_rank": 19
+        },
+        {
+            "section": "Table 1 Table 2",
+            "text": "Optimal JEDI-net hyperparameter setting for different input data sets, when the summed O i quantities are given as input to the \u03c6 C network. The best result, obtained when considering up to 150 particles per jet, is highlighted in bold Optimal JEDI-net hyperparameter setting for different input data sets, when all the O i j elements are given as input to the \u03c6 C network.",
+            "paragraph_rank": 43,
+            "section_rank": 19
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 21
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "We are grateful to Caltech and the Kavli Foundation for their support of undergraduate student research in cross-cutting areas of machine learning and domain sciences. We would also like to thank the Taylor W. Lawrence Research Fellowship and Mellon Mays Fellowship for supporting E. A. M. and making this research effort possible. This work was conducted at \"iBanks,\" the AI GPU cluster at Caltech. We acknowledge NVIDIA, SuperMicro and the Kavli Foundation for their support of \"iBanks\". This project has received funding from the European Research Council ( ",
+            "paragraph_rank": 44,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 559,
+                    "text": "(",
+                    "end": 560
+                },
+                {
+                    "type": "table",
+                    "start": 572,
+                    "text": "Table 3",
+                    "end": 579
+                }
+            ]
+        },
+        {
+            "text": "True positive rates (TPR) for the optimized JEDI-net taggers and the three alternative models (DNN, CNN, and GRU), corresponding to a false positive rate (FPR) of 10% (top) and 1% (bottom). The largest TPR value for each case is highlighted in bold  Data Availability Statement This manuscript has associated data in a data repository. [Authors' comment: The data set was created using the configuration and parametric description of an LHC detector described in Ref. [24,32], and is available on the Zenodo platform [33][34][35][36] ",
+            "paragraph_rank": 45,
+            "section_rank": 23,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 468,
+                    "text": "[24,",
+                    "end": 472
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 472,
+                    "text": "32]",
+                    "end": 475
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 517,
+                    "text": "[33]",
+                    "end": 521
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 521,
+                    "text": "[34]",
+                    "end": 525
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 525,
+                    "text": "[35]",
+                    "end": 529
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 529,
+                    "text": "[36]",
+                    "end": 533
+                }
+            ]
+        },
+        {
+            "text": "Appendix",
+            "section_rank": 24
+        },
+        {
+            "text": "A Alternative models",
+            "section_rank": 25
+        },
+        {
+            "section": "A Alternative models",
+            "text": "The three benchmark models considered in this work are derived through a Bayesian optimization of their hyperparameters, performed using the GpyOpt library [40], based on Gpy [41]. For each iteration, the training is performed using early stopping to prevent over-fitting and to allow a fair comparison between different configurations. The data set for training (validation) consists of 630,000 (240,000) jets, with 10,000 jets used for testing purposes. The loss for the Bayesian optimization is estimated on the validation data set. The CNN and GRU networks are trained on four different input data sets, obtained considering the first 30, 50, 100, or 150 highestp T jet constituents. The DNN model is trained on quantities computed from the full list of particles. The DNN model consists on a multilayer perceptron, alternating dense layers to dropout layers. The optimal architecture is determined optimizing the following hyperparameters:",
+            "paragraph_rank": 46,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 156,
+                    "text": "[40]",
+                    "end": 160
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 175,
+                    "text": "[41]",
+                    "end": 179
+                }
+            ]
+        },
+        {
+            "section": "A Alternative models",
+            "text": "- The optimization process gives as output an optimal architecture with three hidden layers of 80 neurons each, activated by ELU functions. The best dropout rate is found to be 0.11, when a batch size of 50 and the Adam optimizer are used. This optimized network gives a loss of 0.66 and an accuracy of 0.76.",
+            "paragraph_rank": 47,
+            "section_rank": 25
+        },
+        {
+            "section": "A Alternative models",
+            "text": "The CNN model consists of two-dimensional convolutional layers with batch normalization, followed by a set of dense layers. A 2 \u00d7 2 max pooling layer is applied after the fist convolutional layer. The optimal architecture is derived optimizing the following hyperparameters:  The stride of the convolutional filters is fixed to 1 and \"same\" padding is used. Table 5 shows the optimal sets of hyperparameter values, obtained for the four different data set representations. While the optimal networks are equivalent in performance, we select the network obtained for \u2264 50 constituents, because it has the smallest number of parameters.",
+            "paragraph_rank": 48,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 358,
+                    "text": "Table 5",
+                    "end": 365
+                }
+            ]
+        },
+        {
+            "section": "A Alternative models",
+            "text": "The recurrent model consists of a GRU layer feeding a set of dense layers. The following hyperparameters are considered:",
+            "paragraph_rank": 49,
+            "section_rank": 25
+        },
+        {
+            "section": "A Alternative models",
+            "text": "- The best hyperparameter values are listed in Table 6. As for the CNN model, the best performance is obtained when the list of input particles is truncated at 50 elements. In this appendix, we retrain and evaluate the performance of JEDI-net on a public top tagging data set [19,23] used to benchmark many neural networks architectures for the task of differentiating top quark jets from light quark jets.",
+            "paragraph_rank": 50,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 47,
+                    "text": "Table 6",
+                    "end": 54
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 276,
+                    "text": "[19,",
+                    "end": 280
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 280,
+                    "text": "23]",
+                    "end": 283
+                }
+            ]
+        },
+        {
+            "section": "A Alternative models",
+            "text": "To select the hyperparameters of the model (with and without the sum over particles), we performed a Bayesian optimization. We scan N 1 n from 16 to 256, D E from 4 to 64, D O from 4 to 64, ReLU, ELU, or SELU activation functions for f R , f O , and \u03c6 C , and either the Adam or Adadelta optimizers with an initial learning rate of 10 \u22123 . We report three metrics for the performance of the network on the top tagging data set: model accuracy, area under the ROC curve Table 7 The optimized hyperparameters, number of trainable parameters, and performance metrics of the JEDI-net models on the top tagging data set. Performance metrics are evaluated on the test sample. We quote the area under the ROC curve (AUC), the accuracy, and the background rejection at a signal efficiency of 30% (AUC), and background rejection power at a fixed signal efficiency of 30%, 1/ B ( S = 30%). In Table 7, the accuracy, AUC, and 1/ B ( S = 30%) values are listed for each model considered. The performance of JEDI-net compared to other models developed for this data set is approaching state-ofthe-art [23].",
+            "paragraph_rank": 51,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 469,
+                    "text": "Table 7",
+                    "end": 476
+                },
+                {
+                    "type": "table",
+                    "start": 883,
+                    "text": "Table 7",
+                    "end": 890
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 1088,
+                    "text": "[23]",
+                    "end": 1092
+                }
+            ]
+        }
+    ]
+}

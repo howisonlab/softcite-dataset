@@ -1,0 +1,1145 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "With the increase in energy of the Large Hadron Collider to a centre-of-mass energy of 13 TeV for Run 2, events with dense environments, such as in the cores of highenergy jets, became a focus for new physics searches as well as measurements of the Standard Model. These environments are characterized by charged-particle separations of the order of the tracking detectors sensor granularity. Basic track quantities are compared between 3.2 fb \u22121 of data collected by the ATLAS experiment and simulation of protonproton collisions producing high-transverse-momentum jets at a centre-of-mass energy of 13 TeV. The impact of chargedparticle separations and multiplicities on the track reconstruction performance is discussed. The track reconstruction efficiency in the cores of jets with transverse momenta between 200 and 1600 GeV is quantified using a novel, datadriven, method. The method uses the energy loss, dE/dx, to identify pixel clusters originating from two charged particles. Of the charged particles creating these clusters, the measured fraction that fail to be reconstructed is 0.061\u00b10.006 (stat.)\u00b1 0.014 (syst.) and 0.093 \u00b1 0.017 (stat.) \u00b1 0.021 (syst.) for jet transverse momenta of 200-400 GeV and 1400-1600 GeV, respectively.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "1 ATLAS uses a right-handed coordinate system with its origin at the nominal interaction point (IP) in the centre of the detector and the z-axis along the beam pipe. The x-axis points from the IP to the centre of the LHC ring, and the y-axis points upwards. Cylindrical coordinates (r, \u03c6) are used in the transverse plane, \u03c6 being the azimuthal angle around the z-axis. The pseudorapidty is defined in terms of the polar angle \u03b8 as \u03b7 = \u2212 ln tan(\u03b8/2). Angular distance is defined as R \u2261 ( \u03b7) 2 + ( \u03c6) 2 .",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "The Large Hadron Collider (LHC) entered a new energy regime in 2015, at the start of Run 2, with proton-proton collisions at a centre-of-mass energy of 13 TeV. Events with TeV-scale jets showering in the detectors, or \u03c4 -leptons and b-hadrons that pass through multiple active layers of material, now occur at high enough rates to be studied in detail. These signatures also occur in potential new physics scenarios including massive new resonances decaying to highly boosted bosons or top quarks whose decay products are often reconstructed as a single jet [1]. In the cores of highly e-mail: atlas.publications@cern.ch energetic hadronic jets and \u03c4 -leptons, the average separation between highly collimated charged particles is comparable to the granularity of individual sensors of the inner detector. This can create confusion within the algorithms used to reconstruct charged-particle trajectories, or tracks. Therefore, without careful consideration, the track reconstruction efficiency in these dense environments is limited, resulting in difficulties in identifying long-lived b-hadrons and hadronic \u03c4 -decays, or in calibrating the energy and mass of jets. To prevent losses in efficiency, to increase the possibility of discovering new phenomena and to allow more detailed measurements of the newly opened kinematic regime, a dedicated optimization for dense environments was performed and deployed in the ATLAS [2] reconstruction for the start of Run 2. This updated reconstruction provides superior physics performance, reduces the required computing resources, and is now the default used by ATLAS.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 558,
+                    "text": "[1]",
+                    "end": 561
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1423,
+                    "text": "[2]",
+                    "end": 1426
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "This paper first describes the ATLAS detector (Sect. 2). Then, a general overview of the track reconstruction algorithm (Sect. 3) is given, focusing on the performance of charged-particle reconstruction in dense environments at the start of Run 2. The data set utilized is described in Sect. 4. The quality of the expected performance is evaluated in dedicated single-particle and dijet simulation samples (Sect. 5), and comparisons between simulation and data are performed in events with energetic jets. Extending these mainly Monte Carlo (MC) simulation-based studies, a fully data-driven method is introduced in Sect. 6 which probes the fraction of tracks lost in reconstruction, due to the high density and collimation of charged particles in high-transverse-momentum 1 ( p T ) jets. This is achieved by using the ionization energy loss (dE/dx) in the pixel detector.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 292,
+                    "text": "4",
+                    "end": 293
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 413,
+                    "text": "5)",
+                    "end": 415
+                }
+            ]
+        },
+        {
+            "text": "The ATLAS detector",
+            "section_rank": 3
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "The ATLAS experiment, a multipurpose particle detector at the LHC, covers almost the entire solid angle around the collision point, and consists of an inner detector (ID) tracking system surrounded by a thin superconducting solenoid magnet producing a 2 T axial magnetic field, electromagnetic and hadronic calorimeters, and a muon spectrometer incorporating three large toroid magnet assemblies.",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "The ID, shown in Fig. 1, provides position measurements for charged particles in the range |\u03b7| < 2.5 by combining information from three subdetectors. It consists of a cylindrical barrel region (full coverage for |\u03b7| 1.5) arranged around the beam pipe, and two end-caps. Disks in the endcap region are placed perpendicular to the beam axis, covering 1.5 < |\u03b7| < 2.5. Starting from the interaction point, the high-granularity silicon pixel detector segmented in r -\u03c6 and z (including the new innermost layer, the insertable B-layer (IBL) [3,4] added for Run 2) covers the vertex region and typically provides four measurements per track. The IBL has a mean radius of 33 mm and a typical IBL pixel has a size of 50 \u00b5m by 250 \u00b5m in the transverse and longitudinal directions with a sensor thickness of 200 \u00b5m. For the remaining three layers of the pixel system, located at mean radii of 50.5, 88.5, and 122.5 mm respectively, a typical pixel has a size of 50 \u00b5m by 400 \u00b5m in the transverse and longitudinal directions with a thickness of 250 \u00b5m. The pixel layer at a radius of 50.5 mm is referred to as the B-layer in this paper. The coverage in the end-cap region is enhanced by three disks on either side of the interaction point. The pixel detectors measure the charge collected in each individual pixel using the time over threshold (ToT) [5]. ToT is the time the pulse exceeds a given threshold and is proportional to the deposited energy.",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 17,
+                    "text": "Fig. 1",
+                    "end": 23
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 537,
+                    "text": "[3,",
+                    "end": 540
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 540,
+                    "text": "4]",
+                    "end": 542
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 1340,
+                    "text": "[5]",
+                    "end": 1343
+                }
+            ]
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "Outside the pixel volume, the barrel of the silicon microstrip detector (SCT) consists of four double strip layers at radii of 299-514 mm, complemented by nine disks in each of the end-caps. A typical strip of a barrel SCT sensor has a length of 126 mm and a pitch of 80 \u00b5m. On each layer, the strips are parallel to the beam direction on one side and at a stereo angle of 40 mrad on the other. The information from the two sides of each layer can be combined to provide an average of four three-dimensional measurements per track. The SCT sensors are connected to binary read-out chips, which do not provide information about the collected charge. The silicon detectors are complemented by the transition radiation tracker (TRT) [6], which extends track reconstruction radially up to a radius of 1082 mm for charged particles within |\u03b7| = 2.0 while providing r -\u03c6 information. The raw timing information from its straw tubes is translated into calibrated drift circles that are matched to track candidates reconstructed from the silicon detectors [6].",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 730,
+                    "text": "[6]",
+                    "end": 733
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1048,
+                    "text": "[6]",
+                    "end": 1051
+                }
+            ]
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "The solenoid is surrounded by sampling calorimeters. Calorimetry is provided by three distinct detectors outside the ID volume. A lead/liquid-argon sampling electromagnetic calorimeter is split into barrel (|\u03b7| < 1.5) and end-cap (1.5 < |\u03b7| < 3.2) sections. A steel/scintillator-tile hadronic calorimeter covers the barrel region (|\u03b7| < 1.7) and two end-cap copper/liquid-argon sections extend to higher pseudorapidity (1.5 < |\u03b7| < 3.2). Finally, the forward region (3.1 < |\u03b7| < 4.9) is covered by a liquid-argon calorimeter with a copper (tungsten) absorber in the electromagnetic (hadronic) section. In the outermost part, air-core toroids provide the magnetic field for the muon spectrometer. It consists of three layers of gaseous detectors: monitored drift tubes and cathode strip chambers for muon identification and momentum measurements for |\u03b7| < 2.7, and resistive-plate and thingap chambers for online event selection up to |\u03b7| = 2.4. A two-level trigger system, custom hardware followed by a software-based level, is used for online event selection and to reduce the event rate to about 1 kHz for offline reconstruction and storage.",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "ATLAS track reconstruction",
+            "section_rank": 4
+        },
+        {
+            "section": "ATLAS track reconstruction",
+            "text": "The following provides an overview of primary-track reconstruction in the pixel and SCT detectors. After cluster creation, the primary-track reconstruction algorithm utilizes iterative track-finding seeded from combinations of silicon detector measurements, while additional methods are employed to recover non-prompt tracks. A staged patternrecognition approach is used: a loose track candidate search, which allows a number of combinatorial track candidates, is followed by a stringent ambiguity-solver that compares and rates the individual tracks by assigning a relative track score to each track. This follows current approaches to track reconstruction first introduced in Ref. [7]. Further details, including a description of TRT track extensions, can be found in Ref. [8].",
+            "paragraph_rank": 10,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 683,
+                    "text": "[7]",
+                    "end": 686
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 775,
+                    "text": "[8]",
+                    "end": 778
+                }
+            ]
+        },
+        {
+            "text": "Clusterization",
+            "section_rank": 5
+        },
+        {
+            "section": "Clusterization",
+            "text": "Charged-particle reconstruction in the pixel and SCT detectors begins by assembling clusters from the raw measurements. A connected component analysis (CCA) [9] groups pixels and strips in a given sensor, where the deposited energy yields a charge above threshold, with a common edge or corner into clusters. From these clusters, three-dimensional measurements referred to as space-points are created. They represent the point where the charged particle traversed the active material of the ID. In the pixel detector, each cluster equates to one space-point, while in the SCT, clusters from both sides of a strip layer must be combined to obtain a threedimensional measurement.",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 157,
+                    "text": "[9]",
+                    "end": 160
+                }
+            ]
+        },
+        {
+            "section": "Clusterization",
+            "text": "The charge in a pixel sensor is often collected on multiple adjacent pixels. In the data set described in Sect. 4, the average size of pixel clusters in the barrel is about two pixels in the r \u2212 \u03c6 plane and from one to three pixels in the longitudinal direction increasing with \u03b7. The total charge is proportional to the path length in the sensor and thus dependent on the incident angle of the particle. The particle's intersection point with the sensor is determined from the pixels contributing to the cluster using a linear approximation refined with a charge interpolation technique [10]. In dense environments, the spatial separation between charged particles traversing the sensor is only a few pixels, and the CCA algorithm, at times, reconstructs only one cluster which includes energy deposits from multiple particles. Identifying such clusters reliably and quickly is paramount for an efficient chargedparticle reconstruction in dense environments.",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 588,
+                    "text": "[10]",
+                    "end": 592
+                }
+            ]
+        },
+        {
+            "section": "Clusterization",
+            "text": "It is useful to introduce the several classes of clusters identified by either the \"truth information\", only available in simulation and referring to information at MC generator level, or reconstructed quantities in both collision data and MC simulation. Clusters created by charge deposits from one particle are called single-particle clusters. Clusters created by charge deposits from multiple particles are called merged clusters. These definitions rely on truth information and both cases are illustrated in Fig. 2. Based on information available in the track reconstruction algorithm described below, clusters which are compatible with a merged cluster can be identified. These are labelled identified as merged. Ideally, all clusters identified as merged are, in fact, merged clusters, and all merged clusters are identified as merged. Shared clusters are those which are used in multiple reconstructed tracks but are not sufficiently compatible with the properties of a merged cluster to be identified as merged by the reconstruction. Multiply used clusters -clusters used by multiple tracks -are either identified as merged or shared but not both.",
+            "paragraph_rank": 13,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 512,
+                    "text": "Fig. 2",
+                    "end": 518
+                }
+            ]
+        },
+        {
+            "text": "Iterative combinatorial track finding",
+            "section_rank": 6
+        },
+        {
+            "section": "Iterative combinatorial track finding",
+            "text": "Track seeds are formed from sets of three space-points. This approach maximizes the possible number of combinations while still allowing a first crude momentum estimate. The impact parameters of a track seed, with respect to the centre of the interaction region, are estimated by assuming a perfect helical trajectory in a uniform magnetic field.",
+            "paragraph_rank": 14,
+            "section_rank": 6
+        },
+        {
+            "section": "Iterative combinatorial track finding",
+            "text": "The purity, or fraction of seeds that result in good-quality tracks, varies significantly depending on which subdetector(s) recorded the space-points used in the seed. Therefore, seed types are considered starting with SCT-only, then (a) Single-particle pixel clusters (b) Merged pixel cluster pixel-only and finally mixed-detector seeds, representing the order of purity. A number of criteria are placed on the seeds to maximize purity: first and foremost seed-type-dependent momentum and impact parameter requirements. Also, the use of space-points in multiple seeds is carefully controlled. Purity is further improved by requiring that one additional space-point is compatible with the particle's trajectory estimated from the seed. A combinatorial Kalman filter [11] is then used to build track candidates from the chosen seeds by incorporating additional space-points from the remaining layers of the pixel and SCT detectors which are compatible with the preliminary trajectory. The filter creates multiple track candidates per seed if more than one compatible spacepoint extension exists on the same layer. These criteria result in a very high efficiency for reconstructing primary particles (for example, the muon reconstruction efficiency is greater than 99% [12]) and the removal of tracks created from purely random collections of spacepoints. Suppressing such purely combinatorial tracks is essential in order to remain within the available CPU budget for event reconstruction. From approximately 13 space-point combinations created for an isolated charged particle traversing the entire ID, the time-intensive combinatorial Kalman filter is, on average, called in its entirety 1.1 times. As all realistic combinations of space-points have been made, there are a number of track candidates where space-points overlap, or have been incorrectly assigned. This necessitates an ambiguity-solving stage.",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 766,
+                    "text": "[11]",
+                    "end": 770
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1267,
+                    "text": "[12]",
+                    "end": 1271
+                }
+            ]
+        },
+        {
+            "text": "Track candidates and ambiguity solving",
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "In the ambiguity solver, track candidates considered to create the reconstructed track collection are processed individually in descending order of a track score, favouring tracks with a higher score. This design relies on having an appropriate track score definition that puts tracks into an order that scores more highly the candidates likely to correctly represent the trajectory of a charged primary particle.",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "The method used to determine the track score, discussed in the following, applies a robust approach based largely on simple measures of the track quality. Clusters assigned to a track increase the track score according to configurable weight fractions reflecting the intrinsic resolutions and expected cluster multiplicities in the different subdetectors. Holes 2 reduce the score. The \u03c7 2 of the track fit is also considered to penalize candidates with a poor fit. Finally, the logarithm of the track momentum is considered to promote energetic tracks and suppress the larger number of tracks with incorrectly assigned clusters, which typically have a low p T .",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "After the track scores have been calculated, the ambiguity solver deals with clusters assigned to multiple track candidates. Clusters compatible with multiple track candidates are a natural consequence of having merged clusters in dense environments. High reconstruction efficiency is facilitated by the identification of merged clusters, as explained in Sect. 3.4. However, shared clusters, clusters used in multiple track candidates which are not identified as merged, must be limited as they are a strong indicator of incorrect assignments.",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "To count shared clusters, a track candidate is only compared to those tracks previously accepted by the ambiguity solver. Clusters can be shared by no more than two tracks, giving preference to tracks processed first in the ambiguity  Fig. 3 Sketch of the flow of tracks through the ambiguity solver solver. Also, a track can have no more than two shared clusters. A cluster is removed from a track candidate if it causes either the candidate or an accepted track to not meet the shared-cluster criterion. The track candidate is then scored again and returned to the ordered list of remaining candidates. Track candidates are rejected by the ambiguity solver if they fail to meet any of the following basic quality criteria:",
+            "paragraph_rank": 19,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 235,
+                    "text": "Fig. 3",
+                    "end": 241
+                }
+            ]
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "\u2022 Minimum of 7 pixel and SCT clusters (12 are expected),",
+            "paragraph_rank": 20,
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "\u2022 Maximum of either one shared pixel cluster or two shared SCT clusters on the same layer, \u2022 Not more than two holes in the combined pixel and SCT detectors, \u2022 Not more than one hole in the pixel detector,",
+            "paragraph_rank": 21,
+            "section_rank": 7
+        },
+        {
+            "section": "Track candidates and ambiguity solving",
+            "text": "where d BL 0 is the transverse impact parameter calculated with respect to the measured beam-line position, z BL 0 is the longitudinal difference along the beam line between the point where d BL 0 is measured and the primary vertex, 3 and \u03b8 is the polar angle of the track. In the remainder of the paper, all studied tracks fulfil these requirement. A simplified flow of track candidates through the ambiguity solver is shown in Fig. 3. 3 All events considered in this analysis are required to have at least one reconstructed primary vertex with at least two associated tracks [13]. Only tracks compatible with the primary vertex having the highest sum of the squared transverse momenta of its associated tracks are considered.",
+            "paragraph_rank": 22,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 233,
+                    "text": "3",
+                    "end": 234
+                },
+                {
+                    "type": "figure",
+                    "start": 429,
+                    "text": "Fig. 3",
+                    "end": 435
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 437,
+                    "text": "3",
+                    "end": 438
+                },
+                {
+                    "type": "bibr",
+                    "start": 577,
+                    "text": "[13]",
+                    "end": 581
+                }
+            ]
+        },
+        {
+            "text": "Neural-network pixel clustering",
+            "section_rank": 8
+        },
+        {
+            "section": "Neural-network pixel clustering",
+            "text": "To aid the ambiguity solver and minimize the loss of efficiency due to limitations on the number of shared clusters per track, an artificial neural network (NN) trained to identify merged clusters is used. The measured charge, which is proportional to the deposited energy, and relative position of pixels in the cluster can be used to identify merged clusters. Additional information about the particle's incident angle, provided from the track candidate, significantly improves the NN's performance [14]. For merged clusters created by two charged particles, the NN identification efficiency of this cluster as being created by two particles is about 90%. Merged clusters created by three charged particles are identified as such with an efficiency of 85%. Only a few percent of single particle clusters are incorrectly identified as a twoparticle merged cluster and a negligible amount are identified as three-particle merged clusters. The NN is not able to distinguish clusters from exactly three and more than three charged particles. It is not possible for the NN to separate the energy deposits of each charged particle in an identified merged cluster and subsequently divide it into multiple clusters. Unlike the Run-1 reconstruction algorithm [8], the NN is consulted only when a cluster is used in multiple track candidates largely mitigating the impact of misidentification of merged clusters by the NN.",
+            "paragraph_rank": 23,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 501,
+                    "text": "[14]",
+                    "end": 505
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 1252,
+                    "text": "[8]",
+                    "end": 1255
+                }
+            ]
+        },
+        {
+            "section": "Neural-network pixel clustering",
+            "text": "The inherent randomness of charged-particle interactions with thin silicon layers prevents the NN from performing perfectly. For example, the emission of \u03b4-rays causes difficulties as they can lead to bigger clusters and larger energy deposits than expected from a single particle. These inefficiencies can be mitigated by correlating information from consecutive layers of the pixel detector. In general, the separation between collimated charged particles increases as they travel outward through the ID. Therefore, if a pair of tracks uses a merged cluster on a given layer, then the inner layer is likely to contain a merged cluster as well. Furthermore, both clusters should be used by the same track candidates in this logic.",
+            "paragraph_rank": 24,
+            "section_rank": 8
+        },
+        {
+            "section": "Neural-network pixel clustering",
+            "text": "In summary, a cluster can be identified as merged in two ways. Either it is used by multiple track candidates and the NN identifies it as a merged cluster, or if two track candidates compete for clusters on two consecutive layers, the cluster on the inner layer is identified as merged if the cluster on the outer layer is identified as merged. Clusters identified as merged are used by the competing track candidates without penalty. Clusters which are not identified as merged, shared clusters, can still be used in multiple tracks but with the penalty described in Sect. 3.3.",
+            "paragraph_rank": 25,
+            "section_rank": 8
+        },
+        {
+            "text": "Track fit",
+            "section_rank": 9
+        },
+        {
+            "section": "Track fit",
+            "text": "For track candidates fulfiling the requirements listed in Sect. 3.3, a high-resolution fit is performed using all available information. Fitted tracks which pass through the ambiguity solver without modification are added to the final track collection. Delaying the track fit until this stage minimizes the number of times the fitter is called, which is advantageous as it is a relatively CPU-intensive process.",
+            "paragraph_rank": 26,
+            "section_rank": 9
+        },
+        {
+            "section": "Track fit",
+            "text": "For the high-resolution track fits, the position and uncertainty of each cluster is determined by additional NNs [14]. They predict the positions where the charged particles intersected the sensor based on the same input to the NN described in Sect. 3.4. The predicted number of charged particles which created the cluster determines the number of particle intersections the additional NNs predict. This decreases the discrepancy between the reconstructed cluster position and the cluster's fitted track position at the detector surface, especially for merged clusters, resulting in more precise track parameters.",
+            "paragraph_rank": 27,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 113,
+                    "text": "[14]",
+                    "end": 117
+                }
+            ]
+        },
+        {
+            "text": "Data and Monte Carlo samples",
+            "section_rank": 10
+        },
+        {
+            "section": "Data and Monte Carlo samples",
+            "text": "Data from proton-proton collisions at \u221a s = 13 TeV, collected during 2015 and corresponding to an integrated luminosity of 3.2 fb \u22121 , are used in this paper. Events are selected using triggers requiring a single jet above various p T thresholds. The minimum jet trigger p T threshold is 100 GeV. The numbers of events selected by the triggers were reduced by a factor depending on the instantaneous luminosity and the jet p T threshold. This suppresses the number of lowp T jets while keeping all events with at least one jet with p T > 450 GeV. Standard ATLAS data-quality requirements are applied to all data sets, ensuring all detectors were operational.",
+            "paragraph_rank": 28,
+            "section_rank": 10
+        },
+        {
+            "section": "Data and Monte Carlo samples",
+            "text": "The data are compared to a leading-order dijet MC sample generated with Pythia 8.186 [15] with the A14 tuned parameter set [16] and the NNPDF2.3LO parton distribution function (PDF) set [17]. MC samples generated with Herwig++2.7.1 [18], and Sherpa 2.1 [19] are also studied. For Herwig++, the UEEE5 tuned parameter set is used with the CTEQ6L1 PDF set [20] and for Sherpa, parameters corresponding to the CT10 PDF set [21] are used. The ATLAS detector response is fully simulated [22] using the Geant 4 framework [23]. The average number of protonproton interactions per bunch crossing (pile-up) was approximately 15 during the 2015 data-taking period. The expected contribution from additional proton-proton interactions is accounted for by overlaying minimum-bias events simulated with Pythia 8. The MC samples are reweighted to match the distribution of the number of interactions per bunch crossing and then reweighted to the inclusive jetp T spectrum observed in collision data. In dense environments, the impact of pile-up on the track reconstruction performance is small. The change in tracking efficiency considering only one interaction per bunch crossing to an average pile-up of 40 in the dijet MC sample for jets with a p T above 200 GeV is below 0.3%.",
+            "paragraph_rank": 29,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 85,
+                    "text": "[15]",
+                    "end": 89
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 123,
+                    "text": "[16]",
+                    "end": 127
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 186,
+                    "text": "[17]",
+                    "end": 190
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 232,
+                    "text": "[18]",
+                    "end": 236
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 253,
+                    "text": "[19]",
+                    "end": 257
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 353,
+                    "text": "[20]",
+                    "end": 357
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 419,
+                    "text": "[21]",
+                    "end": 423
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 481,
+                    "text": "[22]",
+                    "end": 485
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 514,
+                    "text": "[23]",
+                    "end": 518
+                }
+            ]
+        },
+        {
+            "section": "Data and Monte Carlo samples",
+            "text": "In order to perform detailed simulation-based studies on event topologies with highly collimated particles, four large MC samples, with a single particle decaying into a set of nearby charged particles, are employed. The initial particles have different lifetimes and decay multiplicities, and are generated with a uniform transverse momentum spectrum from 10 to 1 TeV within |\u03b7| of 1.0. Topologies with two highly collimated tracks are studied in a simulated \u03c1 \u2192 \u03c0 + \u03c0 \u2212 sample. Simulated decays of a single \u03c4 -lepton to three charged hadrons (\u03c4 \u00b1 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 \u00b1 \u03bd \u03c4 ) are used to study topologies with three charged particles. To study the performance in topologies with higher charged-particle multiplicities, two additional samples are created; a sample containing all decays of a B 0 into multiple particles and a \u03c4 -lepton decaying to a final state including five charged hadrons.",
+            "paragraph_rank": 30,
+            "section_rank": 10
+        },
+        {
+            "text": "Track reconstruction performance in dense environments",
+            "section_rank": 11
+        },
+        {
+            "section": "Track reconstruction performance in dense environments",
+            "text": "This section first compares basic properties of tracks inside jets in data with those in simulated dijet samples (Sect. 5.2). Using truth-based quantities, Sect. 5.3 studies single-particle decays with collimated decay products. These relatively simple topologies allow the behaviour of the track reconstruction to be studied as a function of the momentum of the initial particle, and the spatial separation between the tracks. Section 5.4 presents analogous results, but derived from a dijet MC sample of highp T jets.",
+            "paragraph_rank": 31,
+            "section_rank": 11
+        },
+        {
+            "text": "Classification",
+            "section_rank": 12
+        },
+        {
+            "section": "Classification",
+            "text": "In simulation, tracks are classified using a truth-matching probability. It is the ratio of the weighted number of measurements originating, at least in part, from the same simulated particle, to the weighted number of all measurements used in a track. A subdetector-specific weight of ten for measurements in the pixel detector, five for the SCT and one for the TRT is used. These weights reflect the average number of expected measurements in each subdetector. A properly reconstructed track is required to have a truth-matching probability above 0.5. Such a requirement is imposed for all reconstruction efficiencies presented in this paper. Fake tracks are those which have a truth-matching probability below 0.5. Due to the careful pruning of seeds, the majority of reconstructed fake tracks are from the misallocation of clusters from other particles to a track and not purely random combinations of clusters. The track reconstruction procedure described in Sect. 3 results in a negligible number of fake tracks in dense environments. For jets with a p T above 200 GeV in the dijet MC sample described in Sect. 4, the fraction of fake tracks is below 0.5%. From only one pp interaction per bunch crossing to an average pile-up of 40, this fraction increases by about 0.5%, still making it negligible. Consequently, fake tracks are not discussed in further detail.",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "section": "Classification",
+            "text": "Jets are reconstructed from topological clusters [24] of energy deposits in the calorimeter using the anti-k t algorithm [25] with a radius parameter R = 0.4 and are selected requiring a minimum jet p T of 200 GeV and |\u03b7 jet | < 2.5. Jets are corrected for the effects of non-compensating response in the calorimeter and inactive material by using energyand \u03b7-dependent calibration factors, based on MC simulation and pp collision data. Additional corrections are applied to reduce the dependence of the jet energy measurement on the longitudinal and transverse structure of the jets and also to correct for jets that are not fully contained in the calorimeter [26].",
+            "paragraph_rank": 33,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 49,
+                    "text": "[24]",
+                    "end": 53
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 121,
+                    "text": "[25]",
+                    "end": 125
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 661,
+                    "text": "[26]",
+                    "end": 665
+                }
+            ]
+        },
+        {
+            "text": "Data and MC simulation comparison",
+            "section_rank": 13
+        },
+        {
+            "section": "Data and MC simulation comparison",
+            "text": "This section gives an overview of basic properties of tracks inside jets. Data and MC simulation comparisons establish fair agreement between the two.",
+            "paragraph_rank": 34,
+            "section_rank": 13
+        },
+        {
+            "section": "Data and MC simulation comparison",
+            "text": "The average number of tracks per unit of angular area versus the angular distance from the jet axis in data and MC events is compared in Fig. 4. The charged-particle density in jets increases linearly with the logarithm of the jet momentum, which reflects the average number of tracks inside the jet. Moreover, most tracks are located within an angular distance of 0.05 from the jet axis. Jets in data tend to have a slightly wider distribution of reconstructed charged particles than those in simulation.  Due to the large number of collimated charged particles the number of multiply used clusters rises steeply at small distances to the jet axis. Figure 5 shows the number of pixel clusters that are identified as merged and the number of shared pixel clusters on the track for data and MC simulation versus the angular distance from the jet axis. The average number of shared pixel clusters remains relatively low compared to the number of clusters identified as merged, down to the smallest distances, because the reconstruction algorithm identifies merged clusters with high efficiency, and these consequently are not counted as shared. MC simulation and data show reasonable agreement in the individual bins of jet p T .",
+            "paragraph_rank": 35,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 137,
+                    "text": "Fig. 4",
+                    "end": 143
+                },
+                {
+                    "type": "figure",
+                    "start": 650,
+                    "text": "Figure 5",
+                    "end": 658
+                }
+            ]
+        },
+        {
+            "section": "Data and MC simulation comparison",
+            "text": "Inefficiencies in the identification and treatment of merged clusters affect the number of IBL clusters on tracks in dense environments. Figure 6 shows the average number of IBL clusters on the track, for data and MC simulation versus the angular distance from the jet axis. For small distances the number of IBL clusters shows a drop, explained by a residual inefficiency in assigning clusters to the appropriate track. MC simulation and data agree within expectations in each of the individual jet p T bins. The overall lower average number of IBL clusters on track in data is due to a not fully functional IBL detector module, which is not correctly considered in MC simulation.",
+            "paragraph_rank": 36,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 137,
+                    "text": "Figure 6",
+                    "end": 145
+                }
+            ]
+        },
+        {
+            "section": "Data and MC simulation comparison",
+            "text": "Although the SCT sensors are located at much higher radii than the pixel sensors, the expected number of shared clusters is considerably larger than for the pixels as shown in Fig. 7. This is due to the coarser segmentation of the SCT strips in one dimension and the lack of charge information hindering the identification of merged SCT clusters. The average number of shared SCT clusters decreases with the angular distance from the jet axis, correlated with the decrease in charged-particle density visible in Fig. 4   The average number of IBL clusters on primary tracks (with a production vertex before the IBL) shown as a function of the angular distance of the track from the jet axis. Data (markers) and dijet MC (lines) samples are compared in bins of jet p T showing a slight drop at small distances explained by a residual cluster-to-track assignment inefficiency simulation. In the studied jetp T range, the average number of SCT clusters on tracks is approximately 7.7 with little variation with respect to angular distances from the jet axis. The MC simulation agrees within expectations with data in the individual bins of jet p T .",
+            "paragraph_rank": 37,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 176,
+                    "text": "Fig. 7",
+                    "end": 182
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 512,
+                    "text": "Fig. 4",
+                    "end": 518
+                }
+            ]
+        },
+        {
+            "text": "Performance for collimated tracks",
+            "section_rank": 14
+        },
+        {
+            "section": "Performance for collimated tracks",
+            "text": "Quantities such as cluster assignment and track reconstruction efficiencies can be studied using truth information from simulation to elucidate the track reconstruction behaviour  Fig. 7 The average number of shared SCT clusters for primary tracks with a production vertex before the IBL is shown as a function of the angular distance of the track from the jet axis. Data (markers) and dijet MC (lines) samples are compared in bins of jet p T . Due to the lack of charge information and the coarse sensor dimensions, the clusters cannot be readily identified as merged in the presence of highly collimated charged particles. This section utilizes the single-particle samples described in Sect. 4. Figure 8 shows how the minimum separation between charged particles at the IBL sensor surfaces evolves with the initial particle's p T . For the same p T , the density of the decay products may differ significantly: the lighter the initial particle, or the higher the multiplicity of its decay products, the smaller the distance. The degradation of the track reconstruction performance is mainly driven by the distance between charged particles and the charged-particle multiplicity in their vicinity. The results presented hereafter are  Fig. 8 A comparison of the average minimum distance between charged decay products at the IBL sensor surfaces as a function of initial particle's p T for single-particle samples therefore representative of the reconstruction performance in many physics processes, provided these parameters are known. Throughout this section, unless otherwise noted, it is required that all charged particles are created before the IBL (production radius smaller than 29 mm) in all figures shown.",
+            "paragraph_rank": 38,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 180,
+                    "text": "Fig. 7",
+                    "end": 186
+                },
+                {
+                    "type": "figure",
+                    "start": 697,
+                    "text": "Figure 8",
+                    "end": 705
+                },
+                {
+                    "type": "figure",
+                    "start": 1236,
+                    "text": "Fig. 8",
+                    "end": 1242
+                }
+            ]
+        },
+        {
+            "section": "Performance for collimated tracks",
+            "text": "The average number of merged clusters is compared to the average number of clusters identified as merged in Fig. 9 for the single \u03c1 and three-prong \u03c4 samples. The average charged-particle separation decreases with increasing initialparticle p T leading to more merged pixel clusters as shown in the points labelled Ideal. The average numbers of both the merged clusters and the clusters identified as merged fall to zero at the lowest initial-particle p T , confirming a low rate of false-positives. Both grow at a similar rate with increasing initial-particle p T . The residual inefficiency of the pixel NN is apparent in a lower number of clusters identified as merged compared to the ideal number of merged clusters at high initial-particle p T . The reconstruction performance correlates directly with the multiplicity and distances at a given initial-particle p T shown in Fig. 8.",
+            "paragraph_rank": 39,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 108,
+                    "text": "Fig. 9",
+                    "end": 114
+                },
+                {
+                    "type": "figure",
+                    "start": 879,
+                    "text": "Fig. 8",
+                    "end": 885
+                }
+            ]
+        },
+        {
+            "section": "Performance for collimated tracks",
+            "text": "Merged clusters failing identification can result in shared clusters, which (as explained in Sect. 3.3) need to be limited. To study possible inefficiencies of the reconstruction algorithm, the cluster assignment efficiency is shown in Fig. 10 as a function of the minimum truth particle separation at the sensor's surface for the first two layers of the pixel detector. It is defined as the fraction of clusters created by a particle that are then used on the reconstructed track of said particle. With the closest truth particle separated by 400 \u00b5m at the IBL, the cluster assignment efficiency at this layer is in excess of 99% for the \u03c1 and three-prong \u03c4 samples, and 98% for the B 0 samples. When going to smaller separations, individual clusters start to merge and eventually only a single merged cluster remains. Since in the simpler topology \u03c1 \u2192 \u03c0 + \u03c0 \u2212 the cluster has to be assigned to a maximum of two tracks, the cluster assignment efficiency is 99% down to the smallest distances shown. In case of the B 0 and three-prong \u03c4 decays, several daughter particles are likely to contribute to a merged cluster. The NN described in Sect. 3.4 lacks the ability to distinguish between merged clusters from more than three particles and those from exactly three particles [14]. Also, the track reconstruction algorithm limits the number of tracks using the same cluster without penalties to three. As a result, at much smaller particle separations, the cluster assignment efficiency is lim- ",
+            "paragraph_rank": 40,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 236,
+                    "text": "Fig. 10",
+                    "end": 243
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 1275,
+                    "text": "[14]",
+                    "end": 1279
+                }
+            ]
+        },
+        {
+            "text": "ATLAS Simulation",
+            "section_rank": 15
+        },
+        {
+            "section": "ATLAS Simulation",
+            "text": "(a) (b) Fig. 11 The reconstructable efficiency, defined as the efficiency to reconstruct all of the charged decay products of the parent particle, is shown for the \u03c1 and three-prong \u03c4 samples with various limits on the number of shared clusters allowed on a track candidate assuming all the merged pixel clusters have been identified as merged. It is required that the stable charged particles are created before the IBL ited in the B 0 and three-prong \u03c4 samples. The case of more than three charged particles contributing to a pixel cluster in the B 0 decay results in an additional assignment inefficiency on the B-layer. Regardless of how well the ambiguity solver identifies merged pixel clusters and assigns them to tracks, a substantial inefficiency remains at high initial-particle momenta due to the necessary limitations on shared SCT clusters. Figure 11 shows the reconstructable efficiency of the \u03c1 and three-prong \u03c4 decays utilizing MC truth information. This is defined as the efficiency to be able to reconstruct all of the charged decay products from a given resonance having satisfied the cluster multiplicity requirements defined in Sect. 3.3. All merged pixel clusters are assumed to have been identified, so for a fixed maximum number of allowed shared SCT clusters, this represents the maximum achievable reconstruction efficiency. The loss in efficiency is exacerbated by increasing charged-particle multiplicities as in the three-prong \u03c4 sample. This limit is fixed at two shared clusters. The efficiency improvement obtained from loosening this limit is not sufficient to justify the associated increase in the proportion of fake tracks. In simulated events with several jets, the inclusive number of fake tracks increases by 25% when loosening the limit to three shared clusters.",
+            "paragraph_rank": 41,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 8,
+                    "text": "Fig. 11",
+                    "end": 15
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 854,
+                    "text": "Figure 11",
+                    "end": 863
+                }
+            ]
+        },
+        {
+            "section": "ATLAS Simulation",
+            "text": "Finally, the per-track reconstruction efficiency is shown in Fig. 12 as a function of particle p T and production radius. The production radius is defined as the radial distance of the decay of the parent particle from the beam axis. The efficiency degrades with increased multiplicity. The visible inefficiency in all samples at low initial-particle p T is due to inelastic interactions, such as hadronic interactions. At higher transverse momentum of the initial particle, a decrease in efficiency is driven by the increasingly collimated nature of the decay products. A decrease in efficiency is also seen with a increasing production radius as the charged particles arrive at each active layer with less average separation. The requirement on the total number of clusters for track reconstruction leads to discrete drops in efficiency at each active layer.",
+            "paragraph_rank": 42,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 61,
+                    "text": "Fig. 12",
+                    "end": 68
+                }
+            ]
+        },
+        {
+            "text": "Performance for tracks in jets",
+            "section_rank": 16
+        },
+        {
+            "section": "Performance for tracks in jets",
+            "text": "In the previous sections, the performance in simple topologies is discussed. These samples are crucial for understanding the effects of charged-particle separations and multiplicities on the performance, but they are insufficient to quantify the expected performance in the dense jet environments evident in Fig. 4. As demonstrated in Sect. 5.2, samples of dijet MC events do provide a reasonable description of jets in data. The following contains studies of the track reconstruction efficiency in these samples. Figure 13 shows the charged-primary-particle reconstruction efficiency dependence on the angular distance of a particle to the jet axis for different jet \u03b7 and p T ranges. All charged particles studied are required to be created before the IBL. The efficiency drops rapidly towards the centre of the jet, where the charged-particle density is maximal. A slight decrease in efficiency towards the edge of the jet is consistent with an isolated-track efficiency that rises with chargedparticle p T [27] and a decrease in the average chargedparticle p T with distance from the jet core. The dependence of the efficiency on the jet p T and on the production radius of the charged particle, where charged particles are not required to be created before the IBL, is shown in Fig. 14. The decrease in efficiency with production radius is from two effects. Firstly, particles created beyond the first active layers of the ID create fewer clusters. Secondly, with the shorter flight length to   Fig. 12 Single-track reconstruction efficiency is shown as a a function of the initial particle's p T when it is required that the parent particle decays before the IBL for the decay products of a \u03c1, three-and five-prong \u03c4 and a B 0 and, b versus the production radius for the decay products of a three-and five-prong \u03c4 as well as a B 0 , where no requirement is imposed on the production radius of stable charged particles R(jet,particle) \u0394 The efficiency to reconstruct charged primary particles in jets with a |\u03b7| < 1.2 and b |\u03b7| > 1.2 is shown as a function of the angular distance of the particle from the jet axis for various jet p T for simulated dijet MC events the next active layer, the average separation between particles is smaller compared to prompt decays, producing more merged clusters. The overall trend for all efficiencies shown is the same at all \u03b7. However, the loss in absolute efficiency is exacerbated at high |\u03b7|, while the degradation at small separations between a track and the jet axis is alleviated.",
+            "paragraph_rank": 43,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 308,
+                    "text": "Fig. 4",
+                    "end": 314
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 514,
+                    "text": "Figure 13",
+                    "end": 523
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 1010,
+                    "text": "[27]",
+                    "end": 1014
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1283,
+                    "text": "Fig. 14",
+                    "end": 1290
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1500,
+                    "text": "Fig. 12",
+                    "end": 1507
+                }
+            ]
+        },
+        {
+            "text": "ATLAS Simulation",
+            "section_rank": 17
+        },
+        {
+            "text": "Measurement of track reconstruction efficiency in jets from data",
+            "section_rank": 18
+        },
+        {
+            "section": "Measurement of track reconstruction efficiency in jets from data",
+            "text": "Previous sections discuss the performance of the track reconstruction in dense environments based mainly on MC simulation. This section introduces a novel method to probe this performance in data. A measurement of the fraction of tracks lost in reconstruction due to the high density and collimation of charged particles in highp T jets is presented for the subset of tracks with a B-layer cluster created by two charged particles. The dE/dx of a charged particle traversing the pixel sensor is measured from the charge collected in the clusters associated with the reconstructed track. With single particles and thin layers, one expects the dE/dx measurements to approximately follow a Landau distribution [28]. A typical particle reconstructed from an LHC collision is expected to be a minimum-ionizing particle (MIP). Thus, two particles contributing to the same cluster are expected to deposit twice the energy of a single MIP. In the context of this paper, dE/dx is As demonstrated in the previous sections, near the jet core the charged-particle density is high and particles can be highly collimated. The tracks of these particles are thus more likely to create merged clusters, as shown in Fig. 5. By fitting the cluster dE/dx for reconstructed tracks near the core of the jet, single-particle clusters can be statistically separated from merged clusters. The fraction of lost tracks can therefore be inferred from the number of times only one reconstructed track is associated with a cluster dE/dx compatible with two MIPs. At truth-level, this fraction is defined as follows: the denominator is the number of truth particles passing the analysis selections (listed in Sect. 6.1, and including a p T > 10 GeV requirement), which have a B-layer cluster created by exactly two charged particles; the numerator is the subset of these particles which failed to be reconstructed.",
+            "paragraph_rank": 44,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 707,
+                    "text": "[28]",
+                    "end": 711
+                },
+                {
+                    "type": "figure",
+                    "start": 1198,
+                    "text": "Fig. 5",
+                    "end": 1204
+                }
+            ]
+        },
+        {
+            "section": "Measurement of track reconstruction efficiency in jets from data",
+            "text": "For the IBL, ToT is encoded in four bits. Eight bits are available in each of the remaining three pixel layers, which therefore provide an enhanced ToT resolution compared to the IBL, resulting in a superior energy resolution. For this reason, the cluster dE/dx values corresponding to the B-layer are used in this study.",
+            "paragraph_rank": 45,
+            "section_rank": 18
+        },
+        {
+            "text": "Track selection",
+            "section_rank": 19
+        },
+        {
+            "section": "Track selection",
+            "text": "To enhance the contribution of high-quality collimated tracks and suppress fake tracks to a negligible number, additional track selections beyond those outlined in Sect. 3.3 are required for all tracks used in this analysis:",
+            "paragraph_rank": 46,
+            "section_rank": 19
+        },
+        {
+            "section": "Track selection",
+            "text": "\u2022 Exactly one pixel cluster per layer,",
+            "paragraph_rank": 47,
+            "section_rank": 19
+        },
+        {
+            "text": "Fit method",
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "A measurement distribution of cluster dE/dx of tracks inside the jet core is fit using two dE/dx template distributions: a single-track template containing mainly tracks reconstructed from a single-particle cluster, and a multiple-track template mainly made up of tracks reconstructed from a merged cluster. Both templates are derived directly from collision data or from simulation for the corresponding efficiency measurements.",
+            "paragraph_rank": 48,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "As verified in simulation, most highly collimated tracks are expected to be within R(jet,trk) < 0.05 which then defines the jet core for this method. Outside the jet core, the contribution of collimated tracks is negligible, and therefore all tracks are expected to be reconstructed from a singleparticle cluster. The single-track template is created using tracks reconstructed from clusters which are neither identified as merged nor shared and that are well outside the jet core ( R(jet,trk)> 0.1). The multiple-track template is taken from tracks reconstructed from either B-layer clusters identified as merged or shared B-layer clusters inside the jet core. These multiply used clusters are likely to be merged clusters.",
+            "paragraph_rank": 49,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "Examples of the resulting distributions are shown in Fig. 15. The single-track template, displayed as circles in Fig. 15, contains a single peak at the dE/dx value expected for a MIP traversing the B-layer of the pixel detector and a long tail to higher values compatible with a Landau distribution. Contamination of merged clusters in this template is 0.3-0.5% in the simulation. The multiple-track template, displayed as squares in the same figure, instead exhibits a peak in the dE/dx range expected for two MIPs. A third, smaller peak occurs at dE/dx > 3.2 MeVg \u22121 cm 2 for clusters created by three particles. The peak in the multiple-track template dE/dx distribution at values expected for one MIP is due to the fact that multiply used clusters can also originate from shared clusters or clusters identified as merged which, in truth, are not merged clusters.",
+            "paragraph_rank": 50,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 53,
+                    "text": "Fig. 15",
+                    "end": 60
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 113,
+                    "text": "Fig. 15",
+                    "end": 120
+                }
+            ]
+        },
+        {
+            "section": "Fit method",
+            "text": "The measurement distribution is created from tracks inside the jet core that are reconstructed from a cluster which is neither identified as merged nor shared. No additional requirements are made on other tracks using this cluster, including whether or not they satisfy the selections outlined in Sect. 6.1. The resulting dE/dx distribution contains singleparticle clusters with a peak at the energy of one MIP and a long tail to high values, as well as an enhanced contribution of merged clusters from two particles. Contributions from clusters from more than two particles are negligible. The true two-MIP clusters are created from a pair of tracks where only one track is reconstructed. Therefore, for every reconstructed track in the measurement distribution with a merged cluster, there is one particle which is not reconstructed. Using this information, the number of tracks contributing to merged Blayer clusters from two particles (N True ",
+            "paragraph_rank": 51,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "The sample of \u03c1 decays discussed in Sect. 5.3 is used to confirm that the multiple-track template captures merged clusters and that the second MIP peak in the measurement sample does in fact contain merged clusters where one contributing particle is not reconstructed. Therefore, to obtain the number of lost tracks (N Lost ), the measurement distribution is fit with the two templates. The fraction of merged clusters in the measurement distribution, F merged , is simply calculated from the post-fit number of tracks in the multipletrack template divided by the total number of tracks (N Reco Data ). Finally, the fraction of lost tracks passing through the same detector element as a reconstructed track is given by:",
+            "paragraph_rank": 52,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "where",
+            "paragraph_rank": 53,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "The relation is approximate due to the assumption that the lost track of a pair of tracks has the same properties (e.g. p T and hit content) as the reconstructed track. In simulation, this assumption can be explicitly checked by requiring the truth particle corresponding to the lost track to also pass the analysis selections. This confirms that the deviation from the approximation results in a less than 1.5% change in F lost 2 .",
+            "paragraph_rank": 54,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "To minimize the effect of clusters created by more than two particles, the fit was performed over the range 1.1-3.07 (1.26-3.2) MeVg \u22121 cm 2 for data (simulation). Contributions from clusters from more than two particles in this range are of the order of a few percent. An offset in the distributions observed in MC events compared to data requires an adjustment of the respective fit ranges. The ranges are chosen to have the same fraction of clusters inside the fit range with respect to all clusters in the distribution. An imperfect description of the leading edge of the measurement distribution by the single-track template would affect the fitted result. Since the area of interest lies at much higher dE/dx values, the lower edge of the fit range was chosen to avoid as much as possible the leading edge of the single-particle dE/dx peak, while retaining a large sample for the remainder of the distribution.",
+            "paragraph_rank": 55,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "To study the dependence of lost tracks on jet p T , the fit is performed in seven different bins of jet p T ranging from 200 GeV to 1600 GeV in steps of 200 GeV.",
+            "paragraph_rank": 56,
+            "section_rank": 20
+        },
+        {
+            "section": "Fit method",
+            "text": "The measurement is performed both on data and simulation samples. For simulation, separate templates are constructed for each jetp T bin. For data, the single-track and multiple-track templates are derived from the lowest jetp T bin, shown in Fig. 15, due to the small number of events at higher jet p T . It was verified that within the statistical uncertainty of the highp T bins, the templates derived from the lowest jetp T bin have the same shape within the fitted range. ",
+            "paragraph_rank": 57,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 243,
+                    "text": "Fig. 15",
+                    "end": 250
+                }
+            ]
+        },
+        {
+            "text": "Systematic uncertainties",
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "The resulting F merged exhibits a statistical uncertainty due to the finite number of entries in both the template and the measurement distributions.",
+            "paragraph_rank": 58,
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "Various potential sources of systematic bias were studied and are discussed below. The relative values for data are summarized in Table 1 and values for MC simulation are comparable. The measured F lost 2 varies as a function of the range in dE/dx for which the distribution is fit. This is due to the different fractions of clusters with a dE/dx of two and three MIPs falling in the fitted range. The effect was estimated by increasing the fit range. The fitting process was repeated for six different ranges with the upper edge increasing in 0.2 MeVg \u22121 cm 2 increments. A symmetric uncertainty, equal to the maximum change in F lost 2 , is applied to each jetp T bin. The start of the fitted range was chosen such that small variations have a negligible impact on F lost 2 .",
+            "paragraph_rank": 59,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 130,
+                    "text": "Table 1",
+                    "end": 137
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "A systematic uncertainty considered for data is the result of fitting all data jetp T bins with the templates from the lowest jetp T bin. This results in an overestimate of F lost 2 increasing with jet p T . To account for this bias, a p Tdependent multiplicative correction was determined by comparing the F lost 2 values fitted in simulation with templates from the corresponding jetp T bin with those obtained using a template from the lowest jetp T bin. This correction increases from about 10 to 25% for jets with a p T ranging from 400 to 600 GeV and from 1400 to 1600 GeV, respectively. This correction term was applied to data F lost 2 values after completing the fitting procedure. In addition, the difference between the two simulation F lost 2 values compared for the correction factor was also included as a systematic uncertainty. An additional check performed with a large simulated sample showed a 3-8% bias in F lost 2 in the studied jetp T range due to the fraction of tracks reconstructed from \u2265 3 particle clusters, relative to the two-particle contribution in the multiple-track template.",
+            "paragraph_rank": 60,
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "To validate the method, and provide an estimate of any residual biases, a truth-based closure test was performed using simulated samples. At low jet p T , the residual dE/dx peak at values expected from one MIP in the multiple-track template contributes to a non-closure. Also, for all jet p T , isolated-track reconstruction efficiency, the composition of multiple-particle clusters, including particle composition and the calibration of dE/dx itself are all covered in this nonclosure estimate. This is already covered by the systematic uncertainty determined from changing the fit range described above, but also leads to a non-closure. In the lowest jetp T bin, a non-closure of approximately +18% is observed, corresponding to an absolute overestimation of the true F lost 2 of about 0.013, but then quickly decreases with increasing jet p T . This uncertainty is included for both simulation and data with the corresponding relative values in Table 1.",
+            "paragraph_rank": 61,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 949,
+                    "text": "Table 1",
+                    "end": 956
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "Other possible sources of uncertainty are contributions to F lost 2 not originating from the density of the environment. Such contributions could come from pile-up tracks creating merged clusters with tracks in the jets, as well as lost isolated tracks. Conservative estimates based on MC studies showed that such contributions are 2-6% of the total F lost 2 in the studied jetp T range. This effect is covered by the non-closure systematic uncertainty described above.",
+            "paragraph_rank": 62,
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "Uncertainties in the jet energy scale calibration and resolution have negligible impact in the analysis. Possible effects due to the binning of the dE/dx distributions were studied and found also to be insignificant. Figure 16 shows the fit result for data in two bins of jet p T . The single-track and multiple-track dE/dx templates provide a good description of the dE/dx distribution as visible from the ratio in Fig. 16.",
+            "paragraph_rank": 63,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 217,
+                    "text": "Figure 16",
+                    "end": 226
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 416,
+                    "text": "Fig. 16",
+                    "end": 423
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 22
+        },
+        {
+            "section": "Results",
+            "text": "Differences between event generators, such as different hadronization models and flavour compositions, can affect F lost 2 and the overall comparison of data and MC simulation. By comparing the fit results from simulated samples made with the Pythia 8, Sherpa and Herwig++event generators, a generator uncertainty was derived for simulation only. For each jetp T bin, results from Pythia are taken as the central value and the largest difference of F lost 2 between the three generators is symmetrized and taken as the generator uncertainty. The relative generator uncertainties in the fraction of lost tracks ranges from 4 to 37% in the different jetp T bins. The measured fraction of lost tracks, F lost2 , in the jet core ( R(jet,trk)< 0.05) as a function of jet p T for data (black circles) and simulation (red line). Vertical solid error bars indicate statistical uncertainty, while the total uncertainty is represented by dashed error bars for data and a shaded area for simulation A comparison of F lost 2 as a function of jet p T for data and simulation is shown in Fig. 17. As the jet p T increases, so does F lost 2 , with a similar trend observed in both data and simulation. This increase is caused by an increasing density of charged particles, which thereby causes higher collimation of the track pair, and is not due to confusion in correctly assigning clusters to tracks. At a certain point, the two particles are so collimated that the reconstructed tracks start to overlap completely up to the radius of the SCT detector. At that point a similar effect as shown for tracks from the \u03c1 decay in Figs. 10 and 12 occurs. The cluster assignment efficiency for reconstructed tracks remains constant with increasing jet p T , indicating no degradation of performance due to the environmental effects besides the second track. Only because of their increasingly collimated nature, the probability of losing one of the tracks rises. This effect was confirmed in simulation for tracks selected by this analysis.",
+            "paragraph_rank": 64,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1074,
+                    "text": "Fig. 17",
+                    "end": 1081
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1611,
+                    "text": "Figs. 10 and 12",
+                    "end": 1626
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "The measurements in data and MC simulation are consistent across the whole studied jetp T range.",
+            "paragraph_rank": 65,
+            "section_rank": 22
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 23
+        },
+        {
+            "section": "Conclusion",
+            "text": "This paper presents the performance of the ATLAS track reconstruction chain with detailed studies in dedicated topologies, such as the cores of highp T jets and the decays of \u03c4 -leptons, that are characterized by charged-particle separations comparable to the inner detector's sensor granularity. The ambiguity-solver stage of the reconstruction chain is described, including the usage of a neural-networkbased approach to identify pixel clusters created by multiple charged particles. The current performance is demonstrated with simulated samples of a single particle decaying to a set of collimated charged particles. In the cores of jets, the number of IBL clusters on tracks, as well as the expected track reconstruction efficiency, is robust up to the highest investigated p T values.",
+            "paragraph_rank": 66,
+            "section_rank": 23
+        },
+        {
+            "section": "Conclusion",
+            "text": "A novel, fully data-driven technique, using the energy loss to identify clusters as originating from two charged particles is introduced to measure the fraction of charged particles, creating these clusters, that fail to be reconstructed. The results are presented using tracks with p T above 10 GeV in the core of a jet from 3.2 fb \u22121 of 13 TeV proton-proton collisions at the LHC. The measured fraction of lost tracks as a function of jet transverse momentum was found to range from 0.061 \u00b1 0.006(stat.) \u00b1 0.014(syst.) to 0.093 \u00b1 0.017(stat.) \u00b1 0.021(syst.) as the jet p T increases from 200 to 1600 GeV. Data and simulation are compatible for the full studied jetp T range. This result can be used to minimize the uncertainty in the track reconstruction inefficiency in the cores of jets relevant for jet energy and mass calibrations as well as measurements of jet properties.",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 24
+        },
+        {
+            "section": "Fig. 1",
+            "text": "Fig. 1 Sketch of the barrel region of the ATLAS inner detector",
+            "paragraph_rank": 68,
+            "section_rank": 24
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 25
+        },
+        {
+            "section": "Fig. 2",
+            "text": "Fig. 2Illustration of a single-particle pixel clusters on a pixel sensor and b a merged pixel cluster due to very collimated charged particles. Different colours represent energy deposits from different charged particles traversing the sensor and the particles trajectories are shown as arrows",
+            "paragraph_rank": 69,
+            "section_rank": 25
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 26
+        },
+        {
+            "section": "Fig. 4",
+            "text": "Fig. 4The average number of primary tracks per unit of angular area as a function of the angular distance from the jet axis. Data (markers) and dijet MC (lines) samples are compared in bins of jet p T showing the high density in the cores of energetic jets",
+            "paragraph_rank": 70,
+            "section_rank": 26
+        },
+        {
+            "text": "Fig. 5 Fig. 6",
+            "section_rank": 27
+        },
+        {
+            "section": "Fig. 5 Fig. 6",
+            "text": "Fig. 5The average number of a pixel clusters identified as merged and b shared pixel clusters on primary tracks (with a production vertex before the IBL) are shown as a function of the angular distance of the track from the jet axis. Data (markers) and dijet MC (lines) samples",
+            "paragraph_rank": 71,
+            "section_rank": 27
+        },
+        {
+            "text": "Fig. 9 AFig. 10",
+            "section_rank": 28
+        },
+        {
+            "section": "Fig. 9 AFig. 10",
+            "text": "Fig. 9A comparison of the average number of merged pixel clusters expected for truth particles from simulation and pixel clusters identified as merged used in reconstructed tracks is shown as a function of the \u03c1 and three-prong \u03c4 (\u03c4 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 \u00b1 \u03bd \u03c4 ) transverse momentum. Ideal",
+            "paragraph_rank": 72,
+            "section_rank": 28
+        },
+        {
+            "text": "Fig. 13",
+            "section_rank": 29
+        },
+        {
+            "section": "Fig. 13",
+            "text": "Fig. 13The efficiency to reconstruct charged primary particles in jets with a |\u03b7| < 1.2 and b |\u03b7| > 1.2 is shown as a function of the angular distance of the particle from the jet axis for various jet p T for simulated dijet MC events",
+            "paragraph_rank": 73,
+            "section_rank": 29
+        },
+        {
+            "text": "Fig. 14",
+            "section_rank": 30
+        },
+        {
+            "section": "Fig. 14",
+            "text": "Fig. 14The track reconstruction efficiency is compared for charged primary particles in jets with |\u03b7| < 1.2 (|\u03b7| > 1.2) for the entire jetp T range as a function of a the jet p T and b the production radius of the",
+            "paragraph_rank": 74,
+            "section_rank": 30
+        },
+        {
+            "text": "Fig. 15",
+            "section_rank": 31
+        },
+        {
+            "section": "Fig. 15",
+            "text": "Fig. 15Single-track and multiple-track templates for data with a jet p T in the range 200 GeV < p jet T < 400 GeV",
+            "paragraph_rank": 75,
+            "section_rank": 31
+        },
+        {
+            "text": "2 ) 2 )",
+            "section_rank": 32
+        },
+        {
+            "section": "2 ) 2 )",
+            "text": "is found from the sum of the number of reconstructed particles in the multipletrack template (N Reco and twice the number of lost particles (N Lost ), N True 2",
+            "paragraph_rank": 76,
+            "section_rank": 32
+        },
+        {
+            "text": "Fig. 16 Fig. 17",
+            "section_rank": 33
+        },
+        {
+            "section": "Fig. 16 Fig. 17",
+            "text": "Fig. 16 Data dE/dx measurement distributions (black circles) with fit results (solid line) are shown for a 200 GeV < p jet T < 400 GeV and b 1000 GeV < p jet T < 1200 GeV. The single-track template scaled by",
+            "paragraph_rank": 77,
+            "section_rank": 33
+        },
+        {
+            "text": "Calculate track scores and Reject tracks with bad score Order tracks according to score (process from highest to lowest) Input tracks Create stripped-down track candidate Accept track candidate or Reject track candidate, if too many holes too few clusters problematic pixel cluster(s) or Recover track candidate, if too many shared clusters (Neural network used to identify merged clusters) Output tracks Rejected tracks Fit tracks fulfilling minimum requirements (Neural network used to predict cluster positions)",
+            "section_rank": 34
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 35
+        },
+        {
+            "section": "Table 1",
+            "text": "Measured F lost2 , relative values of leading systematic uncertainties, and total systematic and statistical uncertainty in the fraction of lost tracks for data in bins of jet p T Jet p T (GeV) F lost2 Fit range (%) Lowp T temp. (%) Non-closure (%) Tot. syst. (%) Stat. (%)",
+            "paragraph_rank": 79,
+            "section_rank": 35
+        },
+        {
+            "section": "Table 1",
+            "text": "Holes are defined as intersections of the reconstructed track trajectory with a sensitive detector element that does not contain a matching cluster. These are estimated by following closely the track trajectory and comparing, within the uncertainties, the intersected sensors with the clusters on the track. Inactive sensors or regions, such as edge areas on the silicon sensors, are excluded from the hole definition.",
+            "paragraph_rank": 80,
+            "section_rank": 35
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 37
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "We thank CERN for the very successful oper-",
+            "paragraph_rank": 81,
+            "section_rank": 37
+        }
+    ]
+}

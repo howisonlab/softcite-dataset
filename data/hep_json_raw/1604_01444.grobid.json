@@ -1,0 +1,1180 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Convolutional neural networks (CNNs) have been widely applied in the computer vision community to solve complex problems in image recognition and analysis. We describe an application of the CNN technology to the problem of identifying particle interactions in sampling calorimeters used commonly in high energy physics and high energy neutrino physics in particular. Following a discussion of the core concepts of CNNs and recent innovations in CNN architectures related to the field of deep learning, we outline a specific application to the NOvA neutrino detector. This algorithm, CVN (Convolutional Visual Network) identifies neutrino interactions based on their topology without the need for detailed reconstruction and outperforms algorithms currently in use by the NOvA collaboration.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "A core problem in experimental high-energy particle physics (HEP) is the correct categorization of the particle interactions recorded in our detectors as signal and background. Commonly, this characterization has been done by reconstructing high-level components such as clusters, tracks, showers, jets, and rings associated with particle interactions recorded by the detector and summarizing the energies, directions, and shapes of these objects with a handful of quantities. These quantities are then either directly selected or fed into machine learning algorithms such as K-Nearest Neighbors [1], Boosted Decision Trees [2], or Multilayer Perceptrons [3,4] to separate signal from background. While these techniques have been very successful, they are prone to two potential failings: mistakes in the reconstruction of high level features from the raw data can lead to incorrect categorization of the physics event, and the features used to characterize the events are limited to those which have already been imagined and implemented for the experiment.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 596,
+                    "text": "[1]",
+                    "end": 599
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 624,
+                    "text": "[2]",
+                    "end": 627
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 655,
+                    "text": "[3,",
+                    "end": 658
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 658,
+                    "text": "4]",
+                    "end": 660
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "This core problem shares many similarities with the problems confronted in computer vision. As in HEP, the computer vision community has explored many approaches to extract specific features from images to enable categorization. Recently, however, computer vision has made great advances by moving away from using specifically constructed features to the extraction of features using a machine learning algorithm known as a convolutional neural network (CNN) [5].",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 459,
+                    "text": "[5]",
+                    "end": 462
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "CNNs are well suited to a broad class of detectors used in HEP and particularly in high energy neutrino physics. Sampling calorimeters that use scintillator (e.g. NOvA [6], MINERvA [7] and MINOS [8]), liquid argon time projection chambers (e.g. ICARUS [9], MicroBooNE [10], DUNE [11][12][13][14]), and water Cherenkov detectors (e.g. IceCube [15,16] and Super-Kamiokande [17]) record the amount of energy deposited in small regions throughout the volume of the detector. When these measurements are combined, they result in what is essentially an image of the physics interaction which is well suited to analysis using computer vision tools. Early studies with Daya Bay data [18,19] and simulated LHC jets [20][21][22] have demonstrated that CNNs can be powerful tools in high energy physics.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 168,
+                    "text": "[6]",
+                    "end": 171
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 181,
+                    "text": "[7]",
+                    "end": 184
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 195,
+                    "text": "[8]",
+                    "end": 198
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 252,
+                    "text": "[9]",
+                    "end": 255
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 268,
+                    "text": "[10]",
+                    "end": 272
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 279,
+                    "text": "[11]",
+                    "end": 283
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 283,
+                    "text": "[12]",
+                    "end": 287
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 287,
+                    "text": "[13]",
+                    "end": 291
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 291,
+                    "text": "[14]",
+                    "end": 295
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 342,
+                    "text": "[15,",
+                    "end": 346
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 346,
+                    "text": "16]",
+                    "end": 349
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 371,
+                    "text": "[17]",
+                    "end": 375
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 675,
+                    "text": "[18,",
+                    "end": 679
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 679,
+                    "text": "19]",
+                    "end": 682
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 706,
+                    "text": "[20]",
+                    "end": 710
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 710,
+                    "text": "[21]",
+                    "end": 714
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 714,
+                    "text": "[22]",
+                    "end": 718
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In this paper, we describe CNNs and the techniques commonly used to build and train these networks. We then outline the construction, training, and testing of a specific application of the -1 -CNN technique, \"CVN\" (Convolutional Visual Network), to events simulated in the NOvA experiment [6] and present benchmarks of its performance.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 289,
+                    "text": "[6]",
+                    "end": 292
+                }
+            ]
+        },
+        {
+            "text": "Deep Learning and Convolutional Neural Networks",
+            "section_rank": 3
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "The multilayer perceptron (MLP) [3,4], or traditional neutral network, is a machine learning algorithm in wide use in HEP. The structure of an MLP consists of an input layer, one or more hidden layers, and an output layer. The goal of an MLP is to approximate a function f : R n \u2192 R m , where n is the dimensionality of the input x and m is the dimensionality of the output f . All layers in traditional MLPs are fully connected, meaning that the output of each node is the weighted sum of the outputs of all nodes in the previous layer plus a bias term, operated on by a non-linear function. Traditionally, the preferred non-linearity is a sigmoid function such as tanh or the logistic function [4]. An MLP with a single hidden layer, under certain assumptions, can be shown to approximate any function to arbitrary precision given a sufficient number of hidden nodes [23,24]. The weights and biases used in an MLP are typically determined using supervised learning. During supervised learning [25], the MLP is presented examples where both x and the corresponding output, f , referred to as the ground truth, are known. The loss, a measure of the error between the output of the MLP and the ground truth is computed, and its gradient as a function the weights and biases is calculated using the back-propagation algorithm [26]. The loss is then minimized by altering the weights and biases using the stochastic gradient descent [27] method. This procedure is repeated until the errors are reduced to an acceptable level.",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 32,
+                    "text": "[3,",
+                    "end": 35
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 35,
+                    "text": "4]",
+                    "end": 37
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 696,
+                    "text": "[4]",
+                    "end": 699
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 869,
+                    "text": "[23,",
+                    "end": 873
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 873,
+                    "text": "24]",
+                    "end": 876
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 995,
+                    "text": "[25]",
+                    "end": 999
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 1324,
+                    "text": "[26]",
+                    "end": 1328
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 1430,
+                    "text": "[27]",
+                    "end": 1434
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "The MLP is a powerful technique, but it has a number of deficiencies [28]. First, it tends to scale poorly to a large number of raw inputs. Historically, most of the work in developing an MLP for a particular task was devoted to extracting features from the raw data that could be used as optimal inputs [29]. In HEP, this is essentially the process of reconstruction; however, developing optimal, robust reconstruction routines is difficult and time consuming. Second, although a single hidden layer can approximate most functions to arbitrary precision, the number of nodes necessary in that hidden layer may approach infinity. Networks with multiple hidden layers can often reach the required accuracy with fewer nodes than the equivalent single layer network [4]. However, multilayer networks can be difficult to train. This is partially due to the fact that sigmoid functions are saturating, that is, as the input to the sigmoid approaches \u00b1\u221e, the gradient approaches zero. The updates to the weights and biases applied using the stochastic gradient descent method have a term proportional to the gradient, so this situation can slow down or halt learning. In shallow networks, this can be controlled through the careful preparation of inputs [27], but it is difficult to keep the inputs to nodes in the non-saturated range over many layers. Third, the large number of free parameters in a large network runs the risk of over-training in which the network learns to reproduce the training sample too well and fails to generalize to inputs it has not seen [4].",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 69,
+                    "text": "[28]",
+                    "end": 73
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 304,
+                    "text": "[29]",
+                    "end": 308
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 763,
+                    "text": "[4]",
+                    "end": 766
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 1248,
+                    "text": "[27]",
+                    "end": 1252
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 1560,
+                    "text": "[4]",
+                    "end": 1563
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "Deep learning [29], the use of architectures with many layers, has had considerable success in tasks like image recognition [30,31] and natural language processing [32] and has been made possible by several advances that mitigate the deficiencies of traditional MLPs. Instead of relying on engineered features as inputs, the development of structures like CNNs have made it possible to robustly and automatically extract learned features. To allow for the efficient training of deep structures, saturating non-linearities are frequently replaced by rectified linear units (ReLU) [33], defined as f (x) = max(0, x), which is non-saturating. Finally, over-training is mitigated in fully connected layers using the regularization technique called dropout [34] in which, at every training iteration, each weight is set to zero with a probability r while the remaining weights are scaled up by a factor of 1/(1 \u2212 r) to roughly maintain the overall scale of the value passed through the nonlinearity. In this way, every iteration only uses a random subsample of the possible connections, leading to a final network which is effectively an ensemble of smaller networks.",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 14,
+                    "text": "[29]",
+                    "end": 18
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 124,
+                    "text": "[30,",
+                    "end": 128
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 128,
+                    "text": "31]",
+                    "end": 131
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 164,
+                    "text": "[32]",
+                    "end": 168
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 579,
+                    "text": "[33]",
+                    "end": 583
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 752,
+                    "text": "[34]",
+                    "end": 756
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "In this paper we will focus on CNNs, which have been highly successful in the field of computer vision for classification and other tasks [30,35]. The technique was inspired by studies of the visual cortex of animals [36]. In these studies, it was found that the visual cortex contains simple cells, which are sensitive to edge-like features within small regions of the retina, and complex cells, which are receptive to collections of simple cells and are sensitive to position independent edge-like features. These structures can be modeled by performing discrete convolutions to extract simple features across the visual field. CNNs mimic this structure using a series of convolutional layers that extract a set of features from the input image and pooling layers that perform dimensionality reduction and add translational invariance.",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 138,
+                    "text": "[30,",
+                    "end": 142
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 142,
+                    "text": "35]",
+                    "end": 145
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 217,
+                    "text": "[36]",
+                    "end": 221
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "The data passed from layer to layer in a CNN has a three dimensional structure -height, width, and channel number. Height and width refer to the dimensions of the input image, and channel number is defined in analogy with the RGB channels of color images. For an n \u00d7 m convolutional layer, the input data is transformed according to,",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "where ( f * g) p,q,r refers to the (p, q) pixel of the r channel of the transformed image, n and m are the height and width of the convolutional kernel, c is the number of channels of the input image, f is a filter, and g is an array corresponding to pixel intensities of the input image. The filter f is a four dimensional tensor where i and j index the height and width of the filter, k indexes the input channel, and r indexes the output channel, and it is trained to identify features within the image. For a fixed k and r, the filter, f , can be thought of as an n \u00d7 m convolutional kernel. After applying a separate convolutional kernel to each channel and performing a weighted sum across channel, the resulting output image is known as a feature map. The range of the r dimension determines the number of c stacks of n \u00d7 m convolutional kernels that are trained. Each of these stacks of kernels produces a feature map which are stored in the channel dimension of the layer output. Finally, each output pixel is operated on by a non-linear function. In this way, convolutional layers [29] produce many alternative representations of the input image, each serving to extract some feature which is learned from the training sample. At early stages, the feature maps often resemble the original image with certain elements emphasized, but they become more abstract at later stages of the network.",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 1091,
+                    "text": "[29]",
+                    "end": 1095
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "Since each convolutional layer generates many feature maps which have comparable dimensions to the original input image, the memory requirements and number of operations needed to evaluate the network can grow dramatically. Pooling is a technique to down-sample the size of feature maps; we have made use of two pooling techniques max pooling and average pooling [35]. In n \u00d7 m max pooling, the image is down-sampled by replacing an n \u00d7 m region of the image with a single value corresponding to the maximum value in that region; in average pooling the average value is used. The pooled regions may be chosen to overlap [30,31] to reduce information loss. Since each pixel after pooling corresponds to n \u00d7 m before pooling, small translations in input features result in identical output. This decreases the network's sensitivity to the absolute location of elements in the image.",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 363,
+                    "text": "[35]",
+                    "end": 367
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 620,
+                    "text": "[30,",
+                    "end": 624
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 624,
+                    "text": "31]",
+                    "end": 627
+                }
+            ]
+        },
+        {
+            "section": "Deep Learning and Convolutional Neural Networks",
+            "text": "The network we will describe in this paper is inspired by the GoogLeNet [31] architecture, which excelled at the ImageNet image classification task [37]. The core of GoogLeNet's power comes from its use of the network-in-network (NIN) [38] approach to augment the learning capacity of convolutional layers while also reducing dimensionality. In NIN the main network is composed of repeating sub-networks, where each sub-network resembles a complete conventional CNN with convolution layers at a variety of scales to capture complex behavior. To avoid exponentially increasing the number of feature maps, NINs use a convolutional layer applying 1 \u00d7 1 convolutional kernels. This performs a weighted sum over feature maps to down-sample into a smaller number of maps. The sub-network in the GoogLeNet architecture, called the inception module, is shown in Figure 1. Each branch of the inception module applies filters which extract features of various scales. The GoogLeNet architecture also makes use of the technique local response normalization (LRN) in which the response of a given cell in a kernel map is normalized relative to the activity of adjacent kernel maps. This creates competition for large valued features between outputs computed by different kernels which helps the network avoid local minima and to converge to a more optimal set of weights.",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 72,
+                    "text": "[31]",
+                    "end": 76
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 148,
+                    "text": "[37]",
+                    "end": 152
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 235,
+                    "text": "[38]",
+                    "end": 239
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 854,
+                    "text": "Figure 1",
+                    "end": 862
+                }
+            ]
+        },
+        {
+            "text": "Application to NOvA event classification",
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "We have developed and trained our own CNN, \"CVN\", for the identification of neutrino events recorded by the NOvA experiment. NOvA aims to make precision measurements of neutrino oscillation parameters via the disappearance of \u03bd \u00b5 and appearance of \u03bd e from neutrino oscillation. NOvA consists of two functionally identical detectors in the NuMI (Neutrinos at the Main Injector) beam [39] at Fermilab which produces a focused beam with an initial flavor composition largely dominated by \u03bd \u00b5 and a small intrinsic \u03bd \u00b5 , \u03bd e , and \u03bd e components. Placing the detectors off-axis at 14.6 mrad provides a narrow-band neutrino energy spectrum near 2 GeV. The Near Detector, located at Fermilab, is placed 1 km from the neutrino source; the Far Detector is located 810 km away near Ash River, Minnesota. The NOvA detectors are composed of extruded PVC cells filled with liquid scintillator which segment the detector into cells with a cross section 3.9 cm wide \u00d7 6.6 cm deep. The cells are 15.5 m long in the Far Detector. Scintillation light from charged particles can be captured by a wavelength shifting fiber which runs through each cell. The end of the fiber is exposed to a single pixel on an avalanche photo-diode array to record the intensity and arrival time of photon signals. The spatial and absolute response of the detector to deposited light is calibrated out using physical standard candles, such that a calibrated response can be derived which is a good estimate of the true deposited energy. Parallel cells are arrayed into planes, which are configured in alternating horizontal and vertical alignments to provide separate, interleaved X-Z, and Y-Z views. The 14,000 ton Far Detector, which is used for the training and evaluation of CVN in this paper, consists of 344,064 total channels arranged into 896 planes each 384 cells wide [6]. Information from the two views can be merged to allow 3D event reconstruction. A schematic of the detector design can be seen in Figure 2.",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 383,
+                    "text": "[39]",
+                    "end": 387
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1842,
+                    "text": "[6]",
+                    "end": 1845
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1976,
+                    "text": "Figure 2",
+                    "end": 1984
+                }
+            ]
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "-4 - Like any single layer, the inception module takes the set of feature maps produced by the previous layer as input. It then distributes those feature maps to branches, each with filters at different scales. NIN architecture is implemented with 1 \u00d7 1 convolutions to down-sample into a smaller number of maps, maintaining the dimensionality of the input maps. Separate branches perform 3 \u00d7 3 and 5 \u00d7 5 convolution, as well as 3 \u00d7 3 overlapping pooling. The filtered outputs from each branch are then concatenated to produce an output to the next layer with the same number of feature maps, each with the same dimensions, as were passed as input to the inception module.",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "Reconstruction of the neutrino energy and flavor state at the detector is essential to neutrino oscillation measurements. The neutrino flavor state can be determined in charged-current (CC) interactions which leave a charged lepton in the final state; an electron in the case of \u03bd e , a muon in the case of \u03bd \u00b5 , or a tau in the case of \u03bd \u03c4 . Neutral-current (NC) interactions bear no signature of the flavor of the interacting neutrino and are thus a background for the charged-current analyses, but may be signal events in other searches.",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "To support these analyses, we constructed the CVN identifier to characterize candidate neutrino events into one of the following interaction types.",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "\u2022 \u03bd \u00b5 CC-A muon plus a hadronic component. One of the main topological features of these events is the long, low dE/dx track corresponding to the track of a minimally ionizing muon.",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "\u2022 \u03bd e CC-An electron plus a hadronic component. The electron topology is typically a wide shower, rather than a track, whose dimensions are related to the radiation length of the detector material.",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "\u2022 \u03bd \u03c4 CC-A tau plus a hadronic component. The tau is extremely short lived and not visible in the NOvA detector but decays immediately with varying final state probabilities that may produce pions, electrons, muons, and neutrinos. The production threshold for these events is 3.4 GeV, at the upper end of the energy spectrum seen in the NOvA detectors. \u2022 \u03bd NC-The outgoing lepton in these interactions is a neutrino, which will travel onward undetected. Thus, only the hadronic component of these events is visible, making their flavor impossible to identify.",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "While it is useful to think about each category as a particular iconic topology, misidentification can still occur. In particular NC interactions can be mistaken for CC interactions when they produce pions which look like leptonic activity. A charged pion track can appear quite similar to a muon track, with the exception of a spike in energy deposition at the end of the track. A neutral pion will rapidly decay to produce a pair of photons which themselves produce electromagnetic showers, which are difficult to distinguish from showers produced by an electron, unless you can find the telltale gap between the interaction vertex and the shower. By constructing an identification algorithm like CVN, which views the entire event topology, we hope to minimize these misidentification failure modes but they remain a challenge.",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "section": "Application to NOvA event classification",
+            "text": "CC interactions were further divided into quasi-elastic (QE), resonant (RES), and deep-inelasticscattering (DIS) categories which vary in the complexity of the hadronic portion of the event. QE events are two-bodied with the nucleon recoiling intact from the scattering lepton. In RES events the nucleon is knocked into a baryonic resonance and decays back down to the nucleon with associated hadrons, and in higher energy DIS events the nucleon breaks up in the process of hadronization. Figure 3 shows example, simulated, events from these categories as they might be recorded by the NOvA detectors. While the network shows some promise in being able to categorize events at this detailed level, for now we have focused only on neutrino event flavor identification by combining the outputs of these detailed subdivisions into the four categories in the list above.  (b) A \u03bd e CC RES electron plus hadron shower signature with a characteristic electron shower and short prongs which could correspond to multiple hadrons.",
+            "paragraph_rank": 22,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 489,
+                    "text": "Figure 3",
+                    "end": 497
+                }
+            ]
+        },
+        {
+            "text": "NOvA -FNAL E929",
+            "section_rank": 5
+        },
+        {
+            "section": "NOvA -FNAL E929",
+            "text": "Run: 18571 / (c) A \u03bd \u00b5 CC QE muon plus one hadron signature with a long track-like prong with lower charger-per-cell corresponding to a muon and a short prong with larger chargeper-cell corresponding to a proton. Each panel is the side view of a section of the NOvA detector, as depicted in Figure 2. The charge measured in each cell in units of ADC is indicated by color.",
+            "paragraph_rank": 23,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 291,
+                    "text": "Figure 2",
+                    "end": 299
+                }
+            ]
+        },
+        {
+            "section": "NOvA -FNAL E929",
+            "text": "-7 -",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "section": "NOvA -FNAL E929",
+            "text": "The input to CVN was formed first by clustering energy deposits recorded in each scintillator column together in space and time into slices. These slices efficiently separate deposits due to neutrino interactions from those due to cosmic ray interactions and remove nearly all energy deposits due to noise. Grids 100 planes deep and 80 cells wide are chosen which contain the slice. Two separate grids were made for the x \u2212 z and y \u2212 z detector views. These grids are windows of the detector activity 14.52 m deep and 4.18 m wide. The upstream side of the window was chosen to align with the first plane that contains a detector hit and the window is centered on the median hit cell position. The size and placement of this window ensured that the majority of neutrino events, including muon neutrino CC interactions, are fully contained. The intensity of each pixel in this grid is proportional to the calibrated energy deposition in each scintillator column allowing these projections to naturally be interpreted as grayscale images.",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "section": "NOvA -FNAL E929",
+            "text": "In order to optimize data storage and transfer in the training stage, the pixel intensities were encoded using 8-bits which saturate for hits with energy above 278 MeV. This conversion offers a factor of eight savings over a floating point representation without significantly compromising the representational capacity, as shown in Figure 4. These savings were especially important in reading data from disk into memory during training. This map of 8-bit resolution hits, roughly analogous to an image, was the input to our neural network. Figure 5 shows examples of the input to the neural network for three distinct neutrino interaction types.  ",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 333,
+                    "text": "Figure 4",
+                    "end": 341
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 541,
+                    "text": "Figure 5",
+                    "end": 549
+                }
+            ]
+        },
+        {
+            "text": "CVN Architecture",
+            "section_rank": 6
+        },
+        {
+            "section": "CVN Architecture",
+            "text": "Our implementation of CVN was developed using the Caffe [40] framework.",
+            "paragraph_rank": 27,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 56,
+                    "text": "[40]",
+                    "end": 60
+                }
+            ]
+        },
+        {
+            "section": "CVN Architecture",
+            "text": "Caffe is an open framework for deep learning applications which is highly modular and makes accelerated training on graphics processing units straightforward.   Input given to the CNN for an example \u03bd \u00b5 CC interaction (top), \u03bd e CC interaction (middle), and \u03bd NC interaction (bottom). Hits in the X view of the NOvA detector are shown on the left, and hits in the Y view are shown on the right.",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "section": "CVN Architecture",
+            "text": "architecture, and we used this as a starting point for designing our own network which is shown in Figure 6.",
+            "paragraph_rank": 29,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 99,
+                    "text": "Figure 6",
+                    "end": 107
+                }
+            ]
+        },
+        {
+            "section": "CVN Architecture",
+            "text": "The CVN architecture differs from the GoogLeNet architecture in a few important ways. First, unlike most natural image problems, we have two distinct views of the same image rather than a single image described in multiple color channels. In order to best extract the information of each view, the channels corresponding to the X and Y-views were split, and each resulting image was sent down a parallel architecture based on GoogLeNet. Since our images are simpler than natural images, it was found that the nine inception modules used in the GoogLeNet network did not improve our results; therefore, we truncated the parallel GoogLeNet networks after three inception modules. At that point, the features from each view were concatenated together and passed through one final inception module to extract combined features. The output of the final inception module was down-sampled using an average pooling layer. During an evaluation (forward) pass, classifier outputs were calculated using the softmax function or normalized exponential function [41] such that the sum of the classifier outputs was always equal to one.",
+            "paragraph_rank": 30,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 1048,
+                    "text": "[41]",
+                    "end": 1052
+                }
+            ]
+        },
+        {
+            "text": "Training",
+            "section_rank": 7
+        },
+        {
+            "section": "Training",
+            "text": "A sample of 4.7 million simulated NOvA Far Detector neutrino events was used as the input to our training, with 80% of the sample used for training and 20% used for testing. FLUKA and FLUGG [42,43] were used to simulate the flux in the NuMI beamline [44]. Before oscillations, the NuMI beam is composed mostly of \u03bd \u00b5 with 2.1% intrinsic \u03bd e contamination. To model \u03bd e and \u03bd \u03c4 appearing through oscillation, we perform simulations where the \u03bd \u00b5 flux has been converted to another flavor. The training sample was composed of one third simulation with the expected, unoscillated flux, one third where the \u03bd \u00b5 flux was converted to \u03bd e , and one third where the \u03bd \u00b5 flux was converted to \u03bd \u03c4 . Neutrino-nucleus interactions were simulated using the GENIE [45] package and GEANT4 [46,47] was used to propagate products of the neutrino interactions through a detailed model of the NOvA detectors. Custom NOvA simulation software converted energy depositions into simulated electronic signals which correspond to the detector output [48]. The only requirements placed on the training events were that they were required to have 15 distinct hits. Distinct categories were created for each GENIE CC interaction mode; (\u03bd \u00b5 \u2212 CC, \u03bd e \u2212 CC, \u03bd \u03c4 \u2212 CC) \u00d7 (QE, RES , DIS , Other) and one category was used for all GENIE NC interactions to give the distribution of events by label shown in Figure 9.",
+            "paragraph_rank": 31,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 190,
+                    "text": "[42,",
+                    "end": 194
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 194,
+                    "text": "43]",
+                    "end": 197
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 250,
+                    "text": "[44]",
+                    "end": 254
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "start": 752,
+                    "text": "[45]",
+                    "end": 756
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "start": 776,
+                    "text": "[46,",
+                    "end": 780
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 780,
+                    "text": "47]",
+                    "end": 783
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "start": 1027,
+                    "text": "[48]",
+                    "end": 1031
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_10",
+                    "start": 1375,
+                    "text": "Figure 9",
+                    "end": 1383
+                }
+            ]
+        },
+        {
+            "section": "Training",
+            "text": "We made use of a Mini-Batch [27] training strategy which simultaneously evaluated 32 training examples in each iteration. During training the final softmax output was used to calculate a multinomial logistic loss [49] by comparing that output to the true target value. We found that we converged to the most optimal versions of CVN by adopting a training strategy whereby the step size of the stochastic gradient descent dropped at fixed intervals. These intervals were chosen to be at points where the network loss improvement rate had plateaued. This strategy, in combination with the vectorized implementation of mini-batch gradient descent within the Caffe framework, allowed for rapid and accurate optimization of our network.",
+            "paragraph_rank": 32,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 28,
+                    "text": "[27]",
+                    "end": 32
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 213,
+                    "text": "[49]",
+                    "end": 217
+                }
+            ]
+        },
+        {
+            "section": "Training",
+            "text": "To ensure that a trained model could reasonably generalize beyond the training sample, we employed multiple regularization techniques. We included penalty terms in the back-propagation calculation which are proportional to the square of the weights, thus constraining them to remain small during training. Keeping the weights small prevented the model from responding too strongly  Figure 6. Diagram of the CNN architecture used for event classification.",
+            "paragraph_rank": 33,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 382,
+                    "text": "Figure 6",
+                    "end": 390
+                }
+            ]
+        },
+        {
+            "section": "Training",
+            "text": "Starting with the input at the bottom, the network has separate branches for the X-view and Y-view. Each branch undergoes successive convolution, pooling, and local response normalization (LRN). Inception modules are used in downstream layers. The two views are merged and passed through a final inception module, and pooled. The output of the network comes from softmax units.",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "section": "Training",
+            "text": "-11 -   Figure 8. Output of the first inception module Shown above are three example input images and corresponding example human readable feature maps from the output of the first inception module in the Y view branch of our trained network. Darker regions indicate greater activation, and since this is the output from an early convolutional layer the regions correspond to the regions of the original image. The top-most feature map shows strong responses only in regions where hadronic activity can be found in the original image and the bottom-most feature map shows strong activation only along the path of the muon track. Shown are an example \u03bd \u00b5 CC DIS interaction (top), \u03bd \u00b5 CC QE interaction (middle), and \u03bd NC interaction (bottom).",
+            "paragraph_rank": 35,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 8,
+                    "text": "Figure 8",
+                    "end": 16
+                }
+            ]
+        },
+        {
+            "section": "Training",
+            "text": "-13 - to any one input feature. In addition, we applied the dropout technique with r = 0.4 in the pooling step immediately before the final fully connected layer. Perhaps the most robust defense against over training is more training data. We augmented our sample using two techniques to add variation to the dataset. First, pixel intensities were varied by adding Gaussian noise with a standard deviation of 1%. Adding noise had the benefit of training the network to rely less heavily on the intensity in each pixel and to adapt to the fluctuations encountered in real data. Second, events were randomly selected to be reflected in the cell dimension, which is roughly transverse to the beam direction. Symmetry in the cell dimension is not perfect; the beam axis is directed 3 \u2022 above detector horizon and attenuation in the optical fiber causes thresholding to become more significant for hits further from the readout electronics. However, these effects are small and their presence in fact aids in enhancing variation of the training sample and the robustness of the training against the precise details of the simulation.",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "section": "Training",
+            "text": "The training of the network presented here was carried out on a pair of NVIDIA Tesla K40s [50] over a full week of GPU hours. Figure 10 shows loss calculated for our training and test samples as a function of number of training iterations; the extremely similar loss on both samples throughout training is a strong indication that the network has not overtrained.",
+            "paragraph_rank": 37,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 126,
+                    "text": "Figure 10",
+                    "end": 135
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 8
+        },
+        {
+            "section": "Results",
+            "text": "The same NOvA simulation and software that allowed us to build our training and test samples also allowed us to readily assess the performance of our identification algorithm. To measure performance we used a statistically independent sample of neutrino interactions from that used in the training and testing of CVN. The sample was weighted by the simulated NOvA flux and by neutrino oscillation probabilities from [51] using the NOvA baseline [6] and matter density calculated from the CRUST 2.0 model of the Earth's crust [52] in order to create a representative mixture of different beam events in the detector. The \u03bd e selection test uses the preselection described in [53], and the \u03bd \u00b5 selection uses the preselection described in [54]. These preselections are designed to reject cosmic backgrounds while retaining well-contained neutrino events inside the signal energy window with high efficiency. We quote our selection efficiencies relative to true contained signal, again matching the approach described in [53] for \u03bd e and [54] for \u03bd \u00b5 tests respectively.",
+            "paragraph_rank": 38,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b51",
+                    "start": 416,
+                    "text": "[51]",
+                    "end": 420
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 445,
+                    "text": "[6]",
+                    "end": 448
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b52",
+                    "start": 525,
+                    "text": "[52]",
+                    "end": 529
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 674,
+                    "text": "[53]",
+                    "end": 678
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 737,
+                    "text": "[54]",
+                    "end": 741
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 1018,
+                    "text": "[53]",
+                    "end": 1022
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 1035,
+                    "text": "[54]",
+                    "end": 1039
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "Since the output of the final softmax layer in CVN is normalized to one, it can be loosely interpreted as a probability of the input event falling in each of the thirteen training categories. For the results presented in this paper a \u03bd e CC classifier was derived from the sum of the four \u03bd e CC component probabilities. Similarly, the four \u03bd \u00b5 CC components were summed to yield a \u03bd \u00b5 CC classification. Figure 11 shows the distribution of the CVN \u03bd e CC classification parameter for true \u03bd e CC events from \u03bd \u00b5 \u2192 \u03bd e oscillation and the various NuMI beam backgrounds broken down by type. Figure 12 shows the cumulative efficiency, purity, and their product when selecting all events above a particular CVN \u03bd e CC classification parameter value. Excellent separation between signal and background is achieved such that the only significant background remaining is that of electron neutrinos present in the beam before oscillation; CVN does not attempt to differentiate between \u03bd e CC events from \u03bd \u00b5 \u2192 \u03bd e oscillation and those from \u03bd e which are produced promptly in the neutrino beam; these differ only in their energy distributions. Figures 11 and 12 also show the performance of the CVN \u03bd \u00b5 CC classification parameter. As with \u03bd e , excellent separation is achieved.",
+            "paragraph_rank": 39,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 405,
+                    "text": "Figure 11",
+                    "end": 414
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 590,
+                    "text": "Figure 12",
+                    "end": 599
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1137,
+                    "text": "Figures 11 and 12",
+                    "end": 1154
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "A common way to assess the performance of a signal selection is to compute a  Figure 11. \u03bd e CC and \u03bd \u00b5 CC classifier output Distribution in \u03bd e CC Classifier output (top) and \u03bd \u00b5 CC Classifier output (bottom) for appearing electron neutrino CC interactions (violet), surviving CC muon neutrino (green), NC interactions (blue), and NuMI beam electron neutrino CC interactions (magenta). The y-axis is truncated in the top figure such that the background is not fully visible in order to better show the signal distribution. Distributions are scaled to a NuMI exposure of 18\u00d710 20 protons on target, full 14-kton Far Detector.  Figure 12. \u03bd e CC and \u03bd \u00b5 CC classifier output performance Cumulative efficiency (blue), purity (red), and their product (green) for \u03bd e CC Classifier output (top) and \u03bd \u00b5 CC Classifier output (bottom). Efficiency is quoted relative to the true contained signal.",
+            "paragraph_rank": 40,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 78,
+                    "text": "Figure 11",
+                    "end": 87
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 627,
+                    "text": "Figure 12",
+                    "end": 636
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "optimizes for a pure sample useful for establishing the presence of the signal S in the presence of the background, while FOM = S / \u221a S + B optimizes for an efficient sample useful for making parameter measurements with the signal S . Table 1 shows the efficiency, purity, and event count at the maximal point for both optimizations when using CVN to select \u03bd e CC events, and for \u03bd \u00b5 CC events. Using CVN we were able to set selection criteria well optimized for either FOM when searching for both surviving \u03bd \u00b5 and appearing \u03bd e events. Perhaps the most important way to assess the performance of the CVN classification parameters is to compare their performance to the sophisticated identification algorithms already used in recent NOvA publications. For \u03bd \u00b5 CC interactions the CVN measurement-optimized efficiency of 58% is comparable to the efficiency of 57% quoted in Ref. [54]. This is a modest improvement but shows that CVN algorithm does not underperform when used to identify a class of events we expect to be particularly clear. For \u03bd e CC interactions the CVN signal-detection-optimized efficiency of 49% is a significant gain over the efficiency of 35% quoted in in Ref. [53]. In both the \u03bd \u00b5 CC and \u03bd e CC cases the CVN purity very closely matches the purity of the samples reported in Refs. [53,54]. The \u03bd e CC efficiency improvement is significant not just because the \u03bd e CC signal is particularly hard to separate from its backgrounds, but additionally because the measurements of \u03bd e -appearance and the associated parameters (\u03b8 13 , neutrino mass hierarchy, etc.) are statistics limited and hence significantly improved by increasing the signal efficiency.",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 235,
+                    "text": "Table 1",
+                    "end": 242
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 880,
+                    "text": "[54]",
+                    "end": 884
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 1186,
+                    "text": "[53]",
+                    "end": 1190
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 1308,
+                    "text": "[53,",
+                    "end": 1312
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 1312,
+                    "text": "54]",
+                    "end": 1315
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "Tests of the CVN selectors response to systematic uncertainties suggest no increased sensitivity to them compared to the the selectors used in Refs. [53,54]. In particular we studied the variation in signal and background selection for our \u03bd \u00b5 CC and \u03bd e CC optimized cuts for a subset of the dominant uncertainties in Refs. [53,54], specifically calibration and scintillator saturation uncertainties. For \u03bd \u00b5 CC interactions the CVN measurement-optimized selection signal sample was sensitive at the 1.9% level, and the extremely small background was sensitive at the 20% level. For \u03bd e CC interactions the CVN signal-detection-optimized selection signal sample was sensitive at the 1.6% level, and the extremely small background was sensitive at the 1.0% level. In both the \u03bd \u00b5 CC and \u03bd e CC cases these shifts are small and comparable to those seen in the selectors used in -18 -Refs. [53,54].",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 149,
+                    "text": "[53,",
+                    "end": 153
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 153,
+                    "text": "54]",
+                    "end": 156
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 325,
+                    "text": "[53,",
+                    "end": 329
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 329,
+                    "text": "54]",
+                    "end": 332
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 888,
+                    "text": "[53,",
+                    "end": 892
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 892,
+                    "text": "54]",
+                    "end": 895
+                }
+            ]
+        },
+        {
+            "text": "Conclusion and future work",
+            "section_rank": 9
+        },
+        {
+            "section": "Conclusion and future work",
+            "text": "With minimal event reconstruction, we were able to build and train a single algorithm which achieved excellent separation of signal and background for both of the NOvA electron-neutrino appearance and muon-neutrino disappearance oscillation channels. This algorithm, CVN, is a powerful approach to the problem of event classification and represents a novel proof of concept -that CNNs can work extremely well with non-natural images like the readout of a sampling calorimeter. We expect this approach to be transferable to a wide range of detector technologies and analyses.",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "section": "Conclusion and future work",
+            "text": "CVN also opens up other possibilities for event classification and reconstruction which we have just started to explore. For example, the same training and architecture reported here can be expanded to include identification of \u03bd NC and \u03bd \u03c4 CC interactions which are used by NOvA in sterile neutrino and exotic physics searches. We also tested the application of CVN to the problem of identification of particles within neutrino events by presenting the algorithm with images of individual, isolated particle clusters [55] along with the images of the overall neutrino event. Initial results have already shown improvements in the efficiency and purity in particle identification over other likelihood methods employed by NOvA and may aid in future cross-section analyses. We are also exploring improvements to cluster-finding and particle identification using semantic segmentation [56] which, starting from the same minimal reconstruction used by CVN, may make it possible to identify the particles which contributed to each \"pixel\" in the detector readout.",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b55",
+                    "start": 518,
+                    "text": "[55]",
+                    "end": 522
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b56",
+                    "start": 883,
+                    "text": "[56]",
+                    "end": 887
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 10
+        },
+        {
+            "section": "Figure 1 .",
+            "text": "Figure 1. Diagram of the inception module",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 11
+        },
+        {
+            "section": "Figure 2 .",
+            "text": "Figure 2. Schematic of the NOvA detector designThe two figures on the right show the views through the top and side of the three-dimensional figure on the left. They show the 'hits' produced as charged particles pass through and deposit energy in the scintillator-filled cells. Illustration courtesy of Fermilab.",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 12
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Figure 3. Simulated events in NOvA",
+            "paragraph_rank": 47,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 13
+        },
+        {
+            "section": "Figure 4 .",
+            "text": "Figure 4. A comparison of the energy spectrum of individual hits using arbitrarily fine binning and using 256 bins. This shows that it is acceptable to encode pixel intensities using 8-bits. In this encoding, the maximum representable energy per pixel is 278 MeV.",
+            "paragraph_rank": 48,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 14
+        },
+        {
+            "section": "Figure 5 .",
+            "text": "Figure 5. Example CNN image input",
+            "paragraph_rank": 49,
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 7 . 7 \u00d7",
+            "section_rank": 15
+        },
+        {
+            "section": "Figure 7 . 7 \u00d7",
+            "text": "Figure 7. 7 \u00d7 7 convolutional filter and example output This figure shows the Y view of an example \u03bd \u00b5 CC interaction (top left), all 64 convolutional filters from the early Y view 7 \u00d7 7 convolutional layer of our trained network (top right), and the output of applying those trained filters to the example event (bottom).",
+            "paragraph_rank": 50,
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 9 .",
+            "section_rank": 16
+        },
+        {
+            "section": "Figure 9 .",
+            "text": "Figure 9. Number of events of each category in our training sample",
+            "paragraph_rank": 51,
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 10 .",
+            "section_rank": 17
+        },
+        {
+            "section": "Figure 10 .",
+            "text": "Figure 10. Loss calculated on the training dataset (blue), loss calculated on the test dataset (green), and accuracy calculated on the test dataset (red) as a function of the number of training iterations the network has seen. The training loss shown here is a rolling window average of 40,000 iterations, such that each point represents the average over 128,000 training examples. Each test iteration is the average loss over 256,000 test examples.",
+            "paragraph_rank": 52,
+            "section_rank": 17
+        },
+        {
+            "text": "Figure of Merit (FOM) given the number of selected signal events S and background events B. The FOM = S /",
+            "paragraph_rank": 53,
+            "section_rank": 18
+        },
+        {
+            "text": "CC QE electron plus one hadron signature where the upward-going showerlike prong with multiple hit cells on each plane corresponds to an electron and the downward-going track-like prong with approximately one hit per plane correspond to a proton.",
+            "paragraph_rank": 54,
+            "section_rank": 19
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 20
+        },
+        {
+            "section": "Table 1 .",
+            "text": "Tables showing relative selected event numbers for the various components of the NuMI beam, efficiency, and purity for two different optimizations for the selection of appearing electron neutrino CC interactions (a) and surviving muon neutrino CC interactions (b). Efficiency is shown here relative to the true contained signal. The numbers are scaled to an exposure of 18 \u00d7 10 20 protons on target, full 14-kton Far Detector.",
+            "paragraph_rank": 55,
+            "section_rank": 20
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 22
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "The authors thank the NOvA collaboration for use of its Monte Carlo simulation software and related tools. We thank Gustav Larsson for useful conversations, and we are grateful for Amitoj Singh and the Fermilab Scientific Computing Division's efforts installing Caffe and maintaining the GPU cluster used for training.",
+            "paragraph_rank": 56,
+            "section_rank": 22
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "This work was supported by the US Department of Energy and the US National Science Foundation. NOvA receives additional support from the Department of Science and Technology, India; the European Research Council; the MSMT CR, Czech Republic; the RAS, RMES, and RFBR, Russia; CNPq and FAPEG, Brazil; and the State and University of Minnesota. We are grateful for the contributions of the staff at the Ash River Laboratory, Argonne National Laboratory, and Fermilab. Fermilab is operated by Fermi Research Alliance, LLC under Contract No. De-AC02-07CH11359 with the US DOE.",
+            "paragraph_rank": 57,
+            "section_rank": 22
+        }
+    ]
+}

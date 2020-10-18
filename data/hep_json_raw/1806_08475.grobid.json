@@ -1,0 +1,605 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "The trigger selection capabilities of the ATLAS detector have been significantly enhanced for the Large Hadron Collider (LHC) Run-2 in order to cope with the higher event rates and with the large number of simultaneous interactions (pile-up) per proton-proton bunch crossing. A new hardware system, designed to analyse real time event-topologies at Level-1 came to full use in 2017. A hardware-based track reconstruction system, expected to be used real-time in Run-3, is designed to provide track information to the high-level software trigger at its full input rate. The high-level trigger selections are largely relying on offline-like reconstruction techniques, and in some cases multi-variate analysis methods. Despite the sudden change in LHC operations during the second half of 2017, which caused an increase in pile-up and therefore also in CPU usage of the trigger algorithms, the set of triggers (so called trigger menu) running online has undergone only minor modifications thanks to the robustness and redundancy of the trigger system and the use of a levelling luminosity scheme in agreement with LHC and other experiments. This paper gives a brief yet comprehensive review of the real-time performance of the ATLAS trigger system in 2017. Considerations will be presented on the most relevant parameters of the trigger (efficiency to collect signal and output data rate) as well as details on some aspects of the algorithms which are run real-time on the High Level Trigger CPU farm.",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "I. INTRODUCTION",
+            "section_rank": 2
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "O NE of the main objectives of the Large Hadron Collider (LHC) physics program in Run-2 is to discover new phenomena beyond the Standard Model (SM) of particle physics. Following the tight constraints set on many Beyond the Standard Model (BSM) scenarios by the Run-1 LHC analyses, a large spectrum of still viable BSM models require very exclusive final states in small regions of the phase space. Another central piece of the LHC physics program is the precision measurement of electroweak and quantum chromodynamics (QCD) processes, as well as a complete mapping of the various Higgs boson couplings and parameters. In order to meet these research objectives, data samples with very high statistics must be used for the searches and the measurements. To maximize the amount of data collected by the detectors, the LHC is constantly increasing the luminosity delivered to the experiments. This constitutes a challenge for the trigger and data acquisition (TDAQ) system of the LHC experiments because of the limited CPU and storage available.",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "During Run-1, the ATLAS trigger system operated efficiently primarily at center-of-mass energies of 7 and 8 TeV and at instantaneous luminosities of up to 8 \u00d7 10 33 cm \u22122 s \u221211 . In Run-2, the center-of-mass energy increased to 13 TeV, enhancing the total proton-proton (pp) cross section by more than a factor of two, therefore increasing the trigger rate by more than 100%. In addition, changes in the LHC beam parameters resulted in an increase of the instantaneous luminosity up to a factor 3, with up to 80 pp-interactions per bunch-crossing (in-time pile-up) in 2017. Finally, a reduction of the bunch spacing from 50 ns to 25 ns added interactions from neighboring bunch-spacing (out-of-time pile-up). These changes in the LHC operation, designed to allow for the experiments to take data samples with larger statistics, made the Run-1 trigger menu completely unsustainable. To preserve the physics program of the experiment, a significant upgrade of the ATLAS trigger system was needed for Run-2.",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "II. RUN-2 IMPROVEMENTS OF THE ATLAS TRIGGER",
+            "section_rank": 3
+        },
+        {
+            "section": "II. RUN-2 IMPROVEMENTS OF THE ATLAS TRIGGER",
+            "text": "SYSTEM Improvements of the hardware, firmware and software parts of the trigger system must aim at a better rate control and processing time per event, higher reconstruction and identification efficiencies with respect to offline selections, and resolution effects closer to offline measurements. A detailed description of the upgrade of the trigger system is presented in [2].",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 373,
+                    "text": "[2]",
+                    "end": 376
+                }
+            ]
+        },
+        {
+            "text": "A. Level 1 Trigger Improvements",
+            "section_rank": 4
+        },
+        {
+            "section": "A. Level 1 Trigger Improvements",
+            "text": "From the hardware perspective, a fourth layer of resistive plate chambers (RPC) was added, before Run-1, to the muon spectrometer in order to recover acceptance lost at the first trigger level (L1) near detector feet and elevator shafts. These chambers were however only equipped with electronics during the long shutdown following Run-1. A net increase of 3.6% in the muon L1 trigger efficiency resulted from this hardware addition while reducing the trigger rate by 60%, thanks to its impact on the suppression of particles not originating from the interaction point.",
+            "paragraph_rank": 4,
+            "section_rank": 4
+        },
+        {
+            "section": "A. Level 1 Trigger Improvements",
+            "text": "Multiple changes have also been brought to the hardware and firmware L1 trigger system. A new Fast Tracking reconstruction system (FTK) has been developed [3], and will become fully operational in Run-3. The FTK system provides global inner detector (ID) track reconstruction at L1, using lookup tables in associative memory chips for pattern recognition. This FPGA-based track fitter performs a fast linear fit and the tracks are made available to the High-Level Trigger system (HLT). The FTK allows for the use of tracks at much higher event rates in the HLT than is affordable using CPU systems, improving, among others, the tau and the B-meson physics (B-physics) trigger performances.",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 155,
+                    "text": "[3]",
+                    "end": 158
+                }
+            ]
+        },
+        {
+            "section": "A. Level 1 Trigger Improvements",
+            "text": "In order to refine the muon and calorimeter-based object kinematic calculations and to make more sophisticated event selections at L1 (e.g. invariant mass cuts, angular distance between jets, etc.), two FPGA-based processor modules (L1-Topo) have been added to the L1 trigger system, and became fully operational in 2017. Consequently, changes to the central trigger processor (CTP) were required (see [2] for details). The improvements made to the CTP and other L1 components allowed for a bunch-by-bunch pedestal subtraction that significantly reduced the rate of L1 jets and missing transverse energy (E miss T ) triggers. It also linearized the L1 trigger rate as a function of the luminosity and the position of bunches in a train, and improved the bunch-crossing identification. Finally, the CTP upgrades allowed to double the number of L1 trigger signatures and bunch-group selections providing more sophisticated trigger chains for very exclusive event topologies. The improvements brought to the entire L1 trigger system allowed for a L1 accept rate of 100 kHz, which constitutes approximatively a 30% increase with respect to the corresponding rate in Run-1. It also made it possible to keep a similar L1 trigger composition as in Run-1 despite the dramatic increase in the luminosity and pile-up.",
+            "paragraph_rank": 6,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 402,
+                    "text": "[2]",
+                    "end": 405
+                }
+            ]
+        },
+        {
+            "text": "B. High Level Trigger Improvements",
+            "section_rank": 5
+        },
+        {
+            "section": "B. High Level Trigger Improvements",
+            "text": "The entire High-Level Trigger (HLT) architecture has been changed after Run-1. The Level 2 and Event Filter farms have been merged to allow for more flexibility, to simplify the hardware and the software, and to remove rate limitations between fast and precision processing by using the resources more efficiently. To deal with the increase in the readout rate due to higher L1 accept rate, but to also increase the output rate of the TDAQ system, the Read-Out System (ROS) has also been upgraded. Thanks to these improvements, data have been stored at a rate of 1.1 kHz in Run-2, almost a factor of 3 increase with respect to Run-1 [2].",
+            "paragraph_rank": 7,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 633,
+                    "text": "[2]",
+                    "end": 636
+                }
+            ]
+        },
+        {
+            "section": "B. High Level Trigger Improvements",
+            "text": "The output rate is however not the only limiting factor; the HLT processing time is also limited by the amount of CPU cores available at HLT. The time taken to process one event at the LHC is determined by both the trigger menu and by the number of pile-up interactions which are continuously increasing with time, as can be seen in Fig. 1. At an instantaneous luminosity of 5.2\u00d710 33 cm \u22122 s \u22121 and an average pile-up of < \u00b5 >= 15, the average HLT processing time is of 230 ms, which is well within the 2-3 seconds time available before time-out. However, as was reported in [2], the average processing time increases with luminosity and pile-up, and the distribution of HLT processing time has a tail that goes well above the time-out threshold. Part of these long-processing events can be recovered thanks to the data stream procedure (debug stream), but there is an imperative need for HLT algorithms to cleverly deal with pile-up to avoid a significant decrease in the triggering performance.    Many improvements have been brought to the online inner detector and muon spectrometer tracking [2]. For example, to limit CPU usage, multiple stage track reconstruction was implemented, thanks to the redesign of the HLT architecture in Run-2. It allows, among other things, to use larger region of interest around L1 objects, to seed hadronic taus or b-quark jets (b-jets) reconstruct for example, before precision tracking exploit aspects of offline tracking to improve resolution and reduce rate at no cost in efficiency, as can be seen in figures 2 and 3.",
+            "paragraph_rank": 8,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 333,
+                    "text": "Fig. 1",
+                    "end": 339
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 576,
+                    "text": "[2]",
+                    "end": 579
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1097,
+                    "text": "[2]",
+                    "end": 1100
+                }
+            ]
+        },
+        {
+            "section": "B. High Level Trigger Improvements",
+            "text": "The signal output from the calorimeter readout is also processed to produce cells or clusters that are then used to reconstruct physics objects like electrons, photons, taus, jets and E miss T . The cells and the clusters are also used in the determination of the shower shape and isolation characteristics  Fig. 3. The trigger track transverse impact parameter resolution of the Inner Detector (ID) trigger for muons with p T > 4 GeV from medium quality offline muon candidates, shown as a function of the offline muon p T . This resolution is evaluated for both a 10 GeV and a 24 GeV muon triggers running in a mode where the trigger decision is made based on early muon candidates reconstructed from the Muon Spectrometer information only and so can contain candidates where the full offline reconstructed muons have a p T lower than the trigger threshold. The ID trigger first runs a Fast Track Finder stage followed by a detailed Precision Tracking stage to refine the track candidates identified in the first stage and improve their quality [4]*.",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 308,
+                    "text": "Fig. 3",
+                    "end": 314
+                }
+            ]
+        },
+        {
+            "section": "B. High Level Trigger Improvements",
+            "text": "of these particles to enhance the purity of their identification. Two different clustering algorithms are used to reconstruct the clusters of energy deposition in the calorimeter: the slidingwindow algorithm [5], and the topo-clustering algorithm [6]. The first stage of their reconstruction consists in unpacking the data from the calorimeter. With the very high amount of pile-up events produced in Run-2, the possibility to reconstruct topoclusters for the full calorimeter on each event was compromised. However, with a new memory caching mechanism allowing for a very fast unpacking of the data, and with the development of offline-like clustering algorithms for HLT, the mean processing time for topo-clustering has been kept to 82 ms, making topoclusters available to tau, jets and E miss T algorithms on every events. An energy correction based on the bunch-crossing identification in a train and the average pile-up contribution for such bunch-crossing is applied to the topoclusters to reduce the out-of-time pile-up distortion of their energy measurement. As a consequence, the energy resolution of the topoclusters reconstructed online is comparable to what is achieved offline.",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 208,
+                    "text": "[5]",
+                    "end": 211
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 247,
+                    "text": "[6]",
+                    "end": 250
+                }
+            ]
+        },
+        {
+            "section": "B. High Level Trigger Improvements",
+            "text": "Building on these various improvements, the trigger menu composition and the lowest transverse energy/momentum thresholds used by the different trigger objects for selecting events without random rejection (i.e. without prescale) has been designed to comply with the requirement of the LHC physics program. In 2015, it was even more inclusive than it was in Run-1. To maximize the output of the experiment relevant to the complete set of physics analyses to be carried during Run-2, the trigger menu is optimized for several luminosity ranges, changing even during a fill to use all available resources while the instantaneous luminosity and the average pile-up drop during a fill. An example of the bandwidth usage of the various triggering objects is presented in Fig. 4  the streaming strategy has been simplified: rather than using different data collection tags (streams) for events with muons (muon stream), electrons and photons (egamma stream), and jets, taus and E miss T objects (JetTauETmiss stream), only one single Main Physics stream as been used to channel all the events to be used in most physics analyses. This change reduced event duplication, thus reducing storage and CPU resources required for online reconstruction by roughly 10%. In addition, a new streaming strategy, based on a partial event storage of only HLT reconstructed objects, sacrificing the ATLAS detector data needed for offline reconstruction, has been developed in Run-2. Such streams are used for calibration purposed, and to carry Trigger-Level Analyses (TLA) [7]. Such analyses are particularly useful for physics studies where the phase space probed is at kinematics lower than what is provided by the lowest unprescaled triggers. For example, more than one order of magnitude of dijet low p T events can be recovered by the Trigger-Level Analyses compared to what standard offline analyses can afford [2]. This is another example of how creativity on real-time analysis serve the physics objective of the experiment.",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 766,
+                    "text": "Fig. 4",
+                    "end": 772
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1551,
+                    "text": "[7]",
+                    "end": 1554
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1895,
+                    "text": "[2]",
+                    "end": 1898
+                }
+            ]
+        },
+        {
+            "text": "III. EXAMPLES OF REAL TIME DATA ANALYSES",
+            "section_rank": 6
+        },
+        {
+            "section": "III. EXAMPLES OF REAL TIME DATA ANALYSES",
+            "text": "Inner detector and muon spectrometer tracks, as well as calorimeter cells and clusters, are not directly used to select events at trigger level but are used as ingredients to reconstruct electrons, muons, taus, jets, b-jets, and E miss T objects. In turn, these objects can be used to select multiple particle events, such as the triggers dedicated to B-physics for example 2 .",
+            "paragraph_rank": 12,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 374,
+                    "text": "2",
+                    "end": 375
+                }
+            ]
+        },
+        {
+            "section": "III. EXAMPLES OF REAL TIME DATA ANALYSES",
+            "text": "The reconstruction and identification of these particles is critical for selecting as many events containing W bosons, Z bosons, H bosons and top-quarks as possible, on which most of the LHC precision measurements bare. The particles reconstructed at trigger level are also used to signal new phenomena. Inefficiencies in their reconstruction, or too high kinematic thresholds could compromise a BSM discovery or the precision of the SM parameters and cross sections to be obtained from these data. The task of the trigger is therefore to control rates in a way that keeps very high efficiency particle selections with thresholds as low as possible.",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "section": "III. EXAMPLES OF REAL TIME DATA ANALYSES",
+            "text": "Because of the small cross section and the small fake rate for processes involving multiple reconstructed particles when one of them is an electron or a muon, the largest trigger bandwidth is attributed to the lowest unprescaled single lepton (electron, muon, and tau) triggers. This is illustrated in Fig. 5 that gives an example of the single electron trigger rate compared to the dielectron trigger rate with even lower p T threshold on each electrons (top), as well as an estimate of the physics processes contributing to the lowest unprescaled single electron trigger used in 2016 (bottom). Similar patterns apply to muons. Jets are however more tricky. Because the LHC is a hadron collider, realm of the strong interaction, the production rate of dijet and multijet events is so large that the jet thresholds have to be very high to keep rates manageable. For example, the lowest unprescale single jet trigger has a threshold of 360 GeV, more than one order of magnitude larger than for the corresponding electron and muon triggers. Similar arguments apply to tau and E miss T . That was already the case in Run-1. However, in Run-2, these triggers had to also develop strategies to stay robust against pile-up in order to keep the thresholds relatively stable with respect to what they were in Run-1. Improvements in the different object reconstruction algorithms, building on the improvements of the overall trigger system presented in Sec. II, succeeded in meeting the objective of keeping high efficiency at comparable kinematic thresholds as in Run-1 for all particles (electrons (e), muons (\u00b5), taus (\u03c4 ), etc.). Some of these successes are summarized below.",
+            "paragraph_rank": 14,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 302,
+                    "text": "Fig. 5",
+                    "end": 308
+                }
+            ]
+        },
+        {
+            "text": "A. Electron trigger",
+            "section_rank": 7
+        },
+        {
+            "section": "A. Electron trigger",
+            "text": "Like any other object, the objective of HLT electron reconstruction algorithms is to reject events as fast as possible, while identifying electrons and reconstructing their kinematics almost as efficiently and accurately as what can be done offline. Because of the Run-2 improvements to the ATLAS TDAQ system, especially of the better CPU time management at the HLT, multivariate techniques are now being used online to a) calibrate the energy of the clusters used to reconstruct electrons and photons; and b) implement the likelihood discriminant developed offline to identify electrons with a better purity vs efficiency figure of merit. Three working points are used at HLT: loose, medium, and tight. The composition of the likelihood is the same as offline, with the exception of the momentum loss due to bremsstrahlung that is not accounted for in the online algorithm. This approach has a better rejection for the same efficiency as the simple cutbase approach that was used in Run-1, or, conversely, a better efficiency for the same rate, as is demonstrated in Fig. 6 with simulation. Because of the high rejection rate of these electron identification algorithms, the lowest unprescaled p T threshold at the HLT can be kept very close to the corresponding threshold at L1. This is impressive because the L1 accept rate is about 100 times larger than the HLT output. In Fig. 7 we can see that the HLT efficiency turn-on curve is steeper than the L1 one. The cost for keeping such a low HLT threshold is however that a 100% efficiency is never reached by the HLT identification algorithm compared to offline. Comparing the top and bottom panel of Fig. 8 shows that the tighter is the identification working point, the larger is the signal efficiency lost. However, increasing the p T threshold well beyond 30 GeV would compromise the precision measurements of many important physics parameters such as the W mass [8]. It is therefore better to sacrifice a few percent efficiency for all p T , to keep the bulk of the electron p T distribution. These hard  Fig. 6. Comparison of the likelihood-base and the cut-base HLT electron triggers efficiency as a function of the offline electron candidate's transverse energy E T with respect to true reconstructed electrons in Z \u2192 ee simulation. The HLT e24 medium iloose L1EM18VH trigger is the Run-1 algorithm requiring an electron candidate with E T > 24 GeV satisfying the cutbased medium identification, while HLT e24 lhmedium iloose L1EM18VH corresponds to the Run-2 algorithm using the likelihood-based lhmedium electron identification. Both trigger chains also require the same track isolation selection and are seeded by the same level-1 trigger (L1 EM18VH) [4]*.  Fig. 7. Efficiency of the L1 EM20VHI trigger (circles) as well as the combined L1 EM20VHI and HLT e24 lhtight nod0 ivarloose trigger (blue triangles) as a function of the offline electron candidate's transverse energy (E T ). A variable-size cone isolation criteria is applied (\"ivarloose\"). The HLT trigger requires an electron candidate with E T > 24 GeV satisfying the likelihood-based tight identification. The offline reconstructed electron is required to pass a likelihood-based tight identification [4]*.",
+            "paragraph_rank": 15,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 1068,
+                    "text": "Fig. 6",
+                    "end": 1074
+                },
+                {
+                    "type": "figure",
+                    "start": 1377,
+                    "text": "Fig. 7",
+                    "end": 1383
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 1653,
+                    "text": "Fig. 8",
+                    "end": 1659
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 1919,
+                    "text": "[8]",
+                    "end": 1922
+                },
+                {
+                    "type": "figure",
+                    "start": 2062,
+                    "text": "Fig. 6",
+                    "end": 2068
+                },
+                {
+                    "type": "figure",
+                    "start": 2721,
+                    "text": "Fig. 7",
+                    "end": 2727
+                }
+            ]
+        },
+        {
+            "section": "A. Electron trigger",
+            "text": "decisions have to be taken, while designing the trigger menu, by the whole ATLAS community, but the high performance of the trigger makes this decision easier. Note, as we can see in Fig. 8, that the data to Monte Carlo agreement is excellent, showing that we have a good understanding of the behavior of this trigger.",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 183,
+                    "text": "Fig. 8",
+                    "end": 189
+                }
+            ]
+        },
+        {
+            "text": "B. Muon trigger",
+            "section_rank": 8
+        },
+        {
+            "section": "B. Muon trigger",
+            "text": "For the muon triggers, the largest challenge is not so much the large background reduction, but the efficiency lost at L1 due to limited instrumentation coverage. As can be seen in Fig. 9, there are significant variations of the L1 muon trigger efficiency as a function of the azimuth angle \u03c6 because of the limited RPC coverage for central rapidity (|\u03b7| < 1.05) due to the detector feet, elevator shafts, and toroid magnets. We can see that the HLT adds almost no inefficiency in selecting muons that can be reconstructed offline compared to the L1 trigger as HLT and offline both use the same detector signal. Fig. 10 presents the muon trigger efficiency with respect to offline as a function of the transverse momentum of the offline muons. We can see on the top panel that the L1 inefficiency due to the lack of coverage of the RPC chambers amounts to about 30%. The problem is however about three times smaller for the region covered by the TGC detector, as can be seen on the bottom panel of Fig. 10. In both cases we can see that the HLT-only muon trigger algorithm is performing very similarly than the offline muon reconstruction and identification algorithm: the HLT turn-on curve with respect to L1 is very close to be a step function. Note that despite this limit of acceptance, the trigger and offline reconstruction algorithm are very precise and the background usually well understood, such that measurements in the muon channel are often the most precise. ",
+            "paragraph_rank": 17,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 181,
+                    "text": "Fig. 9",
+                    "end": 187
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 612,
+                    "text": "Fig. 10",
+                    "end": 619
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 998,
+                    "text": "Fig. 10",
+                    "end": 1005
+                }
+            ]
+        },
+        {
+            "text": "C. Jet trigger",
+            "section_rank": 9
+        },
+        {
+            "section": "C. Jet trigger",
+            "text": "Beside the rate difficulties discussed above, the main challenges for jet triggers at the HLT are to preform an accurate calibration of the jets and to efficiently trigger on them in a high pile-up environment. As presented in Sec. II-B, topoclusters, very similar to the offline ones, are used as input to the HLT jet algorithm. Jets are then calibrated in a twostep procedure similar to that adopted for offline analyses: first, pile-up contribution is subtracted on an event-by-event basis using the calculated area of each jet and the measured energy density in the central part of the calorimeter; second, the response of the calorimeter is corrected using a series of p T -and \u03b7dependent calibration factors derived from simulation. The calibration strategy is continually improving as can be seen in Fig. 11. Starting in 2017, the calibration also uses track information. The sharp HLT efficiency turnon curves presented in this figure prove that there is a good agreement between the HLT and the offline jet energy measurements. Note that on the contrary to electron and muon efficiency measurements, a bootstrap method [9] is used to obtain the jet trigger efficiency as is illustrated on the top panel of Fig. 12. Many physics analyses focus on events with heavily boosted massive particles decaying to multiple jets that are collimated. To avoid large efficiency lost due to jet reconstruction algorithm not adapted to this kind of event topologies, the jet reconstruction algorithm is fast enough to be run twice on an event in order to produce large size (large-R) jets from the output of the standard jet algorithm. Special jet trigger elements are then added to the menu to efficiently select such large-jet events. The performance of this jet algorithm is illustrated on the bottom panel of Fig. 12.",
+            "paragraph_rank": 18,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 807,
+                    "text": "Fig. 11",
+                    "end": 814
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 1128,
+                    "text": "[9]",
+                    "end": 1131
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1215,
+                    "text": "Fig. 12",
+                    "end": 1222
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1807,
+                    "text": "Fig. 12",
+                    "end": 1814
+                }
+            ]
+        },
+        {
+            "text": "D. Tau trigger",
+            "section_rank": 10
+        },
+        {
+            "section": "D. Tau trigger",
+            "text": "While data samples enriched in leptonically decaying tau particles are selected by electron and muon triggers, hadronically decaying taus require a dedicated trigger. These are in essence narrow jets. Keeping the tau trigger rates under control for p T thresholds low enough for the physics of interest is particularly challenging. To meet this objective, a 3-step reconstruction algorithm is deployed at the HLT. In the first step, narrow calorimeter energy deposits are identified from the reconstructed topoclusters found in a cone of size \u2206R = 0.2 around the L1 object used to seed the HLT. In a second step, tau candidates are selected if there is a small  number of reconstructed tracks pointing to the tau cluster, with the leading track central to it. Finally, a collection of variables built from the topoclusters and the tracks obtained by a precision tracking algorithm is used in a Boosted Decision Tree (BDT) multivariate algorithm to produce a score with which the final tau identification is done. To maximize the correlation between online and offline identifications, the BDT is trained using offline inputs. To mitigate pile-up effects, all variables used in the BDT are corrected according to the expected average interaction per bunch-crossing. Measurements of the tau trigger efficiency as a function of the offline tau p T have been obtained using the tag-and-probe technique on high purity samples. Results are presented in Fig. 13. As can be seen on this figure, the tau trigger efficiency is well-modeled by the Monte Carlo (top panel), and the HLT is only adding a marginal extra source of inefficiency compare to L1 (bottom panel). ",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1447,
+                    "text": "Fig. 13",
+                    "end": 1454
+                }
+            ]
+        },
+        {
+            "text": "E. E miss",
+            "section_rank": 11
+        },
+        {
+            "text": "T trigger",
+            "section_rank": 12
+        },
+        {
+            "section": "T trigger",
+            "text": "The largest challenges however probably come from the E miss T triggers which require information about the entire detector, but which is also highly sensitive to pile-up. To benefit from the pile-up removal from jet energy measurements at the HLT, an offline-like E miss T was developed using trigger jets as input (MHT) rather than calorimeter cells or topoclusters. While such a reconstruction algorithm performed very well in 2015 and in early 2016, it rapidly became clear that this was not sufficient: the MHT algorithm is exponentially dependent on the pile-up increase. During the shutdown between Run-1 and Run-2 another algorithm was developed that was suppressing pile-up energy on an event-by-event basis beyond what is reconstructed in the jets. This algorithm uses topoclusters energy in regions of the calorimeter where the hadronic activity is less intense, and then performs a fit, under the assumption that the total pile-up does contribute to no net E miss T , to estimate the pile-up contribution to regions of the detector where the hadronic activity of the main process is likely to be situated [2]. As can be seen in Fig. 14, this algorithm (PuFit) succeeded in linearizing the E miss T rate dependence on pile-up, allowing much lower thresholds than would be otherwise possible. As can be seen in Fig. 15, the PuFit algorithm is even a little bit more efficient than the MHT algorithm, despite being much more different than the offline E miss T reconstruction algorithm. Note that because of L1 improvements presented above, the L1 threshold is kept so low (50 GeV) that the only source of inefficiency with respect to offline comes from the much more precise HLT algorithms.",
+            "paragraph_rank": 20,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1117,
+                    "text": "[2]",
+                    "end": 1120
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1140,
+                    "text": "Fig. 14, this",
+                    "end": 1153
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1321,
+                    "text": "Fig. 15",
+                    "end": 1328
+                }
+            ]
+        },
+        {
+            "text": "IV. CONCLUSION",
+            "section_rank": 13
+        },
+        {
+            "section": "IV. CONCLUSION",
+            "text": "Large statistic data samples constitute one of the key ingredients for exploring new physics and performing highprecision measurements. To do this, the LHC luminosity is continually increased. This constitutes a challenge for data-taking. To cope with the high luminosity and pile-up conditions of LHC in Run-2, the ATLAS TDAQ system went through a series of hardware, firmware, and software upgrades. At L1, these improvements led to a 30% bandwidth increase as well as in the capacity to efficiently select events with a broader range of topologies. At the HLT, they allowed for the development of more performant algorithms deployed on all events such as the multistage track reconstruction and the full calorimeter scan topocluster formation with powerful pile-up mitigation. Information from tracks and calorimeter clusters are then used to efficiently select events with electrons, muons, taus, jets, and E miss T , often even exploiting multivariate techniques. Stronger correlations in the energy measurements of objects reconstructed online and offline have been observed compared to Run-1. Thanks to all these improvements, ATLAS succeeded in selecting with high performance the events needed for the success of its Run-2 physics program. New challenges are now awaiting for Run-3!",
+            "paragraph_rank": 21,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 1 .",
+            "section_rank": 14
+        },
+        {
+            "section": "Fig. 1 .",
+            "text": "Fig. 1. Luminosity-weighted distribution of the mean number of interactions per bunch crossing for the 2015-2018 pp collision data at 13 TeV centre-ofmass energy. The mean number of interactions per bunch crossing corresponds to the mean of the poisson distribution of the number of interactions per crossing calculated for each bunch. It is calculated from the instantaneous per bunch luminosity as \u00b5 = L bunch \u00d7 \u03c3 intel /fr, where L bunch is the per bunch instantaneous luminosity, \u03c3 inel is the inelastic cross section which was taken to be 80 mb for 13 TeV collisions, and fr is the LHC revolution frequency [4]*.",
+            "paragraph_rank": 22,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 15
+        },
+        {
+            "section": "Fig. 2 .",
+            "text": "Fig. 2. The track finding efficiency of the Inner Detector (ID) trigger for tracks with p T > 1 GeV within jets shown as a function of the multiplicity of the mean number of pileup interactions in the event. For the jet and Bjet triggers the reconstruction in the ID trigger runs in three stages[4].*",
+            "paragraph_rank": 23,
+            "section_rank": 15
+        },
+        {
+            "text": "trigger : Fast Track Finder 10 GeV Muon trigger : Precision Tracking 24 GeV Muon trigger : Fast Track Finder 24 GeV Muon trigger : Precision Tracking 10 GeV Muon trigger : Fast Track Finder 10 GeV Muon trigger : Precision Tracking 24 GeV Muon trigger : Fast Track Finder 24 GeV Muon trigger : Precision Tracking 10 GeV Muon trigger : Fast Track Finder 10 GeV Muon trigger : Precision Tracking 24 GeV Muon trigger : Fast Track Finder 24 GeV Muon trigger : Precision Tracking 10 GeV Muon trigger : Fast Track Finder 10 GeV Muon trigger : Precision Tracking 24 GeV Muon trigger : Fast Track Finder 24 GeV Muon trigger : Precision Tracking",
+            "paragraph_rank": 24,
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 4 .",
+            "section_rank": 17
+        },
+        {
+            "section": "Fig. 4 .",
+            "text": "Fig. 4. HLT trigger rates grouped by trigger signature during an LHC fill in July 2016 with a peak luminosity of 1.02 \u00d7 10 34 cm \u22122 s \u22121 [4]. Due to overlaps the sum of the individual groups is higher than the Main physics stream rate, which is shown as a black line. Multi-object triggers are included in the b-jets and tau groups. The B-physics triggers are mainly muon-based triggers. The combined group includes multiple triggers combining different trigger signatures such as electrons with muons, taus, jets or E miss T . Common features to all rates are their exponential decay with decreasing luminosity during an LHC fill. The rates periodically increase due to change of prescales to optimize the bandwidth usage, dips are due to deadtime, and spikes are caused by detector noise*.",
+            "paragraph_rank": 25,
+            "section_rank": 17
+        },
+        {
+            "text": "Fig. 5 .",
+            "section_rank": 18
+        },
+        {
+            "section": "Fig. 5 .",
+            "text": "Fig. 5. Top: Output rates of the single-electron and di-electron primary triggers as a function of the un-calibrated instantaneous luminosity measured online during the 2016 proton-proton data taking at a center-of-mass energy of 13 TeV [4]*. Bottom: Rate (in Hz) of the isolated single electron trigger as a function of the E T threshold at the high-level trigger (HLT) in the [26,72] GeV range, for the same likelihood-based tight identification and Level-1 selections. The rate is measured in a dataset collected at a constant instantaneous luminosity of 8 \u00d7 10 33 cm \u22122 s \u22121 at \u221a s = 13 TeV, while the contribution from W, Z and multi-jet production is estimated with Monte Carlo. The dominant uncertainty on the multi-jet rate is evaluated with a data-driven technique [4]*.",
+            "paragraph_rank": 26,
+            "section_rank": 18
+        },
+        {
+            "text": "Fig. 8 .",
+            "section_rank": 19
+        },
+        {
+            "section": "Fig. 8 .",
+            "text": "Fig. 8. Efficiency of the HLT likelihood-base electron trigger as a function of the offline electron candidate's transverse energy (E T ) as measured with the tab and probe method on a sample of 2017 ATLAS data as well as on a Z \u2192 ee Monte Carlo sample [4]*. The data-to-MC agreement is very good. The efficiency is calculated for two different trigger chain: an electron candidate with E T > 24 GeV satisfying the likelihood-based very loose identification and seeded by a 20 GeV electron L1 trigger (Top); and an electron candidate with E T > 26 GeV satisfying the likelihood-based tight identification and seeded by a 22 GeV electron L1 trigger (Bottom).",
+            "paragraph_rank": 27,
+            "section_rank": 19
+        },
+        {
+            "text": "Fig. 9 .Fig. 10 .",
+            "section_rank": 20
+        },
+        {
+            "section": "Fig. 9 .Fig. 10 .",
+            "text": "Fig. 9. Absolute efficiency of Level 1 (L1) MU20 trigger and absolute and relative efficiencies of the OR of mu26 ivarmedium with mu50 High Level Triggers (HLT) plotted as a function of \u03c6 of offline muon candidates in the barrel detector region. The efficiency is computed with respect to offline isolated muon candidates which are reconstructed using standard ATLAS software and are required to pass \"Medium\" quality requirement. The selection is restricted to the plateau region with p T > 27 GeV [4]*.",
+            "paragraph_rank": 28,
+            "section_rank": 20
+        },
+        {
+            "text": "Fig. 11 .",
+            "section_rank": 21
+        },
+        {
+            "section": "Fig. 11 .",
+            "text": "Fig. 11. Efficiencies are shown for a single-jet trigger with three different calibrations[10] applied to jets in the ATLAS high-level trigger (HLT) [4]*.",
+            "paragraph_rank": 29,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 90,
+                    "text": "[10]",
+                    "end": 94
+                }
+            ]
+        },
+        {
+            "text": "Fig. 12 .",
+            "section_rank": 22
+        },
+        {
+            "section": "Fig. 12 .",
+            "text": "Fig. 12. Top: Efficiencies for HLT single-jet triggers as a function of leading offline jet p T . Triggers denoted HLT jX accept an event if a jet is reconstructed at HLT with E T > X GeV*. The unprescaled trigger with the lowest threshold requires a jet with E T > 380 GeV[4]. Bottom: Efficiencies for HLT large-R single-jet triggers as a function of the leading offline trimmed[11] jet p T . Blue circles represent a trimmed large-R jet trigger with a p T threshold of 420 GeV. Adding an additional 30 GeV cut on the jet mass of the selected trimmed trigger jet is shown in green triangles. The mass cut significantly suppresses the QCD di-jet background, allowing a lower p T threshold of 390 GeV, while retaining nearly all signal-like jets with a mass of above 50 GeV*.",
+            "paragraph_rank": 30,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 379,
+                    "text": "[11]",
+                    "end": 383
+                }
+            ]
+        },
+        {
+            "text": "Fig. 13 .",
+            "section_rank": 23
+        },
+        {
+            "section": "Fig. 13 .",
+            "text": "Fig. 13. Top: Tau trigger efficiency measured in data and compared to simulation, with respect to offline reconstructed tau candidate with one or three tracks and passing the offline medium identification criteria, as function of the offline transverse momentum. The trigger efficiency is measured in a tag and probe analysis with Z \u2192 \u03c4 \u03c4 \u2192 \u00b5\u03c4 had event from the 2016 dataset in 13TeV collision (8.0 fb \u22121 )*. Bottom Comparison of this HLT tau trigger efficiency with the L1 tau trigger efficiency [4]*.",
+            "paragraph_rank": 31,
+            "section_rank": 23
+        },
+        {
+            "text": "Fig. 14 .",
+            "section_rank": 24
+        },
+        {
+            "section": "Fig. 14 .",
+            "text": "Fig. 14. The trigger cross-section as measured by using online rate and luminosity is compared for the main trigger E miss T reconstruction algorithms used in 2016 (\"mht\") and 2017 (\"pufit\") as a function of the mean number of simultaneous interactions per proton-proton bunch crossing averaged over all bunches circulating in the LHC [4]*.",
+            "paragraph_rank": 32,
+            "section_rank": 24
+        },
+        {
+            "text": "Fig. 15 .",
+            "section_rank": 25
+        },
+        {
+            "section": "Fig. 15 .",
+            "text": "Fig. 15. The combined L1 and HLT efficiency of the missing transverse energy triggers HLT xe110 pufit L1XE50 and HLT xe110 mht L1XE50 as well as the efficiency of the corresponding L1 trigger (L1 XE50) are shown as a function of the reconstructed E miss T (modified to count muons as invisible) [4]. The events shown are taken from data with a W \u2192 \u00b5\u03bd selection to provide a sample enriched in real E miss T *.",
+            "paragraph_rank": 33,
+            "section_rank": 25
+        },
+        {
+            "text": "where L bunch is the per bunch instantaneous luminosity, \u03c3 inel is the inelastic cross section which was taken to be 80 mb for 13 TeV collisions, and fr is the LHC revolution frequency [4]*.",
+            "paragraph_rank": 34,
+            "section_rank": 26
+        },
+        {
+            "text": ". Finally,",
+            "paragraph_rank": 35,
+            "section_rank": 27
+        },
+        {
+            "text": "For a full description of the ATLAS detector, see[1] arXiv:1806.08475v2 [hep-ex] 17 Sep 2020",
+            "paragraph_rank": 36,
+            "section_rank": 27,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 49,
+                    "text": "[1]",
+                    "end": 52
+                }
+            ]
+        },
+        {
+            "text": "Note that some special triggers do not rely at all on the reconstruction of tracks or clusters, such as the random trigger, the minimum bias triggers, or the empty bunches triggers. These are not discussed here.",
+            "paragraph_rank": 37,
+            "section_rank": 27
+        }
+    ]
+}

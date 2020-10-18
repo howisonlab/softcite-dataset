@@ -1,0 +1,1023 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Deep generative models parametrised by neural networks have recently started to provide accurate results in modeling natural images. In particular, generative adversarial networks provide an unsupervised solution to this problem. In this work we apply this kind of technique to the simulation of particle-detector response to hadronic jets. We show that deep neural networks can achieve high-fidelity in this task, while attaining a speed increase of several orders of magnitude with respect to traditional algorithms.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "The extraction of results from high energy physics data crucially relies on accurate models of particle detectors, and on complex algorithms that infer the properties of incoming particles from signals recorded in electronic sensors. Numerical models, based on Monte Carlo methods, are used to simulate the interaction between elementary particles and matter. In particular, the Geant4 toolkit [1] features stateof-the art models and is employed to simulate particle detectors at the CERN LHC. Reconstruction algorithms routinely used at collider experiments (see e.g. [2] and [3]) are based on estimators of particle trajectories and energy deposits. This information is subsequently aggregated in order to reconstruct energy, type and direction of final state particles produced by the collision of the primary beams.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 394,
+                    "text": "[1]",
+                    "end": 397
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 569,
+                    "text": "[2]",
+                    "end": 572
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 577,
+                    "text": "[3]",
+                    "end": 580
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The CERN LHC complex will undergo a series of upgrades [4] over the next ten years that will allow collecting a dataset roughly 30 times larger than the one currently available. The number of simultaneous interactions per bunch crossing in such a future dataset will increase by a factor of about 4, compared to the present levels. It is estimated [5] that, because of the larger volume and complexity of the data the shortfall between needs and bare technology gains is about 4-fold in computing power, if one assumes constant funding. This gap should therefore be bridged with faster, more efficient algorithms for particle detector simulation and data reconstruction.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 55,
+                    "text": "[4]",
+                    "end": 58
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 348,
+                    "text": "[5]",
+                    "end": 351
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In this work, we develop a generative model parametrised by a deep neural network, that is capable of predicting the combined effect of particle detector simulation models and reconstuction algorithms to hadronic jets. The results are based on samples of simulated hadronic jets produced in proton-proton collisions at \u221a s = 7 TeV that was published by the CMS collaboration on the CERN open data portal. The dataset [6,7,8,9,10,11,12,13,14,15,16, 17] is part of the \"level 3\" category in the the High Energy Physics (HEP) data preservation classification [18] and it contains the result of the Geant4 simulation of the CMS detector and of the subsequent data reconstruction algorithms used by the CMS collaboration.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 417,
+                    "text": "[6,",
+                    "end": 420
+                },
+                {
+                    "type": "bibr",
+                    "start": 420,
+                    "text": "7,",
+                    "end": 422
+                },
+                {
+                    "type": "bibr",
+                    "start": 422,
+                    "text": "8,",
+                    "end": 424
+                },
+                {
+                    "type": "bibr",
+                    "start": 424,
+                    "text": "9,",
+                    "end": 426
+                },
+                {
+                    "type": "bibr",
+                    "start": 426,
+                    "text": "10,",
+                    "end": 429
+                },
+                {
+                    "type": "bibr",
+                    "start": 429,
+                    "text": "11,",
+                    "end": 432
+                },
+                {
+                    "type": "bibr",
+                    "start": 432,
+                    "text": "12,",
+                    "end": 435
+                },
+                {
+                    "type": "bibr",
+                    "start": 435,
+                    "text": "13,",
+                    "end": 438
+                },
+                {
+                    "type": "bibr",
+                    "start": 438,
+                    "text": "14,",
+                    "end": 441
+                },
+                {
+                    "type": "bibr",
+                    "start": 441,
+                    "text": "15,",
+                    "end": 444
+                },
+                {
+                    "type": "bibr",
+                    "start": 444,
+                    "text": "16",
+                    "end": 446
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 556,
+                    "text": "[18]",
+                    "end": 560
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Generative adversarial networks (GANs) [19] are pairs of neural networks, a generative model and a discriminative one, that are trained concurrently as players of a minimax game. The task of the generative net-work is to produce, starting from a latent space with a fixed distribution, samples that the discriminative model tries to separate from samples drawn from a target dataset. It can be shown [19] that with this kind of setup the generator is able to learn the distribution of the target dataset, provided that the generative and discriminative models have enough capacity (it should be noted that this condition has actually been proven to hold for mixtures of neural networks [20], not for single ones; the interested reader may find additional information about GANs convergence in [20,21,22,23] and references therein.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 39,
+                    "text": "[19]",
+                    "end": 43
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 400,
+                    "text": "[19]",
+                    "end": 404
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 686,
+                    "text": "[20]",
+                    "end": 690
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 793,
+                    "text": "[20,",
+                    "end": 797
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 797,
+                    "text": "21,",
+                    "end": 800
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 800,
+                    "text": "22,",
+                    "end": 803
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 803,
+                    "text": "23]",
+                    "end": 806
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Since they were first proposed, GANs have been applied to an increasingly large number of problems in machine learning, mostly dealing with natural-image data, but not only. Applications of adversarial networks were also proposed in the context of HEP, mainly with two purposes: training of robust discriminators that are insensitive to systematic effects, or uncorrelated from observables used for signal extraction [24,25,26], and for event generation and detector simulation [27,28,29]. Similar applications were proposed in the context of cosmic ray experiments [30].",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 417,
+                    "text": "[24,",
+                    "end": 421
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 421,
+                    "text": "25,",
+                    "end": 424
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 424,
+                    "text": "26]",
+                    "end": 427
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 478,
+                    "text": "[27,",
+                    "end": 482
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 482,
+                    "text": "28,",
+                    "end": 485
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 485,
+                    "text": "29]",
+                    "end": 488
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 566,
+                    "text": "[30]",
+                    "end": 570
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "We use GANs to train a generative model that generates the reconstruction-level detector response to a hadronic jet, conditionally on its particle level content. We represent hadronic jets as \"gray-scale\" images of fixed size centred on the jet axis, where the pixel intensity reflects the fraction of jet energy deposited in the corresponding geometrical cell. The architecture of the networks and the problem formulation, that can be classified as a domain mapping one, are based on the image-to-image translation work described in [31]. We introduce a few differences to tailor the approach to the generation of jet images: we explicitly model the set of non-empty pixels in the generated images, which are much sparser than in natural images; we enforce a good modelling of the total pixel intensity, though the combined use of feature matching [32] and of a dedicated adversarial classifier; and we condition the generator on a number of auxiliary features. The use of feature matching on physics-inspired features was already introduced in the HEP context in [28], while conditional GANs are common in image generation problems (see, e.g. [33] and references in [31]). Previous work on the handling of sparsity in hadronic jet images was proposed in [28] and [34], and it was based on the engineering of high level auxiliary features.",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 534,
+                    "text": "[31]",
+                    "end": 538
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 849,
+                    "text": "[32]",
+                    "end": 853
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 1065,
+                    "text": "[28]",
+                    "end": 1069
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 1145,
+                    "text": "[33]",
+                    "end": 1149
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 1168,
+                    "text": "[31]",
+                    "end": 1172
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 1256,
+                    "text": "[28]",
+                    "end": 1260
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 1265,
+                    "text": "[34]",
+                    "end": 1269
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Related work has recently been presented in [28] and [30]. The authors of [28] proposed to use a deep convolutional neural network to simulate calorimeter showers, thus aiming at modelling the particle interaction with the detector medium. The solution that we explore here allows the largest reduction in computation time, by predicting directly the objects used at analysis level, and thus reproducing the output of both detector simulation and reconstruction algorithms. This philosophy is similar to that of the parametrised detectors simulations [35] that are often used in HEP for phenomenological studies, and that are very limited in accuracy. We show that using a deep neural network model allows attaining accuracies that are comparable to that of the full simulation and reconstruction chain. The approach of [30], that studied the application of GANs to the generation of air-showers, is more similar to ours, as it aims at predicting the patterns reconstructed by the detectors, conditionally on the energy and type of the primary particles.",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 44,
+                    "text": "[28]",
+                    "end": 48
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 53,
+                    "text": "[30]",
+                    "end": 57
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 74,
+                    "text": "[28]",
+                    "end": 78
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 551,
+                    "text": "[35]",
+                    "end": 555
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 820,
+                    "text": "[30]",
+                    "end": 824
+                }
+            ]
+        },
+        {
+            "text": "Inputs and problem formulation",
+            "section_rank": 3
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "For this study we use simulated samples of hadronic jets produced by the CMS collaboration and published on the CERN open data portal. In particular we take hadronic jets produced in proton-proton collisions at \u221a s = 7 TeV. These events feature state-of-the-art characteristics in terms of simulation and reconstruction algorithms in HEP. The events were generated with the PYTHIA6 event generator [36], the CMS detector response was simulated using Geant4 [1]. Concurrent proton-proton interactions (\"pile-up\") were simulated, roughly reproducing the LHC running conditions of 2011. The samples contain the results of the full CMS reconstruction chain [3].",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 398,
+                    "text": "[36]",
+                    "end": 402
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 457,
+                    "text": "[1]",
+                    "end": 460
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 653,
+                    "text": "[3]",
+                    "end": 656
+                }
+            ]
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "In the input dataset, hadronic jets were clustered with the anti-kt algorithm [37], using the FastJet library [38] and a distance parameter of 0.5. We used two sets of hadronic jets: those clustered from the list of stable particles produced by PYTHIA6, and those clustered from the list of reconstructed particle candidates. In the following we term \"particle-level jets\" the former, and \"reconstructed jets\" the latter.",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 78,
+                    "text": "[37]",
+                    "end": 82
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 110,
+                    "text": "[38]",
+                    "end": 114
+                }
+            ]
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "Following standard practices in collider experiments, we employ a cylindrical system of coordinates. The origin of the coordinate system is set to the centre of the CMS detector, the z axis is chosen to be parallel to the beam line, and the x axis is chosen to point towards the centre of the LHC ring. We indicate as \u03c6 and \u03b8 the azimuthal and polar angles, respectively, and we define the pseudorapidity \u03b7 as log(cot(\u03b8/2)).",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "In each event, we select particle-level jets with a transverse component of the momentum above 20 GeV and with an absolute value of the pseudorapidity below 2.5. A search is then performed in the reconstructed jet collection to find reconstructed jets satisfying \u2206\u03b7 2 + \u2206\u03c6 2 < 0.3, where \u2206\u03b7 and \u2206\u03c6 are, respectively, the difference between pseudo-rapidity and azimuth of the particle-level and reconstructed jets. Pairs of reconstructed and particle-level jets satisfying these conditions are considered in this study. As we are interested in the particle content of jets, no jet energy calibrations are applied to the reconstructed jets.",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "Jet images are constructed by opening a window of size \u2206\u03b7 \u00d7 \u2206\u03c6 = 0.3 \u00d7 0.3 around the particle-level jet axis. The window is split into 32 \u00d7 32 identical square pixels and the intensity associated to each pixel is proportional to the total transverse momentum of the jet components contained in it, divided by the transverse momentum of the particle-level jet. Roughly 80-90% of the jet energy is contained in the jet window that we considered, and the jet components not contained in the window are used to fill the closest pixel of the image border. The choice of studying the central part of the jet was aimed at limiting the data size, while keeping sufficiently high spacial resolution. Increasing the window to the 0.5 \u00d7 0.5 region would have in fact almost doubled the image size and thus considerably increased the training time. This technical limitation will have to be addressed by future work, but is not expected to significantly change the conclusion of this work. Each pair of jet images is further associated to four auxiliary features: the transverse momentum (p gen T ), pseudorapidity (\u03b7 gen ) and azimuthal angle (\u03c6 gen ) of the particlelevel jet, and the number of pile-up interactions (n P U ) that were simulated in the event under consideration. No further preprocessing or standardisation was performed on the input data, which is available on the Zenodo information server [39].",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 1399,
+                    "text": "[39]",
+                    "end": 1403
+                }
+            ]
+        },
+        {
+            "section": "Inputs and problem formulation",
+            "text": "The distribution of p gen T for the selected hadronic jets is shown by the blue histogram in figure 1. The shape of the distributions is multi-modal because the original dataset was split in several bins in the scale of the parton-parton interaction. A set of weighting factors, as a function of p gen T was applied to obtain a falling distribution. The distribution obtained after applying such weighting factors is shown by the red histogram.",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Notation and learning setup",
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "We adopt the following notation: we denote by x and y the jet image at particle and reconstruction level, respectively, we indicate with c the set of auxiliary features, and we use z to denote a latent space of uniformly distributed noise. With this notation, our problem can be formulated as follows.",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "-Given:",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "where p cx and p y are the input-data distributions, and U indicates the uniform distribution.",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "-We want to construct a function G, such that",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "We note that the c and x variables sets play, from a mathematical point of view, an identical role in the problem, as we want to condition the output of G is conditional on the union of the two. The reason to separate them is mostly conceptual, as x represents the image data associated with a jet, while c parametrises information about jet kinematics and the environment. Furthermore, the two sets of variables are treated differently by the neural network architecture, as detailed in the following.",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "The function G is a generative model that approximates the combined response of particle detector simulation and reconstruction algorithms to hadronic jets. Following the GAN paradigm, we look for a solution to this problem by introducing a discriminative model D and setting-up a minimax game between the two models, with value function V (G, D) defined as:",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "While the problem could in principle be solved using the GAN setup alone, we inject additional information in order to stabilise and speed-up the convergence. In particular, we take into account two facts:",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "1. G and y should match on average; 2. y is very sparse (on average, roughly 3% of the pixels have non-zero values).",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "The authors of [31] show that the first requirement can be efficiently satisfied by adding an L 2 -or L 1 -norm term to the loss function. We adopt this approach, using in particular an L 2 -norm term.",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 15,
+                    "text": "[31]",
+                    "end": 19
+                }
+            ]
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "To explicitly take into account the second requirement, we modify the structure of the generator, by increasing the depth of its output: one channel is used to model the pixel intensity, while a second channel, to which we refer as a \"soft-mask\", models the probability of a pixel to be non-zero. We denote the two channels as G 0 and G 1 , and we modify the generative model loss function by adding a term of this form:",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "where \u03bb is the associated hyperparameter.",
+            "paragraph_rank": 25,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "To generate images, we sample the soft-mask probabilities to create a \"hard-mask\" binary stochastic layer G 1 (z) = 1 z<G1 , where 1 is the so-called indicator function. The GAN value function in eq. 4 becomes",
+            "paragraph_rank": 26,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "where G 2 is defined as G 0 \u2022 G 1 , and the differentiability is preserved by replacing G 1 with G 1 during backpropagation [40].",
+            "paragraph_rank": 27,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 124,
+                    "text": "[40]",
+                    "end": 128
+                }
+            ]
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "Finally, we enforce a good modelling of the total image intensity, which is proportional to the reconstructed jet energy, with two additions:",
+            "paragraph_rank": 28,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "we add an extra term to the generative model loss function, proportional to the mean squared error of the total image intensities:",
+            "paragraph_rank": 29,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": "where the operator I computes the total intensity of the jet images and \u00b5 is the associated hyperparameter. -We introduce a second discriminative model D T that receives as input the total reconstructed jet image intensities, and the auxiliary features c, and we setup an additional minimax game, whose importance is controlled by the \u00b5 hyperparameter, with value",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "section": "Notation and learning setup",
+            "text": ", defined as below:",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "Model architecture",
+            "section_rank": 5
+        },
+        {
+            "section": "Model architecture",
+            "text": "The generative model and the discriminative model D are implemented as convolutional neural networks [41]. For the generator we adopt the so called \"U-net\" architecture [42], that consists of an encoding section followed by a decoding one, with additional skip connections linking encoding and decoding layers with the same spatial dimension. The input images are first fed into a batch normalisation layer [43], which allows running the network on non-standardised inputs. Afterwards, we use 5 encoding layers and 5 decoding ones. Each encoding layer consists of a convolutional unit, followed by a batch-normalisation one and by a leaky ReLU activation [44], with a slope of 0.2 in the negative domain. The encoding filters size is chosen to be of 3\u00d73, with a stride of 2 in order to reduce the representation width. The number of filters is set to 16 for the first layer and it is doubled at each step. The decoding layers comprise a concatenation unit to implement the skip connections, followed by up-convolutional units, batch normalisation and leaky ReLU activation ones. Dropout units are also employed in the first two layers of the decoding section. At each step in the decoding section, the depth of the representation is halved, while its width is doubled. This is achieved by decreasing the number of convolutional filters, while appropriately choosing the stride and padding parameters. Auxiliary conditional features are injected in the architecture as follows: they are first passed through a batch normalisation unit and then into a 1\u00d71 convolution unit whose output matches the depth of the last encoding layer; the 1\u00d71 convolutional unit output is subsequently concatenated with that of the last encoding convolution. Noise can be injected into the architecture at the same level. However, we obtained better results by feeding noise only in the form of a stochastic sampling of the output soft-mask. Figure 2 shows a graphical summary of the generator architecture.",
+            "paragraph_rank": 32,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 101,
+                    "text": "[41]",
+                    "end": 105
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 169,
+                    "text": "[42]",
+                    "end": 173
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 407,
+                    "text": "[43]",
+                    "end": 411
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 655,
+                    "text": "[44]",
+                    "end": 659
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1920,
+                    "text": "Figure 2",
+                    "end": 1928
+                }
+            ]
+        },
+        {
+            "section": "Model architecture",
+            "text": "The discriminative model D uses 4 layers, comprising 3\u00d73 convolutional filter units, batch normalisation units and leaky ReLU activation ones. Stride and padding are tuned in such a way that the largest field of view of the convolution layers is of 13\u00d713 pixels. The model acts as a \"patch-GAN\" [31], i.e. it is only sensitive to the local structure of the jet images. The convolutional layers are followed by a fully-connected layer with a sigmoid activation function. The auxiliary variables are treated similarly to what is done in the generative model and are injected at the input of the fully connected layer.",
+            "paragraph_rank": 33,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 295,
+                    "text": "[31]",
+                    "end": 299
+                }
+            ]
+        },
+        {
+            "section": "Model architecture",
+            "text": "The model D T takes as input the total intensities for y (or G 2 ) as well as c, and is parametrised as a feedforward fully connected neural network with 4 layers, using dense units, batch normalisation and leaky ReLU activations. The fully connected layers have widths of 64-64-32-16 and are followed by an output layer with a sigmoid activation function.  Fig. 3 Average jet images obtained at the particle-level (\"gen\"), after detector simulation and reconstruction (\"reco\"), and those predicted by the generative model (\"pred\").",
+            "paragraph_rank": 34,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 358,
+                    "text": "Fig. 3",
+                    "end": 364
+                }
+            ]
+        },
+        {
+            "section": "Model architecture",
+            "text": "We did not perform a formal optimisation of the neural networks architecture, but we picked a particular set of values after exploring the parameter space in terms of width and depth of the networks, based on two factors: the performance of the model and the computational times required. A software package implementing the neural networks' instantiation and training is openly available in [45].",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 392,
+                    "text": "[45]",
+                    "end": 396
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 6
+        },
+        {
+            "section": "Results",
+            "text": "The models were trained on two million jet images extracted from the dataset described in section 2. The TensorFlow [46] framework, and the Keras [47] high level interface were used to implement and train the models. Computing resources from the Piz Daint Cray supercomputer located at the Swiss Centre for Supercomputing were used to obtain the results that we present here. Two independent Adam [48] optimisers were employed for parameter sets of the generative and discriminative models. NVIDIA Pascal P100 GPUs were used to accelerate the computations and the models were trained for 10-20 epochs, which were sufficient to achieve convergence. The training time for these models was around 1 hour per epoch. Inference ran at roughly 100Hz on Intel Xeon CPUs and at roughly 10kHz on NVIDIA Pascal P100 GPUs, which are to be compared to the typical time scale for event simulation and reconstruction, i.e. 10 \u22121 -10 \u22122 Hz. Figure 3 shows the average jet image obtained at particle-level by aggregating the y values, as well as those obtained at reconstruction-level by aggregating either the x values or the G 2 ones. One can observe that the average effect of the detector simulation and reconstruction algorithms is to generally spread the jet energy away from the core. We see that this general trend is correctly reproduced by our set-up. Figure 4 shows the correlation between the particles and detector-level pixel intensities for the input dataset and for the predicted images, obtained from a test sample of 100000 images. Three sub-populations can be observed in the distributions: well measured jet components populate the diagonal; errors in the position reconstruction of the jet components lead to energy migration between close-by pixels and thus contribute to the sub-populations located close to the horizontal and vertical axes; non-reconstructed jet components manifest as empty reconstruction-level pixels that correspond to nonempty ones at particle level and therefore to the sub-population located along the horizontal axis pile-up effects lead to non-empty pixels in the reconstruction level image in correspondence to empty particle-level pixels and so contribute to the subpopulation close to the vertical axis.",
+            "paragraph_rank": 36,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 116,
+                    "text": "[46]",
+                    "end": 120
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 146,
+                    "text": "[47]",
+                    "end": 150
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 397,
+                    "text": "[48]",
+                    "end": 401
+                },
+                {
+                    "type": "figure",
+                    "start": 925,
+                    "text": "Figure 3",
+                    "end": 933
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1345,
+                    "text": "Figure 4",
+                    "end": 1353
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "As can be seen from the figure, our set-up (right panel) achieves a good modelling of the relative weight of the three sub-populations, which result from a non-trivial set of effects. The sub-populations located along the diagonal, the horizontal axis and the vertical one account for about 40%, 25% and 25% of the non-empty pixels, respectively and our algorithm is able to reproduce such numbers with a relative accuracy of roughly 30%. In figure 5 we show the distributions of the total pixel intensities obtained integrating over rings in \u2206R centred on the particle-level jets axis. Blue histograms are obtained from the input dataset, while red ones show the results of the generative model. Figure 6 shows the evolution of the aggregated pixel intensities distri- bution as a function of the particle-level jet transverse momentum. These results show that our set-up allows good modelling of hadronic jet structure over more than two orders of magnitude in jet transverse momentum. We further investigate the goodness of the learned model by evaluating its ability to reproduce high level jet features that are typically used in physics analyses. We concentrate, in particular on two sets of variables:",
+            "paragraph_rank": 37,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 442,
+                    "text": "figure 5",
+                    "end": 450
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 697,
+                    "text": "Figure 6",
+                    "end": 705
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "1. variables used in the context of quark/gluon discrimination; 2. jet substructure variables used in the context of merged jets discrimination.",
+            "paragraph_rank": 38,
+            "section_rank": 6
+        },
+        {
+            "section": "Results",
+            "text": "From the first set, we choose the so-called major and minor axes, i.e. the square root of the eigenvalues of the \u03b7-\u03c6 covariance matrix of the jet image, and the p T D variable, i.e. the ratio between the square root of the second and first non-central moment of the pixel intensities [49]. From the second set, we choose the ratio between the 2-and 1-subjettines [50] and that between the 2-and 3-subjettiness. The subjettiness variables were computed using the FastJet package [51,52], approximating each jet as a set of mass-less particles with energies and directions obtained from the pixel intensities and positions.  Figure 7 shows the distribution of the quark/gluon and merged jets discrimination variables that we considered aggregated over the test dataset, while figure 8 shows the evolution of the distributions as a function of the transverse momentum of the jet at particle level. The level at which these variables are predicted by our set-up is good (in general, the marginal densities and the value of the distributions quantiles are predicted with an accuracy of 5-10%), even though some mismodelling can be observed for the quark-gluon discriminating variables. In particular, mismodelling at the 10-20% level in the marginal density, and in the p gen T dependence of the 75% and 90% quantiles can be observed for the p T D and the major and minor axes. These kind of disagreements point to the fact that the correlation between the number of non-empty pixels and their energy sharing is not perfectly modelled.",
+            "paragraph_rank": 39,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 284,
+                    "text": "[49]",
+                    "end": 288
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 363,
+                    "text": "[50]",
+                    "end": 367
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 478,
+                    "text": "[51,",
+                    "end": 482
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 482,
+                    "text": "52]",
+                    "end": 485
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 623,
+                    "text": "Figure 7",
+                    "end": 631
+                }
+            ]
+        },
+        {
+            "text": "Discussion",
+            "section_rank": 7
+        },
+        {
+            "section": "Discussion",
+            "text": "The results that we discussed above represent a step forward in terms of accuracy of fast simulation systems proposed in the context of collider detector physics. We believe that three main aspects contributed to this:",
+            "paragraph_rank": 40,
+            "section_rank": 7
+        },
+        {
+            "section": "Discussion",
+            "text": "the use of a generative model that is designed to handle spatial correlations well, and the use of a conditioning space (i.e. that of particle-level images) that encodes large amounts of spatial information; the explicit handling of the sparsity through the soft-mask layer; the use of physics-driven constraints on the total intensity of the jet images.",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "section": "Discussion",
+            "text": "The method that we outline here has potential application in conjunction with fast detector simulation models, or parametrised ones [35,53]. In this context, being able to accurately predict the output of simulation and reconstruction algorithms for objects like hadronic jets, which are ubiquitous at the LHC, would allow to save large amounts of the computing power, by reducing the cost of producing simulated events samples.",
+            "paragraph_rank": 42,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 132,
+                    "text": "[35,",
+                    "end": 136
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 136,
+                    "text": "53]",
+                    "end": 139
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "While a relatively stable set-up was established by tuning the model hyper-parameters, this aspect of the work is not yet completely satisfactory, as the region of hyper-parameters space that lead to satisfactory results was found to be relatively narrow. A review of the loss function structure, possibly incorporating the use of alternative formulations of the GAN game [21,22,23], and of the model training strategy in general, will be important to allow streamlining the method, and will the subject of future work. Furthermore, the current approach introduces noise only through the stochastic generation of the set of active pixels. Our attempts at injecting noise at a more fundamental level in the generative model structure have been unsuccessful so far. Similar problems have been reported by researchers working on natural image generation (see e.g. [31]). A more extensive investigation of the handling of noise will also be subject of subsequent work.",
+            "paragraph_rank": 43,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 372,
+                    "text": "[21,",
+                    "end": 376
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 376,
+                    "text": "22,",
+                    "end": 379
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 379,
+                    "text": "23]",
+                    "end": 382
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 861,
+                    "text": "[31]",
+                    "end": 865
+                }
+            ]
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 8
+        },
+        {
+            "section": "Conclusions",
+            "text": "We have reported on a method that uses deep neural networks to learn the response of particle detectors simulation and reconstruction algorithms. The method is based on generative adversarial networks and it was applied to the generation of hadronic jet images at the CERN LHC.",
+            "paragraph_rank": 44,
+            "section_rank": 8
+        },
+        {
+            "section": "Conclusions",
+            "text": "We trained a generative model to reproduce the combined response of state-of-the-art simulation and reconstruction algorithms. This was possible thanks to the exploitation of the open datasets published by the CMS collaboration under the HEP data preservation initiative.",
+            "paragraph_rank": 45,
+            "section_rank": 8
+        },
+        {
+            "section": "Conclusions",
+            "text": "Starting from proposals made for natural image processing, we devised a hybrid set-up based on the combined use of generative adversarial networks and analytic loss functions that is able to take into account the conditioning on auxiliary variables and physics-driven constraints on the generation process.",
+            "paragraph_rank": 46,
+            "section_rank": 8
+        },
+        {
+            "section": "Conclusions",
+            "text": "Our method allows reducing the computation time required to obtain reconstruction-level hadronic jets from particle-level jets by several orders of magnitude, while achieving a very good accuracy in reproducing the simulation and reconstruction algorithms response. The model is in particular capable of reproducing the evolution of the reconstructed jet shapes as a function of several conditional variables. Physics-driven high level features commonly used for merged jets tagging and quark/gluon discrimination, and their evolution, are also generally well modelled.",
+            "paragraph_rank": 47,
+            "section_rank": 8
+        },
+        {
+            "section": "Conclusions",
+            "text": "The results obtained with this work represent a promising step forward towards the development of fast and accurate simulation systems that will be crucial for the future of collider experiments in high energy physics.",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 9
+        },
+        {
+            "section": "Fig. 1",
+            "text": "Fig. 1Distribution of the jet transverse momentum at particle level for the hadronic jets in the input dataset. The blue histogram shows the distribution as coming from the dataset, while the red one shows the distribution obtained after applying the weights used for training.",
+            "paragraph_rank": 49,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 10
+        },
+        {
+            "section": "Fig. 2",
+            "text": "Fig. 2 Graphical summary of the generator network. Boxes shows the data representation, while arrows represent operations. Input and output nodes annotated with bold-text labels. On the right side of the diagram, white and blue boxes are concatenated before applying up-convolution operations. Convolutions applied to the x node and its daughters have a filter size of 3x3, while a 1x1 convolution is applied to the c node. All up-convolutions use 3x3 filters.",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 11
+        },
+        {
+            "section": "Fig. 4",
+            "text": "Fig. 4Joint distribution of the particle-level (\"gen\") and reconstruction level pixel intensities. The left plot shows the distribution of the input data, while the right plot is obtained using the generative model.",
+            "paragraph_rank": 51,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 5",
+            "section_rank": 12
+        },
+        {
+            "section": "Fig. 5",
+            "text": "Fig. 5 Aggregated pixel intensities for different rings in \u2206\u03b7-\u2206\u03c6. Blue histograms are obtained from the input data, while red ones are obtained using the generative model.",
+            "paragraph_rank": 52,
+            "section_rank": 12
+        },
+        {
+            "text": "Fig. 6",
+            "section_rank": 13
+        },
+        {
+            "section": "Fig. 6",
+            "text": "Fig. 6Evolution of the aggregated pixel intensities for different rings in \u2206\u03b7-\u2206\u03c6 as a function of the particle level jet transverse momentum. Solid lines represent the median of the distribution, filled regions show the inter-quartile range, while dashed lines mark the 10% and 90% quantiles. Blue lines are obtained from the input data, while red ones are obtained using the generative model.",
+            "paragraph_rank": 53,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 7",
+            "section_rank": 14
+        },
+        {
+            "section": "Fig. 7",
+            "text": "Fig. 7Distribution of high level variables used for quark/gluon discrimination (first two rows) and merged jets tagging (last row). Blue histograms are obtained from the input data, while red ones are obtained using the generative model.",
+            "paragraph_rank": 54,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 8",
+            "section_rank": 15
+        },
+        {
+            "section": "Fig. 8",
+            "text": "Fig. 8Evolution of the quark/gluon (first two rows) discrimination and merged jet tagging (last row) variables as a function of the particle level jet transverse momentum. Solid lines represent the median of the distribution, filled regions show the inter-quartile range, while dashed lines mark the 10% and 90% quantiles. Blue lines are obtained from the input data, while red ones are obtained using the generative model.",
+            "paragraph_rank": 55,
+            "section_rank": 15
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 17
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "We thank the CMS collaboration for publishing state of the art simulated data under the open access policy. We strongly support this initiative and believe that it will be crucial to spark developments of new algorithms from which the HEP community as a whole can profit. We thank Dr. M. Doneg\u00e0, Prof. G. Dissertori, and Dr. M. Pierini, for their careful review of this manuscript. This work was supported by the Swiss Centre for Supercomputing under the project D78. The final publication is available at https://doi.org/10. 1007/s41781-018-0015-y.",
+            "paragraph_rank": 56,
+            "section_rank": 17
+        },
+        {
+            "text": "Conflicts of interest",
+            "section_rank": 19
+        },
+        {
+            "section": "Conflicts of interest",
+            "text": "On behalf of all authors, the corresponding author states that there is no conflict of interest.",
+            "paragraph_rank": 57,
+            "section_rank": 19
+        },
+        {
+            "text": "A Comparison with traditional fast simulation methods",
+            "section_rank": 20
+        },
+        {
+            "section": "A Comparison with traditional fast simulation methods",
+            "text": "In this appendix we compare the results obtained using our generative neural networks with methods for fast simulation traditionally used for phenomenological studies in high energy physics. These packages parametrise particle detectors responses, on a particle by particle basis, in terms of gaussian energy and momentum resolutions and binomial reconstruction probabilities. In particular, we compared the results obtained with our GAN with the output of the DELPHES [35] package. In order to do that, we used version 3.4.1 of the program and the standard CMS datacard included in the package.",
+            "paragraph_rank": 58,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 469,
+                    "text": "[35]",
+                    "end": 473
+                }
+            ]
+        },
+        {
+            "section": "A Comparison with traditional fast simulation methods",
+            "text": "In figures 9 and 10 we show the same quantities as shown in figures 5 and 6, respectively, but with the addition of the results obtained with the DELPHES gaussian-smearing model (shown in gray). As can be seen the simple gaussian-smearing approach fails to describe the fine structure of particle jets, and shows that our neural network based approach provides results of superior quality, compared to traditional fast simulation methods. ",
+            "paragraph_rank": 59,
+            "section_rank": 20
+        },
+        {
+            "text": "B Differential characterisation of the image translation",
+            "section_rank": 21
+        },
+        {
+            "section": "B Differential characterisation of the image translation",
+            "text": "In this appendix we report a differential comparison of the jet images obtained at particle level, reconstruction level, and through our generative model. In figures 11 and 12 we show the same quantities as shown in figures 5 and 6, respectively, but with the addition of results obtained using particle level jets.   Fig. 12 Evolution of the aggregated pixel intensities for different rings in \u2206\u03b7-\u2206\u03c6 as a function of the particle level jet transverse momentum. Solid lines represent the median of the distribution, filled regions show the inter-quartile range, while dashed lines mark the 10% and 90% quantiles. Blue histograms are obtained from the full simulation and reconstruction chain; red ones are obtained using the generative model; gray histograms show the quantities obtained before detector simulation.",
+            "paragraph_rank": 60,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 318,
+                    "text": "Fig. 12",
+                    "end": 325
+                }
+            ]
+        }
+    ]
+}

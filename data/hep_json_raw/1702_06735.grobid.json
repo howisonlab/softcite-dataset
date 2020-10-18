@@ -1,0 +1,287 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "The GooFit Framework is designed to perform maximum-likelihood fits for arbitrary functions on various parallel back ends, for example a GPU. We present an extension to GooFit which adds the functionality to perform time-dependent amplitude analyses of pseudoscalar mesons decaying into four pseudoscalar final states. Benchmarks of this functionality show a significant performance increase when utilizing a GPU compared to a CPU. Furthermore, this extension is employed to study the sensitivity on the D 0 \u2212 D 0 mixing parameters x and y in a time-dependent amplitude analysis of the decay",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Studying a sample of 50 000 events and setting the central values to the world average of x = (0.49 \u00b1 0.15) % and y = (0.61 \u00b1 0.08) %, the statistical sensitivities of x and y are determined to be \u03c3(x) = 0.019 % and \u03c3(y) = 0.019 %.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "In physics analyses it is common to fit a theoretical model to observed data to extract parameters of interest. This involves minimizing the differences between a model and data, which is mostly done by performing a minimization of a cost function, for example the likelihood function. However, problems arise because the computations become very expensive as the complexity of the models and number of events increases. The GooFit [1][2][3] framework has been designed to address this issue by allowing such computations to be performed in parallel. It is built upon the Thrust library [4] to be able to run on different parallel architectures, while maintaining a control flow similar to the RooFit package [5], which is commonly used in high energy physics to fit theoretical models to data, and which only runs on CPUs. While GooFit has been successfully employed in several analyses, even for complex models such as time-dependent mixing in threebody decays, it did not allow for performing a time-dependent amplitude analyses of four-body decays. This functionality was recently added and will be described in this paper.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 432,
+                    "text": "[1]",
+                    "end": 435
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 435,
+                    "text": "[2]",
+                    "end": 438
+                },
+                {
+                    "type": "bibr",
+                    "start": 438,
+                    "text": "[3]",
+                    "end": 441
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 587,
+                    "text": "[4]",
+                    "end": 590
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 709,
+                    "text": "[5]",
+                    "end": 712
+                }
+            ]
+        },
+        {
+            "text": "Mixing in the decay D",
+            "section_rank": 3
+        },
+        {
+            "section": "Mixing in the decay D",
+            "text": "Mixing or oscillation of neutral mesons is a process during which a particle transitions into its antiparticle or vice versa. This process has been observed in the K 0 , B 0 , B 0 s and D 0 systems. The D 0 system is the only one comprised of up-type quarks. One possible decay to study the Figure 1. Schematic view of the two possible decay paths for a D 0 decaying into a K + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 final state. The top path corresponds to the direct decay, while the bottom path shows the mixing transition of a D 0 into a D 0 followed by a decay into the final state.",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 291,
+                    "text": "Figure 1",
+                    "end": 299
+                }
+            ]
+        },
+        {
+            "section": "Mixing in the decay D",
+            "text": "phenomenon of mixing in the neutral charm meson system is the decay of D 0 to K + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 . This decay can proceed via two different decay amplitudes, which are depicted in figure 1. The top arrow depicts the direct decay subscribed A f , while the bottom arrow represents the decay proceeding via mixing into a D 0 which decays into the final state via an amplitude subscribed\u0100 f . Due to the mixing of a D 0 into a D 0 being time-dependent, the overall decay rate becomes timedependent. Analysing such time-dependent decay rates allows extraction of mixing properties of the D 0 system.The expression for the time-dependent decay rate of the D 0 , assuming no CP violation, can be derived to be [6],",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 701,
+                    "text": "[6]",
+                    "end": 704
+                }
+            ]
+        },
+        {
+            "section": "Mixing in the decay D",
+            "text": "Most of the complexity of this expression lies within the model used to describe the two amplitudes A f and\u0100 f 3. Structure and implementation of four-body amplitudes While equation 1is completely general, the amplitudes that encode the properties of the decay are functions of the position in phase space occupied of the final state of the decay. The amplitude structure of a four-body decay is significantly more complicated than that of threebody decays because their phase space is five dimensional while three-body decays merely occupy a two-dimensional phase space. Similar to other amplitude models, the implemented functionality assumes that multibody decays mostly proceed via quasi two-body processes, which include two-body resonances. This leads to two possible decay chain topologies depicted in figure 2, where R 1 and R 2 are intermediate resonances and a, b, c and d are the four final decay products, in various configurations. Here, R 1 and R 2 can take the form of multiple kinematically allowed resonance states, resulting in many possible decay chains. A complete amplitude will therefore be modelled Figure 2. Possible quasi two-body decay topologies of a four-body decay. Left, a D 0 meson decays into two resonances R 1 and R 2 , which decay into two particles each. Right, a D 0 meson decays into a particle a and a resonance R 1 , which proceeds to decay into a resonance R 2 and a final state particle. R 2 then decays into the remaining two final state particles.",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_2",
+                    "start": 182,
+                    "text": "1",
+                    "end": 183
+                },
+                {
+                    "type": "figure",
+                    "start": 1122,
+                    "text": "Figure 2",
+                    "end": 1130
+                }
+            ]
+        },
+        {
+            "section": "Mixing in the decay D",
+            "text": "by a coherent sum over these decay chains A i as,",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "section": "Mixing in the decay D",
+            "text": "Each decay chain A i is constructed by the user from classes representing form factors, spin factors, resonance lineshapes, and possibly, in the case of two identical final state particles, Bosesymmetrization. After successfully constructing all necessary decay chains the user constructs two amplitude class instances representing A f and\u0100 f , which each hold the necessary decay chains to fit the theoretical model. The model creation is finalized by creating an instance of the time-dependent amplitude model class and passing the two amplitudes just created by the user. Upon creation the time-dependent model class automatically checks for recurring form factors, spin factors, and lineshapes in all decay chains. In case of multiple occurrences, these instances are substituted by a link to a single instance, thus removing redundant calculations. The proceeding steps of the internal model building process are explained in detail in [1,2].",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 941,
+                    "text": "[1,",
+                    "end": 944
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 944,
+                    "text": "2]",
+                    "end": 946
+                }
+            ]
+        },
+        {
+            "text": "Normalization and event generation",
+            "section_rank": 4
+        },
+        {
+            "section": "Normalization and event generation",
+            "text": "During the fitting procedure the complete expression in equation (1) must be normalized accurately. As it is not feasible to find an analytic expression for such a complex function, the normalization is computed numerically. In our study, this requires evaluating the function at several million phase space points. To achieve a sufficiently fast generation of phase space events, we integrated the MCBooster library [7,8], which allows very fast generation of phase space events on the GPU. This also enables the generation of pseudo-events, which are uniformly distributed phase space events weighted by the previously created amplitude model.",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 417,
+                    "text": "[7,",
+                    "end": 420
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 420,
+                    "text": "8]",
+                    "end": 422
+                }
+            ]
+        },
+        {
+            "text": "Validation",
+            "section_rank": 5
+        },
+        {
+            "section": "Validation",
+            "text": "As this work implemented various new building blocks to model four-body decay amplitudes in GooFit it was important to validate the correctness of each of these new components. A cross check of the implementation was performed by comparing the newly implemented functionality of GooFit to the software package MINT3 [9]. MINT3 is based upon the MINT (Minuit Interface) package [10], which is used to perform time-integrated amplitude analyses of three-and fourbody decays. Additionally, it supports the generation of pseudo-events. We generate 500, 000 pseudo-events for a specific amplitude model, which includes all newly implemented building blocks, and compare the resulting event samples. This comparison is performed by studying the phase space projections of the samples given the five variables m 12 , m 34 , cos 12 , cos 34 and \u03c6, where  the subscript 12 refers to the \u03c0 + \u03c0 \u2212 pair and 34 to the K + \u03c0 \u2212 pair. As shown in figure 3, there are no significant differences observed and the pull distribution as well as the p-value indicate that both samples are drawn from the same distribution.",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 377,
+                    "text": "[10]",
+                    "end": 381
+                }
+            ]
+        },
+        {
+            "text": "Statistical sensitivity to the charm mixing parameters x and y",
+            "section_rank": 6
+        },
+        {
+            "section": "Statistical sensitivity to the charm mixing parameters x and y",
+            "text": "The novel functionality of GooFit has successfully been used to determine the statistical sensitivity on the charm mixing parameters x and y in a time-dependent amplitude analysis of the decay D 0 \u2192 K + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 . This study did not account for resolution effects, background in the data, and did not allow the model to float. Therefore, the real sensitivity will be worse than shown in table 1. Nevertheless, this study proves the capabilities of the newly implemented extension in GooFit to be fully functional. Table 1. Summary of the obtained statistical sensitivities of x and y in the case of x = 0.49 % and y = 0.61 % [11]. ",
+            "paragraph_rank": 11,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 517,
+                    "text": "Table 1",
+                    "end": 524
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 628,
+                    "text": "[11]",
+                    "end": 632
+                }
+            ]
+        },
+        {
+            "text": "Performance comparison between CPU and GPU",
+            "section_rank": 7
+        },
+        {
+            "section": "Performance comparison between CPU and GPU",
+            "text": "Lastly, we present a performance comparison of the newly implemented functionality, between the CPU and GPU. Two different test cases are used to study the performance. The first one targets the generation speed of pseudo-events according to a time-dependent amplitudemodel. This generation is repeated for three different sample sizes to study the scaling behavior. Secondly, the performance of the fitting procedure is studied, where the scaling behavior is studied by increasing the number of used events in the normalization while leaving the sample size one fits to constant. These tests are repeated on three different platforms: a server with two Intel Xeon E5-2680 v3 CPUs, each with 12 physical cores that can run two concurrent threads, a NVIDIA K40 GPU and a mid-range mobile gaming GPU NVIDIA GeForce GT 525M. The results are obtained by an average over 5 runs, and listed in tables 2 and 3. They show a significant speedup when utilizing the K40 and even the outdated mid-range mobile graphics card was able to perform surprisingly well compared to the other two platforms, but due to insufficient memory it was not able to complete all tests. While the non-linear scaling from 24 to 48 cores was expected as one only increases the logical number of cores by running two threads per core, the expected performance gain from the K40 compared to the GT 525M was less than a priori expected. Using the available NVIDIA profiler, we are able to determine that the source of the throttled performance on the K40 is due to memory latency. We hope to reduce this in the future by reducing the used memory as well adapting the current memory layout to make memory transfers more efficient.",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "Summary",
+            "section_rank": 8
+        },
+        {
+            "section": "Summary",
+            "text": "In conclusion, we have presented a novel extension to the GooFit framework which allows for performing a time-dependent amplitude analysis of a pseudoscalar meson decaying into four pseudo-scalar final states. Additionally, this extension allows the user to generate pseudo-events according to a previously defined time-dependent amplitude model. This functionality was successfully validated by comparing the results to an existing software package and furthermore used to study the sensitivity to the charm mixing parameters in the decay D 0 \u2192 K + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 . Lastly, it is shown that there is a significant speedup gained by utilizing the GPU, while an even bigger performance gain is forseen once the memory layout in GooFit has been adapted to minimize memory latency on high performance GPUs like the K40.",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "section": "Summary",
+            "text": "The GooFit package can be found on GitHub at https://github.com/GooFit",
+            "paragraph_rank": 14,
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 9
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Figure 3. Comparison between the generated pseudo events from the MINT3 (dots) and GooFit (solid) frameworks. Shown are the distributions of the five variables used to parametrize the phase space. Additionally, the normalized pull distributions and p-value are shown. The pulls should follow a normal distribution with a mean of zero (blue line) and a standard deviation of one. The red lines mark the 2\u03c3 region.",
+            "paragraph_rank": 15,
+            "section_rank": 9
+        },
+        {
+            "text": "Table 2 .Table 3 .",
+            "section_rank": 10
+        },
+        {
+            "section": "Table 2 .Table 3 .",
+            "text": "Pseudo-event generation according to a time-dependent model using a Monte-Carlo accept/reject method. Fit to 100 000 generated pseudo-events, with varying number of points used to calculate the normalization. Fixed model, floating x and y.",
+            "paragraph_rank": 16,
+            "section_rank": 10
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 12
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "I would like to thank the authors and maintainers of the MINT and MINT3 framework, P. d'Argent, T.D. Evans and J. Rademacker, as their work and support has been most helpful in implementing the presented extension to GooFit.",
+            "paragraph_rank": 17,
+            "section_rank": 12
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "Work sponsored by the Wolfgang Gentner Programme of the Federal Ministry of Education and Research.",
+            "paragraph_rank": 18,
+            "section_rank": 12
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "The development of this extension has been in part supported by the National Science Foundation under grant number PHY-1414736.",
+            "paragraph_rank": 19,
+            "section_rank": 12
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "NVidia provided K40 GPUs for our use through its University Partnership program.",
+            "paragraph_rank": 20,
+            "section_rank": 12
+        }
+    ]
+}

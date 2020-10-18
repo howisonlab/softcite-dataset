@@ -1,0 +1,1096 @@
+{
+    "level": "paragraph",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "The ATLAS collaboration E-mail: atlas.publications@cern.ch",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        },
+        {
+            "text": "A :",
+            "section_rank": 2
+        },
+        {
+            "section": "A :",
+            "text": "The momentum measurement capability of the ATLAS muon spectrometer relies fundamentally on the intrinsic single-hit spatial resolution of the monitored drift tube precision tracking chambers. Optimal resolution is achieved with a dedicated calibration program that addresses the specific operating conditions of the 354 000 high-pressure drift tubes in the spectrometer. The calibrations consist of a set of timing offsets and drift time to drift distance transfer relations, and result in chamber resolution functions. This paper describes novel algorithms to obtain precision calibrations from data collected by ATLAS in LHC Run 2 and from a gas monitoring chamber, deployed in a dedicated gas facility. The algorithm output consists of a pair of correction constants per chamber which are applied to baseline calibrations, and determined to be valid for the entire ATLAS Run 2. The final single-hit spatial resolution, averaged over 1172 monitored drift tube chambers, is 81.7 \u00b1 2.2 \u00b5m.",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "K",
+            "section_rank": 3
+        },
+        {
+            "section": "K",
+            "text": ": Gaseous detectors; Muon spectrometers; Particle tracking detectors (Gaseous detectors); Wire chambers (MWPC, Thin-gap chambers, drift chambers, drift tubes, proportional chambers etc)",
+            "paragraph_rank": 2,
+            "section_rank": 3
+        },
+        {
+            "text": "Introduction",
+            "section_rank": 4
+        },
+        {
+            "section": "Introduction",
+            "text": "This paper summarizes the calibration procedure and reports the single-hit spatial resolution of the monitored drift tubes (MDT) in the ATLAS muon spectrometer (MS) during Run 2 of the Large Hadron Collider (LHC), spanning the 2015-2018 operating period. In this context, single-hit refers to the signal produced by a charged particle passing through a drift tube. The calibrations use data from both the spectrometer MDT chambers and a dedicated gas monitor MDT chamber (GMC), and are performed at the ATLAS muon calibration centers [1].",
+            "paragraph_rank": 3,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 534,
+                    "text": "[1]",
+                    "end": 537
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The MS design momentum resolution \u03b4p/p is \u223c3% at 100 GeV and around 10% at 1 TeV [2], allowing both Standard Model measurements and new physics searches in processes containing high-momentum final-state muons [3]. Such searches may include the decay of heavy resonances into high transverse momentum (p T ) muons, demanding superior spectrometer performance for their discovery. For muons of p T above 100 GeV, the drift tube single-hit resolution (and to a lesser extent, the chamber alignment) becomes an important contribution to the transverse momentum -1 -resolution, and is the dominant factor above 250 GeV [2]. At high momentum, the p T resolution \u03c3 p T is determined by the relation \u03c3 p T /p T \u221d \u03c3 res \u00d7 p T [4], where \u03c3 res is the single-hit spatial resolution. The design resolution is \u03c3 res = 80 \u00b5m [2].",
+            "paragraph_rank": 4,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 81,
+                    "text": "[2]",
+                    "end": 84
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 209,
+                    "text": "[3]",
+                    "end": 212
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 614,
+                    "text": "[2]",
+                    "end": 617
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 717,
+                    "text": "[4]",
+                    "end": 720
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 811,
+                    "text": "[2]",
+                    "end": 814
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The objective of the MDT calibration program is to achieve this resolution for all 354 000 drift tubes assembled into 1172 MDT chambers throughout all ATLAS data taking in LHC Run 2. The primary MDT calibration ingredients consist of tube t 0 timing offsets (referred to here as t 0 offsets or just t 0 ) and chamber-specific drift electron time to drift distance transfer relations, hereafter referred to as R(t) functions. The t 0 offset is primarily a function of cable length and electronics delays, while the R(t) function depends on the gas properties.",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "section": "Introduction",
+            "text": "The operating conditions of the MDT detectors in the ATLAS cavern are characterized by large temperature gradients, occasional component faults, variations in humidity, background radiation, flow, pressure and mixture instabilities of the gas supply, all of which affect the timing response. In order to achieve the optimal resolution the calibration constants are routinely monitored, corrected for many of these second-order effects, and updated.",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "section": "Introduction",
+            "text": "This paper describes the algorithms which generate a pair of correction parameters for the t 0 offsets and the R(t) functions. These pairs of chamber-specific constants compensate for a number of systematic uncertainties associated with the operating conditions of the MDT chambers. As a final result, the MDT tube spatial resolution that has been achieved in ATLAS Run 2 is presented. Unless otherwise noted, all reported errors are statistical.",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "ATLAS detector",
+            "section_rank": 5
+        },
+        {
+            "section": "ATLAS detector",
+            "text": "The ATLAS experiment [5] at the LHC is a multipurpose particle detector with a forward-backward symmetric cylindrical geometry and a near 4\u03c0 coverage in solid angle.1 It consists of an inner tracking detector (ID) surrounded by a thin superconducting solenoid providing a 2 T axial magnetic field, electromagnetic and hadronic calorimeters, and a muon spectrometer. The ID covers the pseudorapidity range |\u03b7| < 2.5. It consists of silicon pixel, silicon microstrip, and transition-radiation tracking detectors. Lead/liquid-argon (LAr) sampling calorimeters provide electromagnetic (EM) energy measurements with high granularity. A steel/scintillator-tile hadronic calorimeter covers the central pseudorapidity range (|\u03b7| < 1.7). The endcap and forward regions are instrumented with LAr calorimeters for EM and hadronic energy measurements up to |\u03b7| = 4.9.",
+            "paragraph_rank": 8,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 21,
+                    "text": "[5]",
+                    "end": 24
+                }
+            ]
+        },
+        {
+            "section": "ATLAS detector",
+            "text": "The ATLAS muon spectrometer is cylindrical, 22 m in diameter and 45 m in length, surrounding the calorimeters with an acceptance coverage of 2\u03c0 in azimuth and \u00b12.7 in pseudorapidity. It consists of a barrel and two endcap sections located in an air-core toroidal magnetic field generated by eight coils for each section. The field integral of the toroids ranges between 2.0 and 6.0 T m for most of the acceptance, while the field magnitude at the MDT chambers ranges from near zero to 0.2 T in most of the endcap region (1.05 < |\u03b7| < 2.7), and averages about 0.6 T in the barrel (|\u03b7| < 1.05) region [2]. The MS identifies muons, provides muon triggers and, integrating with the 1ATLAS uses a right-handed coordinate system with its origin at the nominal interaction point in the center of the detector and the z-axis along the beam pipe. The x-axis points from the interaction point to the center of the LHC ring, and the y-axis points upwards. Cylindrical coordinates (r, \u03d5) are used in the transverse plane, \u03d5 being the azimuthal angle around the z-axis. The pseudorapidity is defined in terms of the polar angle \u03b8 as \u03b7 = \u2212 ln tan(\u03b8/2). The momentum in the transverse plane is denoted by p T .",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 599,
+                    "text": "[2]",
+                    "end": 602
+                }
+            ]
+        },
+        {
+            "section": "ATLAS detector",
+            "text": "-2 -inner detector information, measures their charge sign and momenta. The MDT chambers perform precision charged-particle tracking in the plane defined by the beam axis (z) and the radial distance to the beam (r). The momentum measurement is based on the track curvature in these r-z coordinates, while resistive-plate chambers (RPC) and thin-gap chambers (TGC) provide triggering in the barrel and endcaps respectively, and readout of the so called second coordinate in the r-\u03d5 non-bending plane. The MDT chambers are assembled in three nested cylindrical barrel stations and three main coaxial discs in each of the endcap regions. A fourth annulus of endcap chambers covers a limited pseudorapidity region spanning from the barrel to the endcap. They are constructed of pairs of close-packed multilayers of 3 cm diameter cylindrical aluminum drift tubes, 1 m to 6 m long for the inner stations close to the beam and outer stations, respectively. Each multilayer comprises either three or four single planes, depending on the barrel (endcap) chamber radial (Z-axis) position, with each plane containing from 12 to 72 tubes. A 50 \u00b5m diameter anode wire is centered to within 30 \u00b5m of the axis of a 1.46 cm (1.5 cm) inner (outer) radius aluminum tube. The MDT gas is a mixture of 93% Ar and 7% CO 2 plus a few hundred ppm of water vapour at 3 bar pressure. The gas flows in a common trunk line to distribution racks and is fed in parallel to all drift tubes at a rate of roughly one tube volume per day. The total gas throughput to the entire MDT system is about 2 \u00d7 10 6 L/day. The tubes are operated at 3080 V anode voltage to deliver a gas avalanche amplification gain of 20 000. The single-hit efficiency for a minimum-ionizing particle is nearly 100% [6].",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 1757,
+                    "text": "[6]",
+                    "end": 1760
+                }
+            ]
+        },
+        {
+            "section": "ATLAS detector",
+            "text": "First-level triggers [7] are implemented in hardware and combine muon spectrometer and calorimeter measurements to accept events at a maximum rate of 100 kHz. These first-level triggers are followed by more refined software-based triggers that reduce the accepted event rate to 1 kHz on average.",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 21,
+                    "text": "[7]",
+                    "end": 24
+                }
+            ]
+        },
+        {
+            "text": "Analysed data",
+            "section_rank": 6
+        },
+        {
+            "section": "Analysed data",
+            "text": "The results presented here are based on a subset of the ATLAS Run 2 proton-proton collision data at a center-of-mass energy \u221a s = 13 TeV. Specifically, this analysis uses 1.3 fb \u22121 of data that were acquired in 2015, 23.8 fb \u22121 in 2016, and 22.3 fb \u22121 in 2017. The 2015 and 2017 data include 7.9 pb \u22121 and 55.3 pb \u22121 , respectively, collected with the MS toroid magnet turned off. The data set is from the primary ATLAS physics data stream that includes all triggers and was processed with data quality selections common to all physics analyses. The selected set of data runs is distributed along the whole data acquisition period for each year, allowing checks of the stability of the parameters under study in different conditions. Each single run contains enough muon tracks per chamber to allow the determination of the R(t) and resolution functions. Two corrections that depend on the non-bending plane second coordinate are applied to the time of the MDT signal by the offline event reconstruction software: (1) the magnetic-field-induced Lorentz angle effect on the drift time [8] and (2) the signal propagation time associated with the hit position along the wire.",
+            "paragraph_rank": 12,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 1084,
+                    "text": "[8]",
+                    "end": 1087
+                }
+            ]
+        },
+        {
+            "section": "Analysed data",
+            "text": "This paper uses single-hit information from muon tracks with p T > 20 GeV that are reconstructed in the ID and MS. The data include drift times, drift radii and timing offsets as used by the offline tracking reconstruction algorithms. A minimum of 1000 tube hits per chamber per run is required to obtain stable fit results in the analysis. As a consequence of these selection criteria the number of chambers for which results are obtained has a run-to-run variation of 0.3%. When -3 -",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "JINST 14 P09011",
+            "section_rank": 7
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "possible, multiple consecutive runs with the same gas conditions are grouped together in order to reach a minimum number of muon tracks per chamber.",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "MDT calibration",
+            "section_rank": 8
+        },
+        {
+            "section": "MDT calibration",
+            "text": "This section introduces the drift radius measurement and the basic calibration parameters necessary for its determination. The operational definition of the single-hit spatial resolution as applied in this analysis is then presented.",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Drift radius determination",
+            "section_rank": 9
+        },
+        {
+            "section": "Drift radius determination",
+            "text": "The MDT drift tube signal, or hit, provides the pulse arrival time, and a quantity reconstructed as the collected electric charge of the signal pulse. Read-out is accomplished with 24-channel front-end cards. These cards amplify, shape and discriminate the signals with programmable thresholds, then digitize the data. The hit time data are recorded in 1.2 \u00b5s windows initiated by a first-level trigger signal with a 0.78125 ns minimum digitization time. The charge contained in the leading edge of the signal is stored as voltage on a capacitor and read out as a run-down time using the Wilkinson technique [9].",
+            "paragraph_rank": 16,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 608,
+                    "text": "[9]",
+                    "end": 611
+                }
+            ]
+        },
+        {
+            "section": "Drift radius determination",
+            "text": "The signal arrival time is relative to a specific proton-proton interaction time called the bunch crossing identifier. The bunch crossing time is measured in 25 ns ticks synchronized with an LHC global 40 MHz clock, and is subtracted in the read-out electronics hardware to yield the raw pulse arrival time. This pulse arrival time includes, in addition to the drift time, several timing offsets: the time-of-flight of the particle (muon) from the proton-proton interaction point to the tube, the signal propagation time along the tube wire, plus various fixed electronics and cable latencies. The sum of all these is referred to as the t 0 offset. The t 0 offset therefore represents the drift time produced by a particle crossing at the tube wire.",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "section": "Drift radius determination",
+            "text": "The raw time for every hit is converted into a drift time by subtracting the tube time offset. The drift time is a measure of the transit time of electrons generated by the primary ionization and subsequent avalanche multiplication to arrive at the anode wire. The resultant drift time is then mapped to the drift distance (circle) by means of a time-to-distance R(t) transfer function, an example of which is shown in figure 1. The best straight line tangent to all such drift circles in a single chamber forms a track segment.",
+            "paragraph_rank": 18,
+            "section_rank": 9
+        },
+        {
+            "section": "Drift radius determination",
+            "text": "In ATLAS, the t 0 offset is a property of a single tube, whereas an R(t) function is associated to a single MDT chamber. This association is valid to the extent that the operating conditions are uniform. Since chambers share a common high-voltage supply, gas pressure and thermal environment, these conditions are generally met at the chamber level. These t 0 offsets and R(t) functions, globally called calibration constants, are generated by the ATLAS calibration computing centers.",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "t 0 determination",
+            "section_rank": 10
+        },
+        {
+            "section": "t 0 determination",
+            "text": "While the t 0 offset represents the drift time of a hit at the wire, operationally it is defined as the point of 50% of maximum amplitude of a Fermi-Dirac sigmoid function fit to the rising edge of an MDT drift time spectrum [10], as illustrated in figure 2. t 0 offsets are nominally determined for all tubes in the MS using single tube spectra or, when hit statistics are poor, the combined spectra from groups of 24 equal-length tubes sharing a common readout card. This t 0 offset definition is subject -4 -  to small systematic uncertainties of order 1 ns. These arise from different data selection, different background level and operating conditions in the GMC (see section 4.4) and the MDT systems, which affect the number of hits near the wire, the slope of the rising edge, and the subsequent fit result. These systematic effects are relevant for the GMC-based universal R(t) function described in section 4.3 which is computed using the GMC t 0 offsets. They are resolved using a correction parameter, \u03b4t 0 , described in section 5.1.",
+            "paragraph_rank": 20,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 225,
+                    "text": "[10]",
+                    "end": 229
+                }
+            ]
+        },
+        {
+            "text": "R(t) function determination",
+            "section_rank": 11
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "A standard method to extract the R(t) function is by an autocalibration algorithm [11]. This algorithm, using a given set of t 0 offsets, iterates the linear fit to the drift radii in a chamber, each time updating the R(t) function until the residuals converge to a minimum. An autocalibration R(t) function is self-adapting to the chamber conditions, but a daily implementation of this procedure for every single MDT chamber requires significant computing resources and a large amount of data transfer and storage.",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 82,
+                    "text": "[11]",
+                    "end": 86
+                }
+            ]
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "The alternative R(t) function calibration method used here adopts the temperature-corrected universal R(t) (URT), where the URT is the GMC R(t) function derived using autocalibration for standard operating conditions (defined as gas pressure 3 bar, high voltage 3080 V, temperature 293 K, and GMC t 0 offsets). The URT method assumes that the absolute measured values of the chamber operating conditions of both the GMC and the MDT chambers are all known and that their differences can be corrected. The main sources of systematic differences resulting from this assumption are:",
+            "paragraph_rank": 22,
+            "section_rank": 11
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "\u2022 The MDT chamber pressures can differ from the 3 bar nominal point due to several factors: local gas flow rates, pressure gauge location in the gas flow circuit, and pressure sensor offsets. Furthermore, sensors used in the GMC and in the MDT gas racks have systematic uncertainties of 10-20 mbar.",
+            "paragraph_rank": 23,
+            "section_rank": 11
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "\u2022 The internal MDT gas temperature may be systematically misrepresented by the thermal sensors. There are typically eight sensors mounted on the tube walls at different locations in -5 -the chamber. These sensors are read out periodically, and a daily average value over all sensors is computed. However, due to possible thermal gradients across the chambers (on average 1.8 \u00b1 0.7 (RMS) K), and because the sensors are external to the tubes, this average temperature may not accurately represent the internal temperature everywhere in the gas volume.",
+            "paragraph_rank": 24,
+            "section_rank": 11
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "\u2022 The actual high voltage supplied to chambers might deviate slightly (by about 1 V) from the nominal 3080 V operating voltage, although this has an effect of less than 0.1% on the maximum drift time. A larger high-voltage deviation generally indicates equipment failure, not a systematic error, and it is addressed during the detector access periods.",
+            "paragraph_rank": 25,
+            "section_rank": 11
+        },
+        {
+            "section": "R(t) function determination",
+            "text": "To correct for these effects a single catch-all parameter, referred to as effective pressure, \u03b4P, is defined. This parameter is used in a phenomenological correction function described in section 5.2. In summary, an MDT chamber requires two types of calibrations: an R(t) function and a set of t 0 offsets, each with a specific set of uncertainties. Two similar algorithms provide correction factors that compensate for these uncertainties and lead to improved single-hit spatial resolution.",
+            "paragraph_rank": 26,
+            "section_rank": 11
+        },
+        {
+            "text": "Gas monitor chamber",
+            "section_rank": 12
+        },
+        {
+            "section": "Gas monitor chamber",
+            "text": "The GMC [10] is an independent MDT chamber that operates in the surface gas facility, outside of the ATLAS experimental cavern. It has two gas partitions each independently sampling the common MDT trunk supply and exhaust lines that serve the entire MDT system, and records cosmic-ray muons at a rate of about 14 Hz. It is housed in a stable thermal enclosure where all operating parameters, gas flow, pressure, temperature, and high voltage, are continuously monitored.",
+            "paragraph_rank": 27,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 8,
+                    "text": "[10]",
+                    "end": 12
+                }
+            ]
+        },
+        {
+            "section": "Gas monitor chamber",
+            "text": "The principal GMC output is a measurement of the maximum drift time, t max = t w \u2212t 0 , where t w is the arrival time of a hit located at the tube wall. A drift time spectrum, similar to figure 2, is computed for standard operating conditions by applying a correction function [12] based on the output of chamber-mounted pressure and temperature sensors. The tail end of the spectrum is fitted using a modified Fermi-Dirac sigmoid function similar to that used to obtain the t 0 offsets, and the t max is defined as a fit parameter, as described in ref. [10]. The t max is published hourly to the online run monitoring system and to the muon calibration centers. A variation of t max > 1 ns triggers the calculation of a new set of R(t) functions for the track reconstruction. The t max is sensitive to small changes in the gas composition: for example, a 100 ppm absolute increase in water vapour content yields a nearly 7 ns increase in t max [13]. A single 24-hour period of GMC t max data is shown in figure 3, where the stability is better than 1 ns RMS. The GMC t max superimposed with the same quantity determined from the average of all chambers over the 2016 data-taking period is presented in figure 4. A one-time offset of \u221212 ns is applied to compensate for the typical difference in gas temperature between the MDT and the standard URT that range from about 4.5 to 5 K. The range of t max variation over one year is 15 ns. This change, observed annually, is attributed to the seasonal variation in ambient humidity in the ATLAS cavern that modulates the content of water vapour in the gas mixture.",
+            "paragraph_rank": 28,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 277,
+                    "text": "[12]",
+                    "end": 281
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 554,
+                    "text": "[10]",
+                    "end": 558
+                },
+                {
+                    "type": "bibr",
+                    "start": 945,
+                    "text": "[13]",
+                    "end": 949
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1005,
+                    "text": "figure 3",
+                    "end": 1013
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1203,
+                    "text": "figure 4",
+                    "end": 1211
+                }
+            ]
+        },
+        {
+            "section": "Gas monitor chamber",
+            "text": "The GMC produces URT functions every two hours. After local GMC temperature and pressure corrections are applied, the URT registers only changes in the gas composition. Based on the daily average of measurements from detector-mounted thermal sensors, the URT is converted into chamber-specific R(t) functions [12]. These chamber R(t) functions are further tuned by the \u03b4P correction parameter, as detailed in section 5.2.",
+            "paragraph_rank": 29,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 309,
+                    "text": "[12]",
+                    "end": 313
+                }
+            ]
+        },
+        {
+            "section": "Gas monitor chamber",
+            "text": "-6 -2019 JINST 14 P09011  ",
+            "paragraph_rank": 30,
+            "section_rank": 12
+        },
+        {
+            "text": "Residuals and resolution",
+            "section_rank": 13
+        },
+        {
+            "section": "Residuals and resolution",
+            "text": "Track segments in a chamber are the best-fit straight lines tangent to the N circles defined by N drift radii. The distance of closest approach of a hit radius to this fit line is either a fit or hit residual. The former results when all N data points are included in the linear fit, and the latter is a measure of the j th residual when the j th point is excluded from the fit of the other N \u2212 1 points. Hit and fit residual distributions (N entries per track, for all tracks in the analysed data set) are generated for each MDT chamber. Residuals are calculated for each of 15 radial bins, 1 mm wide, from 0 to 15 mm in drift radius r, as well as for a single 15-mm-wide radial bin. The former are used to obtain the radial dependence of the resolution and the latter is used to obtain the single-hit spatial resolution, both averaged over all tubes in a chamber. The residual distributions are fitted using a double-Gaussian function as expressed in equation (4.1): this choice is dictated by the stochastic nature of the signal formation that arises from ion-pair creation, gas diffusion and electron-ion transport and, importantly, allows for the dependence of the drift velocity on drift radius, as indicated by the non-linearity of the R(t) function in figure 1. These properties produce residual distributions with radially dependent widths, including tails that are attributed to misassociated track hits from deltarays and asynchronous background hits. While a single-Gaussian function inadequately describes the distributions for all radial bins, the double-Gaussian function used here provides a good fit to the residuals with a minimal increase in the number of free parameters. The fit function is:",
+            "paragraph_rank": 31,
+            "section_rank": 13
+        },
+        {
+            "section": "Residuals and resolution",
+            "text": "where A n , A w , \u03c3 n , \u03c3 w are the amplitudes and standard deviations of a narrow and a wide Gaussian component. The two terms in equation (4.1) are constrained to a common meanr, and fit over a residual range of \u00b1 0.5 mm, which contains more than 99% of hits (section 7). The \u03c3 parameters (for fit and hit residuals) are determined for the r th radial bin of the amplitude-weighted standard -7 -",
+            "paragraph_rank": 32,
+            "section_rank": 13
+        },
+        {
+            "text": "JINST 14 P09011",
+            "section_rank": 14
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "deviations of the double-Gaussian function by:",
+            "paragraph_rank": 33,
+            "section_rank": 14
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "where the dependence of the fit parameters on the drift radius is explicitly indicated. Fit and hit residual distributions for a representative chamber at a drift radius near the wire, where the resolution is broader than far away from the wire, are shown in figures 5 and 6, respectively. These distributions are fit with the function of equation (41). For comparison purposes a single-Gaussian fit within the FWHM of these distributions is also shown.  The drift tube spatial resolution, \u03c3 res , is the geometric mean of the fit and hit residual widths [14] defined as:",
+            "paragraph_rank": 34,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 348,
+                    "text": "(4",
+                    "end": 350
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 555,
+                    "text": "[14]",
+                    "end": 559
+                }
+            ]
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "This approach was checked by Monte Carlo simulation. About 10 6 tracks incident on a generic chamber within a 10 \u2022 angular range were generated. The drift radii assigned to these tracks were Gaussian distributed about their initial values using a radially dependent input resolution function derived from a test beam [15]. These smeared hit points were linearly fit and the output resolution for each radial bin was obtained using equation (43). The mean difference over the tube radius between the output and input resolution is 0.3 \u00b1 0.2 \u00b5m, confirming the validity of the formulation.",
+            "paragraph_rank": 35,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 317,
+                    "text": "[15]",
+                    "end": 321
+                },
+                {
+                    "start": 440,
+                    "text": "(4",
+                    "end": 442
+                }
+            ]
+        },
+        {
+            "text": "Correction algorithms",
+            "section_rank": 15
+        },
+        {
+            "section": "Correction algorithms",
+            "text": "This section describes the algorithms used to determine the \u03b4t 0 and \u03b4P corrections and their associated metrics, the track residuals and the resolution.",
+            "paragraph_rank": 36,
+            "section_rank": 15
+        },
+        {
+            "text": "\u03b4t 0 correction",
+            "section_rank": 16
+        },
+        {
+            "section": "\u03b4t 0 correction",
+            "text": "The default t 0 offset definition may vary by the order of 1 ns from the t 0 value that provides the best resolution. The algorithm described here is a variant of the tuning procedures designed to find the -8 -",
+            "paragraph_rank": 37,
+            "section_rank": 16
+        },
+        {
+            "text": "JINST 14 P09011",
+            "section_rank": 17
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "best linear fit to a track segment by tuning the t 0 on a track-by-track basis [16]. The \u03b4t 0 correction method instead optimizes the default t 0 by testing a new, modified t 0 associated with a single chamber simultaneously for all tubes and for all tracks in a data run, while keeping the R(t) function fixed. The algorithm operates on track segments containing at least as many hits as there are drift tube layers in the chamber, i.e. a minimum of six (eight) hits for a six-layer (eight-layer) chamber. The procedure steps through \u03b4t 0 over a range of \u00b110 ns in 0.5 ns steps. At each step, new drift times and drift radii are computed and the segments are re-fit. Importantly, the residuals are evaluated only for hits with drift radii r < 5 mm where the drift velocity is largest, about 50 \u00b5m/ns. By using only these near-wire residuals the procedure is practically insensitive to the R(t) function and avoids compensating for systematic uncertainties which come into play at larger drift radii (see figure 12).    Figure 8 shows the incremental change with each step of the residual RMS widths for the entire range of \u03b4t 0 values relative to the initial t 0 . The optimal \u03b4t 0 is the one yielding the minima of the RMS widths of the fit and hit residual distributions. The value on the vertical axis corresponding to the minimum in figure 8 does not represent the resolution, but only the RMS spread of the hit residuals near the wire.2",
+            "paragraph_rank": 38,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 79,
+                    "text": "[16]",
+                    "end": 83
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1005,
+                    "text": "figure 12",
+                    "end": 1014
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 1020,
+                    "text": "Figure 8",
+                    "end": 1028
+                }
+            ]
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "The \u03b4t 0 correction procedure is applied to 2015 data (the first year of Run 2 operation) using initial t 0 offsets generated by the MDT calibration centers. The \u03b4t 0 corrections obtained in a much higher peak-luminosity November 2015 run, 4.8 \u00d7 10 33 cm \u22122 s \u22121 , are shown in figure 9, which reveals an average t 0 global correction of 1.3 ns with a RMS spread of 0.7 ns. The tails of the distribution are populated by a few chambers that were measured to have been constructed with structural non-conformities affecting the internal alignment of the tubes and therefore of the hit positions. The \u03b4t 0 correction tries to compensate for this misalignment.  The determination of the \u03b4t 0 corrections for all MDT chambers was repeated for a selection of data runs that span all data-taking periods in 2016 and 2017. The chamber-averaged \u03b4t 0 corrections for each run are shown in figure 10. At least 1165 out of the total 1172 chambers are included in each data point used for this average, depending on the integrated luminosity of the run. For the 65 runs analysed in 2016 the mean global \u03b4t 0 offset is 1.35 \u00b1 0.05 (RMS) ns, consistent with the result determined from the 2015 data set. The \u03b4t 0 corrections from 2016 are then added to the calibration constants for 2017, so that the algorithm, when applied to the 2017 data set, produces a smaller global shift with a mean of 0.43 \u00b1 0.07 (RMS) ns. Figure 11 shows the chamber-by-chamber \u03b4t 0 difference between the first and last runs of the 2017 data set. In the first run, the toroid magnetic field was off and in the last run the field was at full strength and the instantaneous luminosity was higher by one order of magnitude. The mean difference is consistent with zero. This result demonstrates that the \u03b4t 0 parameter, once established, remains stable for all chambers over a large range of instantaneous luminosity and is insensitive to the magnetic field.",
+            "paragraph_rank": 39,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 880,
+                    "text": "figure 10",
+                    "end": 889
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1402,
+                    "text": "Figure 11",
+                    "end": 1411
+                }
+            ]
+        },
+        {
+            "text": "\u03b4P correction",
+            "section_rank": 18
+        },
+        {
+            "section": "\u03b4P correction",
+            "text": "Optimization of the R(t) functions is done with an effective pressure parameter, \u03b4P, that corrects for the (small) inaccuracies in gas pressure sensors, temperature measurement, and high voltage. In all three cases, minor variations from nominal values produce radially dependent changes in the R(t) function, such that a single, scalable correction function can be used. The calculation of this function is done using the Garfield program [17] configured to model the drift electron transport in MDT tubes with standard operating parameters as in section 2. Specifically, a pure Ar-CO 2 gas mixture without water vapour and zero magnetic field is used. Figure 12 shows the predicted change in the drift time as a function of drift radius for variations of temperature, pressure and high voltage from their reference values. This drift time response was previously validated with temperature data [12]. The maximum effect on the drift time is at the tube wall as expressed in equation (5.1), where the temperature correction is \u22122.6 ns/K, while the pressure correction function scales as \u22120.1 K/mbar relative to the temperature correction. The negative sign means that an increase in gas -10 -  pressure at fixed temperature corresponds to an increase in gas density, a decreased drift electron mean free path, and thus longer drift times. Similarly, a higher voltage at fixed pressure leads to an increased electric field and higher drift velocity. Importantly, for any of these parameters, the curves in figure 12 indicate a negligible effect on drift times for radii smaller than 5 mm. For small deviations of the high voltage from the nominal setting, the drift time changes by only about 0.26 ns/V at the tube wall, thus typical systematic offsets of 1 V have a negligible effect:",
+            "paragraph_rank": 40,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 440,
+                    "text": "[17]",
+                    "end": 444
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 654,
+                    "text": "Figure 12",
+                    "end": 663
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 897,
+                    "text": "[12]",
+                    "end": 901
+                },
+                {
+                    "type": "bibr",
+                    "start": 985,
+                    "text": "(5.1)",
+                    "end": 990
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1506,
+                    "text": "figure 12",
+                    "end": 1515
+                }
+            ]
+        },
+        {
+            "section": "\u03b4P correction",
+            "text": "The effective pressure correction algorithm is similar to the \u03b4t 0 method and uses the same tracksegment hit selection. For a collection of track-segment hits, \u03b4P is incremented in 5 mbar steps through a \u00b1100 mbar range of test pressures centered around the nominal 3 bar. The R(t) function is recalculated using the correction function shown in figure 12 rescaled by the P+\u03b4P effective pressure value assumed in the scan, new drift radii are obtained from the newly corrected R(t) function, and track segments are re-fit and residuals evaluated. The procedure is initiated with the set of chamberspecific R(t) functions of the day of the run. The \u03b4t 0 corrections found previously are applied to the hit drift times. For \u03b4P determination, the residuals are calculated for all drift radii.",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "section": "\u03b4P correction",
+            "text": "Similar to the \u03b4t 0 procedure, the optimal \u03b4P is the one yielding the minimum of the RMS width of the fit and hit residual distributions. The hit residuals for three \u03b4P values, of \u221240 mbar, 10 mbar and 60 mbar, are shown for a representative chamber in figure 13. Figure 14 shows the RMS width of the hit residual distribution as a function of \u03b4P for the full scan range. The minimum at 10 mbar represents the best value of this parameter.",
+            "paragraph_rank": 42,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 253,
+                    "text": "figure 13",
+                    "end": 262
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 264,
+                    "text": "Figure 14",
+                    "end": 273
+                }
+            ]
+        },
+        {
+            "section": "\u03b4P correction",
+            "text": "The minima of curves similar to figure 14, taken as the \u03b4P step corresponding to the lowest residual, were initially determined for all MDT chambers using data from August 2015 with the toroid magnet turned off. The algorithm was applied to a set of collision runs acquired 2.5 months later with the magnetic field turned on, and with 25 times higher instantaneous luminosity (from 0.17 \u00d7 10 33 cm \u22122 s \u22121 in mid August to 4.8 \u00d7 10 33 cm \u22122 s \u22121 at beginning of November), yielding in both cases an average correction \u03b4P of 30.0 \u00b1 0.3 mbar with an 11 mbar RMS spread. Distributions -11 -  of the latter \u03b4P results are shown in figure 15, and the chamber-by-chamber differences in the \u03b4P correction for the two data sets are shown in figure 16. The measured change is within the \u03b4P step size. The corrections are stable in time and insensitive to both the magnetic field and the increased hit rates that result from higher instantaneous luminosity.  The \u03b4P algorithm was further applied to 65 collision runs acquired from May to October 2016, where the peak luminosity exceeded 10 34 cm \u22122 s \u22121 , more than twice that of November 2015. These runs used R(t) functions which included the \u03b4P corrections determined in the 2015 data. The chamber-averaged \u03b4P value for each of the runs in 2016 and 2017 is shown in figure 17 as a function of run date. The average of \u03b4P over all of 2016 data is 9.5 \u00b1 0.8 mbar (RMS = 1.3 mbar) and for 2017 is 12.3 \u00b1 1.0 mbar (RMS = 1.3 mbar). The \u03b4P correction is stable over each year to better than 3 mbar. Figure 18 shows the distribution of the chamber-by-chamber \u03b4P difference between the first and last runs in the 2016 data set. The mean difference is 2.3 \u00b1 4.5 (RMS) mbar, within the systematic uncertainty of the algorithm (section 7). This overall result supports the initial hypothesis that \u03b4P represents primarily systematic offsets of pressure gauges and other sensors and, once determined, would remain stable throughout a year of running.  ",
+            "paragraph_rank": 43,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 627,
+                    "text": "figure 15",
+                    "end": 636
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 733,
+                    "text": "figure 16",
+                    "end": 742
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1309,
+                    "text": "figure 17",
+                    "end": 1318
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 1537,
+                    "text": "Figure 18",
+                    "end": 1546
+                }
+            ]
+        },
+        {
+            "text": "Resolution results",
+            "section_rank": 19
+        },
+        {
+            "section": "Resolution results",
+            "text": "The single-hit MDT tube spatial resolution, as defined in equation (43), is measured in runs with the toroidal magnetic field on. A requirement of p T > 20 GeV for the muon transverse momentum measured with the ID is applied to reduce the track curvature such that track segments could be reliably fit with a linear function, even in the chambers in a high magnetic field. For these tracks the negligible effects of the curvature due to magnetic field are folded into the systematic uncertainty.",
+            "paragraph_rank": 44,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 67,
+                    "text": "(4",
+                    "end": 69
+                }
+            ]
+        },
+        {
+            "section": "Resolution results",
+            "text": "The resolution obtained for a series of runs in each year of Run 2 is reported in figure 19. The full circles are calculated directly from fits to the default reconstructed track segments using the standard t 0 and R(t) calibration constants. The triangles include the \u03b4t 0 corrections, and the blue inverted triangles also include \u03b4P corrections. Significant improvements to the resolution in 2015 are the result of a first implementation of the corrections, dominated by \u03b4P. These \u03b4P corrections were subsequently included in the standard production of R(t) function calibration constants. The application of the procedure in each year yields 1-2 \u00b5m better resolution. The \u03b4t 0 corrections in 2015 and 2016 each lead to a 3-4 \u00b5m improvement in resolution. From the beginning of 2017 the previous year's \u03b4t 0 corrections are also applied, but only the \u03b4P corrections from 2016 (not those from 2015). However, they yield an improvement of only 1.2 \u00b5m as shown in the right panel of figure 19.",
+            "paragraph_rank": 45,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 82,
+                    "text": "figure 19",
+                    "end": 91
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 982,
+                    "text": "figure 19",
+                    "end": 991
+                }
+            ]
+        },
+        {
+            "section": "Resolution results",
+            "text": "Both the best \u03b4t 0 and \u03b4P values are incorporated in the end-of-year data reprocessing in order to provide the best calibrated data for subsequent physics analyses.   daily updated R(t) functions: 84.9 \u00b1 0.2 \u00b5m for 2015, 82.3 \u00b1 0.2 \u00b5m for 2016, and 81.7 \u00b1 0.2 \u00b5m for 2017. Notably the improvements are measured both by the decrease of the mean value of the distribution and by the decrease of the RMS width, indicating greater uniformity of the resolutions of the whole ensemble of MDT chambers. In 2015, the \u03b4P corrections were applied for the first time in Run 2, and then incorporated into the default calibrations for 2016. In 2016, the larger data set allowed a much higher fraction of the initial t 0 offsets to be determined for single tubes by the calibration centers, resulting in a better overall initial resolution. The \u03b4t 0 corrections from 2016 were propagated into the default calibrations for 2017. For this reason, the incremental improvement in both the mean and the RMS spread decreases with each year and the standard offline tube resolution approaches the fully corrected result. Specific high instantaneous luminosity collision runs are analysed in order to measure the drift tube rates by counting all chamber hits occurring within the MDT read-out time window of 1.2 \u00b5s initiated by any muon trigger. This total number of hits per time window is normalized to the total tube area to obtain a rate per unit area. These rates are consistently less than 10 Hz/cm 2 , -14 -",
+            "paragraph_rank": 46,
+            "section_rank": 19
+        },
+        {
+            "text": "JINST 14 P09011",
+            "section_rank": 20
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "except for one set of 16 endcap inner chambers at high pseudorapidity whose rates range from 20 to 50 Hz/cm 2 , and another set of 16 chambers nearest the beam-line where rates range from 60 to 140 Hz/cm 2 . At background rates above 100 Hz/cm 2 , some loss in tracking efficiency and resolution is expected due to increased read-out electronics dead time and space charge in the gas, respectively. Furthermore, an increase of the read-out electronics dead time was observed in special high instantaneous luminosity runs at the end of Run 1, and addressed in Run 2 by optimizing the data acquisition parameters. The resolutions from the analysed runs recorded in 2017 are entirely consistent with the results from 2016 shown here.  ",
+            "paragraph_rank": 47,
+            "section_rank": 20
+        },
+        {
+            "text": "Systematic uncertainties",
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "The main sources of systematic uncertainty affecting the determination of the MDT resolution are: (1) the fit uncertainty associated with the range of the double-Gaussian fit; (2) the use of linear fits for curved track segments; (3) the precision of the \u03b4t 0 and \u03b4P determinations; and (4) the accuracy of equation (43) to describe the resolution. They are described in this section.",
+            "paragraph_rank": 48,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 316,
+                    "text": "(4",
+                    "end": 318
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "A double-Gaussian function is fit in a range of \u00b1500 \u00b5m for both the fit and hit residual distributions. This fit function matches well the central region with a narrow component and the tails with the wider component. The fraction of hits included in the residual distributions exceeds 99% for most drift radii, and (95-97)% for the first millimeter nearest the wire. The reason for this additional loss is attributed to the minimum 1 mm path length corresponding to the MDT front-end electronics threshold of 23 primary ionization electrons [9]. For radial distances below 1 mm, -15 -the precision of the drift radius determination deteriorates due to the small number of ion pairs, increasing the fraction of large residuals. A modification of the fit range down to \u00b1400 \u00b5m and up to \u00b11 mm produces an overall systematic variation in the resolution of 1 \u00b5m.",
+            "paragraph_rank": 49,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 543,
+                    "text": "[9]",
+                    "end": 546
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "The path of a low-p T muon track is slightly deflected by the magnetic field as it passes through a chamber. For this reason, the tracks used in the analysis have a minimum transverse momentum of 20 GeV, yielding an average p T of 40 GeV. The systematic resolution broadening from using a linear fit is determined from a Monte Carlo calculation using a worst-case 0.6 T magnetic field and for the most prevalent MDT geometry: a six-layer chamber with a 17 cm spacer frame separating the two multilayers. The hits are smeared with the nominal 80 \u00b5m resolution, linearly fit to generate residuals, and the resolution computed from equation (43). The average resolution for p T = 40 GeV muons is broadened by about 2 \u00b5m relative to the nominal value. In addition, this uncertainty from track curvature in the magnetic field is also directly investigated by comparing the resolutions obtained with and without the toroidal magnetic field. The average resolution of all chambers with the toroid field off is \u03c3 off = 80.1 \u00b1 0.2 \u00b5m. The average broadening of the measured resolution due to the toroidal field is 1.6 \u00b1 0.3 \u00b5m, consistent with the result from Monte Carlo calculation.",
+            "paragraph_rank": 50,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 638,
+                    "text": "(4",
+                    "end": 640
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "The step of the correction algorithm is 0.5 ns for \u03b4t 0 and 5 mbar for \u03b4P. The minima are found separately for the hit and fit residual distributions, and agree to within one step for more than 90% of the chambers. Therefore, the precision with which the parameters can be reliably established is estimated to be half of the step size. The uncertainty for each parameter is determined by altering the optimal \u03b4t 0 and \u03b4P values within \u00b10.25 ns for \u03b4t 0 and \u00b12.5 mbar for \u03b4P and recalculating the resolution functions. The average systematic uncertainty in the correction parameter determination is 1 \u00b5m.",
+            "paragraph_rank": 51,
+            "section_rank": 21
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "A final, small systematic uncertainty derives from the accuracy to which the resolution function of equation (42) reproduces the true resolution. This uncertainty, described in section 4.5, is 0.3 \u00b5m.",
+            "paragraph_rank": 52,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "text": "(4",
+                    "end": 111
+                }
+            ]
+        },
+        {
+            "section": "Systematic uncertainties",
+            "text": "The total systematic error of the single-hit spatial resolution measurement, taken as the sum in quadrature of all contributions, is 2.2 \u00b5m, as summarized in table 1, and about 2.6% of the overall average resolution. ",
+            "paragraph_rank": 53,
+            "section_rank": 21
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 22
+        },
+        {
+            "section": "Conclusion",
+            "text": "This document describes a novel method to optimize the single-hit spatial resolution of the muon MDT chambers of the ATLAS experiment during Run 2 of the LHC. This method tunes the initial t 0 derived from drift time spectra and provides a correction parameter for R(t) functions produced -16 -",
+            "paragraph_rank": 54,
+            "section_rank": 22
+        },
+        {
+            "text": "JINST 14 P09011",
+            "section_rank": 23
+        },
+        {
+            "section": "JINST 14 P09011",
+            "text": "by a gas monitor MDT chamber. The extracted corrections were used in the 2015 and 2016 end-of-year data reprocessing, and became fully integrated in the online calibrations from 2017 onward, yielding results consistent with those presented here. These two combined correction parameters are shown to be very stable over a year, insensitive to increasing luminosity, variations in environmental conditions, or the magnetic field. The method applied to the 2017 data achieves a mean single-hit spatial resolution of 81.7 \u00b1 0.2 \u00b1 2.2 (sys) \u00b5m with an RMS spread of 7 \u00b5m over all 1172 MDT chambers in the spectrometer. The resolution approaches the design value of 80 \u00b5m, consistent over all MDT chambers, and stable across all run periods.",
+            "paragraph_rank": 55,
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 24
+        },
+        {
+            "section": "Figure 1 .",
+            "text": "Figure 1. Gas monitor chamber R(t) function for 93% Ar-7% CO 2 (and less than 0.1% of water vapour) for standard condition: 293 K, 3080 V and 3 bar, obtained via autocalibration.",
+            "paragraph_rank": 56,
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 25
+        },
+        {
+            "section": "Figure 2 .",
+            "text": "Figure 2. Measured drift time spectrum for a generic MDT chamber with a Fermi-Dirac function fit to the rising edge of the distribution.",
+            "paragraph_rank": 57,
+            "section_rank": 25
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 26
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Figure 3.Hourly GMC measurements of t max over a single day during Run 2.",
+            "paragraph_rank": 58,
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 27
+        },
+        {
+            "section": "Figure 4 .",
+            "text": "Figure 4. Measurement of t max daily average over the entire 2016 data-taking period, obtained from an average of all chambers and from the GMC. The horizontal axis represents run numbers, which are not uniformly distributed in time. Dotted lines delineate months.",
+            "paragraph_rank": 59,
+            "section_rank": 27
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 28
+        },
+        {
+            "section": "Figure 5 .",
+            "text": "Figure 5. Fit residual distribution for a representative chamber for the radial bin r = [2, 3] mm. A double-Gaussian (solid line) is fit in the range \u00b10.5 mm. A single-Gaussian (dotted line) is fit within the FWHM but shown out to \u00b10.5 mm.",
+            "paragraph_rank": 60,
+            "section_rank": 28
+        },
+        {
+            "text": "Figure 6 .",
+            "section_rank": 29
+        },
+        {
+            "section": "Figure 6 .",
+            "text": "Figure 6. Hit residual distribution for the same chamber and radial bin as in figure 5.",
+            "paragraph_rank": 61,
+            "section_rank": 29
+        },
+        {
+            "text": "Figure 7 .",
+            "section_rank": 30
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Figure 7. Hit residual distributions for a representative chamber for t 0 correction parameter set to \u22124 ns (left), +1 ns (center) and +6 ns (right) from the default value. Widths are 296, 188 and 303 \u00b5m, respectively.",
+            "paragraph_rank": 62,
+            "section_rank": 30
+        },
+        {
+            "text": "Figure 8 .",
+            "section_rank": 31
+        },
+        {
+            "section": "Figure 8 .",
+            "text": "Figure 8. Typical RMS widths of hit residual distributions of hits less than 5 mm from the wire as a function of the t 0 correction, for the same chamber as in figure 7.",
+            "paragraph_rank": 63,
+            "section_rank": 31
+        },
+        {
+            "text": "Figure 7",
+            "section_rank": 32
+        },
+        {
+            "section": "Figure 7",
+            "text": "Figure 7shows segment hit residuals from the t 0 correction procedure for a representative chamber for \u03b4t 0 values of \u22124, +1, and +6 ns.Figure 8shows the incremental change with each step of the residual RMS widths for the entire range of \u03b4t 0 values relative to the initial t 0 . The optimal \u03b4t 0 is the one yielding the minima of the RMS widths of the fit and hit residual distributions. The value on the vertical axis corresponding to the minimum in figure 8 does not represent the resolution, but only the RMS spread of the hit residuals near the wire.2The \u03b4t 0 correction procedure is applied to 2015 data (the first year of Run 2 operation) using initial t 0 offsets generated by the MDT calibration centers. The \u03b4t 0 corrections obtained in a much higher peak-luminosity November 2015 run, 4.8 \u00d7 10 33 cm \u22122 s \u22121 , are shown in figure 9, which reveals an average t 0 global correction of 1.3 ns with a RMS spread of 0.7 ns. The tails of the distribution are populated by a few chambers that were measured to have been constructed with structural non-conformities affecting the internal alignment of the tubes and therefore of the hit positions. The \u03b4t 0 correction tries to compensate for this misalignment.",
+            "paragraph_rank": 64,
+            "section_rank": 32
+        },
+        {
+            "text": "Figure 9 .",
+            "section_rank": 33
+        },
+        {
+            "section": "Figure 9 .",
+            "text": "Figure 9. Distribution of \u03b4t 0 for one run in November 2015 determined by the t 0 correction algorithm.",
+            "paragraph_rank": 65,
+            "section_rank": 33
+        },
+        {
+            "text": "Figure 10 .",
+            "section_rank": 34
+        },
+        {
+            "section": "Figure 10 .",
+            "text": "Figure 10. Chamber-averaged \u03b4t 0 values for runs in 2016 (left) and 2017 (right). Uncertainties are the RMS of the distributions.",
+            "paragraph_rank": 66,
+            "section_rank": 34
+        },
+        {
+            "text": "Figure 11 .",
+            "section_rank": 35
+        },
+        {
+            "section": "Figure 11 .",
+            "text": "Figure 11. Chamber-by-chamber difference in the \u03b4t 0 parameter obtained from the June (toroid magnetic field off) and November (toroid magnetic field on) 2017 data.",
+            "paragraph_rank": 67,
+            "section_rank": 35
+        },
+        {
+            "text": "Figure 12 .",
+            "section_rank": 36
+        },
+        {
+            "section": "Figure 12 .",
+            "text": "Figure 12. Garfield simulation of drift time variation as a function of drift radius for: +3 K, \u221231 mbar, and +30 V change relative to 293 K, 3 bar and 3080 V, respectively.",
+            "paragraph_rank": 68,
+            "section_rank": 36
+        },
+        {
+            "text": "Figure 13 .",
+            "section_rank": 37
+        },
+        {
+            "section": "Figure 13 .",
+            "text": "Figure 13. Fit residual distributions for a representative MDT chamber for \u03b4P = \u221240 mbar (left), +10 mbar (middle, optimal setting) and +60 mbar (right). RMS widths are 141, 131 and 144 \u00b5m, respectively.",
+            "paragraph_rank": 69,
+            "section_rank": 37
+        },
+        {
+            "text": "Figure 14 .",
+            "section_rank": 38
+        },
+        {
+            "section": "Figure 14 .",
+            "text": "Figure 14. Fit residual RMS as a function of \u03b4P for the same chamber as in figure 13.",
+            "paragraph_rank": 70,
+            "section_rank": 38
+        },
+        {
+            "text": "Figure 15 .",
+            "section_rank": 39
+        },
+        {
+            "section": "Figure 15 .",
+            "text": "Figure 15. Distribution of \u03b4P for a highluminosity run in November 2015.",
+            "paragraph_rank": 71,
+            "section_rank": 39
+        },
+        {
+            "text": "Figure 16 .",
+            "section_rank": 40
+        },
+        {
+            "section": "Figure 16 .",
+            "text": "Figure 16. Chamber-by-chamber difference of \u03b4P for a run with the toroidal magnetic field off and a run 2.5 months later with 25 times higher luminosity and the toroid on.",
+            "paragraph_rank": 72,
+            "section_rank": 40
+        },
+        {
+            "text": "Figure 17 .",
+            "section_rank": 41
+        },
+        {
+            "section": "Figure 17 .",
+            "text": "Figure 17. Chamber-averaged \u03b4P for each analysed run in 2016 (left) and 2017 (right). The uncertainties are the RMS spread of the chamber's \u03b4P distribution.",
+            "paragraph_rank": 73,
+            "section_rank": 41
+        },
+        {
+            "text": "Figure 18 .",
+            "section_rank": 42
+        },
+        {
+            "section": "Figure 18 .",
+            "text": "Figure 18. Chamber-by-chamber differences in \u03b4P between the first and last 2016 analysed run.",
+            "paragraph_rank": 74,
+            "section_rank": 42
+        },
+        {
+            "text": "Figure 20 summarizes",
+            "section_rank": 43
+        },
+        {
+            "section": "Figure 20 summarizes",
+            "text": "the resolution averaged over all runs in 2015, 2016, and 2017, for each MDT chamber. The left panels show the initial resolutions obtained with the standard calibrations. The right panels show the resolutions after all \u03b4t 0 and \u03b4P corrections are implemented and using -13 -",
+            "paragraph_rank": 75,
+            "section_rank": 43
+        },
+        {
+            "text": "Figure 19 .",
+            "section_rank": 44
+        },
+        {
+            "section": "Figure 19 .",
+            "text": "Figure 19. Resolution averaged over chambers for runs in 2015 (left), 2016 (center) and 2017 (right) using default calibrations, with \u03b4t 0 and \u03b4P corrections. The initial calibration data in the right panel already include the \u03b4t 0 corrections from 2016; additional \u03b4t 0 correction is not needed.",
+            "paragraph_rank": 76,
+            "section_rank": 44
+        },
+        {
+            "text": "Figure 20 .",
+            "section_rank": 45
+        },
+        {
+            "section": "Figure 20 .",
+            "text": "Figure 20. Single-hit resolutions for each chamber. Left: with default calibrations (different conditions every year). Right: with all corrections and most up-to-date R(t) functions.",
+            "paragraph_rank": 77,
+            "section_rank": 45
+        },
+        {
+            "text": "The final MDT drift tube spatial resolution, with all corrections described in previous sections included, is shown as a function of drift radius in figure 21 and in figure 22. In particular, figure 21 shows for 2016 the run-averaged resolution distributions \u03c3 res (r) in 1 mm radial bins, where each histogram bin entry represents a single chamber. This set of histograms therefore represents the full range of resolution functions obtained for the entire ensemble of MDT chambers. The mean values of these distributions are plotted as a single resolution function in figure 22, where the uncertainties are the RMS widths of the distributions for all chambers. For comparison, the resolution curves of a single MDT chamber deployed in a test beam [15], with and without background irradiation, are also displayed. The 2016 chamber-weighted resolution averaged over all radial bins is 86.4 \u00b1 0.2 \u00b5m and the average excluding the radial bin closest to the wire is 79.7 \u00b1 0.2 \u00b5m. These two values bracket the final 2016 resolution averaged over all chambers, presented in figure 20, of 82.3 \u00b1 0.2 \u00b5m.",
+            "paragraph_rank": 78,
+            "section_rank": 46
+        },
+        {
+            "text": "Figure 21 .",
+            "section_rank": 47
+        },
+        {
+            "section": "Figure 21 .",
+            "text": "Figure 21. Distribution of resolutions in 1 mm radial bins of drift radius for all MDT chambers, averaged over all analysed runs from 2016.",
+            "paragraph_rank": 79,
+            "section_rank": 47
+        },
+        {
+            "text": "Figure 22 .",
+            "section_rank": 48
+        },
+        {
+            "section": "Figure 22 .",
+            "text": "Figure 22. Resolution as a function of drift radius averaged over all MDT chambers and all analysed runs from 2016. Muon test-beam resolutions of an MDT chamber with background radiation from 0 to 64 Hz/cm 2 are also shown for comparison[15]. Uncertainties are RMS widths of the resolution distribution for all chambers.",
+            "paragraph_rank": 80,
+            "section_rank": 48,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 237,
+                    "text": "[15]",
+                    "end": 241
+                }
+            ]
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 49
+        },
+        {
+            "section": "Table 1 .",
+            "text": "Main resolution systematic uncertainties averaged over all chambers.",
+            "paragraph_rank": 81,
+            "section_rank": 49
+        },
+        {
+            "section": "Table 1 .",
+            "text": "2For over 95% of the MDT chambers the double-Gaussian fits yield the same t 0 minima as obtained using the RMS of the residual distributions. In the remaining chambers the fit method can lead to anomalous minima, so for consistency and stability of the results, the RMS method to establish the minimum is adopted for all chambers.",
+            "paragraph_rank": 82,
+            "section_rank": 49
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 51
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "We thank CERN for the very successful operation of the LHC, as well as the support staff from our institutions without whom ATLAS could not be operated efficiently.",
+            "paragraph_rank": 83,
+            "section_rank": 51
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "We acknowledge the support of ANPCyT, Argentina; YerPhI, Armenia; ARC, Australia; BMWFW and FWF, Austria; ANAS, Azerbaijan; SSTC, Belarus; CNPq and FAPESP, Brazil; NSERC, NRC and CFI, Canada The crucial computing support from all WLCG partners is acknowledged gratefully, in particular from CERN, the ATLAS Tier-1 facilities at TRIUMF (Canada), NDGF (Denmark, Norway, Sweden), CC-IN2P3 (France), KIT/GridKA (Germany), INFN-CNAF (Italy), NL-T1 (Netherlands), PIC (Spain), ASGC (Taiwan), RAL (U.K.) and BNL (U.S.A.), the Tier-2 facilities worldwide and large non-WLCG resource providers. Major contributors of computing resources are listed in ref. [18].",
+            "paragraph_rank": 84,
+            "section_rank": 51,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 647,
+                    "text": "[18]",
+                    "end": 651
+                }
+            ]
+        }
+    ]
+}

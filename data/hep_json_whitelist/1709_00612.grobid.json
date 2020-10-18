@@ -1,0 +1,1049 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "The new Belle II experiment at the asymmetric e + e \u2212 accelerator SuperKEKB at KEK in Japan is designed to deliver a peak luminosity of 8 \u00d7 10 35 cm \u22122 s \u22121 . ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "To perform high-precision track reconstruction, e.g. for measurements of time-dependent CPviolating decays and secondary vertices, the Belle II detector is equipped with a highly segmented pixel detector (PXD). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The high instantaneous luminosity and short bunch crossing times result in a large stream of data in the PXD, which needs to be significantly reduced for offline storage. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The data reduction is performed using an FPGA-based Data Acquisition Tracking and Concentrator Online Node (DATCON), which uses information from the Belle II silicon strip vertex detector (SVD) surrounding the PXD to carry out online track reconstruction, extrapolation to the PXD, and Region of Interest (ROI) determination on the PXD. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The data stream is reduced by a factor of ten with an ROI finding efficiency of >90% for PXD hits inside the ROI down to 50 MeV in p T of the stable particles. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We will present the current status of the implementation of the track reconstruction using Hough transformations, and the results obtained for simulated \u03a5 (4S ) \u2192 BB events.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Motivation for the Belle II Experiment",
+            "section_rank": 2
+        },
+        {
+            "text": "Since the Belle experiment stopped taking data in 2010, its successor Belle II is being developed. ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The Belle II experiment will be located at the KEK laboratory in Japan, at the only interaction point of the SuperKEKB collider, which is the successor of the KEKB machine. ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "SuperKEKB will collide asymmetric energy beams (7 GeV electrons and 4 GeV positrons) with a design instantaneous luminosity of 8 \u00d710 35 cm \u22122 s \u22121 . ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This luminosity is 40 times the instantaneous luminosity of KEKB. ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This produces higher data rates and thus higher background rates with which the new Belle II detector has to cope. ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Due to limited bandwidth of the readout electronics and to minimise the amount of mass storage required, online data reduction is essential. ",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The working principle of one of the two deployed online data reduction systems, the Data Acquisition Tracking and Concentrator Online Node (DATCON) is described in this article.",
+            "section": "Motivation for the Belle II Experiment",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        }
+    ],
+    "body_text": [
+        {
+            "text": ".",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "Overview of the Belle II Detector.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "Figure 2.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "The Belle II Vertex Detector.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "It contains two subdetectors, the PiXel Detector (PXD) with two layers, surrounded by the Silicon Vertex Detector (SVD) with four layers.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The innermost radius is 14 mm, the outermost radius is 135 mm.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "sub-detectors are: the central drift chamber, the solenoid magnet producing a magnetic field of 1.5T, detectors for particle identification, the electromagnetic calorimeter, and an instrumented flux return that can detect K L and muons.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The VXD consists of two components: a PiXel Detector (PXD) based on DEPFET [1] technology and a Silicon Vertex Detector (SVD) based on double-sided silicon strip sensors.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "The placement of both components is shown in Figure 2.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 53,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "Both PXD and SVD are very thin detectors with only 0.2% and 0.6% of a radiation length per layer, respectively.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The PXD consists of 2 layers at radii of 14 and 22 mm from the interaction point with in total 40 modules.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "A module contains 250 \u00d7 768 pixels, having two types of pixels with a pitch of 50 \u00d7 55 \u03bcm 2 (256 pixels in central region) and 50 \u00d7 70 \u03bcm 2 (512 pixels in forward and backward region) for layer 1 and 50 \u00d7 65 \u03bcm 2 (256 pixels in central region) and 50 \u00d7 70 \u03bcm 2 (512 pixels in forward and backward region) for layer 2.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The information in the 8 million pixels is read out at a data rate of 256 Gb/s, corresponding to 90% of the data rate of the complete Belle II detector without data reduction.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 134,
+                    "end": 139,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "The SVD consists of 4 layers at radii ranging between 39 and 135 mm.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "In total the SVD contains 172 sensors with 768 \u00d7 768 strips having a pitch of 50 and 160 \u03bcm (layer 3) and 768 \u00d7 512 strips having a pitch of 75 \u00d7 240 \u03bcm (layers 4 to 6), respectively.",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "This results in about 240000 strips in total [2].",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 48,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "In a BB event coming from the decay of the \u03a5 (4S ) resonance there are on average 10 tracks in the acceptance region of the VXD, which covers the full angle of 2\u03c0 in azimuthal direction (\u03d5 ), and the region 17 \u2022 < \u03b8 < 150 \u2022 in polar angle. ",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "In addition to hits from particle tracks originating from BB events, background processes produce additional hits that are recorded by the VXD. ",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Such background hits come for instance from two-photon QED processes, Touschek scattering, Coulomb scattering of beam particles with residual gas in the beam pipe, radiative Bhabha scattering and Synchrotron radiation. ",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Beam-induced backgrounds increase the occupancy of the PXD up to 1% and up to 0.25% in the SVD, based on detailed simulations of the backgrounds. ",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Only a small fraction of the hits in the VXD belong to tracks originating from the decay of BB pairs. ",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "The online data reduction of the Belle ",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Data Reduction Concept",
+            "section_rank": 4
+        },
+        {
+            "text": "! \"",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "\" \" #$ %& Figure 3.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 10,
+                    "end": 18,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "A simplified illustration of the Belle II data acquisition system with the two data reduction systems: DATCON receives hit recorded by the SVD and performs an online track reconstruction to define ROIs on the PXD.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "The HLT receives hit information from the SVD, the drift chamber, and the muon system as well as information from the PID detectors to define ROIs on the PXD.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "Both HLT and DATCON run independently of each other.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "The ROIs of both systems are sent to the ONSEN system, which performs the overall PXD data reduction by applying the ROIs to the PXD data.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 3 shows a simplified sketch of the Belle II Data Acquisition (DAQ) system.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 47,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "The data of the SVD, the drift chamber and the sub-detectors for particle identification (PID), calorimetry and muon detection are sent to the Higher Level Trigger (HLT) [3].",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 170,
+                    "end": 173,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "The data from the SVD are additionally sent to the DATCON, which performs online track reconstruction, extrapolation to the PXD, and calculation of ROI's in the PXD.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "The ROIs are then sent to the Online Selector Node (ONSEN) [4].",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Besides DATCON, the HTL is the second system that performs a calculation of ROI's in the PXD.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "For this task the HLT not only can use data from the SVD, but also from the drift chamber and the other sub detectors.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "In addition, HLT provides the trigger signal for the complete detector and pipelines the data of the sub-detectors, except PXD, to the storage.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "The PXD data are only sent to ONSEN, which merges the ROI's of HLT and DATCON and performs the overall PXD data reduction by rejecting hits outside the ROIs.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "The HLT uses a computing farm with 6400 cores in total and runs sophisticated track finding and fitting algorithms.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "These HLT algorithms will also be used in the later offline track reconstruction.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "DATCON, on the other hand, runs a fast FPGA-based track reconstruction.",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 5,
+            "section_rank": 4
+        },
+        {
+            "text": "A track in a magnetic field, parametrised by a helix, is characterised by five parameters at the point of closest approach from to the beamline. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "text": "This is illustrated in Figure 4. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 6,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 31,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "The parameters are: the initial azimuthal angle \u03d5 0 , the distance of closest approach d 0 , the radius of the track r T,0 , the initial polar angle \u03b8 0 , and the initial z-coordinate at the point of closest approach z 0 .",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "text": "A schematic overview of the data reduction procedure and the data flow inside DATCON is shown in Figure 5: The ROIs are calculated by using SVD hits to reconstruct tracks and extrapolating the trajectories to the PXD. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 105,
+                    "type": "figure",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "For the purpose of track finding, the tracks are assumed to be circular in the x-y-plane , with an additional ghost hit at the origin of the coordinate system where the beam spot is located. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The algorithm assumes that the trajectories can be approximated by straight lines in the r-z-plane with z 0 0. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The hits are transformed using Hough [5] and Hesse transformations:",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 37,
+                    "end": 40,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "where \u03c1 = 1 r T denotes the track curvature, r hit is the distance of the hit from the z-axis , z denotes the global z coordinate of the hit, and x , y are the conformally transformed values of x, y of the hit defined by:",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The conformal transformation is only valid for d 0 = 0, which is a good approximation for B-meson decays as their decay products (except the charged particles e \u00b1 , \u03bc \u00b1 , \u03c0 \u00b1 , and p/p) only have a short lifetime and decay in close proximity to the origin of the z-axis . ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Note that the conformal transformation is needed as the Hough transformation is better applicable to straight lines. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Using conformal and Hough transformation, a helix trajectory is mapped onto a straight line. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Hits on this straight line correspond to intersecting of lines in the Hough parameter space. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Thus the task of finding tracks in real space is equivalent to finding intersections of lines in Hough space. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Once the intersections are found, equations 1 and 2 allow for a straightforward computation of the angle and track curvature \u03c1 = 1 r T . ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "With this information intersections of all tracks with the PXD detector planes are calculated. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "This reduces the task of finding ROIs to finding the intersection of a circle with a straight line in two dimensions in the x-y-plane and to finding the intersection of two straight lines in the r-z-plane . ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "From these interceptions, Most Probable Hits (MPH) are defined and a fixed-size ROI of 80 \u00d7 120 pixels is created. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Studies to tune the ROI size on the estimated particle momenta are currently being performed. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Finally, the identified ROIs are transmitted to ONSEN. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "DOI: 10.1051/ , 00014 (2017) 71500 1 EPJ Web of Conferences 50 epjconf/201 0014 Figure 5. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 88,
+                    "type": "figure",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "Schematic overview of the DATCON track reconstruction and extrapolation to the PXD. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The data of the the SVD strips (1.) are converted to clusters (2.) in local detector coordinates, from which the absolute coordinates of the hits are computed (3.). ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "These coordinates are Hough-transformed (4.) to reconstruct possible tracks, yielding two 2D tracks with information on \u03d5 and r, and \u03b8 and s, respectively. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The information is combined to obtain 3D tracks, which are extrapolated to the PXD. ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The positions of the most probable hits are calculated from the intersection of the extrapolated tracks with the PXD layers (5.). ",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Finally the ROI's on the two PXD layers are calculated (6.).",
+            "section": "Data Reduction Concept",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Preliminary Results",
+            "section_rank": 5
+        },
+        {
+            "text": "To develop and test the necessary algorithm to be implemented on an FPGA, a C++ and python based implementation of the algorithm is used, running inside the Belle II Analysis and Software Framework (BASF2) [6]. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 206,
+                    "end": 209,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 84,
+                    "end": 90,
+                    "type": "software",
+                    "rawForm": "python",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                },
+                {
+                    "start": 157,
+                    "end": 162,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "The BASF2 framework allows for the simulation of the detector response of particles traversing the Belle II detector and includes the full decay chain of \u03a5 (4S ) \u2192 BB \u2192 stable particles (i.e. e \u00b1 , \u03bc \u00b1 , \u03c0 \u00b1 , p/p, and K L ). ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 99,
+                    "end": 104,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "This allows one to assess the performance of a given algorithm using simulated decays and variable background conditions. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "The preliminary performance of such simulations of the DATCON using 100,000 simulated BB events are shown. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 6 shows the performance of the track reconstruction for the azimuthal and the polar angle: 92% and 93% of all reconstructed tracks are within 1 \u2022 of the true track in \u03d5 and \u03b8 , respectively.",
+            "section": "Preliminary Results",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "In Figure 7, the track reconstruction efficiency as a function of the transverse momentum, p T , is shown: The overall track reconstruction efficiency is 96% over the complete momentum range Figure 6. Angular residuals \u0394 of the reconstructed tracks, defined as difference between reconstructed and true angles, for \u03d5 (blue) and \u03b8 (red) of the cases. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "text": "Figure 7"
+                },
+                {
+                    "start": 191,
+                    "end": 199,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "In 92% (\u03d5 ) and 93% (\u03b8 ), respectively, the reconstructed values show a deviation of less than 1 \u2022 from the true track. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The sharp edges edges at \u00b10.35 \u2022 and \u00b10.7 \u2022 in both distributions are caused by the discrete Hough space. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 7. Track reconstruction efficiency as a function of the transverse momentum p T . ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "The sharp drop in the low-p T region is caused by the fact that particles with p T < 80 MeV do not reach the third layer of the SVD and thus do not produce the required minimum number of three SVD hits. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 88,
+                    "end": 91,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "The large error bars for p T > 1.5 GeV are due to limited occurrence of particles with such a transverse momentum in the simulation. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The average track reconstruction efficiency is 96% in the complete p T -range shown.",
+            "section": "Preliminary Results",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "expected for the decay products of the \u03a5 (4S ) resonance. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The reduced efficiency for low-p T tracks is primarily due to the fact that they only traverse one or two SVD layers and the DATCON algorithm requires at least three hits in different layers to identify a track to reduce combinatorics. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 8. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "Residuals of the extrapolation to the PXD (measured in pixels) in local sensor coordinates u and v. The residual is defined as the difference between the local coordinates of the extrapolated hit and the local coordinates of the true simulated Monte-Carlo hit. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The left side shows the residuals on a logarithmic scale and the ROI of 80\u00d7120 pixels around the MPH as a red box. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The right side shows a 3D illustration of the residuals. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "With ROIs of size 80\u00d7120 pixels, the ROI finding efficiency is 94% with a data reduction factor of 15. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "To obtain a higher ROI finding efficiency, it is possible to further increase the ROI size while still reducing the data by a factor of about ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "10. Figure 9. Efficiency of the ROI finding as a function of track p T . ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 9"
+                }
+            ]
+        },
+        {
+            "text": "Particles with a transverse momentum below 80 MeV cannot be found during tracking, and thus also no extrapolation is possible for these tracks. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 49,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "For tracks with p T > 100 MeV, the ROI finding efficiency is above 90%, the average over the complete p T -range is larger than 94%, with the data reduction factor being above ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 29,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w11"
+                }
+            ]
+        },
+        {
+            "text": "10. Figure 8 shows the residuals of the extrapolated hits, defined as the difference between the local position of the extrapolated hit and the local position of the true MC hit, measured in pixels in the local coordinates u and v. Over 90% of the extrapolated hits are very close to the true hit position within \u0394R = \u221a u 2 + v 2 of 50 pixels, and 94% of all MPHs in the PXD are located such that the ROIs of size 80 \u00d7 1120 pixels (u \u00d7 v) calculated around the MPHs include the corresponding true PXD hits. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "As can be seen in Figure 8, the residual distribution is slightly wider in v-direction than in u-direction, which is why the ROI size is chosen to be larger in v-direction. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 26,
+                    "type": "figure",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "Finally, Figure 9 shows the ROI-finding efficiency as a function of track p T . ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 17,
+                    "type": "figure",
+                    "text": "Figure 9"
+                }
+            ]
+        },
+        {
+            "text": "The average ROI-finding efficiency over the whole p T -range is larger than 94%, and for tracks with p T >100 MeV the algorithm is nearly 100% efficient. ",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 110,
+                    "end": 113,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w12"
+                }
+            ]
+        },
+        {
+            "text": "The median data reduction factor is about 15, leaving room to further optimise the ROI size and other aspects of the algorithm.",
+            "section": "Preliminary Results",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Conclusions and Outlook",
+            "section_rank": 6
+        },
+        {
+            "text": "In this article the performance of the DATCON system was presented: DATCON performs an FPGAbased online track reconstruction to define ROIs on the Belle II Pixel Detector using reconstructed hits from the Silicon Vertex Detector. ",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 147,
+                    "end": 152,
+                    "type": "software",
+                    "rawForm": "Belle",
+                    "resp": "whitelist",
+                    "id": "software-simple-w13"
+                }
+            ]
+        },
+        {
+            "text": "This allows one to reduce the amount of data needed to be stored offline. ",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "The currently achieved median data reduction factor is 15. ",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "The track reconstruction efficiency that can be achieved with \u03a5 (4S ) \u2192 BB events is about 96% over the full p T range, as determined by simulation. ",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "The efficiency of finding a true hit within a DATCON ROI is 94%. ",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Future improvements on the performance could be obtained by tuning the ROI size using the p T of the reconstructed tracks or by improving the clustering of the Hough space.",
+            "section": "Conclusions and Outlook",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 4. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "Two-dimensional view of a helix as parametrisation of a track inside a magnetic field. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "The index 0 indicates parameters at the point of closest approach of an ideal track. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "The values of these parameters can change with time due to e.g. multiple scattering or other processes which cause energy loss.",
+            "section": "Figure 4 .",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "II experiment is designed in such a way that only the hits of interest for physics analysis recorded in the PXD are forwarded to permanent storage. ",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "To implement this, the hits of other sub-detectors as the SVD are used to execute an online track finding. ",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "The reconstructed tracks are then used to define Regions of Interest (ROI) on the PXD and only the subset of pixels inside an ROI are permanently stored. ",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "For the maximum tolerable occupancy of 3%, a data reduction factor of about 10 for PXD hit information is required.",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Connecting The Dots/Intelligent Trackers 2017",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 10
+        },
+        {
+            "text": "This work is supported by the German Federal Ministry of Education and Research (BMBF).",
+            "section": "Acknowledgements",
+            "paragraph_rank": 17,
+            "section_rank": 10
+        }
+    ]
+}

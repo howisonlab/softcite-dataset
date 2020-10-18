@@ -1,0 +1,1870 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "NUISANCE is an open source C++ framework which facilitates detailed studies of neutrino interaction cross-section models implemented in Monte Carlo neutrino event generators. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "It provides a host of automated methods to perform comparisons of multiple generators to published cross-section measurements and each other. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "External reweighting libraries are used to allow the end-user to evaluate the impact of model parameters variations in the generators with data, or to tune the generator predictions to arbitrary dataset combinations. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The design is modular and focusses on ease-of-use to allow new datasets and more generators to be added without requiring detailed understanding of the entire NUISANCE package. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We discuss the motivation for the NUISANCE framework and suggested usage cases, alongside a description of its core structure.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Prepared for submission to JINST NUISANCE: a neutrino cross-section generator tuning and comparison framework",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "l A a L * 1",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Introduction",
+            "section_rank": 3
+        },
+        {
+            "text": "Current and future neutrino oscillation experiments have stringent systematic error budgets, which are considerably smaller than are currently achievable. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "In particular, the uncertainties associated with neutrino interaction cross-section models need to be reduced down to the few percent level to deliver the required sensitivy; required cross-section uncertainties of 4% and 2% have been projected for T2K-II and DUNE respectively [1,2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 278,
+                    "end": 281,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 281,
+                    "end": 283,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "Long baseline oscillation experiments spanning the 0.1 \u2264 E \u03bd \u2264 10 GeV range suffer especially, as at these energies a consistent theoretical interaction picture has yet to emerge [3][4][5]. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 179,
+                    "end": 182,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 182,
+                    "end": 185,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 185,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "Selecting default interaction models from those available and estimating parameter uncertainties are significant challenges currently facing neutrino oscillation and cross-section experiments. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Two main issues complicate the problem of building a consistent neutrino cross-section model when using nuclear targets. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Firstly, the interaction-level variables which cross-section models are constructed in terms of (e.g., energy and momentum transfer, neutrino energy) cannot be directly measured by experiments. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "The incoming neutrino four-momentum is not known on an event-by-event basis from the beam, nor can it be reconstructed accurately by using final-state particle kinematics without relying on the experiment's model for nuclear effects, such as initial state nucleon model and particle propagation. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "The only measurable model-independent quantities are the outgoing particle kinematics (e.g., outgoing muon momentum and direction). ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Secondly, Final State Interactions (FSI)-where the particles leaving the interaction vertex re-interact before leaving the nucleus-can modify the outgoing particle kinematics and event particle content. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "It is not possible to separate a single interaction process with selection cuts: a simple \u03bd \u00b5 + n \u2192 \u00b5 \u2212 + p Charged-Current Quasi-Elastic (CCQE) interaction cannot be clearly distinguished from a \u03bd \u00b5 + p \u2192 \u00b5 \u2212 + \u03c0 + + p interaction if the pion is absorbed in the nucleus. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "As a result, model-independent measurements must, in general, describe a final-state topological cross section rather than a single interaction mode cross section-such as measuring events with one muon and no pions in the final state (CC0\u03c0 interactions) in lieu of CCQE interactions.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "A number of general purpose neutrino interaction Monte Carlo (MC) event generators are available, simulating a large range of interactions. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "These make it possible to produce realistic predictions for topological cross-section measurements, and allow the user to modify model parameters and combine different models. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Whilst model-independent measurements are essential for arriving at a well-motivated cross-section model with defensible uncertainties, topological cross sections given in terms of final-state particle kinematics provide relatively weak constraints of cross-section model parameters which often have most strength in interaction variables such as four-momentum transfer. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "This is complicated by the fact that different detector sensitivities and kinematic thresholds mean experiments may probe vastly different regions of phase-space for an observed interaction channel. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore model parameters extrapolated from one experiment may not be sufficient to describe all other experiments. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Hence it is essential to use data from many experiments, with different energies, target materials and detector designs to constrain a full cross-section model and claim confidence in it. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "NUISANCE is a software package written to simplify the task of confronting and comparing neutrino event generators with each other and published world cross-section data. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 22,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                },
+                {
+                    "start": 23,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "It is an open source C++ package distributed under the GPLv3 license agreement [6]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 25,
+                    "end": 32,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "NUI-SANCE is the primary tool for evaluating and constraining the cross-section model used in T2K analyses [7] using external scattering data, and grew out of efforts to tune the NEUT interaction model within the T2K Neutrino Interactions Working Group. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 110,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "The main advantage of this framework is its modularity: new datasets can be included with ease by adding \"measurement\" classes which converts any supported generator's output to a cross-section and compares it to data, without requiring the user to understand the output formats of the generators. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Similarly, new generators can be added without requiring detailed understanding of the entire NUISANCE framework. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The only dependency of NUISANCE outside the chosen generator(s) themselves is the ROOT library [8].",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 82,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "In this paper, we describe the core structure of NUISANCE, give the scope of the supported features, and demonstrate different usage scenarios. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Detailed documentation of included datasets, validation plots, and usage instructions with examples can be found at nuisance.hepforge.org.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "NUISANCE",
+            "section_rank": 4
+        },
+        {
+            "text": "This section gives an overview of the core structure and design principles behind the NUI-SANCE framework. ",
+            "section": "NUISANCE",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Full support for the standard output of the GENIE [9,10], NEUT [11], NuWro [12] and GiBUU [13] neutrino event generators is provided, with limited support for NUANCE 1  [14]. ",
+            "section": "NUISANCE",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9,"
+                },
+                {
+                    "start": 53,
+                    "end": 56,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "10]"
+                },
+                {
+                    "start": 63,
+                    "end": 67,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 75,
+                    "end": 79,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 90,
+                    "end": 94,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 166,
+                    "end": 167,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                },
+                {
+                    "start": 169,
+                    "end": 173,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The core structure is designed to be easily extended, with support for different event generators possible in later versions (e.g. neutrino, electron and pion scattering simulations).",
+            "section": "NUISANCE",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Input handling",
+            "section_rank": 5
+        },
+        {
+            "text": "Each event generator has a different output format and event structure, but the underlying content is the same, always including:",
+            "section": "Input handling",
+            "paragraph_rank": 8,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 a list of incoming/outgoing particles, with their four-momentum, PDG code, and status;",
+            "section": "Input handling",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 an underlying interaction mode used in the generation 2 , e.g.\u03bd \u00b5 -12 C CCQE, \u03bd e -16 O CC1\u03c0 + ;",
+            "section": "Input handling",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 a method for normalising the event distribution to produce a differential cross section;",
+            "section": "Input handling",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 (optional) information to support event reweighting, described in Section 2.4.",
+            "section": "Input handling",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "[GeV]  Figure 1: Shape comparison of CC-inclusive \u03bd \u00b5 -CH 2 events generated in different versions of the NEUT, NuWro, and GENIE generators using the MiniBooNE neutrino-mode flux [15] (shown in Figure 2).",
+            "section": "Input handling",
+            "paragraph_rank": 13,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 7,
+                    "end": 15,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                },
+                {
+                    "start": 179,
+                    "end": 183,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 194,
+                    "end": 202,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "To ensure consistency between generators, and to increase speed, NUISANCE uses a reduced event structure that contains only the information required and unifies the format for the various generators. ",
+            "section": "Input handling",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The conversion to the standardised format is performed by the InputHandler class when an event is first used and all subsequent NUISANCE functionality uses this format. ",
+            "section": "Input handling",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The structure provides access to information about the event using common caller functions which are unified for the generators. ",
+            "section": "Input handling",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "It also ensures compatibility were new generators to be added to the InputHandler in the future. ",
+            "section": "Input handling",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Cross section normalisation",
+            "section_rank": 6
+        },
+        {
+            "text": "The NUISANCE InputHandler calculates all the information needed to weight events correctly such that the final distribution is normalised to an inclusive cross-section prediction. ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "In the case of GiBUU, these weights are calculated by the generator itself and saved with the event. ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "For the other generators-where the number of events from different interaction channels are generated in proportion to their cross section-a single weight is calculated which is applied to all events. ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "NUISANCE requires the flux distribution used to generate the sample, \u03c6(E \u03bd ), and calculates the predicted total event rate per target nucleon, R, from information available in the generator output file,",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "Flux Spectrum (Arb. Norm) Figure 2: Flux distributions used to generated events for NUISANCE comparisons in this work [16][17][18][19], also supplied with NUISANCE.",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 16,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 26,
+                    "end": 34,
+                    "type": "figure",
+                    "text": "Figure 2"
+                },
+                {
+                    "start": 118,
+                    "end": 122,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                },
+                {
+                    "start": 122,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                },
+                {
+                    "start": 126,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                },
+                {
+                    "start": 130,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "Flux",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                },
+                {
+                    "start": 36,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "Flux",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "where \u03c3 tot (E \u03bd ) is the total inclusive cross section as a function of neutrino energy and the integral runs over the entire energy range the events were generated in 3 . ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "R is provided in the default output of the NuWro and NEUT generators, but must be calculated for GENIE from the event record. ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "A separate application, PrepareGENIE, is supplied to reconstruct the predicted GENIE cross section as a function of neutrino energy for each interaction channel. ",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "These cross-section \"splines\" are then used to predict R for the event sample given the input flux.",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 17,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 21,
+                    "end": 28,
+                    "type": "software",
+                    "rawForm": "splines",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "A final flux-averaged cross-section weight, W , can then be calculated for each generator",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 18,
+            "section_rank": 6
+        },
+        {
+            "text": "where N is the total number of events generated in the generator, and \u03a6 is the integrated neutrino flux between E min \u03bd and E max \u03bd (the neutrino energy limits in the signal definition)",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 19,
+            "section_rank": 6
+        },
+        {
+            "text": "Filling a histogram in interaction variable x with the weights W , for events that pass a usersupplied signal definition produces a correctly normalised flux-averaged cross section d\u03c3(x).",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "Dividing by each bin's width produces the differential cross section d\u03c3(x)/dx, shown in   Figure 3: Raw event rate and correctly normalised cross-section distributions as a function of muon kinetic energy, T \u00b5 , shown for \u03bd \u00b5 -CH 2 CC1\u03c0 \u00b1 events produced using a variety of generators and the MiniBooNE neutrino-mode flux (shown in Figure 2).",
+            "section": "Cross section normalisation",
+            "paragraph_rank": 21,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 90,
+                    "end": 98,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 3"
+                },
+                {
+                    "start": 332,
+                    "end": 340,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "Comparisons to cross-section data",
+            "section_rank": 7
+        },
+        {
+            "text": "To compare different models to a chosen neutrino cross-section dataset a model prediction must be produced that matches the original data analysis, matching true signal and binning definitions. ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 22,
+            "section_rank": 7
+        },
+        {
+            "text": "To add a new dataset to NUISANCE a new \"measurement\" class must be created which defines the analysis method used to turn a set of generated MC events into a matching model prediction. ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 22,
+            "section_rank": 7
+        },
+        {
+            "text": "To minimise the work required for a user to add a new dataset, these classes inherit from a small number of \"measurement\" base classes which define methods common for all cross-section predictions of a certain type (e.g. one-dimensional, two-dimensional). ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 22,
+            "section_rank": 7
+        },
+        {
+            "text": "Comparisons can be added into the framework provided the following information is known:",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 22,
+            "section_rank": 7
+        },
+        {
+            "text": "1. Data distribution: the measured central values and uncertainties must be supplied in either text or ROOT file format.",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 23,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 103,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "2. Signal definition: a signal which acts to select events using the particle list must be defined. ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 24,
+            "section_rank": 7
+        },
+        {
+            "text": "Utility definitions are available for common signal definitions, e.g. CC0\u03c0.",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 24,
+            "section_rank": 7
+        },
+        {
+            "text": "3. Binning definition: the kinematic variables to plot must be defined from incoming/outgoing particle list, e.g. lepton momentum. ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "The binning itself is copied from the data distribution.",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "4. (Optional) Covariance: the correlations between each point in the data distribution so that a more accurate likelihood can be formed. ",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "If no covariance is provided uncorrelated errors are assumed on each point.",
+            "section": "Comparisons to cross-section data",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "(Optional)",
+            "section_rank": 8
+        },
+        {
+            "text": "Smearing matrix: a translation matrix to smear true variable distributions, converting them into detector reconstructed variable distributions that can be compared directly to reconstructed data releases.",
+            "section": "(Optional)",
+            "paragraph_rank": 27,
+            "section_rank": 8
+        },
+        {
+            "text": "Every sample has an event loop in the base class which iterates over all events given an input file provided at runtime. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The input file to NUISANCE is the output of the generator(s) of interest 4 . ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 73,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "4"
+                }
+            ]
+        },
+        {
+            "text": "Only events which pass the signal definition are retained past the first event loop. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "For signal events, a cross-section weight is calculated using Equation 2.2 (assuming a fluxaveraged cross section), and all histograms in the specific measurement class are filled. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "This automated event loop ensures that the core handling of event inputs remains the same for every measurement implementation class, although each method can be overloaded if necessary. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "An event manager can be turned on to avoid iterating over events in the same input file multiple times if two or more measurement classes use the same generator output file. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "When it is used, the event manager checks whether the signal criteria are met in any of the classes, and retains events which are signal for one or more of them. ",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "This can significantly speed up NUISANCE for many of the fitting routines, in which weights need to be recalculated and histograms refilled multiple times for a number of datasets, e.g. comparing multiple kinematic distributions of the same measurement, or different measurements using the same flux.",
+            "section": "(Optional)",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The most basic measurement implementation class produces a correctly normalised histogram with the same binning as the data and can be compared directly. ",
+            "section": "(Optional)",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "ROOT histograms showing the data, MC prediction(s) and the input flux(es) are saved in the output file for later comparison. ",
+            "section": "(Optional)",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "Various utility functions exist to include histograms, e.g. stacking the MC prediction by interaction mode or particle type, shape predictions and data-MC ratios, as in Figure 5. ",
+            "section": "(Optional)",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 169,
+                    "end": 177,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "It is a trivial exercise to include any additional histograms by overloading the base-class functions.",
+            "section": "(Optional)",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "The data-MC agreement is evaluated by a likelihood which is saved in the output file. ",
+            "section": "(Optional)",
+            "paragraph_rank": 30,
+            "section_rank": 8
+        },
+        {
+            "text": "The base class defaults to using a covariance matrix if supplied, or reverts to a Gaussian pdf for cross-section measurements and a Poisson pdf for event-rate measurements.",
+            "section": "(Optional)",
+            "paragraph_rank": 30,
+            "section_rank": 8
+        },
+        {
+            "text": "where \u03bd i is the bin content in i-th bin for data or MC, M is the supplied covariance matrix, and \u03c3 i is the error on the i-th bin in data. ",
+            "section": "(Optional)",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "These likelihood functions can easily be overloaded by the user for each measurement class to allow more complex likelihoods to be used for a given analysis such as shape-only and floating normalisation likelihoods.",
+            "section": "(Optional)",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "Event reweighting",
+            "section_rank": 9
+        },
+        {
+            "text": "Event reweighting allows MC predictions to be modified after event generation by separating out parts of the cross section that can be recalculated without having to perform the entire MC simulation again. ",
+            "section": "Event reweighting",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "This saves considerable computation time and is useful for both model tuning and the evaluation of model systematic uncertainties since the events are already generated.",
+            "section": "Event reweighting",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "NUISANCE has native support for the NEUT, NuWro [20], and GENIE event reweighting libraries. ",
+            "section": "Event reweighting",
+            "paragraph_rank": 33,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 48,
+                    "end": 52,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "A NUISANCE reweight wrapper is provided which can read in the custom event format and return an event weight for any given parameter set. ",
+            "section": "Event reweighting",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "All reweightable parameters provided by the external libraries can be used to calculate new event weights. ",
+            "section": "Event reweighting",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "This allows the user to easily modify the NUISANCE prediction in the various fitting and validation routines, whilst requiring only minimal knowledge of the individual generators reweight engines. ",
+            "section": "Event reweighting",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "The reweighting parameters are specified in the user-supplied card files.",
+            "section": "Event reweighting",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "NUISANCE applications",
+            "section_rank": 10
+        },
+        {
+            "text": "A number of different applications are available with the NUISANCE framework, all of which are controlled by card files. ",
+            "section": "NUISANCE applications",
+            "paragraph_rank": 34,
+            "section_rank": 10
+        },
+        {
+            "text": "In this section, the main NUISANCE applications are introduced and a general overview of their functionality is given. ",
+            "section": "NUISANCE applications",
+            "paragraph_rank": 34,
+            "section_rank": 10
+        },
+        {
+            "text": "Detailed information on the input format required and example card files are available at nuisance.hepforge.org. ",
+            "section": "NUISANCE applications",
+            "paragraph_rank": 34,
+            "section_rank": 10
+        },
+        {
+            "text": "Additionally, the general behaviour of NUISANCE can be controlled by a configuration file, which can be overridden for specific comparisons if desired either in the card file or with command line arguments.",
+            "section": "NUISANCE applications",
+            "paragraph_rank": 34,
+            "section_rank": 10
+        },
+        {
+            "text": "Simple data-MC comparisons: nuiscomp",
+            "section_rank": 11
+        },
+        {
+            "text": "The simplest usage case for NUISANCE is to produce an MC prediction for one or multiple measurement(s). ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "The nuiscomp application accepts a simple card file with a list of datasets to produce comparisons for and the input file to generate them with. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "It saves the resulting histograms to a single ROOT output file. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 35,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "Optionally, the user can specify any reweightable parameters which should be set when making this comparison. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "The default behaviour is to not reweight the prediction.",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "As described in Section 2, different input types are automatically handled by NUISANCE. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 36,
+            "section_rank": 11
+        },
+        {
+            "text": "Changing generators only requires changing the input type and the file location, both specified by the user in the card file. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 36,
+            "section_rank": 11
+        },
+        {
+            "text": "Multiple generator, multiple dataset comparisons are straightforward with NUISANCE, as illustrated in Figure 4.",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 36,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 110,
+                    "type": "figure",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "Alongside the data and MC histograms, the nuiscomp application saves a number of auxiliary MC histograms to help evaluate where there are tensions between the data and models. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 37,
+            "section_rank": 11
+        },
+        {
+            "text": "Examples include predictions separated by true interaction modes, and shape-only comparisons, shown in Figure 5.   ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 37,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 103,
+                    "end": 111,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4: Comparisons of different generators and their versions to published measurements [17,18]. ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 37,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 4"
+                },
+                {
+                    "start": 91,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17,"
+                },
+                {
+                    "start": 95,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "18]"
+                }
+            ]
+        },
+        {
+            "text": "The fluxes used to produce these distributions are shown in Figure 2.  ",
+            "section": "Simple data-MC comparisons: nuiscomp",
+            "paragraph_rank": 37,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 60,
+                    "end": 68,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "Raw generator comparisons: nuisflat",
+            "section_rank": 12
+        },
+        {
+            "text": "The nuisflat application is intended to compare generators to each other, rather than to data. ",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 38,
+            "section_rank": 12
+        },
+        {
+            "text": "A template class converts the generator events into a flat ROOT tree containing particle information for each event, what signal definitions the event passes, its interaction mode, amongst a host of other event variables. ",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 38,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 59,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "Additional quantities can be added to the tree for tailored studies including an option to save the entire NUISANCE event for access to the full input/output particle stack. ",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 38,
+            "section_rank": 12
+        },
+        {
+            "text": "Once the output has been produce by nuisflat it loses all dependencies on the generator libraries. ",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 38,
+            "section_rank": 12
+        },
+        {
+            "text": "Analysis is only dependent on ROOT to inspect the  tree and its contents; the application produces consistent generator comparisons with minimal knowledge of the individual generator.",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 38,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 30,
+                    "end": 34,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w11"
+                }
+            ]
+        },
+        {
+            "text": "As with all NUISANCE applications, nuisflat supports reweighting the generated events to parameter variations specified in the input card file by the user at runtime.",
+            "section": "Raw generator comparisons: nuisflat",
+            "paragraph_rank": 39,
+            "section_rank": 12
+        },
+        {
+            "text": "Systematic validation studies: nuissyst",
+            "section_rank": 13
+        },
+        {
+            "text": "The nuissyst application can be used to study the effects of cross-section systematics on userspecified distributions in a number of ways, provided that the generators have reweighting libraries enabled 5 . ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 40,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 203,
+                    "end": 204,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5"
+                }
+            ]
+        },
+        {
+            "text": "It can step through a range of values for a reweightable parameter 6 and validate reweighting implementations. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 40,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 67,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "6"
+                }
+            ]
+        },
+        {
+            "text": "It can also compare each generator's implementation of the reweighting engines-e.g. the effect of varying M CCQE A by 0.1\u03c3 in GENIE versus the same variation in NuWro. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 40,
+            "section_rank": 13
+        },
+        {
+            "text": "Examples of the output of this utility can be found in Figure 6.",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 40,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 55,
+                    "end": 63,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The nuissyst application can also make throws of any number of reweightable parameters to build up an error band on a generator prediction across any combination of datasets. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "The central value and 1\u03c3 uncertainty can be defined by the user, and Gaussian throws will be made around that value with the defined width. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "Flat parameter throws are also supported, and a method is included for throwing parameters according to a user-supplied parameter covariance matrix. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "In the latter case the distribution of parameter values for each bin of the requested distributions is used to produce a error band for that bin as shown in Figure 7.",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 41,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 157,
+                    "end": 165,
+                    "type": "figure",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "A realistic use case for nuissyst is shown in Figure 8, where 500 throws of the default GENIE v2.12.0 cross-section uncertainties have been used to build up a 1\u03c3 error band for the ArgoNeuT\u03bd-40 Ar CC-inclusive dataset [19]. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 42,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 46,
+                    "end": 54,
+                    "type": "figure",
+                    "text": "Figure 8"
+                },
+                {
+                    "start": 218,
+                    "end": 222,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "This functionality enables the user to investigate  Figure 7: Examples of thrown parameter values and the likelihood results for 500 different toy datasets generated with GENIE v2.12.0 for comparison to the ArgoNeut\u03bd-40 Ar CC-inclusive dataset [19].  ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 42,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 60,
+                    "type": "figure",
+                    "text": "Figure 7"
+                },
+                {
+                    "start": 244,
+                    "end": 248,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 8: Default GENIE v2.12.0 prediction for the ArgoNeut\u03bd \u00b5 -40 Ar CC-inclusive distributions [19], with error bands produced with 500 throws of all GENIE reweighting parameters according to their nominal uncertainties.",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 42,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 8"
+                },
+                {
+                    "start": 97,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "whether a supplied generator cross-section uncertainty agrees with any particular dataset and aids in robust parameter error inflation studies. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "A histogram is saved in the output file which shows the level of data-MC agreement for all datasets included in the comparison. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "In such a case, a \u03c7 2 statistic is calculated as shown in Figure 7.  ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 66,
+                    "type": "figure",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "Figure 9: Fit of the nominal NEUT v5.3.6 CCQE model to ANL CCQE E \u03bd and N evt (Q 2 ) distributions [16] where the only free parameter in the axial mass M A . ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 9"
+                },
+                {
+                    "start": 99,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "The \u03c7 2 contributions from each distribution to their joint likelihood is shown as a function of M A , and the best fit error is indicated. ",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "The best fit and nominal distributions are compared to the E \u03bd distribution.",
+            "section": "Systematic validation studies: nuissyst",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "Parameter fitting: nuismin",
+            "section_rank": 14
+        },
+        {
+            "text": "NUISANCE was originally designed to compare and tune the NEUT generator predictions to external datasets to provide cross-section uncertainties for T2K analyses. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14
+        },
+        {
+            "text": "The nuismin application fits any number of reweightable parameters to any combination of measurements, and uses ROOT minimisation libraries to minimise the test-statistic with respect to the parameters specified. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 112,
+                    "end": 116,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w12"
+                }
+            ]
+        },
+        {
+            "text": "ROOT provides multiple linear and non-linear scan methods which can be chosen at runtime. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w13"
+                }
+            ]
+        },
+        {
+            "text": "By default, the MIGRAD steepest gradient descent algorithm from the MINUIT package is used [22]. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 91,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 68,
+                    "end": 74,
+                    "type": "software",
+                    "rawForm": "MINUIT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w14"
+                },
+                {
+                    "start": 75,
+                    "end": 82,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w15"
+                }
+            ]
+        },
+        {
+            "text": "It is also possible to modify the test-statistic for each dataset used in the minimisation by overloading the base class function. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14
+        },
+        {
+            "text": "The fit parameters are specified in the card file, and it is possible to fix parameters, set fit boundaries and define starting values.",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 44,
+            "section_rank": 14
+        },
+        {
+            "text": "At each iteration of the fit, NUISANCE recalculates weights on an event-by-event basis using the relevant generator's reweighting libraries with the parameter variations requested by the minimisation algorithm. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "Weighted histograms are filled for all specified samples and the new test-statistic for the reweighted prediction is calculated and used to inform the minimisation algorithm. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "The output includes the nominal and best fit histograms, information about the best fit parameters and correlations between them, and basic information about the fit, such as the best fit \u03c7 2 and the number of iterations. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "Parameter error estimation is determined by the minimiser in ROOT. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 61,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "An example of a simple fit procedure is shown in Figure 9, where the NEUT CCQE model is fit simultaneously to ANL CCQE \u03c3(E \u03bd ) and N evt (Q 2 ) data [16]. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 49,
+                    "end": 57,
+                    "type": "figure",
+                    "text": "Figure 9"
+                },
+                {
+                    "start": 149,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "The joint likelihood is the sum of the likelihoods provided by each of the samples, which are treated independently by NUISANCE. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "The nominal and best fit distributions are also shown, and the error on the fitted parameter is indicated.  ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "Penalty terms on parameters can also be introduced in nuismin. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "The penalties can be applied with a correlation by supplying a covariance matrix. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "The output parameter covariance matrix of a previous nuismin fit is also supported as a penalty term in a subsequent fit. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "For example, Figure 10 shows a fit to MINERvA \u03bd \u00b5 -CH CCQE data [23] where the only free parameter is the axial mass, M A . ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 13,
+                    "end": 22,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 10"
+                },
+                {
+                    "start": 64,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "In this fit, the result of the free-nucleon fit to ANL data shown in Figure 9 has been used as a prior constraint on M A which contributes a penalty to the fit. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 69,
+                    "end": 77,
+                    "type": "figure",
+                    "text": "Figure 9"
+                }
+            ]
+        },
+        {
+            "text": "The contribution from the \u03c7 2 from the MINERvA data and the ANL prior is indicated, and it is clear that the MINERvA data favours a higher M A , contesting the ANL prior. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "It is also possible to use the output of the nuismin fit as an input to most other NUISANCE applications. ",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "For example, after running a fit to MiniBooNE CC1\u03c0 + data, it might be desirable to produce error bands showing the effect of the uncertainty on T2K CC1\u03c0 + data, for which the nuissyst application can be used.",
+            "section": "Parameter fitting: nuismin",
+            "paragraph_rank": 45,
+            "section_rank": 14
+        },
+        {
+            "text": "Summary",
+            "section_rank": 15
+        },
+        {
+            "text": "NUISANCE is a flexible tool for comparing all commonly used neutrino event generators with published cross-section data. ",
+            "section": "Summary",
+            "paragraph_rank": 46,
+            "section_rank": 15
+        },
+        {
+            "text": "It provides a common ground for comparing generators as well as testing and tuning model parameters. ",
+            "section": "Summary",
+            "paragraph_rank": 46,
+            "section_rank": 15
+        },
+        {
+            "text": "It has already proven an invaluable tool for T2K studies of cross-section parameters [7], and has been made open access in the hope that it will prove useful to the wider community. ",
+            "section": "Summary",
+            "paragraph_rank": 46,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "A number of different possible usage cases have been identified for NUISANCE:",
+            "section": "Summary",
+            "paragraph_rank": 46,
+            "section_rank": 15
+        },
+        {
+            "text": "\u2022 users who wish to make a comprehensive range of well-validated generator comparisons to new cross-section datasets without having to be familiar with all of the generators;",
+            "section": "Summary",
+            "paragraph_rank": 47,
+            "section_rank": 15
+        },
+        {
+            "text": "\u2022 users who wish to validate their cross-section parametrisation and error budget with a variety of historical cross-section data, or test new parameters against them;",
+            "section": "Summary",
+            "paragraph_rank": 48,
+            "section_rank": 15
+        },
+        {
+            "text": "\u2022 users who wish to tune and select default cross-section models for a given generator to a wide variety of cross-section data for cross-section and oscillation experiments;",
+            "section": "Summary",
+            "paragraph_rank": 49,
+            "section_rank": 15
+        },
+        {
+            "text": "\u2022 users who are interested in evaluating systematic uncertainties for systematics by comparing predictions of multiple generators.",
+            "section": "Summary",
+            "paragraph_rank": 50,
+            "section_rank": 15
+        },
+        {
+            "text": "This paper provides a number of examples to demonstrate the types of analyses which are straight-forward to perform with NUISANCE. ",
+            "section": "Summary",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "Further documentation, usage examples and guidance can be found at nuisance.hepforge.org. ",
+            "section": "Summary",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "We welcome code contributions, collaboration and new members.",
+            "section": "Summary",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 1",
+            "section_rank": 16
+        },
+        {
+            "text": "illustrates a simple comparison of CC-inclusive \u03bd \u00b5 -CH 2 events generated with a variety of generators using the MiniBooNE neutrino-mode flux shown inFigure 2[15].",
+            "section": "Figure 1",
+            "paragraph_rank": 52,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "start": 159,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "Fig- ure 3 .",
+            "section_rank": 17
+        },
+        {
+            "text": "This is only appropriate when comparing to flux-averaged cross-section results. ",
+            "section": "Fig- ure 3 .",
+            "paragraph_rank": 53,
+            "section_rank": 17
+        },
+        {
+            "text": "For a flux-integrated cross section the flux is instead integrated out on a bin-by-bin basis and the E min \u03bd",
+            "section": "Fig- ure 3 .",
+            "paragraph_rank": 53,
+            "section_rank": 17
+        },
+        {
+            "text": "MC broken down by true interaction mode",
+            "paragraph_rank": 54,
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 5 :",
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 5: NEUT prediction for MINERvA CCN \u03c0 +[21] produced with the nuiscomp application. ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 49,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                }
+            ]
+        },
+        {
+            "text": "The fluxes used to produce these distributions are shown inFigure 2.",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 6 :",
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 6: Reweighting responses for a set of NuWro events compared to MiniBooNE CCQE neutrino data.",
+            "section": "Figure 6 :",
+            "paragraph_rank": 56,
+            "section_rank": 20
+        },
+        {
+            "text": "Muon angle w.r.t incoming beam direction (\u03b8 \u00b5 )",
+            "paragraph_rank": 57,
+            "section_rank": 21
+        },
+        {
+            "text": "\u03c7 2 scan across the M A parameter space Nominal and best fit E \u03bd distribution",
+            "paragraph_rank": 58,
+            "section_rank": 22
+        },
+        {
+            "text": "\u03c7 2 scan across the M A parameter space Nominal and best fit MINERvA distribution",
+            "paragraph_rank": 59,
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 10 :",
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 10: Fit of NEUT v5.3.6 to MINERvA \u03bd \u00b5 -CH CCQE data[23] with a prior constraint set by a fit to ANL CCQE data, shown inFigure 9.",
+            "section": "Figure 10 :",
+            "paragraph_rank": 60,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": ", E max \u03bd limits in 2.3 are instead given by the bin-edges of the relevant E \u03bd bin that an event resides in.",
+            "paragraph_rank": 61,
+            "section_rank": 25
+        },
+        {
+            "text": "Only shape comparisons are possible with NUANCE because of limitations in the generator output.2 ",
+            "paragraph_rank": 62,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 96,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "The definition of these channels may vary between generators. ",
+            "paragraph_rank": 62,
+            "section_rank": 25
+        },
+        {
+            "text": "Since most measurements are topology based, this is not a problem.",
+            "paragraph_rank": 62,
+            "section_rank": 25
+        },
+        {
+            "text": "Even if the signal definition contains a cut on E\u03bd",
+            "paragraph_rank": 63,
+            "section_rank": 25
+        },
+        {
+            "text": "Which has to be pre-processed when using GENIE with the PrepareGENIE utility.",
+            "paragraph_rank": 64,
+            "section_rank": 25
+        },
+        {
+            "text": "Possible in GENIE, NEUT and NuWro6 If a parameter is reweightable by a generator's reweighting library it is supported in NUISANCE.",
+            "paragraph_rank": 65,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 34,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "6"
+                }
+            ]
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 27
+        },
+        {
+            "text": "The authors would like to thank the members of the T2K collaboration for the help and support when developing NUISANCE. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27
+        },
+        {
+            "text": "We would also like to thank the authors of the NEUT, NuWro, GiBUU, and GENIE generators for being responsive to questions regarding the interface to their software. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27,
+            "entity_spans": [
+                {
+                    "start": 155,
+                    "end": 163,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w17"
+                }
+            ]
+        },
+        {
+            "text": "L. Pickering would like to extend special thanks to U. Mosel for his help validating the NUISANCE GiBUU integration. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27
+        },
+        {
+            "text": "We thank the MINERvA, MiniBooNE and T2K collaborations for assistance in understanding their results and helping us to validate the output from NUISANCE. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27
+        },
+        {
+            "text": "We would like to thank HepForge for hosting the NUISANCE framework. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27
+        },
+        {
+            "text": "We acknowledge the support of MEXT, Japan; National Science Centre (NCN), Poland; MINECO and ERDF funds, Spain; SNSF and SER, Switzerland; STFC, UK; and DOE, USA. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27,
+            "entity_spans": [
+                {
+                    "start": 126,
+                    "end": 137,
+                    "type": "software",
+                    "rawForm": "Switzerland",
+                    "resp": "whitelist",
+                    "id": "software-simple-w18"
+                }
+            ]
+        },
+        {
+            "text": "KM would like to acknowledge the support of the DOE under award number 145568 and the Alfred P. Sloan Foundation.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 66,
+            "section_rank": 27,
+            "entity_spans": [
+                {
+                    "start": 86,
+                    "end": 92,
+                    "type": "software",
+                    "rawForm": "Alfred",
+                    "resp": "whitelist",
+                    "id": "software-simple-w19"
+                },
+                {
+                    "start": 102,
+                    "end": 112,
+                    "type": "software",
+                    "rawForm": "Foundation",
+                    "resp": "whitelist",
+                    "id": "software-simple-w20"
+                }
+            ]
+        }
+    ]
+}

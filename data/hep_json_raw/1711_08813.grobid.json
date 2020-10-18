@@ -1,0 +1,702 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "High-precision modeling of subatomic particle interactions is critical for many fields within the physical sciences, such as nuclear physics and high energy particle physics. Most simulation pipelines in the sciences are computationally intensive -in a variety of scientific fields, Generative Adversarial Networks have been suggested as a solution to speed up the forward component of simulation, with promising results. An important component of any simulation system for the sciences is the ability to condition on any number of physically meaningful latent characteristics that can effect the forward generation procedure. We introduce an auxiliary task to the training of a Generative Adversarial Network on particle showers in a multi-layer electromagnetic calorimeter, which allows our model to learn an attribute-aware conditioning mechanism.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "Modeling the interactions of particles with media is critical across many many physical sciences. Detailed simulation of particle collisions and subsequent interactions at the LHC experiments, along with simulating exact detector response, is very computationally expensive, requiring billions of CPU hours and roughly half of LHC computing resources [1,2,3].",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 351,
+                    "text": "[1,",
+                    "end": 354
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 354,
+                    "text": "2,",
+                    "end": 356
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 356,
+                    "text": "3]",
+                    "end": 358
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Recently, deep learning-based generative models including Generative Adversarial Networks [4] and Variational Auto-Encoders [5] have been proposed and tested as a solution to significantly speed up scientific simulation in Oncology [6], Cosmology [7,8,9], and High Energy Physics [10,11], and many other basic science fields. We propose a simple extension to the CaloGAN model [10] allowing such a generation model to be conditioned on a vector of physically meaningful characteristics. We introduce a series of auxiliary tasks to encourage our arXiv:1711.08813v1 [hep-ex]  23 Nov 2017 model to learn p(x|\u03be), where \u03be is a vector of meaningful characteristics which should guide the generation procedure.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 90,
+                    "text": "[4]",
+                    "end": 93
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 124,
+                    "text": "[5]",
+                    "end": 127
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 232,
+                    "text": "[6]",
+                    "end": 235
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 247,
+                    "text": "[7,",
+                    "end": 250
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 250,
+                    "text": "8,",
+                    "end": 252
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 252,
+                    "text": "9]",
+                    "end": 254
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 280,
+                    "text": "[10,",
+                    "end": 284
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 284,
+                    "text": "11]",
+                    "end": 287
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 377,
+                    "text": "[10]",
+                    "end": 381
+                },
+                {
+                    "type": "bibr",
+                    "start": 564,
+                    "text": "[hep-ex]",
+                    "end": 572
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 574,
+                    "text": "23",
+                    "end": 576
+                }
+            ]
+        },
+        {
+            "text": "The Dataset",
+            "section_rank": 3
+        },
+        {
+            "section": "The Dataset",
+            "text": "The publicly available dataset from Ref. [12], composed of 500,000 e + , 500,000 \u03c0 + , and 400,000 \u03b3 Geant4-generated showers, is used to construct and validate a proposed architecture for conditional modeling. The detector geometry present in the data consists of a cubic region along the z direction of V = 480 mm 3 of an ATLAS-inspired EM calorimeter, at a distance of z 0 = 288 mm from (0,0,0). The volume is radially segmented into three layers of depth 90 mm, 347 mm, and 43 mm composed of alternating layers of lead and liquid Argon.",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 41,
+                    "text": "[12]",
+                    "end": 45
+                }
+            ]
+        },
+        {
+            "section": "The Dataset",
+            "text": "In this work, all Geant4 coordinates native to the simulation are transformed into ATLAS coordinates for consistency with practical use-cases in experiments.",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Generative Adversarial Networks",
+            "section_rank": 4
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "Generative Adversarial Networks (GAN) [4] are a method to learna generative model by recasting the generation procedure as a minimax game between two actors that are parameterized by deep neural networks. A generator network is tasked with building samples that are very similar to some target data distribution, and a discriminator network (the adversary) is tasked with learning to distinguish real-looking samples from fake-looking samples.",
+            "paragraph_rank": 6,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 38,
+                    "text": "[4]",
+                    "end": 41
+                }
+            ]
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "Formally, assume we have a data distribution we wish to model, x \u223c p data (x) \u2208 X . We construct a generator network G that maps a",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "The map G implicitly defines a learned probability distribution from which we can sample, p G (x). In order to direct p G (x) towards the data distribution p data (x), a discriminator network D is tasked with taking a sample x and classifying it with a label y as originating from the data distribution (y = 1) or from the implicit synthetic distribution (y = 0), i.e., D :",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "In the original formulation of GANs [4] a loss L adv is constructed (Eqn. 1) to guide the learning towards towards equilibrium. When G and D are allowed to be drawn from the space of all continuous functions (i.e., they have infinite capacity), this system converges to a unique Nash Equilibrium [13] in which the implicit distribution p G (x) exactly recovers the target data distribution p data (x), and D(\u2022) is 1/2 everywhere [4]. It can be shown [4] that this procedure minimizes the Jensen-Shannon divergence between p G (x) and",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 36,
+                    "text": "[4]",
+                    "end": 39
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 296,
+                    "text": "[13]",
+                    "end": 300
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 429,
+                    "text": "[4]",
+                    "end": 432
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 450,
+                    "text": "[4]",
+                    "end": 453
+                }
+            ]
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "term associated with D classifying a sample from G as fake",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "term associated with D perceiving a real sample as real (1) In the original formulation, G minimizes L adv while D minimizes \u2212L adv , i.e., the game is zero sum. However, this formulation suffers from gradient saturation when a synthetic sample x = G(z) is seen as very fake, i.e., when D(G(z)) \u2248 0, stagnating the learning procedure due to near-zero gradients. To overcome this, Ref. [4] proposes the non-saturating heuristic, replacing the generator objective with Eq. 2, which it minimizes just as before. This formulation is utilized in our experiments, and we let L D = L adv represent the same quantity as in Eq. 1, except now it is only used for the discriminator.",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 56,
+                    "text": "(1)",
+                    "end": 59
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 385,
+                    "text": "[4]",
+                    "end": 388
+                }
+            ]
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "Through architecture design [14,15,16,17,18,19] and more theoretically-sound training objectives used [20,21,22,23,24,25,26], GANs have emerged as one of the most promising methods for neural networks to learn generative models of complicated and structured data spaces. We follow Ref. [27] and impose task-specific metrics which allow us to move away from likelihood-level notions of quality which do not directly translate to tasks of interest. We utilize the original heuristic loss formulation (Eq. 2) with label flipping [19] in lieu of mroe recent advances. The authors expect future work will experiment with effective conditioning mechanisms for other more popular GAN formulations such as the Wasserstein GAN [21] and the Cram\u00e9r GAN [26].",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 28,
+                    "text": "[14,",
+                    "end": 32
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 32,
+                    "text": "15,",
+                    "end": 35
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 35,
+                    "text": "16,",
+                    "end": 38
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 38,
+                    "text": "17,",
+                    "end": 41
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 41,
+                    "text": "18,",
+                    "end": 44
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 44,
+                    "text": "19]",
+                    "end": 47
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 102,
+                    "text": "[20,",
+                    "end": 106
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 106,
+                    "text": "21,",
+                    "end": 109
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 109,
+                    "text": "22,",
+                    "end": 112
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 112,
+                    "text": "23,",
+                    "end": 115
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 115,
+                    "text": "24,",
+                    "end": 118
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 118,
+                    "text": "25,",
+                    "end": 121
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 121,
+                    "text": "26]",
+                    "end": 124
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 286,
+                    "text": "[27]",
+                    "end": 290
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 526,
+                    "text": "[19]",
+                    "end": 530
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 718,
+                    "text": "[21]",
+                    "end": 722
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 742,
+                    "text": "[26]",
+                    "end": 746
+                }
+            ]
+        },
+        {
+            "section": "Generative Adversarial Networks",
+            "text": "To effectively condition on physical attributes, we add additional terms to the loss outlined in Eqn. 1, which we explore in-depth in Sec. 4. We modify the CaloGAN architecture [10] to perform the attribute-conditional task, leaning on inspiration from Ref. [16] for conditioning mechanisms.",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 177,
+                    "text": "[10]",
+                    "end": 181
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 258,
+                    "text": "[16]",
+                    "end": 262
+                }
+            ]
+        },
+        {
+            "text": "The Conditional CaloGAN",
+            "section_rank": 5
+        },
+        {
+            "section": "The Conditional CaloGAN",
+            "text": "To create a GAN based simulator that presents a useful solution for fast simulation, we need not only learn p data (x), but we must also approximate p data (x|\u03be), where \u03be is a vector of conditioning attributes. Given the dataset outlined in Sec. 2, \u03be is chosen to be \u03be = (E, x 0 , y 0 , \u03b8, \u03c6), where x 0 and y 0 are the incident coordinates and \u03b8 and \u03c6 are incident angles. As per Ref. [10], an absolute-deviance is defined over requested and reconstructed energy from a simulated collision, encouraging the GAN to learn the conditional distribution. In this work, a generalization is presented. For quantities that do not have a direct mathematical formula given a shower (i.e., x 0 , y 0 , \u03b8, and \u03c6), we build a separate head on the discriminator to learn a specific submodel \u039e which focuses on learning to regress on said quantities given a shower as input. This estimat\u00ea \u03be = \u039e(x) is learned along with the normal alternating gradient step. To both L G and L D from Sec. 3, L\u03be (Eq. 3) is added such that both players seek to minimize the attribute reconstruction error.",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 386,
+                    "text": "[10]",
+                    "end": 390
+                }
+            ]
+        },
+        {
+            "section": "The Conditional CaloGAN",
+            "text": "Note that in Eq. 3 a hyperparameter \u03bb is included to allow us to individually control the contribution for each attribute reconstruction task. Combining this with the energy conditioning loss L E and associated weight \u03bb E from the original CaloGAN formulation [10], our final optimization problem consists of the generator minimizing L G +L\u03be +\u03bb E L E and the discriminator minimizing",
+            "paragraph_rank": 15,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 260,
+                    "text": "[10]",
+                    "end": 264
+                }
+            ]
+        },
+        {
+            "text": "Sparsity Considerations",
+            "section_rank": 6
+        },
+        {
+            "section": "Sparsity Considerations",
+            "text": "As in most scientific applications, sparsity plays an important role in determining how viable a generates sample is. In the original CaloGAN work [10], a raw sparsity (or occupancy) calculation is performed and fed as additional information to the discriminator. For an image X \u2208 R m\u00d7n , the sparsity is calculated as:",
+            "paragraph_rank": 16,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 147,
+                    "text": "[10]",
+                    "end": 151
+                }
+            ]
+        },
+        {
+            "section": "Sparsity Considerations",
+            "text": "Note that although this allows the discriminator to learn to reject generated samples that do not match the sparsity levels of real samples, this formulation does not allow for any gradient signal to propagate to the generator due to all-zero sub-derivatives of the indicator function I[\u2022]. To ameliorate this deficiency, soft sparsity is introduced -a quantity that in the limit of tunable hyperparameters, converges to Eqn. 4. In particular, we define this quantity as softsparsity(X) = 1 nm",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "section": "Sparsity Considerations",
+            "text": "where \u03b1, \u03b2 > 0, all matrix powers and | \u2022 | operators are assumed to act pointwise on X, and \u2022 1 is the entry-wise 1-norm rather than the induced norm. ",
+            "paragraph_rank": 18,
+            "section_rank": 6
+        },
+        {
+            "section": "Sparsity Considerations",
+            "text": "This information is added to the discriminator in raw form as well as a minibatch discrimination [19] step in order to allow our model to learn the correct distribution of sparsity.",
+            "paragraph_rank": 19,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 97,
+                    "text": "[19]",
+                    "end": 101
+                }
+            ]
+        },
+        {
+            "text": "Experiment & Results",
+            "section_rank": 7
+        },
+        {
+            "text": "Setup",
+            "section_rank": 8
+        },
+        {
+            "section": "Setup",
+            "text": "A Conditional CaloGAN (Sec. 4) with soft sparsity information (Sec. 5) is trained on the dataset described in Section 2. We perform our experiments on the simulated e + showers.",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "section": "Setup",
+            "text": "To allow the model to learn to generate translation invariant samples, we replace all locally connected layers in the original CaloGAN formulation with normal convolution layers, as well as a fully-convolutional attention mechanism to mediate layer-to-layer dependence. In addition, convolutional kernels are added as blurring operations to specific detector layers for smearing effects, where weights are initialized to 1 nm for an n\u00d7m filter and are not updated during training, which was empirically found to improve generation quality. This explicit blur operation allows the model to learn a factored problem which marginalizes out smearing effects, and allows the model to focus on important factors in shower patterns.",
+            "paragraph_rank": 21,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 421,
+                    "text": "1",
+                    "end": 422
+                }
+            ]
+        },
+        {
+            "section": "Setup",
+            "text": "Network trainings are performed using the Keras [28] library with customized TensorFlow [29] operations across four Pascal Architecture NVIDIA R Titan X GPUs for a total of 150 epochs.",
+            "paragraph_rank": 22,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 48,
+                    "text": "[28]",
+                    "end": 52
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 88,
+                    "text": "[29]",
+                    "end": 92
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 9
+        },
+        {
+            "section": "Results",
+            "text": "As a first layer of validation, and commensurate with the validation performed in Ref. [10], average images per calorimeter layer between images from the dataset of Geant4 images are compared to images generated from the proposed model, as shown in Figure 1. This visualization illustrates the increased energy dispersion compared to the original dataset presented in Ref. [10].",
+            "paragraph_rank": 23,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 87,
+                    "text": "[10]",
+                    "end": 91
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 249,
+                    "text": "Figure 1",
+                    "end": 257
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 373,
+                    "text": "[10]",
+                    "end": 377
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "The comparison in Figure 1 shows a high level of visual agreement between GAN-generated and Geant4-generated showers.",
+            "paragraph_rank": 24,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 18,
+                    "text": "Figure 1",
+                    "end": 26
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "In addition to aggregate image pattern validation, nearest GAN neighbors 1 are retrieved Figure 2. Nearest GAN-generated neighbors (bottom) for seven random Geant4-generated e + showers (bottom) for the first layer (left), second layer (middle), and last layer (right) of the calorimeter. for seven Geant4 images and used to validate that (a) our model does not memorize shower patterns, and (b) that the full space of displacements (both angular and positional) are explored. At the nearest-neighbor level, the model produces convincing energy deposition patterns, as shown in Figure 2. The model does not appear to memorize the training dataset. In addition, positional variance (observed by noticing energy centroid deviations from the center of the calorimeter image) is well explored by the GAN, as shown by GAN-generated images matching all positions given by Geant4.",
+            "paragraph_rank": 25,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 89,
+                    "text": "Figure 2",
+                    "end": 97
+                },
+                {
+                    "type": "figure",
+                    "start": 578,
+                    "text": "Figure 2",
+                    "end": 586
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "To further verify our models ability to condition on physical attributes, the latent space for each conditioning variable is traversed, showing how the model learns about each conditioning factor. In any practical setting, such conditioning mechanisms will need to be tuned to a high level of fidelity.",
+            "paragraph_rank": 26,
+            "section_rank": 9
+        },
+        {
+            "section": "Results",
+            "text": "To illustrate the model's internal representation, incident energy, x 0 , and \u03b8 manifolds are traversed at regular intervals along the trained range. In Figure 3, incident energy is traversed, clearly showing more energetic behavior as the incident energy is increased from left to right.",
+            "paragraph_rank": 27,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 153,
+                    "text": "Figure 3",
+                    "end": 161
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "Similarly, the latent space for x 0 is traversed, and the resulting impact on generated image is shown in Figure 4. We note that as x 0 increases, shower position shifts downward, which is consistent with the ATLAS coordinates used in the dataset described in Sec. 2.",
+            "paragraph_rank": 28,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 106,
+                    "text": "Figure 4",
+                    "end": 114
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "Finally, as we traverse \u03b8 (Fig. 5) we illustrate the shower behavior dynamic using a difference between the middle point in interpolation space and each point along the \u03b8 traversal. As \u03b8 increases, we note that the width and dispersion decreases and the showers become significantly more centralized 2 , which is consistent with the ATLAS definition of \u03b8.",
+            "paragraph_rank": 29,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 26,
+                    "text": "(Fig. 5",
+                    "end": 33
+                }
+            ]
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 10
+        },
+        {
+            "section": "Conclusion",
+            "text": "In this work, we explore the ability of GANs to be conditioned on physically meaningful attributes towards the ultimate goal of creating a viable, comprehensive solution for fast, high fidelity simulation of electromagnetic calorimeters. Clearly, GANs show great potential for Figure 4. Interpolation across physical range of x 0 as a conditioning latent factor for e + showers. Note in the ATLAS coordinate system, x represents the vertical direction in this dataset. Each point in the interpolation is an average of 10 showers, with each point along the traversal build from an identical latent prior z. Figure 5. Interpolation across physical range of \u03b8 as a conditioning latent factor for e+ showers, with \u03b8 increasing from left to right. Each point in the interpolation is an average of 10 showers subtracted from the middle point along the interpolation path, with each point along the traversal build from an identical latent prior z. controllability of generation procedures, but much future work remains. In particular, a thorough investigation around dynamics between the attribute estimation portion of the network, \u039e, and the overall training objective should be pursued, particularly as it relates to the final fidelity of the attribute estimates. In addition, future work should examine newer GAN formulations (as outlined in Sec. 3) and their ability to improve image quality.",
+            "paragraph_rank": 30,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 277,
+                    "text": "Figure 4",
+                    "end": 285
+                },
+                {
+                    "type": "figure",
+                    "start": 606,
+                    "text": "Figure 5",
+                    "end": 614
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 11
+        },
+        {
+            "section": "Figure 1 .",
+            "text": "Figure 1. Average generated calorimeter image from Geant (top) and our model (bottom) for e + . From left to right, we proceed through layers of the segmented calorimeter.",
+            "paragraph_rank": 31,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 12
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Figure 3. Interpolation across physical range of incident energy as a conditioning latent factor for e + showers, with energy increasing from 1 GeV to 100 GeV from left to right. Each point in the interpolation is an average of 10 showers, with each point along the traversal build from an identical latent prior z.",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "By standard vectoral 2-norm.",
+            "paragraph_rank": 33,
+            "section_rank": 12
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "InFigure 5, areas turning blue indicate that less energy is deposited in that particular section of the image at a given point in latent space.",
+            "paragraph_rank": 34,
+            "section_rank": 12
+        }
+    ]
+}

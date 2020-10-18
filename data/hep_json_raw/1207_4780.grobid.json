@@ -1,0 +1,1017 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Algorithms based on the particle flow approach are becoming increasingly utilized in collider experiments due to their superior jet energy and missing energy resolution compared to the traditional calorimeter-based measurements. Such methods have been shown to work well in environments with low occupancy of particles per unit of calorimeter granularity. However, at higher instantaneous luminosity or in detectors with coarse calorimeter segmentation, the overlaps of calorimeter energy deposits from charged and neutral particles significantly complicate particle energy reconstruction, reducing the overall energy resolution of the method. We present a technique designed to resolve overlapping energy depositions of spatially close particles using a statistically consistent probabilistic procedure. The technique is nearly free of ad-hoc corrections, improves energy resolution, and provides new important handles that can improve the sensitivity of physics analyses: the uncertainty of the jet energy on an event-by-event basis and the estimate of the probability of a given particle hypothesis for a given detector response. When applied to the reconstruction of hadronic jets produced in the decays of tau leptons using the CDF-II detector at Fermilab, the method has demonstrated reliable and robust performance.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction to the Particle Flow Algorithm",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "Accurate measurement of the energy of hadronic jets is critical for precision verification of the Standard Model (SM) as well as searches for new physics at current and future collider experiments. A standard jet energy measurement technique relies on clustering spatially close energy depositions in the calorimeter, the detector designed to measure the energy of particles that produce electromagnetic or hadronic showers in the absorber material. Given that on average about 70% of a typical jet energy is carried by particles interacting hadronically 1 (mostly \u03c0 \u00b1 , but also K \u00b1 , K 0 L , protons, neutrons), the resolu- in an event, a key discriminant used in many analyses searching for new phenomena, calculated as an imbalance of the energy in the event in the direction transverse to the beam line. Enhancing the discovery potential of current and",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 555,
+                    "text": "1",
+                    "end": 556
+                }
+            ]
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "1 the remaining 30% is mainly due to neutral pions decaying to pairs of photons, which produce electromagnetic showers. 2 A typical example is the CDF calorimeter, which has good electromagnetic calorimeter resolution \u03b4E/E \u223c 0.135/ \u221a E while the response to stable hadrons, e.g. charged pions, is substantially less precise \u03b4E/E \u223c 0.5/ \u221a E. 3 E.g., main calorimeter systems at ATLAS, CDF, and CMS are all non-compensating.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 120,
+                    "text": "2",
+                    "end": 121
+                }
+            ]
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "future collider experiments is therefore motivating the development of improved jet energy measurement techniques.",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "A significant improvement in the jet energy resolution at hadron collider experiments has been achieved with the deployment of a technique known as the Particle Flow Algorithm (PFA), e.g. see [7]. PFA achieves better jet energy resolution by reconstructing and measuring energies of individual particles in a jet using information from several detector sub-systems. For example,the momenta of charged hadrons can be measured much more accurately using the tracking system (except for the case of very high transverse momenta, which is not relevant for this discussion), than in the calorimeter. This allows one to replace the less accurate calorimeter measurement of the energy carried by charged hadrons in the PFA jet energy calculation with:",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 192,
+                    "text": "[7]",
+                    "end": 195
+                }
+            ]
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "where the first term is the energy of the charged particles in the jet, the second term accounts for energy of photons accurately measured in the electromagnetic calorimeter, and E n is the energy of stable neutral hadrons, e.g. neutrons or K 0 L 's, which still relies on the hadron calorimeter. The corresponding relative jet energy resolution can be written in terms of single particle relative resolutions as:",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "Note that only the last term depends on the potentially poor calorimeter resolution for the energy of hadronic showers. However, because the fraction of the jet energy carried by stable neutral hadrons is on average only around 10%, its contribution to the overall jet energy uncertainty is strongly suppressed by E n /E jet . With the remaining 90% of energy accurately measured either in the tracker or in the electromagnetic calorimeter, the PFA-based jet energy reconstruction can substantially outperform the traditional calorimeter-only based measurements. Furthermore, the bias in the energy scale related to calorime-ter non-compensation effects is significantly reduced as it is only present in the suppressed third term.",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "Apart from an obvious pre-requisite of highly efficient tracking, the performance of a PFA-based reconstruction in a realistic setting depends critically on one's ability to correctly identify and separate calorimeter energy depositions from spatially close particles. One example illustrating the issue is an overlap of energy deposits in the calorimeter due to a charged pion and a neutron. In this case one has to \"guess\" the fraction of the measured calorimeter energy deposited by the charged pion, so that the excess can be attributed to a neutral hadron. The dependence of the jet energy resolution on the overlap effects is sometimes parameterized by amending Eq. (2) with the so called \"confusion term\" [1] \u03c3 2 conf . The relative importance of the confusion term depends on the power of the algorithm and the detector design features, but it generally increases with the coarser calorimeter segmentation and higher particle densities.",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "In extreme cases, the large size of the confusion term can completely eliminate the advantages of the PFA over traditional calorimeter-based measurements.",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "PF-based algorithms were successfully implemented at LEP in the 1990's [2] and have been pursued in developing the physics program at the International Linear Collider (ILC) [3]. At hadron collider experiments, a simplified version of a PFA-based algorithm was implemented for the reconstruction of hadronically decaying tau leptons at CDF at the end of Run I [4]. In hadronic decays, a tau lepton decays into a neutrino and one or more charged and neutral hadrons 4 .",
+            "paragraph_rank": 11,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 71,
+                    "text": "[2]",
+                    "end": 74
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 174,
+                    "text": "[3]",
+                    "end": 177
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 360,
+                    "text": "[4]",
+                    "end": 363
+                }
+            ]
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "While tau decays often proceed via intermediate resonances, e.g. \u03c1 or a 1 , the final stable charged hadrons are usually pions and, less often, kaons. Neutral hadrons produced in hadronic tau lepton decays are dominated by neutral pions 5 , which promptly decay to photons via \u03c0 0 \u2192\u03b3\u03b3. Tau leptons accessible at hadron machines typically originate from Z or W decays and therefore have 4 the number of charged hadrons in tau lepton decays is always odd owing to the conservation of electric charge 5 Only about 2% of the time tau decay products contain one or more neutral kaon a substantial momentum. This leads to their decay products being fairly collimated and appearing as jets of charged and neutral hadrons, reminiscent of regular jets originating from quarks or gluons. The decay products of tau leptons undergoing hadronic decays are therefore frequently referred to as \"tau jets\". The PF-based reconstruction allowed for a strong improvement in the energy resolution of hadronic tau jets, and the technique was further improved and used at CDF for Run II analyses [5]. A more comprehensive implementation of the same technique [6] has been shown to improve the generic jet resolution at CDF compared to a calorimeter only reconstruction. However, the coarse segmentation of the CDF calorimeter has led to a sizable confusion term associated with the substantial probability for more than one particle to deposit energy in a given calorimeter cluster. The difficulty in resolving such overlaps of energy depositions required to reconstruct momenta of individual particles allowed for only a limited improvement. A complete PFA algorithm developed by the CMS experiment [7] has allowed for a strong improvement in the jet energy measurement as well as a more accurate missing transverse energy scale and resolution. The CMS detector is well suited for PFA-based reconstruction due to the fine granularity of the electromagnetic calorimeter and the longitudinal profiling of hadronic showers in the central part of the detector, which improves their spatial resolution. However, the series of the \"High Luminosity LHC\" upgrades are expected to result in significant increases in particle occupancies per event. Maintaining high performance of the PFA-based reconstruction in the new regime requires the development of techniques capable of efficiently resolving energy overlaps.",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 237,
+                    "text": "5",
+                    "end": 238
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 386,
+                    "text": "4",
+                    "end": 387
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 498,
+                    "text": "5",
+                    "end": 499
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 1074,
+                    "text": "[5]",
+                    "end": 1077
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1137,
+                    "text": "[6]",
+                    "end": 1140
+                }
+            ]
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "In this paper, we discuss the challenges and implications of deploying a PFAbased reconstruction in an environment with frequent energy overlaps (Section 2). In Section 3 we present a technique designed to resolve the overlapping energy depositions of spatially close particles using a statistically consistent probabilistic procedure. In addition to improving the energy resolution, the technique allows for combining measurements from multiple detectors, as opposed to \"substituting\" one measurement with another in existing algorithms.",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction to the Particle Flow Algorithm",
+            "text": "It is nearly free of ad-hoc corrections, thus minimizing distortions due to the discontinuities of the correction functions. The algorithm has additional unique features, such as the ability to calculate the jet energy uncertainty on a jet-by-jet basis, and provides the measure of the overall consistency of the measurement, improving the sensitivity of physics analyses. In Section 4, we describe the implementation of this technique for reconstructing the energy of tau jets, the decay products of hadronically decaying tau leptons, at CDF and illustrate its performance in a realistic setting using the actual experimental data in Section 5.",
+            "paragraph_rank": 14,
+            "section_rank": 2
+        },
+        {
+            "text": "Challenges of the High Occupancy Environment",
+            "section_rank": 3
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "The reconstruction of hadronically decaying tau jets at CDF is a good example of a problem with frequent overlaps of energy deposits from nearby particles.",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "The CDF calorimeter has projective tower geometry with azimuthal segmentation \u03c6 = 15 \u2022 and pseudorapidity segmentation \u03b7 \u2248 0.1 and provides very limited information about the lateral and longitudinal shower profiles 6 . With a typical angular size of a hadronic tau jet being of the order of 0.05-0.1 rad, there is a substantial probability for several or even all particles within the tau jet to cross the face of the calorimeter within the boundaries of a single calorimeter tower. Treatment of frequent energy overlaps is therefore a key consideration in designing a PFA-based reconstruction at CDF.",
+            "paragraph_rank": 16,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 216,
+                    "text": "6",
+                    "end": 217
+                }
+            ]
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "To set the stage, we need to briefly describe the sub-detector systems used in tau reconstruction and identification, a full description of the CDF-II detector is available elsewhere [8]. The CDF tracking system provides nearly 100% efficient tracking within the pseudorapidity range of |\u03b7| < 1, which is relevant for tau reconstruction. Its main element is the Central Outer Tracker (COT), a drift chamber that covers radii from 0.4 m to 1.37 m immersed in a 1.  pion \u03c0 + , a neutral pion \u03c0 0 decaying to two unresolved photons \u03b3 1 \u03b3 2 (depositing energy in a single tower), and possibly a neutral hadron n, as illustrated in Fig. 1.",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 183,
+                    "text": "[8]",
+                    "end": 186
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 627,
+                    "text": "Fig. 1",
+                    "end": 633
+                }
+            ]
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "While the \u03c0 + momentum is known from the tracker, the energy estimation for neutral particles relies on the calorimeter measurement. However, the energy registered in the electromagnetic and hadronic parts of the calorimeter, E EM meas and E HAD meas , is a sum of the unknown deposits by each of the particles in the jet, including that by the charged pion:",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "resulting in an under-constrained system with two equations and six unknowns.",
+            "paragraph_rank": 19,
+            "section_rank": 3
+        },
+        {
+            "section": "Challenges of the High Occupancy Environment",
+            "text": "As the leakage of the electromagnetic showers from photons into the hadron calorimeter is typically small, as illustrated in Fig. 2  ",
+            "paragraph_rank": 20,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 125,
+                    "text": "Fig. 2",
+                    "end": 131
+                }
+            ]
+        },
+        {
+            "text": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "The challenge of solving an underconstrained system with significant correlations and additional redundant measurements outlined in previous section can be addressed with a probabilistic approach. For every hypothesis of the jet particle content (the number of particles of each type), one can define a probability estimator (likelihood) for a set of particles of given type and momenta to result in a particular set of detector measurements. These measurements could represent energy counts in calorimeter towers, cluster energies, track momenta or any other available measurement. The likelihood can be written as follows:",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "where index i runs over particles in a jet (i = 1, ..., i p ), p i is the true momentum of particle i, E j meas stands for each available measurement (j = 1, ..., j m runs over all available measurements), P ij (E j i |p i ) is the \"response function\" for particle i with true momentum p i , to produce a contribution E j i to a measurement j (if the particle cannot contribute to the particular measurement j , we use",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": ", and M contains information about correlations between contributions of each particle to each measurement. One example of the latter is the correlation between the deposits of energy E j i in an electromagnetic calorimeter tower j by all particles crossing it, in which case M will contain a product of expressions of the form",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "The summation runs over all particles i that cross this tower and the delta function ensures that the integration is performed over the parameter space where the assumed contributions to the measured energy by individual particles sum up into the experimentally measured energy deposition in that tower. Another example is the correlation between the energy deposited by particle i in the electromagnetic calorimeter tower j 1 and a hadron calorimeter tower j 2 it crosses.",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "In this case M would have to account for the correlation between the energy deposits E j1 i and E j2 i in the two towers. Once such a global likelihood function is constructed, p 0 corresponding to its maximum will determine the most probable set of particle momenta, thus achieving the goal of fully reconstructing the event using all available detector information. The type of each particle and their number can be taken as parameters of the global likelihood, allowing one to also determine the most probable particle content of a jet.",
+            "paragraph_rank": 25,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "While building a global and fully inclusive likelihood is certainly possible, it is hardly practical. However, this approach can be deployed to solve specific problems like measuring jet energies in environments with frequent energy overlaps in the calorimeter. Here, we will describe an example of one such possible PPFA implementation. For simplicity, this example will use the energy of pre-reconstructed electromagnetic and hadronic calorimeter clusters as the basic measurements E j meas , but an implementation using tower energy measurements would be very similar. The PPFA probability for a set of particles with momenta p i to produce a set of calorimeter measurements E j meas for each cluster j in electromagnetic or hadron calorimeter can be written as follows:",
+            "paragraph_rank": 26,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "where p is the vector of particle momenta p i , index i runs over the list of particles in a jet, index j runs over the available measurements (in our example, the electromagnetic and hadronic calorimeter's cluster energy measurements), E j i is the contribution to the measured energy in cluster j by i th particle, E j meas is the measured energy for cluster j, and the response function P ij (E j i |p i ) is the probability for particle i with true momentum p i to deposit energy E j i in cluster j (P ij depends on the type of particle), and M describes correlations that remain unaccounted after the delta functions have been introduced. The likelihood L p is essentially a sum of probabilities of all possible outcomes, i.e. the specific values of energy deposited by each particle in the electromagnetic and hadronic calorimeter clusters, consistent with the actual cluster energy measurements (the latter is ensured by the delta functions). The probability of each outcome is a product of probabilities P ij for each particle to deposit given amounts of energy E j1 i , E j2 i in the hadronic and electromagnetic calorimeters, given their assumed true momenta p i . In many practical cases, the strongest effect that M in Eq.(6) has to properly account for is the correlation of the values of the deposits by the same particle in the electromagnetic and hadronic calorimeters, e.g. early showering of a charged hadron can lead to a larger than typical deposition of energy in the electromagnetic calorimeter, but the energy deposited in the hadron calorimeter would consequently be lower than typical. The easiest way to take this kind of correlation into account is to switch to two-dimensional response functions While the most probable set of particle momenta p is obtained by maximizing the likelihood L p ( p | E meas ), the likelihood shape in the p space can be used to evaluate the uncertainty in the energy determination for each particle. If one primarily seeks to measure the energy of a particular jet in the event as often is the case, one can use the likelihood defined in Eq.(6) to obtain a \"posterior\" distribution for the jet energy, defined as a sum of the energies of the particles assigned to the jet. This is accomplished by integrating over d p = dp 1 ...dp ip",
+            "paragraph_rank": 27,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "and we have assumed here that the first N particles in the list are those assigned to the jet in question. In the presence of correlations, L E may provide a more convenient estimate of the jet energy and its uncertainty. The shape of the jet energy \"posterior\" allows for the estimation of the uncertainty in the measured jet energy. If one needs to simultaneously evaluate the energy of several jets in the event, Eq.( 7) needs to be modified by introducing additional delta-functions (one per jet) with the summation running over indices of particles assigned to each of the jets.",
+            "paragraph_rank": 28,
+            "section_rank": 4
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "Once the most likely set of particle momenta p 0 is found, one can further test the \"goodness\" of the particle hypothesis. We define a p-value as the probability to observe a combination of detector measurements E meas that is equally or less likely than the actual set E meas observed in the event, given that the true combination of particles and momenta is the one that maximizes the likelihood in Eq. 6:",
+            "paragraph_rank": 29,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_6",
+                    "start": 405,
+                    "text": "6",
+                    "end": 406
+                }
+            ]
+        },
+        {
+            "section": "PPFA: The Probabilistic Particle Flow Algorithm",
+            "text": "The p-value can be easily calculated numerically by generating \"pseudo-experiments,\" in which one generates \"pseudo-deposits\" of energy by each particle with momenta p 0 i towards each cluster energy measurement using the same response functions. The sum of the deposits of all particles crossing particular clusters yields a set of pseudo-measurements E meas . The probability of the generated outcome is given by L p , and the integrated probability of observing In this section we describe a practical implementation of the method developed for hadronic tau jet reconstruction at CDF. In the following, we discuss the CDF baseline hadronic tau jet reconstruction, which is used as a starting point for the algorithm. We then discuss the PPFA strategy, measurement of the response functions, mathematical definition of the PPFA likelihood function and the \"p-value,\" and the algorithm used for correcting the initial particle hypothesis. We conclude with evaluating the algorithm's energy resolution using simulation. As we are primarily interested in improving energy reconstruction for tau jets, we implement a \"local\" version of the PPFA, with the definitions presented in the previous section only including particle candidates that contribute to a particular jet and completely ignoring the rest of the information contained in the event.",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "Baseline Hadronic Tau Jet Reconstruction at CDF",
+            "section_rank": 5
+        },
+        {
+            "section": "Baseline Hadronic Tau Jet Reconstruction at CDF",
+            "text": "The construction of hadronic tau jet candidates at CDF starts with selecting continuous clusters of calorimeter towers. The clustering starts with a \"seed tower,\" defined as any tower with E T > 5 GeV/c and at least one track with After the most likely combination of particle momenta is determined, we construct the \"p-value\" which measures the probability that the given particle content and momenta hypothesis result in detector measurements less or equally as likely as the observed response. If the p-value is too low, the particle content hypothesis is modified by adding a photon, which is assumed to be not reconstructed either due to the detector inefficiency or an overlap with a track (Shower Maximum cluster will be vetoed if it is reconstructed too close to the extrapolated position of a charged track), and the full calculation is repeated. If the p-value remains too low, the particle content is modified by adding a stable neutral hadron (K L ) and the likelihood calculation is repeated. The procedure continues until an acceptable outcome is achieved or after running out of the pre-set options.",
+            "paragraph_rank": 31,
+            "section_rank": 5
+        },
+        {
+            "text": "Response Functions of the CDF Detector Sub-systems",
+            "section_rank": 6
+        },
+        {
+            "section": "Response Functions of the CDF Detector Sub-systems",
+            "text": "As discussed earlier, the relevant detector measurements include tracking, measurements of energy deposited in the electromagnetic and hadronic calorimeter towers, and the measured CES cluster energy. Because the precision of the CDF tracking is much higher than the accuracy of other measurements, the tracker response function for charged pions as a function of pion momenta can be safely approximated by a delta function to simplify further calculations. To determine the calorimeter response functions for charged pions, we use the CDF GEANT-3 [9] based simulation package tuned using the test beam data. Isolated charged pions are selected using hadronic tau decays \u03c4 \u00b1 \u2192\u03c0 \u00b1 \u03bd \u03c4 from an inclusive Z/\u03b3 * \u2192\u03c4 \u03c4 simulated sample of events generated with Pythia [10]. We calculate response functions for charged pions with momenta ranging from 1",
+            "paragraph_rank": 32,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 548,
+                    "text": "[9]",
+                    "end": 551
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 762,
+                    "text": "[10]",
+                    "end": 766
+                }
+            ]
+        },
+        {
+            "section": "Response Functions of the CDF Detector Sub-systems",
+            "text": "to 100 GeV/c in steps of 1 GeV/c. Large fluctuations in the development of hadronic showers and their large lateral size, frequently spanning across several CHA towers, make it impractical to calculate responses separately for each tower in a multi-tower cluster. Instead, we measure the hadronic calorimeter response for charged pions by summing tower energies in a square of 3\u00d73 towers centered on the extrapolated position of the \u03c0 \u00b1 track. In the CEM, hadronic showers rarely deposit energy in more than a single tower, therefore the charged pion electromagnetic deposition is calculated using the energy in the tower pointed at by the track associated with \u03c0 \u00b1 . To take into account the strong correlation of the energy depositions by the same particle in CEM and CHA, we define a 2-dimensional response function in the E EM versus E HAD plane. Fig. 2(b) shows an example of the calorimeter responses in CEM and CHA for simulated isolated charged pions with momenta < p \u03c0 < GeV/c. The adequacy of the CDF simulation of the calorimeter response can be inferred from the results of a dedicated study [12], in which simulation predictions were compared with the pion test beam data and with the collisions data using a pure sample of isolated charged pions. When normalized to unity, these response functions represent the probability density functions (PDF) for a charged pion with a particular momentum to produce a given response in the calorimeter, which we will refer",
+            "paragraph_rank": 33,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 851,
+                    "text": "Fig. 2(b)",
+                    "end": 860
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1104,
+                    "text": "[12]",
+                    "end": 1108
+                }
+            ]
+        },
+        {
+            "section": "Response Functions of the CDF Detector Sub-systems",
+            "text": "The vast majority of photons in tau jets originate from \u03c0 0 \u2192\u03b3\u03b3 and typically have energy of the order of a few GeV, making accurate understanding of the calorimeter response for low energy photons particularly important. While the response functions for photons can be measured directly from the simulation, validating them with the data can be difficult owing to the challenges in selecting a high purity sample of low energy photons in data. Fortunately, the calorimeter response to photons and electrons is nearly identical, allowing for the use of a relatively high purity sample of electrons in data obtained by tagging photon conversions. Similar to the case of charged pions, we calculate 2-dimensional response functions for photons with momenta ranging from 1 to 100 GeV/c in steps of 1 GeV/c in the E EM versus E HAD plane. Fig. 2(a) shows an example of the calorimeter response function for photons with the true momenta 25 < p \u03b3 < 26 GeV/c. We denote the response functions of this type as",
+            "paragraph_rank": 34,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 835,
+                    "text": "Fig. 2(a)",
+                    "end": 844
+                }
+            ]
+        },
+        {
+            "section": "Response Functions of the CDF Detector Sub-systems",
+            "text": "As mentioned earlier, the CES energy measurement is used in the likelihood  Figs. 3(a) and (b), respectively.",
+            "paragraph_rank": 35,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 76,
+                    "text": "Figs. 3(a)",
+                    "end": 86
+                }
+            ]
+        },
+        {
+            "text": "Computation of the PPFA Likelihood",
+            "section_rank": 7
+        },
+        {
+            "section": "Computation of the PPFA Likelihood",
+            "text": "In our implementation, the initial particle hypothesis assumes each reconstructed track to be due to a charged pion and each reconstructed CES cluster not associated with a track to be due to a photon (or perhaps two merged photons, which makes little difference). The tracking momentum measurement is taken to be exact due to the superior resolution of the CDF tracker. ",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "section": "Computation of the PPFA Likelihood",
+            "text": "where the integration runs over all possible depositions of energy by each individual particle in each available calorimeter measurement, the delta functions in the second line ensure that the sum of the deposits for each measurement is equal to the observed value, and the third line includes response functions for photons, charged pions and neutral hadrons in the calorimeter and in the CES detector. One can choose to convert Eq.(9) into a posterior probability distribution to estimate the hadronic tau jet energy as:",
+            "paragraph_rank": 37,
+            "section_rank": 7
+        },
+        {
+            "section": "Computation of the PPFA Likelihood",
+            "text": "(GeV/c) -1 \u03a3p \u03b3i = E jet -\u03a3p \u03c0k GeV/c These distributions serve as statistical probability density functions for the values of the measured energy for a given jet. In the PPFA implementation discussed in this paper, the maximum of the L E (E jet ) distribution is used as the estimator for the jet energy, while the width and the shape of the distribution yield the uncertainty in the measurement of the jet energy on a jet-by-jet basis.",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 8,
+                    "text": "-1",
+                    "end": 10
+                }
+            ]
+        },
+        {
+            "section": "Computation of the PPFA Likelihood",
+            "text": "While the integral form presented in Eqs.(9,10) appears fairly complicated, it is straightforward to implement in the code and compute numerically using ",
+            "paragraph_rank": 39,
+            "section_rank": 7
+        },
+        {
+            "text": "The Reduced p-Value Definition",
+            "section_rank": 8
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "Photon reconstruction failures or the presence of a stable neutral hadron, e.g. K 0 L , may lead to an incorrect initial particle hypothesis. Such occurrences result in a suboptimal estimation of the energy, and therefore it important to detect and correct such cases. We define a p-value using Eq. 8, but, to speed up the calculations, we do two simplifications to the definition of the likelihood L p in Eq. (9). First, because in practice most of the cases affected by the incorrect initial hypothesis can be identified through inconsistencies between the available calorimeter and tracker measurements, we drop the terms associated with the CES. Second, we combine the nine electromagnetic towers in the hadronic tau cluster into a single \"super-tower\" with energy E EM = E EMj , where the summation runs over the nine towers, and define the \"reduced\" version of Eq. 9:",
+            "paragraph_rank": 40,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_9",
+                    "start": 299,
+                    "text": "8",
+                    "end": 300
+                },
+                {
+                    "ref_id": "formula_13",
+                    "start": 871,
+                    "text": "9",
+                    "end": 872
+                }
+            ]
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "dE EMj meas (11) We then define the \"reduced\" p-value according to Eq. (8) using the reduced L p . This p-value quantifies how frequently a set of particles with true momenta p 0 can produce a set of measurements equally or less probable than the one observed in data. The p-value is sensitive to inconsistencies in the available calorimeter measurements and can be used to detect mistakes in the initial particle content hypothesis. As it will be shown next, most of these mismeasurements owe to the incorrect initial particle hypothesis.   Tau jets with one charged hadron and a stable neutral hadron (kaon), which is not included in the initial particle content hypothesis, typically have an excess of energy measured in the hadron calorimeter compared to what one would expect from a single charged pion. As the excessive energy in the hadron calorimeter detected using the p-value cannot be accounted for by adding a photon at the previous step, the p-value for these jets remains small after an attempted correction of the initial particle content hypothesis, as shown in Fig. 6(a). Therefore,",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 12,
+                    "text": "(11)",
+                    "end": 16
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_9",
+                    "start": 1078,
+                    "text": "Fig. 6(a)",
+                    "end": 1087
+                }
+            ]
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "for jets with exactly one reconstructed track and no reconstructed photons that had a low initial p-value (p < 0.005) and continue to have a low p-value after the photon correction (the threshold is p < 0.03), the particle content hypothesis is  While our procedure has been tuned to improve the overall energy resolution and not necessarily to reconstruct and identify each individual particle in the most optimal fashion, we analyze the same sample of simulated Z\u2192\u03c4 \u03c4 events with minimal reconstruction requirements to assess whether the K 0 L correction implemented in the algorithm performs as expected. We find that among the hadronically decaying tau candidates, for which the K 0 L correction has been invoked by our procedure, about 80% of the candidates indeed contain a genuine K 0 L in the tau decay chain based on the generator level information. In the remaining 20% of the cases, the application of the correction has been triggered by either significant fluctuations in the hadron showering detected by the algorithm, or due to various rare mistakes in the baseline tau candidate reconstruction.",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "Some of these mistakes, e.g. significant track momentum mismeasurements, happen very rarely, but the K 0 L correction is capable of detecting at least some of these cases. In such events, the K 0 L correction actually improves the overall jet energy resolution, albeit for the wrong reasons. Note that in our procedure, the K 0 L correction is only applied to tau jet candidates with exactly one reconstructed charged particle track and no reconstructed photon candidates, as this configuration is the most prone to significant energy mismeasurements due to late showering energetic K 0 L 's. We find that of all tau candidates with a genuine K 0 L falling into this category, in 60% of the cases either a \"missing photon\" or \"missing kaon\" correction is applied in our procedure. Of these cases, about 75% of the time the p-value reaches an acceptable value after applying the \"missing photon\" correction alone and the \"missing kaon\" correction is thus not invoked.",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "In the remaining 25% of the cases, the algorithm applies the \"missing kaon\" correction. The sequential application of the corrections used in our procedure is practical given that in the CDF environment the majority of mismeasurements happen due to unreconstructed photons (tagged using CES clusters). However, it is clear that one could further improve individual particle identification with the already existing PPFA tools. For example, one could make a comparison of the the p-values after applying each of the two corrections separately and then make a decision on which one is more appropriate in a particular case.",
+            "paragraph_rank": 44,
+            "section_rank": 8
+        },
+        {
+            "section": "The Reduced p-Value Definition",
+            "text": "Nevertheless, we conclude that the performance of the correction procedure in our algorithm is consistent with the expectation.",
+            "paragraph_rank": 45,
+            "section_rank": 8
+        },
+        {
+            "text": "PPFA Energy Resolution",
+            "section_rank": 9
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "Figures 7(a) and (b) show the relative difference between the PPFA reconstructed tau jet transverse momentum and the true visible transverse momentum, obtained at generator level for one and three-prong hadronic tau jets. For comparison, the same plots show the performance of the standard CDF tau reconstruction (see [11] for details) shown as dashed line using the same simulated Z\u2192\u03c4 \u03c4 events. It is evident that the PPFA algorithm has been able to converge to the correct energy without resorting to complex ad-hoc corrections used in the standard CDF reconstruction. The improvement is particularly striking in cases with significant energy overlaps, as illustrated in Fig. 7(c), which shows the same distribution, but for one-prong events containing at least one photon pointing to the same calorimeter tower as the track.",
+            "paragraph_rank": 46,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 318,
+                    "text": "[11]",
+                    "end": 322
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "start": 673,
+                    "text": "Fig. 7(c)",
+                    "end": 682
+                }
+            ]
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "To quantify the level of improvement, we use the fraction of jets with the reconstructed energy falling within 10% of the true jet energy, denoted as f 10%",
+            "paragraph_rank": 47,
+            "section_rank": 9
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "in Fig. 7. On average, the PPFA increases f 10% by about 10%. The PPFA jet energy resolution distribution also has a more symmetric shape around the true energy and a reduced tail due to jets with underestimated reconstructed energy. The improvement in the tail behavior is more pronounced for one-prong jets as one-prong taus more frequently contain neutral pions with significant contribution towards the total visible jet energy.",
+            "paragraph_rank": 48,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "start": 3,
+                    "text": "Fig. 7",
+                    "end": 9
+                }
+            ]
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "It would have been interesting to quantify the improvement in the confusion term in the energy resolution. However, disentangling the contributions to energy resolution from the confusion in assigning energy is not straightforward in PPFA due to the complex convolution of multiple detector responses, including not only the calorimeters but also the Shower Maximum detector. A qualitative feel for the level of the improvement can be deduced from the distributions shown in Fig. 7. As tau decay products rarely contain K 0 L 's, the shape of the underlying broad distribution beneath the the near-gaussian narrow core has a substantial contribution from the \"confusion\" cases where the electromagnetic deposition of charged pions was not correctly estimated, leading to relatively large mismeasurements. It also has other non-negligible contributions, for example large non-uniformity effects in the response of the electromagnetic calorimeter near the edges of the towers can lead to substantial mismeasurements in tau jet energy if an energetic photon enters the calorimeter near the edge of the tower. These additional effects do not allow one to unambiguously associate the entire shape of the broad component of these distributions with the confusion term. However, narrowing of this distribution in the PPFA case compared to the standard CDF PF-based tau jet reconstruction is most certainly due to improved treatment of the \"confusion prone\" cases, e.g. see Fig. 7(c) where the fraction of these potentially difficult events is enhanced by the requirement of a track and a CES cluster in the same tower. Therefore the observed improvement can arguably be taken as a lower bound on the relative improvement in the confusion term in PPFA as compared to the standard CDF technique.",
+            "paragraph_rank": 49,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "start": 475,
+                    "text": "Fig. 7",
+                    "end": 481
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "start": 1466,
+                    "text": "Fig. 7(c)",
+                    "end": 1475
+                }
+            ]
+        },
+        {
+            "text": "PPFA Performance Tests Using CDF Data",
+            "section_rank": 10
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "While the simulation studies show that the PPFA provides an accurate measurement in a single, self-consistent framework free of complex ad-hoc corrections, it is important to validate the algorithm performance in a realistic analysis setting using actual data. Energy resolution for hadronic tau jets cannot be evaluated directly using data. Unlike the case of Z\u2192ee or Z\u2192\u00b5\u00b5 events where lepton momentum resolution can be inferred from the broadness of the dilepton mass spectrum, there is no such \"standard candle\" for taus at hadron colliders. In the case of Z\u2192\u03c4 \u03c4 , which is the only fairly clean physics signal enriched with true taus accessible at hadron colliders, the shape of the invariant mass distribution calculated using visible tau decay products is very broad, as partial cancellation of the missing transverse energy E / T associated with momenta of the neutrinos from tau decays precludes reconstructing neutrino momenta. In addition to the improved energy resolution, the PPFA can potentially deliver other advantages, e.g. a better discrimination against QCD multi-jet backgrounds due to \"sharper\" shapes of identification variables and the new PPFA specific handles, such as the estimate of the jet energy uncertainty on a jet-by-jet basis and the p-value. However, as many of these potential improvements are correlated, disentangling and quantifying each of these potential improvements separately is not practical. Incidentally, a sample of hadronic taus with purity suitable for such studies would have insufficient statistics due to very harsh cuts required to reduce background contamination.",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "Given the above limitations, we validate the PPFA in a realistic data setting and evaluate its performance as follows. First, we demonstrate that the PFFAbased tau jet energy measurement in the data is well described by the simulation.",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "Similarly, we show that the PPFA p-value is well reproduced in the data. Second, we study the tau jet invariant mass distribution for events with tau decays the full momentum of the jet is applied to exclude biases owing to the choice of a tau energy reconstruction algorithm. Following this, several event topology cuts are applied to reduce contamination due to cosmics, Z/\u03b3 * \u2192ee, Z/\u03b3 * \u2192\u00b5\u00b5 and W +jets events. A full list of selections is available in [13]. The remaining QCD multi-jet background is estimated from data, using events with lepton and tau candidates having electric charge of the same sign. We rely on simulation to estimate Z/\u03b3 * \u2192\u03c4 \u03c4 , Z \u2192 ee, Z \u2192 \u00b5\u00b5 and W +jets contributions. These processes are generated using Pythia Tune A with CTEQ5L parton distribution functions [14] and the detector response is simulated using the GEANT-3",
+            "paragraph_rank": 52,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 456,
+                    "text": "[13]",
+                    "end": 460
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 791,
+                    "text": "[14]",
+                    "end": 795
+                }
+            ]
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "package [9].",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 8,
+                    "text": "[9]",
+                    "end": 11
+                }
+            ]
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "Once the sample is selected, the PPFA reconstruction is performed in data and simulation. A thorough comparison of kinematic distributions sensitive to the hadronic tau jet energy measurement has allowed us to conclude that the PFFA performance in the data is well described by the simulation. As the reduced p-value, which quantifies the level of consistency of the contributing calorimetric measurements with the hypothesis maximizing the PPFA likelihood. Despite its seeming complexity, the distribution for the reduced p-value is well described by the simulation. Figure 9 shows the distribution of the PPFA p-value for selected hadronic tau candidates with one or three charged tracks.",
+            "paragraph_rank": 54,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_13",
+                    "start": 568,
+                    "text": "Figure 9",
+                    "end": 576
+                }
+            ]
+        },
+        {
+            "section": "PPFA Performance Tests Using CDF Data",
+            "text": "Apart from the good agreement between the data and simulation, it is evident that the reduced p-value provides discrimination against the jets from multi-jet QCD events and can be utilized in physics analyses to improve the purity of selected data.",
+            "paragraph_rank": 55,
+            "section_rank": 10
+        },
+        {
+            "text": "PPFA Energy Resolution",
+            "section_rank": 11
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "As discussed earlier, a direct measurement of the energy resolution for hadronic tau jets using data is not Note that the pedestal near m = 0.14 GeV/c 2 is due to tau jets with no reconstructed photons, which includes \u03c0 0 -less one-prong tau decays as well as the cases with the photon being unreconstructed. While these comparisons do not allow quantifying the improvement in the jet energy measurement resolution, it is evident that the PPFA technique provides a better measurement of the tau invariant mass. Similar improvements can be expected for other measurable the missing transverse energy measurement.",
+            "paragraph_rank": 56,
+            "section_rank": 11
+        },
+        {
+            "section": "PPFA Energy Resolution",
+            "text": "quantities related to particle and energy flow within a tau jet candidate. As tau identification mainly relies on exploring differences in particle and energy flow properties between narrow tau jets and the broader generic jets from the QCD multi-jet backgrounds, such improvements have a potential of improving rejection of multi-jet backgrounds.",
+            "paragraph_rank": 57,
+            "section_rank": 11
+        },
+        {
+            "text": "Tau Identification and Background Discrimination",
+            "section_rank": 12
+        },
+        {
+            "section": "Tau Identification and Background Discrimination",
+            "text": "While the primary goal of the PPFA is an accurate jet energy measurement in the high occupancy environment, it also provides additional tools that can be used in physics analyses to improve discrimination against backgrounds.",
+            "paragraph_rank": 58,
+            "section_rank": 12
+        },
+        {
+            "section": "Tau Identification and Background Discrimination",
+            "text": "Improved accuracy of the measurements of energy, particle and energy flow properties, as well as the new PPFA-specific handles, such as the p-value or the jet-by-jet energy measurement uncertainty, can all aid in discriminating hadronic tau jets from multi-jet QCD backgrounds. To illustrate this, we model two simple proto-analyses, both aiming to maximize the signal to background ratio for a sample of Z\u2192\u03c4 \u03c4 candidate events by exploiting properties of the tau jet candidates. One of the analyses relies on variables calculated using standard CDF reconstruction and the other one relies on the PPFA calculations.",
+            "paragraph_rank": 59,
+            "section_rank": 12
+        },
+        {
+            "section": "Tau Identification and Background Discrimination",
+            "text": "Both analyses start with a sample of candidate Z\u2192\u03c4 \u03c4 events with the level of background contamination due to the QCD multi-jet events that is typical for physics analyses 9 . Compared to the high purity sample, the \"realistic\" sample is obtained by loosening isolation and some other tight quality requirements on the lepton leg and removing the requirement on the absence of additional energetic jets in the event. The purity and composition of this sample can be inferred from Fig. 11 showing several kinematic and jet shape variables.   of background while not being specific to either the PPFA or the standard CDF reconstruction. N trk iso cone is the number of tracks with p T > 1 GeV/c in the isolation cone. \u2206\u03b8(\u03c4 ) = E i \u00d7 \u03b8 i / E i is the weighted angular width of the jet calculated using the momenta of individual particles reconstructed in a jet, similar to the case of the previously discussed jet invariant mass m(\u03c4 ).",
+            "paragraph_rank": 60,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 480,
+                    "text": "Fig. 11",
+                    "end": 487
+                }
+            ]
+        },
+        {
+            "section": "Tau Identification and Background Discrimination",
+            "text": "The summation goes over particles in the jet, E i being the particle energy and \u03b8 i is the angle between the particle and the visible 4-momentum of the tau jet. The specific cut choices for \u2206\u03b8(\u03c4 ) and m(\u03c4 ) (see Table 1) aim at a high signal efficiency while rejecting the tails of the corresponding distributions dominated by the background events. These cuts are therefore expected to reduce background contamination, but are not optimized in any particular way.",
+            "paragraph_rank": 61,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_6",
+                    "start": 212,
+                    "text": "Table 1",
+                    "end": 219
+                }
+            ]
+        },
+        {
+            "section": "Tau Identification and Background Discrimination",
+            "text": "The selections discussed above can be equally applied to both the standard and the PPFA-based analyses. Finally, we apply an additional p T -dependent cut Table 1: Selections used in the two proto-analyses using either PPFA or standard CDF selection for hadronically decaying tau jets. The first group of selections corresponds to standard CDF selections applied first in both analyses. The second group shows additional non-standard selections using the invariant mass and the narrowness of the tau candidate's jet cluster that can be applied to both analyses. The last selection uses the PPFA p-value and is only applied to the PPFA proto-analysis. the PPFA technique in discriminating hadronic tau jets from quark and gluon jets, thus providing a nice byproduct of the method that can be utilized in physics analyses.",
+            "paragraph_rank": 62,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_6",
+                    "start": 155,
+                    "text": "Table 1",
+                    "end": 162
+                }
+            ]
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 13
+        },
+        {
+            "section": "Conclusions",
+            "text": "The PPFA is a consistent, probabilistic framework designed for accurate reconstruction of the jet energy in the high occupancy environment, relevant for experiments operating in the very high luminosity regime or featuring coarse calorimeter segmentation. The framework is based on \"first principles\" and is essentially free of ad-hoc corrections. The PPFA can be implemented in a realistic detector setting, as demonstrated using the example of hadronic tau reconstruction at CDF. It is shown to provide a more accurate jet energy measurement and better discrimination against backgrounds compared to the existing tools utilizing the particle flow concept. For hadronic tau reconstruction, the new tools provided by the PPFA, such as a jet-by-jet estimate of the jet energy uncertainty and the p-value quantifying the likelihood of the current hypothesis about particle content of a jet, can be used to further improve energy resolution and provide better discrimination against backgrounds. The proposed technique can be utilized at the LHC experiments once the machine is upgraded for the very high luminosity regime as well as at future collider experiments.",
+            "paragraph_rank": 63,
+            "section_rank": 13
+        },
+        {
+            "text": "tion of the jet energy measurement is driven by the accuracy of the hadronic shower energy reconstruction. While the energy of electromagnetic showers can be measured very well, large fluctuations in the development of hadronic showers lead to a significantly lower precision 2 . The non-equal response of the non-compensating calorimeters to electromagnetic and hadronic showers 3 further biases the overall jet energy scale and degrades the resolution. Special corrections accounting for non-equal response can only partially recover this reduction in resolution. While the presence of many particles in a jet averages out fluctuations in the measurement of energy of individual hadronic showers, jet energy resolution remains poor for jets of low (\u223c10-30 GeV) and moderate (\u223c30-60 GeV) energies. Incidentally, the resolution of low-to-moderate energy jets has a strong impact on the sensitivity of many physics analyses performed at hadron colliders, from precision measurements of the Standard Model parameters to searches for the Higgs boson in bb and \u03c4 \u03c4 channels and searches for new phenomena such as predicted by Supersymmetry. Mismeasurements of the jet energy also bias the measurement of the missing transverse energy (E / T )",
+            "paragraph_rank": 64,
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 15
+        },
+        {
+            "section": "Figure 1 :",
+            "text": "Figure 1: Illustration of the measurements available in the CDF-II detector setup for a hypothetical narrow jet of particles consisting of a charged pion (trajectory and the shower shown as solid lines), a neutral pion (dotted line) decaying to two unresolved photons and a neutral hadron (dashed line).",
+            "paragraph_rank": 65,
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 16
+        },
+        {
+            "section": "Figure 2 :",
+            "text": "Figure 2: Examples of the calorimeter response for (a) simulated isolated electrons with p = 25GeV/c and (b) simulated isolated charged pions with p = 25 GeV/c in the plane E EM versus E HAD . The size of the boxes in the plots is proportional to the probability density; the shaded area indicates the area of the highest density as obtained from the same distribution plotted with finer bin size.",
+            "paragraph_rank": 66,
+            "section_rank": 16
+        },
+        {
+            "text": "where j 1 Figure 3 :",
+            "section_rank": 17
+        },
+        {
+            "section": "where j 1 Figure 3 :",
+            "text": "Figure 3: Examples of the Shower Maximum detector response functions for simulated isolated electrons with momenta in the ranges p = 5 \u2212 6 GeV/c (left) and p = 25 \u2212 26 GeV/c (right).Similarity in the response between electrons and photons allows using these functions in constructing likelihood functions for either electrons or photons.",
+            "paragraph_rank": 67,
+            "section_rank": 17
+        },
+        {
+            "text": "1 Figure 4 :",
+            "section_rank": 18
+        },
+        {
+            "section": "1 Figure 4 :",
+            "text": "Figure 4: Examples of L E (E jet ) for two representative simulated Z \u2192 \u03c4 \u03c4 events plotted versus combined energy of the photon candidates in the jet related to E jet via p\u03b3 = E jet \u2212 p\u03c0.",
+            "paragraph_rank": 68,
+            "section_rank": 18
+        },
+        {
+            "text": "the",
+            "section_rank": 19
+        },
+        {
+            "section": "the",
+            "text": "Monte Carlo integration technique. Values of p \u03c0 k and p \u03b3i , which maximize L( p \u03c0 , p \u03b3 ) in Eq.(9) represent the best estimate for energies of particles produced in the tau decay, under the assumption that the initial hypothesis about the par-ticle content was correct. Figure shows examples of the L E (E jet ) distributions for two representative events from a sample of simulated Z\u2192\u03c4 \u03c4 events.",
+            "paragraph_rank": 69,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 5 (",
+            "section_rank": 20
+        },
+        {
+            "section": "Figure 5 (",
+            "text": "a) shows the distribution of the reduced p-value for all reconstructed hadronic tau jets in the sample of simulated Z\u2192\u03c4 \u03c4 events. The p-value is plotted as a function of the relative difference between the reconstructed visible tau jet energy at the maximum of the likelihood function and the true visible jet energy obtained at the particle generator level. It is evident that a vast majority of mismeasured jets have very low reduced p-value.",
+            "paragraph_rank": 70,
+            "section_rank": 20
+        },
+        {
+            "text": "1 R 3 Figure 5 : 4 . 6 .",
+            "section_rank": 21
+        },
+        {
+            "section": "1 R 3 Figure 5 : 4 . 6 .",
+            "text": "Figure 5: Z \u2192 \u03c4 \u03c4 events in CDF II detector simulation: 1-prong taus with no photon candidate reconstructed by CES. Left: p-value versus relative energy mismeasurement R(\u03c4 h ).Right: R(\u03c4 h ) for events with small p-value before correction (dashed black line) and after correction for missing photon (solid blue line). As points in the enhancements near the x-axis have typically very low p-values (10 \u22123 or less), coarser y-axis binning is chosen to keep these enhancements visible.",
+            "paragraph_rank": 71,
+            "section_rank": 21
+        },
+        {
+            "text": "1 R",
+            "section_rank": 22
+        },
+        {
+            "section": "1 R",
+            "text": "(\u03c4 h )=(p T (reco)-p T (true)) / p T (true) p-value \u03b3-cor h )=(p T (reco)-p T (true)) / p T (true)",
+            "paragraph_rank": 72,
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 6 :",
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 6 :",
+            "text": "Figure 6: Z \u2192 \u03c4 \u03c4 events in CDF II detector simulation: 1-prong taus with no photon candidate reconstructed by CES and p-value uncor < 0.005. Left: p-value after photon correction versus R(\u03c4 h ). Right: R(\u03c4 h ) for events with small p-value \u03b3\u2212cor before kaon correction (dashed blue line) and after correction for kaons (solid red line).",
+            "paragraph_rank": 73,
+            "section_rank": 23
+        },
+        {
+            "text": "12 R",
+            "section_rank": 24
+        },
+        {
+            "section": "12 R",
+            "text": "modified to contain one charged pion and one neutral kaon. Technically, it is accomplished by adding a termP CAL n (E EM , E HAD |p n ) = P CAL \u03c0 (E EM , E HAD |p n )(as the calorimeter response for charged pions and neutral hadrons is very similar) in Eq.(9), and adjusting the argument of the delta-functions to include a new particle. The energy of the tau jet candidate is updated with the energy obtained from maximizing L p (p \u03c0 , p n ) (or the corresponding L E ). The relative difference between the reconstructed and the true tau jet energy before and after the correction for this class of jets is shown inFig. 6(b). h )=(p T (reco)-p T (true)) / p T (true) h )=(p T (reco)-p T (true)) / p T (true) (\u03c4 h )=(p T (reco)-p T (true)) / p T (true)",
+            "paragraph_rank": 74,
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 25
+        },
+        {
+            "section": "Figure 7 :",
+            "text": "Figure 7: Comparison between reconstructed transverse momentum and true transverse momentum of the hadronic tau for Z \u2192 \u03c4 \u03c4 events in CDF II detector simulation. The red solid line corresponds to the likelihood method, the black dashed line corresponds to standard CDF tau reconstruction. (a): events with 1-prong tau; (b): events with 3-prong tau; (c): events with significant energy overlap where 1-prong tau is required to have a track and at least one reconstructed CES cluster in the same calorimeter tower.",
+            "paragraph_rank": 75,
+            "section_rank": 25
+        },
+        {
+            "text": "5 . 1 .\u03c4 l \u03c4 l \u03bd\u03bd\u03bd\u03bd Figure 8 :",
+            "section_rank": 26
+        },
+        {
+            "section": "5 . 1 .\u03c4 l \u03c4 l \u03bd\u03bd\u03bd\u03bd Figure 8 :",
+            "text": "Figure 8: Kinematic distributions demonstrating the purity of the clean tau sample after Z\u2192\u03c4 \u03c4 \u2192l\u03c4 h \u03bd\u03bd\u03bd (l = e or \u00b5) events are extracted from CDF data with tight selection requirements: (a) transverse momentum of the light lepton, (b) transverse momentum of visible decay products of the hadronically decaying tau lepton, \u03c4 h .",
+            "paragraph_rank": 76,
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 9 :",
+            "section_rank": 27
+        },
+        {
+            "section": "Figure 9 :",
+            "text": "Figure 9: Distribution of hadronic tau candidate p-value for events passing selection requirements in data (points) compared to the sum of background and signal predictions. Left :1-prong taus. Right: 3-prong taus.",
+            "paragraph_rank": 77,
+            "section_rank": 27
+        },
+        {
+            "text": "2 )Figure 10 :",
+            "section_rank": 28
+        },
+        {
+            "section": "2 )Figure 10 :",
+            "text": "Figure 10: Distribution of the invariant mass for reconstructed hadronic tau candidates in the clean Z\u2192\u03c4 \u03c4 \u2192l\u03c4 h \u03bd\u03bd\u03bd (l = e or \u00b5) sample extracted from CDF data using tight selection requirements: comparison between PPFA reconstruction (a) and standard CDF reconstruction (b) for all 1-prong tau candidates.",
+            "paragraph_rank": 78,
+            "section_rank": 28
+        },
+        {
+            "text": "* \u2192 \u03c4 l \u03c4 h \u03bd\u03bd\u03bd QCD multijets Z/\u03b3*\u2192 ll W+jets Z/\u03b3*\u2192 \u03c4 l \u03c4 l \u03bd\u03bd\u03bd\u03bd * \u2192 \u03c4 l \u03c4 h \u03bd\u03bd\u03bd QCD multijets Z/\u03b3*\u2192 ll W+jets Z/\u03b3*\u2192 \u03c4 l \u03c4 l \u03bd\u03bd\u03bd\u03bd",
+            "paragraph_rank": 79,
+            "section_rank": 29
+        },
+        {
+            "text": "Figure 11 :",
+            "section_rank": 30
+        },
+        {
+            "section": "Figure 11 :",
+            "text": "Figure 11: Distributions for the selected 1-and 3-prong tau jet candidates in the sample with enhanced contribution of the QCD multi-jet events. Data (points) compared to the sum of background and signal predictions: (a) transverse momentum of visible decay products (b) hadronic tau visible invariant mass, (c) p-value distribution, (d) \u2206\u03b8(\u03c4 ) distribution.",
+            "paragraph_rank": 80,
+            "section_rank": 30
+        },
+        {
+            "text": "Figure 12 :",
+            "section_rank": 31
+        },
+        {
+            "section": "Figure 12 :",
+            "text": "Figure 12: The distribution of the visible mass, m(\u03c4, l, E / T ) for events with 1 and 3-prong taus in data (points) compared to the sum of background and signal (Z\u2192\u03c4 \u03c4 ) predictions after applying selections utilizing variables calculated using either standard CDF reconstruction (a), or PPFA (b). The PPFA case includes a cut on the p-value and otherwise the cut values are the same. (c) S/B ratio as a function of minimal threshold m 0 on m(\u03c4, l, E / T ). The dashed (green) line shows the standard CDF tau reconstruction and the solid (blue) line corresponds to PPFA; bands indicate the statistical uncertainty on the ratio due to the size of the sample and fluctuations in background contributions.",
+            "paragraph_rank": 81,
+            "section_rank": 31
+        },
+        {
+            "text": "(a)  showing E EM vs. E HAD + , the correlation is not trivial, as illustrated inFig. 2(b)showing the 2D distribution of E EM vs. E HAD for a simulated",
+            "paragraph_rank": 82,
+            "section_rank": 32
+        },
+        {
+            "text": "equally or less probable set of measurements than the actually observed E meas gives the p-value. A too low p-value may indicate that the initial particle hypothesis should be modified. Note that interpreting measured p-values has to be done carefully as the arbitrary addition of new particles to make the observed calorimeter response \"perfect\" may degrade the resolution by biasing the measurement towards the calorimeter-based jet energy measurement. While the p-value defined in Eq.( 8)is global for the entire event, a p-value can be defined for each individual jet or a set of particles. For example, one can either build L p by only include particles of interest, e.g. the ones belonging to a particular jet, or by integrating the global L p over a subset of momenta p i belonging to particles that are of no interest for a given measurement.",
+            "paragraph_rank": 83,
+            "section_rank": 33
+        },
+        {
+            "text": "4. PPFA-Based Reconstruction of Hadronically DecayingTau Leptons at CDF",
+            "paragraph_rank": 84,
+            "section_rank": 33
+        },
+        {
+            "text": "GeV/c pointing to the cluster. Broad clusters with more than six contiguous calorimeter towers with E T > 1 GeV/c are excluded from consideration as true tau jets almost always result in narrow clusters of just a few towers.Clusters outside the central part of the detector (|\u03b7| \u2264 1) are also discarded to ensure a high tracking efficiency for the remaining candidates. Given the size of the CDF calorimeter towers of \u2206\u03b7 \u00d7 \u2206\u03c6 \u223c 0.1 \u00d7 0.25, the efficiency of the calorimeter-related selections is very high, reaching nearly 100% for hadronically decaying taus with visible p T > 10 GeV/c. The seed track p T requirement brings a non-negligible inefficiency for tau jets of low-to-moderate visible momentum, but its strong power in rejecting quark and gluon jet backgrounds made it a standard in all CDF analyses involving hadronic tau jets. Next, all tracks within a signal cone of \u2206R = \u2206\u03c6 2 + \u2206\u03b7 2 < 0.17 around the seed track are associated with the tau candidate. Next, we define the probability function using pre-calculated response functions (details for both are discussed in the following two sub-sections) and perform a scan in the multi-dimensional parameter space of momenta of the particles, assumed to comprise the hadronic tau jet, searching",
+            "paragraph_rank": 85,
+            "section_rank": 34
+        },
+        {
+            "text": "4.2. Implementation StrategyThe likelihood-based PPFA algorithm starts with the initial hypothesis that every reconstructed track is a charged pion, every reconstructed cluster in the Shower Maximum detector with no track pointing to it is a photon, and no other particles are present in the jet. While this initial hypothesis can be corrected at a later point in the algorithm, in most cases it turns out to be true owing to the low rate of the track and Shower Maximum reconstruction failures and the low branching fraction of hadronic tau lepton decays for modes with neutral hadrons except \u03c0 0 's, e.g. \u03c4 \u2192K L + X.for the maximum of the likelihood function.",
+            "paragraph_rank": 86,
+            "section_rank": 34
+        },
+        {
+            "text": "function as, despite its modest resolution, it can help correctly assign energies in difficult cases. As photon candidates reconstructed in CES have highly cor-related strip and wire pulse heights, we only use the strip based measurements to determine the energy of a given CES cluster. Examples of the CES response functions P CES",
+            "paragraph_rank": 87,
+            "section_rank": 35
+        },
+        {
+            "text": "\u03b3 (E CES |p \u03b3 ) for isolated photons with energies < p \u03b3 < 6 GeV and 25 < p \u03b3 < 26 GeV are shown in",
+            "paragraph_rank": 88,
+            "section_rank": 35
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 36
+        },
+        {
+            "section": "Table 1",
+            "text": "describes the selections applied. Momentum thresholds and seed track p T requirements are chosen to select a sample with an acceptable level",
+            "paragraph_rank": 89,
+            "section_rank": 36
+        },
+        {
+            "section": "Table 1",
+            "text": "As discussed further in the text, there is a strip-wire chamber embedded inside the electromagnetic calorimeter at \u223c 6X 0 , which allows for rough measurements of the latteral profile in some cases. Longitudinal profile information is limited to two energy measurements for deposits in the electromagnetic and hadron compartments of a tower.",
+            "paragraph_rank": 90,
+            "section_rank": 36
+        },
+        {
+            "section": "Table 1",
+            "text": "Even in more advanced approaches designed to improve mass reconstruction for ditau resonances, e.g. the MMC technique[13], the resolution is still dominated by the accuracy of",
+            "paragraph_rank": 91,
+            "section_rank": 36,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 117,
+                    "text": "[13]",
+                    "end": 121
+                }
+            ]
+        },
+        {
+            "section": "Table 1",
+            "text": "The clean Z\u2192\u03c4 \u03c4 sample used so far features extremely tight lepton leg selections designed to achieve a high purity source of hadronic taus. While effective in reducing multi-jet backgrounds, such selections are not typical of physics analyses due to their very low signal efficiency.",
+            "paragraph_rank": 92,
+            "section_rank": 36
+        },
+        {
+            "section": "Table 1",
+            "text": "This quantity is frequently used as the final discriminant in physics analyses[5,15] ",
+            "paragraph_rank": 93,
+            "section_rank": 36,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 78,
+                    "text": "[5,",
+                    "end": 81
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 81,
+                    "text": "15]",
+                    "end": 84
+                }
+            ]
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 38
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "We thank Anthony K. Rose, Robert M. Roser, and Jeffrey K. Roe for carefully reading the manuscript and their useful suggestions. We thank our CDF collaborators for their support and the Fermi National Accelerator Laboratory, where a part of the work on the paper has been performed. This work would not be possible without the funding support of the U.S. Department of Energy, the DOE OJI program, and the State of Texas.",
+            "paragraph_rank": 94,
+            "section_rank": 38
+        }
+    ]
+}

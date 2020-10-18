@@ -1,0 +1,1497 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "This paper describes the trigger and offline reconstruction, identification and energy calibration algorithms for hadronic decays of tau leptons employed for the data collected from pp collisions in 2012 with the ATLAS detector at the LHC center-of-mass energy \u221a s = 8 TeV. The performance of these algorithms is measured in most cases with Z decays to tau leptons using the full 2012 dataset, corresponding to an integrated luminosity of 20.3 fb \u22121 . An uncertainty on the offline reconstructed tau energy scale of 2-4 %, depending on transverse energy and pseudorapidity, is achieved using two independent methods. The offline tau identification efficiency is measured with a precision of 2.5 % for hadronically decaying tau leptons with one associated track, and of 4 % for the case of three associated tracks, inclusive in pseudorapidity and for a visible transverse energy greater than 20 GeV. For hadronic tau lepton decays selected by offline algorithms, the tau trigger identification efficiency is measured with a precision of 2-8 %, depending on the transverse energy. The performance of the tau algorithms, both offline and at the trigger level, is found to be stable with respect to the number of concurrent proton-proton interactions and has supported a variety of physics results using hadronically decaying tau leptons at ATLAS.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "With a mass of 1.777 GeV and a proper decay length of 87 \u00b5m [1], tau leptons decay either leptonically (\u03c4 \u2192 \u03bd \u03bd \u03c4 , = e, \u03bc) or hadronically (\u03c4 \u2192 hadrons \u03bd \u03c4 , denoted \u03c4 had ) and do so typically before reaching active regions of the ATLAS detector. They can thus only be identified via their decay products. In this paper, only hadronic tau lepton decays are considered. The hadronic tau lepton decays represent 65 % of all possible decay modes [1]. In these, the hadronic decay products are one or three charged pions in 72 and 22 % of all cases, respectively. Charged kaons are present in the e-mail: atlas.publications@cern.ch majority of the remaining hadronic decays. In 78 % of all hadronic decays, up to one associated neutral pion is also produced. The neutral and charged hadrons stemming from the tau lepton decay make up the visible decay products of the tau lepton, and are in the following referred to as \u03c4 had-vis .",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 60,
+                    "text": "[1]",
+                    "end": 63
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 445,
+                    "text": "[1]",
+                    "end": 448
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The main background to hadronic tau lepton decays is from jets of energetic hadrons produced via the fragmentation of quarks and gluons. This background is already present at trigger level (also referred to as online in the following). Other important backgrounds are electrons and, to a lesser degree, muons, which can mimic the signature of tau lepton decays with one charged hadron. In the context of both the trigger and the offline event reconstruction (shortened to simply offline in the following), discriminating variables based on the narrow shower shape, the distinct number of charged particle tracks and the displaced tau lepton decay vertex are used.",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "Final states with hadronically decaying tau leptons are an important part of the ATLAS physics program. Examples are measurements of Standard Model processes [2][3][4][5][6], Higgs boson searches [7], searches for new physics such as Higgs bosons in models with extended Higgs sectors [8][9][10], supersymmetry (SUSY) [11][12][13], heavy gauge bosons [14] and leptoquarks [15]. This places strong requirements on the \u03c4 had-vis identification algorithms (in the following, referred to as tau identification): robustness and high performance over at least two orders of magnitude in transverse momentum with respect to the beam axis ( p T ) of \u03c4 had-vis , from about 15 GeV (decays of W and Z bosons or scalar tau leptons) to a few hundred GeV (SUSY Higgs boson searches) and up to beyond 1 TeV (Z searches). At the same time, an excellent energy resolution and small energy scale uncertainty are particularly important where resonances decaying to tau leptons need to be separated (e.g. Z \u2192 \u03c4 \u03c4 from H \u2192 \u03c4 \u03c4 mass peaks). The triggering for final states which rely exclusively on tau triggers is particularly challenging, e.g. H \u2192 \u03c4 \u03c4 where both tau leptons decay hadronically. At the trigger level, in addition to the challenges of offline tau identification, bandwidth and time constraints need to be satisfied and the trigger identification is based on an incomplete reconstruction of the event. The ATLAS trigger system, together with the detector and the simulation samples used for the studies presented, are briefly described in Sect. 2.",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 158,
+                    "text": "[2]",
+                    "end": 161
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 161,
+                    "text": "[3]",
+                    "end": 164
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 164,
+                    "text": "[4]",
+                    "end": 167
+                },
+                {
+                    "type": "bibr",
+                    "start": 167,
+                    "text": "[5]",
+                    "end": 170
+                },
+                {
+                    "type": "bibr",
+                    "start": 170,
+                    "text": "[6]",
+                    "end": 173
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 196,
+                    "text": "[7]",
+                    "end": 199
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 285,
+                    "text": "[8]",
+                    "end": 288
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 288,
+                    "text": "[9]",
+                    "end": 291
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 291,
+                    "text": "[10]",
+                    "end": 295
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 318,
+                    "text": "[11]",
+                    "end": 322
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 322,
+                    "text": "[12]",
+                    "end": 326
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 326,
+                    "text": "[13]",
+                    "end": 330
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 351,
+                    "text": "[14]",
+                    "end": 355
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 372,
+                    "text": "[15]",
+                    "end": 376
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The ATLAS offline tau identification uses various discriminating variables combined in Boosted Decision Trees (BDT) [16,17] to reject jets and electrons. The offline tau energy scale is set by first applying a local hadronic calibration (LC) [18] appropriate for a wide range of objects and then an additional tau-specific correction based on simulation. The online tau identification is implemented in three different steps, as is required by the ATLAS trigger system architecture [19]. The same identification and energy calibration procedures as for offline are used in the third level of the trigger, while the first and second trigger levels rely on coarser identification and energy calibration procedures. A description of the trigger and offline \u03c4 had-vis reconstruction and identification algorithms is presented in Sect. 3, and the trigger and offline energy calibration algorithms are discussed in Sect. 5.",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 116,
+                    "text": "[16,",
+                    "end": 120
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 120,
+                    "text": "17]",
+                    "end": 123
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 242,
+                    "text": "[18]",
+                    "end": 246
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 482,
+                    "text": "[19]",
+                    "end": 486
+                },
+                {
+                    "type": "bibr",
+                    "start": 915,
+                    "text": "5",
+                    "end": 916
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "The efficiency of the identification and the energy scale are measured in dedicated studies using a Z \u2192 \u03c4 \u03c4 -enhanced event sample of collision data recorded by the ATLAS detector [20] at the LHC [21] in 2012 at a centre-of-mass energy of 8 TeV. This is described in Sects. 4 and 5. Conclusions and outlook are presented in Sect. 6.",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 180,
+                    "text": "[20]",
+                    "end": 184
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 196,
+                    "text": "[21]",
+                    "end": 200
+                }
+            ]
+        },
+        {
+            "text": "ATLAS detector and simulation",
+            "section_rank": 3
+        },
+        {
+            "text": "The ATLAS detector",
+            "section_rank": 4
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "The ATLAS detector [20] consists of an inner tracking system surrounded by a superconducting solenoid, electromagnetic (EM) and hadronic (HAD) calorimeters, and a muon spectrometer (MS). The inner detector (ID) is immersed in a 2 T axial magnetic field, and consists of pixel and silicon microstrip (SCT) detectors inside a transition radiation tracker (TRT), providing charged-particle tracking in the region |\u03b7| < 2.5. 1 The EM calorimeter uses lead and liquid argon (LAr) as absorber and active material, respectively. In the central rapidity region, the EM calorimeter is divided in three layers, one of them segmented in thin \u03b7 strips for optimal \u03b3 /\u03c0 0 separation, and completed by a presampler layer for |\u03b7| < 1.8. Hadron calorimetry is based on differ-ent detector technologies, with scintillator tiles (|\u03b7| < 1.7) or LAr (1.5 < |\u03b7| < 4.9) as active medium, and with steel, copper, or tungsten as the absorber material. The calorimeters provide coverage within |\u03b7| < 4.9. The MS consists of superconducting air-core toroids, a system of trigger chambers covering the range |\u03b7| < 2.4, and high-precision tracking chambers allowing muon momentum measurements within |\u03b7| < 2.7.",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 19,
+                    "text": "[20]",
+                    "end": 23
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 421,
+                    "text": "1",
+                    "end": 422
+                }
+            ]
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "Physics objects are identified using their specific detector signatures; electrons are reconstructed by matching a track from the ID to an energy deposit in the calorimeters [22,23], while muons are reconstructed using tracks from the MS and ID [24]. Jets are reconstructed using the anti-k t algorithm [25] with a distance parameter R = 0.4. Threedimensional clusters of calorimeter cells called TopoClusters [26], calibrated using a local hadronic calibration [18], serve as inputs to the jet algorithm. The missing transverse momentum (with magnitude E miss T ) is computed from the combination of all reconstructed physics objects and the remaining calorimeter energy deposits not included in these objects [27].",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 174,
+                    "text": "[22,",
+                    "end": 178
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 178,
+                    "text": "23]",
+                    "end": 181
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 245,
+                    "text": "[24]",
+                    "end": 249
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 303,
+                    "text": "[25]",
+                    "end": 307
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 410,
+                    "text": "[26]",
+                    "end": 414
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 462,
+                    "text": "[18]",
+                    "end": 466
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 711,
+                    "text": "[27]",
+                    "end": 715
+                }
+            ]
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "The ATLAS trigger system [19] consists of three levels; the first level (L1) is hardware-based while the second (L2) and third (Event Filter, EF) levels are software-based. The combination of L2 and the EF are referred to as the high-level trigger (HLT). The L1 trigger identifies regions-of-interest (RoI) using information from the calorimeters and the muon spectrometer. The delay between a beam crossing and the trigger decision (latency) is approximately 2 \u00b5s at L1. The L2 system typically takes the RoIs produced by L1 as input and refines the quantities used for selection after taking into account the information from all subsystems. The latency at L2 is on average 40 ms, but can be as large as 100 ms at the highest instantaneous luminosities. At the EF level, algorithms similar to those run in the offline reconstruction are used to select interesting events with an average latency of about 1 s.",
+            "paragraph_rank": 10,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 25,
+                    "text": "[19]",
+                    "end": 29
+                }
+            ]
+        },
+        {
+            "section": "The ATLAS detector",
+            "text": "During 2012, the ATLAS detector was operated with a data-taking efficiency greater than 95 %. The highest peak luminosity obtained was 8\u202210 33 cm \u22122 s \u22121 at the end of 2012. The observed average number of pile-up interactions (meaning generally soft proton-proton interactions, superimposed on one hard proton-proton interaction) per bunch crossing in 2012 was 20.7. At the end of the data-taking period, the trigger system was routinely working with an average (peak) output rate of 700 Hz (1000 Hz).",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Tau trigger operation",
+            "section_rank": 5
+        },
+        {
+            "section": "Tau trigger operation",
+            "text": "In 2012, a diverse set of tau triggers was implemented, using requirements on different final state configurations to maximize the sensitivity to a large range of physics processes. These triggers are listed in Table 1, along with the targeted ",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "start": 211,
+                    "text": "Table 1",
+                    "end": 218
+                }
+            ]
+        },
+        {
+            "section": "Tau trigger operation",
+            "text": "physics processes and the associated kinematic requirements on the triggered objects. For the double hadronic triggers, in the lowest threshold version (29 and 20 GeV requirement on transverse momentum for the two \u03c4 had-vis ) two main criteria are applied: isolation at L1 2 , and full tau identification at the HLT. The isolation requirement is dropped for the intermediate threshold version, and both criteria are dropped in favour of a looser (more than 95 % efficient), non-isolated trigger for the version with the highest thresholds.",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "section": "Tau trigger operation",
+            "text": "As the typical rejection rates of \u03c4 had-vis identification algorithms against the dominant multi-jet backgrounds are considerably smaller than those of electron or muon identification algorithms, \u03c4 had-vis triggers must have considerably higher p T requirements in order to maintain manageable trigger rates. Therefore, most analyses using lowp T \u03c4 had-vis in 2012 depend on the use of triggers which identify other objects. However, by combining tau trigger requirements with requirements on other objects, lower thresholds can be accommodated for the tau trigger objects as well as the other objects. Figure 1 shows the tau trigger rates at L1 and the EF as a function of the instantaneous luminosity during the 8 TeV LHC operation. The trigger rates do not increase more than linearly with the luminosity, due the robust performance of the trigger algorithms under different pile-up conditions. The only exception is the \u03c4 had-vis + E miss T trigger, where the extra pile-up associated with the higher luminosity leads to a degradation of the resolution of the reconstructed event E miss T . At the highest instantaneous luminosities, the rates are affected by deadtime in the readout systems, leading to a general drop in the rates.",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 603,
+                    "text": "Figure 1",
+                    "end": 611
+                }
+            ]
+        },
+        {
+            "text": "Simulation and event samples",
+            "section_rank": 6
+        },
+        {
+            "section": "Simulation and event samples",
+            "text": "The optimization and measurement of tau performance requires simulated events. Events with Z /\u03b3 * and W boson production were generated using alpgen [28] interfaced to 2 A detailed definition of the isolation requirement is provided in Sect. 3.3.  Table 1, with the \u03c4 had-vis +\u03c4 had-vis being the rate for the lowest threshold trigger reported in the table. The rates for the higher threshold triggers are approximately three and five times lower at L1 and HLT, respectively, and are partially included in the rate of the lowest threshold item herwig [29] or Pythia6 [30] for fragmentation, hadronization and underlying-event (UE) modelling. In addition, Z \u2192 \u03c4 \u03c4 and W \u2192 \u03c4 \u03bd events were generated using Pythia8 [31], and provide a larger statistical sample for the studies. For optimization at high p T , Z \u2192 \u03c4 \u03c4 with Z masses between 250 and 1250 GeV were generated with Pythia8. Topquark-pair as well as single-top-quark events were generated with mc@nlo+herwig [32], with the exception of t-channel single-top production, where AcerMC+Pythia6 [33] was used. W Z and Z Z diboson events were generated with herwig, and W W events with alpgen+herwig. In all samples with \u03c4 leptons, except for those simulated with Pythia8, Tauola [34] was used to model the \u03c4 decays, and Photos [35] was used for soft QED radiative corrections to particle decays.",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 149,
+                    "text": "[28]",
+                    "end": 153
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 168,
+                    "text": "2",
+                    "end": 169
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "start": 248,
+                    "text": "Table 1",
+                    "end": 255
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 551,
+                    "text": "[29]",
+                    "end": 555
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 567,
+                    "text": "[30]",
+                    "end": 571
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 711,
+                    "text": "[31]",
+                    "end": 715
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 964,
+                    "text": "[32]",
+                    "end": 968
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 1046,
+                    "text": "[33]",
+                    "end": 1050
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 1230,
+                    "text": "[34]",
+                    "end": 1234
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 1278,
+                    "text": "[35]",
+                    "end": 1282
+                }
+            ]
+        },
+        {
+            "section": "Simulation and event samples",
+            "text": "All events were produced using CTEQ6L1 [36] parton distribution functions (PDFs) except for the mc@nlo events, which used CT10 PDFs [37]. The UE simulation was tuned using collision data. Pythia8 events employed the AU2 tune [38], herwig events the AUET2 tune [39], while alpgen+Pythia6 used the Perugia2011C tune [40] and AcerMC+Pythia6 the AUET2B tune [41].",
+            "paragraph_rank": 16,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 39,
+                    "text": "[36]",
+                    "end": 43
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 132,
+                    "text": "[37]",
+                    "end": 136
+                },
+                {
+                    "type": "bibr",
+                    "start": 225,
+                    "text": "[38]",
+                    "end": 229
+                },
+                {
+                    "type": "bibr",
+                    "start": 260,
+                    "text": "[39]",
+                    "end": 264
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 314,
+                    "text": "[40]",
+                    "end": 318
+                },
+                {
+                    "type": "bibr",
+                    "start": 354,
+                    "text": "[41]",
+                    "end": 358
+                }
+            ]
+        },
+        {
+            "section": "Simulation and event samples",
+            "text": "The response of the ATLAS detector was simulated using GEANT4 [42,43] with the hadronic-shower model QGSP_BERT [44,45] as baseline. Alternative models (FTFP_BERT [46] and QGSP) were used to estimate systematic uncertainties. Simulated events were overlaid with additional minimum-bias events generated with Pythia8 to account for the effect of multiple interactions occurring in the same and neighbouring bunch crossings (called pile-up). Prior to any analysis, the simulated events were reweighted such that the distribution of the number of pile-up interactions matched that in data. The simulated events were reconstructed with the same algorithm chain as used for collision data.",
+            "paragraph_rank": 17,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 62,
+                    "text": "[42,",
+                    "end": 66
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 66,
+                    "text": "43]",
+                    "end": 69
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 111,
+                    "text": "[44,",
+                    "end": 115
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 115,
+                    "text": "45]",
+                    "end": 118
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 162,
+                    "text": "[46]",
+                    "end": 166
+                }
+            ]
+        },
+        {
+            "text": "Reconstruction and identification of hadronic tau lepton decays",
+            "section_rank": 7
+        },
+        {
+            "section": "Reconstruction and identification of hadronic tau lepton decays",
+            "text": "In the following, the \u03c4 had-vis reconstruction and identification at online and offline level are described. The trigger algorithms were optimized with respect to hadronic tau decays identified by the offline algorithms. This typically leads to online algorithms resembling their offline counterparts as closely as possible with the information available at a given trigger level. To reflect this, the details of the offline reconstruction and identification are described first, and then a discussion of the trigger algorithms follows, highlighting the differences between the two implementations.",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Reconstruction",
+            "section_rank": 8
+        },
+        {
+            "section": "Reconstruction",
+            "text": "The \u03c4 had-vis reconstruction algorithm is seeded by calorimeter energy deposits which have been reconstructed as individual jets. Such jets are formed using the anti-k t algorithm with a distance parameter of R = 0.4, using calorimeter TopoClusters as inputs. To seed a \u03c4 had-vis candidate, a jet must fulfil the requirements of p T > 10 GeV and |\u03b7| < 2.5. Events must have a reconstructed primary vertex with at least three associated tracks. In events with multiple primary vertex candidates, the primary vertex is chosen to be the one with the highest p 2 T,tracks value. In events with multiple simultaneous interactions, the chosen primary vertex does not always correspond to the vertex at which the tau lepton is produced. To reduce the effects of pile-up and increase reconstruction efficiency, the tau lepton production vertex is identified, amongst the previously reconstructed primary vertex candidates in the event.",
+            "paragraph_rank": 19,
+            "section_rank": 8
+        },
+        {
+            "section": "Reconstruction",
+            "text": "The tau vertex (TV) association algorithm uses as input all tau candidate tracks which have p T > 1 GeV, satisfy quality criteria based on the number of hits in the ID, and are in the region R < 0.2 around the jet seed direction; no impact parameter requirements are applied. The p T of these tracks is summed and the primary vertex candidate to which the largest fraction of the p T sum is matched to is chosen as the TV [47].",
+            "paragraph_rank": 20,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 422,
+                    "text": "[47]",
+                    "end": 426
+                }
+            ]
+        },
+        {
+            "section": "Reconstruction",
+            "text": "This vertex is used in the following to determine the \u03c4 had-vis direction, to associate tracks and to build the coordinate system in which identification variables are calculated. In Z \u2192 \u03c4 \u03c4 events, the TV coincides with the highest p 2 T,tracks vertex (for the pile-up profile observed during 2012) roughly 90 % of the time. For physics analyses which require higherp T objects, the two coincide in more than 99 % of all cases.",
+            "paragraph_rank": 21,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 235,
+                    "text": "2",
+                    "end": 236
+                }
+            ]
+        },
+        {
+            "section": "Reconstruction",
+            "text": "The \u03c4 had-vis three-momentum is calculated by first computing \u03b7 and \u03c6 of the barycentre of the TopoClusters of the jet seed, calibrated at the LC scale, assuming a mass of zero for each constituent. The four-momenta of all clusters in the region R < 0.2 around the barycentre are recalculated using the TV coordinate system and summed, resulting in the momentum magnitude p LC and a \u03c4 had-vis direction. The \u03c4 had-vis mass is defined to be zero.",
+            "paragraph_rank": 22,
+            "section_rank": 8
+        },
+        {
+            "section": "Reconstruction",
+            "text": "Tracks are associated with the \u03c4 had-vis if they are in the core region R < 0.2 around the \u03c4 had-vis direction and satisfy the following criteria: p T > 1 GeV, at least two associated hits in the pixel layers of the inner detector, and at least seven hits in total in the pixel and the SCT layers. Furthermore, requirements are imposed on the distance of closest approach of the track to the TV in the transverse plane, |d 0 | < 1.0 mm, and longitudinally, |z 0 sin \u03b8 | < 1.5 mm. When classifying a \u03c4 had-vis candidate as a function of its number of associated tracks, the selection listed above is used. Tracks in the isolation region 0.2 < R < 0.4 are used for the calculation of identification variables and are required to satisfy the same selection criteria.",
+            "paragraph_rank": 23,
+            "section_rank": 8
+        },
+        {
+            "section": "Reconstruction",
+            "text": "A \u03c0 0 reconstruction algorithm was also developed. In a first step, the algorithm measures the number of reconstructed neutral pions (zero, one or two), N \u03c0 0 , in the core region, by looking at global tau features measured using strip layer and calorimeter quantities, and track momenta, combined in BDT algorithms. In a second step, the algorithm combines the kinematic information of tracks and of clusters likely stemming from \u03c0 0 decays. A candidate \u03c0 0 decay is composed of up to two clusters among those found in the core region of \u03c4 had-vis candidates. Cluster properties are used to assign a \u03c0 0 likeness score to each cluster found in the core region, after subtraction of the contributions from pile-up, the underlying event and electronic noise (estimated in the isolation region). Only those clusters with the highest scores are used, together with the reconstructed tracks in the core region of the \u03c4 had-vis candidate, to define the input variables for tau identification described in the next section.",
+            "paragraph_rank": 24,
+            "section_rank": 8
+        },
+        {
+            "text": "Discrimination against jets",
+            "section_rank": 9
+        },
+        {
+            "section": "Discrimination against jets",
+            "text": "The reconstruction of \u03c4 had-vis candidates provides very little rejection against the jet background. Jets in which the dominant particle 3 is a quark or a gluon are referred to as quark-like and gluon-like jets, respectively. Quark-like jets are on average more collimated and have fewer tracks and thus the discrimination from \u03c4 had-vis is less effective than for gluon-like jets. Rejection against jets is provided in a separate identification step using discriminating variables based on the tracks and TopoClusters (and cells linked to them) found in the core or isolation region around the \u03c4 had-vis candidate direction. The calorimeter measurements provide information about the longitudinal and lateral shower shape and the \u03c0 0 content of tau hadronic decays.",
+            "paragraph_rank": 25,
+            "section_rank": 9
+        },
+        {
+            "section": "Discrimination against jets",
+            "text": "The full list of discriminating variables used for tau identification is given below and is summarized in Table 2  ",
+            "paragraph_rank": 26,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "start": 106,
+                    "text": "Table 2",
+                    "end": 113
+                }
+            ]
+        },
+        {
+            "section": "Discrimination against jets",
+            "text": "-Track radius (R track ): p T -weighted distance of the associated tracks to the \u03c4 had-vis direction, using all tracks in the core and isolation regions.  Separate BDT algorithms are trained for 1-track and 3track \u03c4 had-vis decays using a combination of simulated tau leptons in Z , W and Z decays. For the jet background, large collision data samples collected by jet triggers, referred from now on as the multi-jet data samples, are used. For the signal, only reconstructed \u03c4 had-vis candidates matched to the true (i.e., generator-level) visible hadronic tau decay products in the region around R < 0.2 with p true T,vis > 10 GeV and |\u03b7 true vis | < 2.3 are used. In the following, the signal efficiency is defined as the fraction of true visible hadronic tau decays with n charged decay products, which are reconstructed with n associated tracks and satisfy tau identification criteria. The background efficiency is the fraction of reconstructed \u03c4 had-vis candidates with n associated tracks which satisfy tau identification criteria, measured in a background-dominated sample. Three working points, labelled tight, medium and loose, are provided, corresponding to different tau identification efficiency values. Their signal efficiency values (defined with respect to 1-track or 3-track reconstructed \u03c4 had-vis candidates matched to true \u03c4 had-vis ) can be seen in Fig. 4. The requirements on the BDT score are chosen such that the resulting efficiency is independent of the true \u03c4 had-vis p T . Due to the choice of input variables, the tau identification also shows stability with respect to the pile-up conditions as shown in Fig. 4. The performance of the tau identification algorithm in terms of the inverse background efficiency versus the signal efficiency is shown in Fig. 5. At low transverse momentum of the \u03c4 had-vis candidates, 40 % signal efficiency for an inverse background efficiency of 60 is achieved. The signal efficiency saturation point, visible in these curves, stems from the reconstruction efficiency for a true \u03c4 had-vis with one or three charged decay products to be reconstructed as a 1-track or 3-track \u03c4 had-vis candidate. The main sources of inefficiency are track reconstruction efficiency due to hadronic Offline tau identification efficiency dependence on the number of reconstructed interaction vertices, for a 1-track and b 3-track \u03c4 had-vis decays matched to true \u03c4 had-vis (with corresponding number of charged decay products) from SM and exotic processes in simulated data. Three working points, corresponding to different tau identification efficiency values, are shown interactions and migration of the number of reconstructed tracks due to conversions or underlying-event tracks being erroneously associated with the tau candidate.",
+            "paragraph_rank": 27,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1370,
+                    "text": "Fig. 4",
+                    "end": 1376
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1634,
+                    "text": "Fig. 4",
+                    "end": 1640
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1781,
+                    "text": "Fig. 5",
+                    "end": 1787
+                }
+            ]
+        },
+        {
+            "text": "Tau trigger implementation",
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "The tau reconstruction at the trigger level has differences with respect to its offline counterpart due to the technical limitations of the trigger system. At L1, no inner detector track reconstruction is available, and the full calorimeter granularity cannot be accessed. Latency limits at L2 prevent the use of the TopoCluster algorithm, and only allow the candidate reconstruction to be performed within the given RoI. At the EF, the same tau reconstruction and identification methods as offline are used, except for the \u03c0 0 reconstruction. In this section, the details of the tau trigger reconstruction algorithm are described. Inverse background efficiency versus signal efficiency for the offline tau identification, for a a low-p T and b a highp T \u03c4 had-vis range. Simulation samples for signal include a mixture of Z , W and Z production processes, while data from multi-jet events is used for background. The red markers correspond to the three working points mentioned in the text. The signal efficiency shown corresponds to the total efficiency of \u03c4 had-vis decays to be reconstructed as 1-track or 3-track and pass tau identification selection Level 1 At L1, the \u03c4 had-vis candidates are selected using calorimeter energy deposits. Two calorimeter regions are defined by the tau trigger for each candidate, using trigger towers in both the EM and HAD calorimeters: the core region, and an isolation region around this core. The trigger towers have a granularity of \u03b7 \u00d7 \u03c6 = 0.1 \u00d7 0.1 with a coverage of |\u03b7| < 2.5. The core region is defined as a square of 2 \u00d7 2 trigger towers, corresponding to 0.2\u00d70.2 in \u03b7 \u00d7 \u03c6 space. The E T of a \u03c4 had-vis candidate at L1 is taken as the sum of the transverse energy in the two most energetic neighbouring central towers in the EM calorimeter core region, and in the 2 \u00d7 2 towers in the HAD calorimeter, all calibrated at the EM scale. For each \u03c4 had-vis candidate, the EM isolation is calculated as the transverse energy deposited in the annulus between 0.2 \u00d7 0.2 and 0.4 \u00d7 0.4 in the EM calorimeter.",
+            "paragraph_rank": 28,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "To suppress background events and thus reduce trigger rates, an EM isolation energy of less than 4 GeV is required for the lowest E T threshold at L1. Hardware limitations prevent the use of an E T -dependent selection. This requirement reduces the efficiency of \u03c4 had-vis events by less than 2 % over most of the kinematic range. Larger efficiency losses occur for \u03c4 had-vis events at high E T values; those are recovered through the use of triggers with higher E T thresholds but without any isolation requirements.",
+            "paragraph_rank": 29,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "The energy resolution at L1 is significantly lower than at the offline level. This is due to the fact that all cells in a trigger tower are combined without the use of sophisticated clustering algorithms and without \u03c4 had-vis -specific energy calibrations. Also, the coarse energy and geometrical position granularity limits the precision of the measurement. These effects lead to a significant signal efficiency loss for low-E T \u03c4 had-vis candidates.",
+            "paragraph_rank": 30,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "Level 2 At L2, \u03c4 had-vis candidate RoIs from L1 are used as seeds to reconstruct both the calorimeter-and trackingbased observables associated with each \u03c4 had-vis candidate. The events are then selected based on an identification algorithm that uses these observables. The calorimeter observables associated with the \u03c4 had-vis candidates are calculated using calorimeter cells, where the electronic and pile-up noise are subtracted in the energy calibration. The centre of the \u03c4 had-vis energy deposit is taken as the energy-weighted sum of the cells collected in the region R < 0.4 around the L1 seed. The transverse energy of the \u03c4 had-vis is calculated using only the cells in the region R < 0.2 around its centre.",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "To calculate the tracking-based observables, a fast tracking algorithm [48] is applied, using only hits from the pixel and SCT tracking layers. Only tracks satisfying p T > 1.5 GeV and located in the region R < 0.3 around the L2 calorimeter \u03c4 had-vis direction are used. The tracking efficiency with respect to offline reaches a plateau of 99 % at 2 GeV (with an efficiency of about 98 % at 1.5 GeV). The fast tracking algorithm required an average of 37 ms to run at the highest pile-up conditions at peak luminosity in 2012 (approximately forty pile-up interactions).",
+            "paragraph_rank": 32,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 71,
+                    "text": "[48]",
+                    "end": 75
+                }
+            ]
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "As there is no vertex information available at this stage, an alternative approach is used to reject tracks coming from pileup interactions. A requirement is placed on the z 0 between a candidate track and the highestp T track inside the RoI. The distribution of z 0 is shown in Fig. 6 for simulated Z \u2192 \u03c4 \u03c4 events with an average of eight interactions per bunch crossing. High values of z 0 typically correspond to pile-up tracks while the central peak corresponds to the main interaction tracks.",
+            "paragraph_rank": 33,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 279,
+                    "text": "Fig. 6",
+                    "end": 285
+                }
+            ]
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "The z 0 distribution is fit to the sum of a Breit-Wigner function to describe the central peak and a Gaussian function to describe the broad distribution from tracks in pile-up events. The half-width of the Breit-Wigner \u03c3 = 0.32 mm is taken as the point where 68 % of the signal events are included in the central peak. A dependence of the trigger variables on Track isolation requirements are applied to \u03c4 had-vis candidates to increase background rejection. For multi-track candidates (candidates with two or three associated tracks, defined to be as inclusive as possible with respect to their offline counterpart), the ratio of the sum of the track p T in 0.1 < R < 0.3 to the sum of the track p T in R < 0.1 is required to be lower than 0.1. Any 1-track candidate with a reconstructed track in the isolation region is rejected.",
+            "paragraph_rank": 34,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "In the last step, identification variables combining calorimeter and track information are built as described in Sect. 3.2. The calorimeter-based isolation variable f cent uses an expanded cone size of R < 0.4 without the pileup correction term to estimate the fraction of transverse energy deposited in the region R < 0.1 around the \u03c4 had-vis candidate. The variables f track and R track , measuring respectively the ratio of the transverse momentum of the leading p T track to the total transverse energy (calibrated at the EM energy scale) and the p T -weighted distance of the associated tracks to the \u03c4 had-vis direction, are calculated using selected tracks in the region R < 0.3 around the highestp T track. Cuts on the chosen identification variables are optimized to provide an inverse background efficiency of roughly ten while keeping the signal efficiency as high as possible (approximately 90 % with respect to the offline medium tau identification). Event Filter At the EF level, the \u03c4 had-vis reconstruction is very similar to the offline version. First, the TopoCluster reconstruction and calibration algorithms are run within the RoI. Then, track reconstruction inside the RoI is performed using the EF tracking algorithm. In the last step, the full offline \u03c4 had-vis reconstruction algorithm is used. The EF tracking is almost 100 % efficient over the entire p T range with respect to the offline reconstructed tracks. It is, however, considerably slower than the L2 fast tracking algorithm, requiring about 200 ms per RoI under severe pile-up conditions (forty pile-up interactions). The TopoClustering algorithms need only about 15 ms.",
+            "paragraph_rank": 35,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "The \u03c4 had-vis candidate four-momentum and input variables to the EF tau identification are then calculated. The main difference with respect to the offline tau reconstruction is that \u03c0 0 -reconstruction-based input variables (m \u03c0 0 +track , N \u03c0 0 and",
+            "paragraph_rank": 36,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "are not used; the methodology to compute these variables had not yet been developed when the trigger was implemented. Furthermore, no pile-up correction is applied to the input variables at trigger level.",
+            "paragraph_rank": 37,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "Since full-event vertex reconstruction is not available at trigger level (vertices are only formed using the tracks in a given RoI), the selection requirements applied to the input tracks are also different with respect to the offline \u03c4 had-vis reconstruction. Similarly to L2, the z 0 requirement for tracks is computed with respect to the leading track, and loosened to 1.5 mm with respect to the offline requirement. The d 0 requirement is calculated with respect to the vertex found inside of the RoI, and is loosened to 2 mm.",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "section": "Tau trigger implementation",
+            "text": "A BDT with the input variables listed in Table 2 is used to suppress the backgrounds from jets misidentified as \u03c4 had-vis . The BDT was trained on 1-and 3-track \u03c4 had-vis candidates with simulated Z , W and Z events for the signal and data multi-jet samples for the background, respectively. Only events passing an L1 tau trigger matched with an offline reconstructed \u03c4 had-vis with p T > 15 GeV and |\u03b7| < 2.2 are used, where the medium identification is required for the \u03c4 had-vis candidates. For the signal, in addition, a geometrical matching to a true \u03c4 had-vis is required. The performance of the EF tau trigger is presented in Fig. 7. The signal efficiency is defined with respect to offline reconstructed \u03c4 had-vis candidates matched at generator level, and the inverse background efficiency is calculated in a multi-jet sample. The working points are chosen to obtain a signal efficiency of 85 and 80 % with respect to the offline medium candidates for 1-track and multi-track candidates respectively, where the inverse background efficiency is of the order of 200 for the multi-jet sample.",
+            "paragraph_rank": 39,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "start": 41,
+                    "text": "Table 2",
+                    "end": 48
+                },
+                {
+                    "type": "figure",
+                    "start": 633,
+                    "text": "Fig. 7",
+                    "end": 639
+                }
+            ]
+        },
+        {
+            "text": "Discrimination against electrons and muons",
+            "section_rank": 11
+        },
+        {
+            "section": "Discrimination against electrons and muons",
+            "text": "Additional dedicated algorithms are used to discriminate \u03c4 had-vis from electrons and muons. These algorithms are only used offline.  Fig. 7 Inverse background efficiency versus signal efficiency for the tau trigger at the EF level, for \u03c4 had-vis candidates which have satisfied the L1 requirements. The signal efficiency is defined with respect to offline medium tau identification \u03c4 had-vis candidates matched at generator level, and the inverse background efficiency is calculated in a multi-jet sample Electron veto The characteristic signature of 1-track \u03c4 had-vis can be mimicked by electrons. This creates a significant background contribution after all the jet-related backgrounds are suppressed via kinematic, topological and \u03c4 had-vis identification criteria. Despite the similarities of the \u03c4 had-vis and electron signatures, there are several properties that can be used to discriminate between them: transition radiation, which is more likely to be emitted by an electron and causes a higher ratio f HT of high-threshold to lowthreshold track hits in the TRT for an electron than for a pion; the angular distance of the track from the \u03c4 had-vis calorimeterbased direction; the ratio f EM of energy deposited in the EM calorimeter to energy deposited in the EM and HAD calorimeters; the amount of energy leaking into the hadronic calorimeter (longitudinal shower information) and the ratio of energy deposited in the region 0.1 < R < 0.2 to the total core region R < 0.2 (transverse shower information). The distributions for two of the most powerful discriminating variables are shown in Fig. 8. These properties are used to define a \u03c4 had-vis identification algorithm specialized in the rejection of electrons misidentified as hadronically decaying tau leptons, using a BDT. The performance of this electron veto algorithm is shown in Fig. 9. Slightly different sets of variables are used in different \u03b7 regions. One of the reasons for this is that the variable associated with transition radiation (the leading track's ratio of high-threshold TRT hits to low-threshold TRT hits) is not available for |\u03b7| > 2.0. Three working points, labelled tight, medium and loose are chosen to yield signal efficiencies of 75, 85, and 95 %, respectively.",
+            "paragraph_rank": 40,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 134,
+                    "text": "Fig. 7",
+                    "end": 140
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 1601,
+                    "text": "Fig. 8",
+                    "end": 1607
+                },
+                {
+                    "type": "figure",
+                    "start": 1849,
+                    "text": "Fig. 9",
+                    "end": 1855
+                }
+            ]
+        },
+        {
+            "section": "Discrimination against electrons and muons",
+            "text": "Muon veto Tau candidates corresponding to muons can in general be discarded based on the standard muon identification algorithms [24]. The remaining contamination level can typically be reduced to a negligible level by a cut-based selec-  [23]. For signal distributions, 1-track \u03c4 had-vis decays are matched to true generator-level \u03c4 had-vis in simulated Z \u2192 \u03c4 \u03c4 events, while the electron contribution is obtained from simulated Z \u2192 ee events where 1-track \u03c4 had-vis decays are matched to true generator-level electrons tion using the following characteristics. Muons are unlikely to deposit enough energy in the calorimeters to be reconstructed as \u03c4 had-vis candidates. However, when a sufficiently energetic cluster in the calorimeter is associated with a muon, the muon track and the calorimeter cluster together may be misidentified as a \u03c4 had-vis . Muons which deposit a large amount of energy in the calorimeter and therefore fail muon spectrometer reconstruction are characterized by a low electromagnetic energy fraction and a large ratio of trackp T to E T deposited in the calorimeter. Low-momentum muons which stop in the calorimeter and overlap with calorimeter deposits of different origin are characterized by a large electromagnetic energy fraction and a low p T -to-E T ratio. A simple cut-based selection based on these two variables reduces the muon contamination to a negligible level. The resulting  Fig. 9 Electron veto inverse background efficiency versus signal efficiency in simulated samples, for 1-track \u03c4 had-vis candidates. The background efficiency is determined using simulated Z \u2192 ee events efficiency is better than 96 % for true \u03c4 had-vis , with a reduction of muons misidentified as \u03c4 had-vis of about 40 %. However, the performance can vary depending on the \u03c4 had-vis and muon identification levels.",
+            "paragraph_rank": 41,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 129,
+                    "text": "[24]",
+                    "end": 133
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 239,
+                    "text": "[23]",
+                    "end": 243
+                },
+                {
+                    "type": "figure",
+                    "start": 1421,
+                    "text": "Fig. 9",
+                    "end": 1427
+                }
+            ]
+        },
+        {
+            "text": "Efficiency measurements using Z tag-and-probe data",
+            "section_rank": 12
+        },
+        {
+            "section": "Efficiency measurements using Z tag-and-probe data",
+            "text": "To perform physics analyses it is important to measure the efficiency of the reconstruction and identification algorithms used online and offline with collision data. For the \u03c4 had-vis signal, this is done on a sample enriched in Z \u2192 \u03c4 \u03c4 events. For electrons misidentified as a tau signal (after applying the electron veto) this is done on a sample enriched in Z \u2192 ee events.",
+            "paragraph_rank": 42,
+            "section_rank": 12
+        },
+        {
+            "section": "Efficiency measurements using Z tag-and-probe data",
+            "text": "The chosen tag-and-probe approach consists of selecting events triggered by the presence of a lepton (tag) and containing a hadronically decaying tau lepton candidate (probe) in the final state and extracting the efficiencies directly from the number of reconstructed \u03c4 had-vis before and after tau identification algorithms are applied. In practice, it is impossible to obtain a pure sample of hadronically decaying tau leptons, or electrons misidentified as a tau signal, and therefore backgrounds have to be taken into account. This is described in the following sections.",
+            "paragraph_rank": 43,
+            "section_rank": 12
+        },
+        {
+            "text": "Offline tau identification efficiency measurement",
+            "section_rank": 13
+        },
+        {
+            "section": "Offline tau identification efficiency measurement",
+            "text": "To estimate the number of background events for the purpose of tau identification efficiency measurements, a variable with high separation power, which is modelled well for simulated \u03c4 had-vis decays is chosen: the sum of the number of core and outer tracks associated to the \u03c4 had-vis candidate. Outer tracks in 0.2 < R < 0.6 are only considered if they fulfill the requirement",
+            "paragraph_rank": 44,
+            "section_rank": 13
+        },
+        {
+            "section": "Offline tau identification efficiency measurement",
+            "text": "\u2022 R(core, outer)) < 4, where p core T refers to any track in the core region, and R(core, outer) refers to the distance between the candidate outer track and any track in the core region. This requirement suppresses the contribution of outer tracks from underlying and pile-up events, due to requirements on the relative momentum and separation of the tracks. This allows the signal track multiplicity to retain the same structure as the core track multiplicity distribution. For backgrounds from multijet events, the track multiplicity is increased by the addition of tracks with significant momentum in the outer cone. The requirement on D outer was chosen to offer optimal signal to background separation. A fit is then performed using the expected distributions of this variable for both signal and background to extract the \u03c4 had-vis signal. This fit is performed for each exclusive tau identification working point, corresponding to: candidates failing the loose requirement, candidates satisfying the loose requirement but failing the medium requirement, candidates satisfying the medium requirement but failing the tight requirement and candidates satisfying the tight requirement.",
+            "paragraph_rank": 45,
+            "section_rank": 13
+        },
+        {
+            "text": "Event selection",
+            "section_rank": 14
+        },
+        {
+            "section": "Event selection",
+            "text": "Z \u2192 \u03c4 lep \u03c4 had events are selected by a triggered muon or electron coming from the leptonic decay of a tau lepton, and the hadronically decaying tau lepton is then searched for in the rest of the event, considered as the probe for the tau identification performance measurement. These events are triggered by a single-muon or a single-electron trigger requiring one isolated trigger muon or electron with a p T of at least 24 GeV.",
+            "paragraph_rank": 46,
+            "section_rank": 14
+        },
+        {
+            "section": "Event selection",
+            "text": "Offline, muons and electrons with p T > 26 GeV are thereafter selected, representing the tag objects. Additional track and calorimeter isolation requirements are applied to the muon and electron. Identified muons are required to have |\u03b7| < 2.4. Identified electrons are required to have |\u03b7| < 1.37 or 1.52 < |\u03b7| < 2.47, therefore excluding the poorly instrumented region at the interface between the barrel and endcap calorimeters. In addition to the requirement of exactly one isolated muon or electron ( ), a \u03c4 had-vis candidate is selected in the kinematic range p T > 15 GeV and |\u03b7| < 2.5, requiring one or three associated tracks in the core region and an absolute electric charge of one and no geometrical overlap with muons with p T > 4 GeV or with electrons with p T > 15 GeV of loose or medium quality (depending on \u03b7). For \u03c4 had-vis with one associated track, a muon veto and a medium electron veto is applied. In addition to this, a very loose requirement on the tau identification BDT score is made which strongly suppresses jets while being more than 99 % efficient for Z \u2192 \u03c4 \u03c4 signal. The tag and the probe objects are required to have opposite-sign electric charges (OS).",
+            "paragraph_rank": 47,
+            "section_rank": 14
+        },
+        {
+            "section": "Event selection",
+            "text": "Additional requirements are made in order to suppress (Z \u2192 ) + jets and (W \u2192 \u03bd ) + jets events:",
+            "paragraph_rank": 48,
+            "section_rank": 14
+        },
+        {
+            "section": "Event selection",
+            "text": "\u2022 On the invariant mass calculated from the lepton and the \u03c4 had-vis four-momenta (m vis ( , \u03c4 had-vis )): for p \u03c4 had-vis T < 20 GeV, 45 GeV < m vis ( , \u03c4 had-vis ) < 80 GeV. Otherwise, for the \u03bc channel, 50 GeV < m vis (\u03bc, \u03c4 had-vis ) < 85 GeV, and for the e channel: 50 GeV < m vis (e, \u03c4 had-vis ) < 80 GeV. For the signal, this variable peaks in these regions. For the signal, this variable tends to peak at zero, indicating that the neutrinos point mainly in the direction of one of the two leptons from Z decay products. For W + jets background events, the value is typically negative, indicating that the neutrino points away from the two lepton candidates.",
+            "paragraph_rank": 49,
+            "section_rank": 14
+        },
+        {
+            "text": "Background estimates and templates",
+            "section_rank": 15
+        },
+        {
+            "section": "Background estimates and templates",
+            "text": "The signal track multiplicity distribution is modelled using simulated Z \u2192 \u03c4 lep \u03c4 had events. Only reconstructed \u03c4 had-vis matched to a true hadronic tau decay are considered.",
+            "paragraph_rank": 50,
+            "section_rank": 15
+        },
+        {
+            "section": "Background estimates and templates",
+            "text": "A single template is used to model the background from quark-and gluon-initiated jets that are misidentified as hadronic tau decays. The background is mainly composed of multi-jet and W +jets events with a minor contribution from Z +jets events. The template is constructed starting from a enriched multi-jet control region in data that uses the full signal region selection but requires that the tag and probe objects have same-sign charges (SS). The contributions from W +jets and Z +jets in the SS control region are subtracted. The template is then scaled by the ratio of OS/SS multi-jet events, measured in a control region which inverts the very loose identification requirement of the signal region. Finally, the OS contributions from W +jets and Z +jets are added to complete the template. The Z +jets contribution is estimated using simulated samples. The shape of the W +jets contribution is estimated from a high-purity W +jets control region, defined by removing the m T requirement and inverting the requirement on cos \u03c6. The normalization of the W +jets contribution is estimated using simulation.",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "section": "Background estimates and templates",
+            "text": "An additional background shape is used to take into account the contamination due to misidentified electrons or muons. This small background contribution (stemming mainly from Z \u2192 events) is modelled by taking the shape predicted by simulation using candidates which are not matched to true \u03c4 had-vis in events of type Z \u2192 \u03c4 lep \u03c4 had , tt, diboson, Z \u2192 ee, \u03bc\u03bc where the reconstructed tau candidate probe is matched to a electron or muon. For the fit, the contribution of these backgrounds is fixed to the value predicted by the simulation, which is typically less than 5 % of the total signal yield.",
+            "paragraph_rank": 52,
+            "section_rank": 15
+        },
+        {
+            "section": "Background estimates and templates",
+            "text": "To measure both the 1-track and 3-tracks \u03c4 had-vis efficiencies, a fit of the data to the model (signal plus background) is performed, using two separate signal templates. The signal templates are obtained by requiring exactly one or three tracks reconstructed in the core region of the \u03c4 had-vis candidate. To improve the fit stability in the background-dominated region where the tau candidates fail the loose requirements, the ratio of the 1-track to 3-track normalization is fixed to the value predicted by the simulation. For other exclusive regions, the ratio is allowed to vary during the fit.",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "section": "Background estimates and templates",
+            "text": "In the fit to extract the efficiencies for real tau leptons passing different levels of identification, the ratio of jet to other \u03c4 had-vis candidates is determined in a preselection step (where no identification is required) and then extrapolated to regions where identification is required by using jet misidentification rates determined in an independent data sample. Figure 10 shows an example of the track multiplicity distribution after the tag-and-probe selection, before and after applying the tau identification requirements, with the results of the fit performed. The peaks in the one-and three-track bins are due to the signal contribution. These are visible before any identification requirements are applied, and become considerably more prominent after identification requirements are applied, due to the large amount of background rejection provided by the identification algorithm. To account for the small differences between data and simulations, correction factors, defined as the ratio of the efficiency in data to the efficiency in simulation for \u03c4 had-vis signal to pass a certain level of identification, are derived. Their values are compatible with one, except for the tight 1-track working point, where the correction factor is about 0.9.",
+            "paragraph_rank": 54,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 371,
+                    "text": "Figure 10",
+                    "end": 380
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 16
+        },
+        {
+            "section": "Results",
+            "text": "Results from the electron-and muon-tag analysis are combined to improve the precision of the correction factors, shown in Fig. 11. No significant dependency on the p T of the \u03c4 had-vis is observed and hence the results are provided separately only for the barrel (|\u03b7| < 1.5) and the endcap (1.5 < |\u03b7| < 2.5) region, and for one and three associated tracks. Uncertainties depend slightly on the tau identification level and kinematic quantities. In Table 3, the most important systematic uncertainties for the working point used by most analyses, medium tau identification, are shown, together with the total statistical and systematic uncertainty. Uncertainties  Table 3. The W +jets shape uncertainty accounts for differences between the W +jets shape in the signal and control regions and is derived from comparisons to simulated W +jets events. The jet background fraction uncertainty accounts for the effect of propagating the statistical uncertainty on the jet misidentification rates.",
+            "paragraph_rank": 55,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 122,
+                    "text": "Fig. 11",
+                    "end": 129
+                },
+                {
+                    "type": "table",
+                    "start": 448,
+                    "text": "Table 3",
+                    "end": 455
+                },
+                {
+                    "type": "table",
+                    "start": 663,
+                    "text": "Table 3",
+                    "end": 670
+                }
+            ]
+        },
+        {
+            "section": "Results",
+            "text": "The results apply to \u03c4 had-vis candidates with p T > 20 GeV. For p T < 20 GeV, uncertainties increase to a maximum of 15 % for inclusive \u03c4 had-vis candidates. For p T > 100 GeV, there are no abundant sources of hadronic tau decays to allow for an efficiency measurement. Previous studies using highp T dijet events indicate that there is no degradation in the modelling of tau identification in this p T range, within the statistical uncertainty of the measurement [14].   Table 3 Dominant uncertainties on the medium tau identification efficiency correction factors estimated with the Z tag-and-probe method, and the total uncertainty, which combines systematic and statistical uncertainties. These uncertainties apply to \u03c4 had-vis candidates with p T > 20 GeV",
+            "paragraph_rank": 56,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 465,
+                    "text": "[14]",
+                    "end": 469
+                },
+                {
+                    "type": "table",
+                    "start": 473,
+                    "text": "Table 3",
+                    "end": 480
+                }
+            ]
+        },
+        {
+            "text": "Source",
+            "section_rank": 17
+        },
+        {
+            "section": "Source",
+            "text": "Uncertainty (%) ",
+            "paragraph_rank": 57,
+            "section_rank": 17
+        },
+        {
+            "text": "Trigger efficiency measurement",
+            "section_rank": 18
+        },
+        {
+            "section": "Trigger efficiency measurement",
+            "text": "The tau trigger efficiency is measured with Z \u2192 \u03c4 \u03c4 events using tag-and-probe selection similar to the one described in Sect. 4.1. The only difference is that the efficiency is measured with respect to identified offline \u03c4 had-vis candidates and thus, offline tau identification selection criteria are applied during the event selection. Only the muon channel is considered, as the background contamination is smaller than in the electron channel. The statistical uncertainty improvements that could be obtained by the addition of the electron channel are offset by the larger systematic uncertainties associated with this channel. The systematic uncertainties are also different from those in the offline identification measurement, since the purity after identification is already high. The systematics are dominated by the uncertainties on the modelling of the kinematics of the background events, rather than the total normalization, as is the case for the offline identification measurement.",
+            "paragraph_rank": 58,
+            "section_rank": 18
+        },
+        {
+            "section": "Trigger efficiency measurement",
+            "text": "The dominant background contribution is due to W +jets and multi-jet events, where a jet is misidentified as a \u03c4 had-vis . These backgrounds are estimated using a method similar to the one described in Sect. 4.1.2. The same multi-jet and W +jets control regions are used. The shape of other backgrounds is taken from simulation but the normalizations of the dominant backgrounds are estimated from data control regions. The contribution of top quark events is normalized in a control region requiring one jet originating from a bquark. Z +jets events with leptonic Z decays and one of the additional jets being misidentified as \u03c4 had-vis are normalized by measuring this misidentification rate in a control region with two identified oppositely charged same-flavour leptons.",
+            "paragraph_rank": 59,
+            "section_rank": 18
+        },
+        {
+            "section": "Trigger efficiency measurement",
+            "text": "In total, more than 60,000 events are collected, with a purity of about 80 % when the offline medium tau identification requirement is applied. With the addition of the tau trigger requirement, the purity increases to about 88 %. Most of the backgrounds accumulate in the region p T < 30 GeV. Figure 12 shows the measured tau trigger efficiency for \u03c4 had-vis candidates identified by the offline medium tau identification as functions of the offline \u03c4 had-vis transverse energy and the number of primary vertices in the event, for each level of the trigger. The tau trigger considered has calorimetric isolation and a p T threshold of 11 GeV at L1, a 20 GeV requirement on p T , the number of tracks restricted to three or less, and medium selection on the BDT score at EF. The efficiency depends minimally on p T for p T > 35 GeV or on the pile-up conditions. The measured tau trigger efficiency is compared to simulation in Fig. 13; the efficiency is shown to be modelled well in simulation. Correction factors, as defined in Sect. 4.1, are derived from this measurement. The correction factors are in general compatible with unity, except for the region p T < 40 GeV where a difference of a few percent is observed. In the p T range from 30 to 50 GeV, the uncertainty on the correction factors is about 2 % but increases to about 8 % for p T = 100 GeV. The uncertainty is also sizeable in the region p T < 30 GeV, where the background contamination is the largest.",
+            "paragraph_rank": 60,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 293,
+                    "text": "Figure 12",
+                    "end": 302
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 926,
+                    "text": "Fig. 13",
+                    "end": 933
+                }
+            ]
+        },
+        {
+            "text": "Electron veto efficiency measurement",
+            "section_rank": 19
+        },
+        {
+            "section": "Electron veto efficiency measurement",
+            "text": "To measure the efficiency for electrons reconstructed as \u03c4 had-vis to pass the electron veto in data, a tag-and-probe analysis singles out a pure sample of Z \u2192 ee events, as illustrated in Fig. 14a. The measurement uses probe 1track \u03c4 had-vis candidates in the opposite hemisphere to the identified tag electron. The tag electron is required to fulfil p ",
+            "paragraph_rank": 61,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 189,
+                    "text": "Fig. 14a",
+                    "end": 197
+                }
+            ]
+        },
+        {
+            "text": "Fig. 13",
+            "section_rank": 20
+        },
+        {
+            "section": "Fig. 13",
+            "text": "The measured tau trigger efficiency in data and simulation, for the offline \u03c4 had-vis candidates passing the medium tau identification, as a function of offline \u03c4 had-vis transverse energy. The expected background contribution has been subtracted from the data. The uncertainty band on the ratio reflects the statistical uncertainties associated with data and simulation and the systematic uncertainty associated with the background subtraction in data ent levels of jet discrimination, and the effects estimated. Efficiencies are extracted directly from the number of reconstructed \u03c4 had-vis before and after identification, in bins of \u03b7 of the \u03c4 had-vis candidate, after subtracting the background modelled by simulation (normalized to data in dedicated control regions). The shape and normalization of the multi-jet background distribution for the \u03b7 of the \u03c4 had-vis are estimated using events with SS tag electron and probe \u03c4 had-vis in data after subtracting backgrounds in the SS region using simulation.",
+            "paragraph_rank": 62,
+            "section_rank": 20
+        },
+        {
+            "section": "Fig. 13",
+            "text": "To estimate the W \u2192 e\u03bd, Z \u2192 \u03c4 \u03c4 , and tt backgrounds, the shape of this distribution is obtained from simulation but normalized to dedicated data control regions for each background. Differences in the modelling of the electron veto algorithm's performance in simulation compared to data are parameterized as correction factors in bins of \u03b7 of the \u03c4 had-vis candidate, by comparing distributions similar to the one shown in Fig. 14. Uncertainties on the correction factors (which are typically close to unity) are \u03b7-dependent and amount to about 10 % for the loose electron veto and get larger for the medium and tight electron veto working points, mainly driven by statistical uncertainties. A summary of the main uncertainties for the working point shown in Fig. 14 is provided in Table 4.  with the true energy scale at the level of a few percent and removes any significant dependencies of the energy scale on the pseudorapidity, energy, pile-up conditions and track multiplicity. Then, additional small corrections to the TES are derived using one of two independent data-driven methods described in Sect. 5.2. Which of the two methods is used depends on whether for a given study the agreement between reconstructed and true TES or the modelling of the TES in simulation is more important.",
+            "paragraph_rank": 63,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 424,
+                    "text": "Fig. 14.",
+                    "end": 432
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 760,
+                    "text": "Fig. 14 is provided",
+                    "end": 779
+                },
+                {
+                    "type": "table",
+                    "ref_id": "tab_6",
+                    "start": 783,
+                    "text": "Table 4",
+                    "end": 790
+                }
+            ]
+        },
+        {
+            "text": "Offline \u03c4 had-vis energy calibration",
+            "section_rank": 21
+        },
+        {
+            "section": "Offline \u03c4 had-vis energy calibration",
+            "text": "The clusters associated with the \u03c4 had-vis reconstruction are calibrated at the LC scale. For anti-k t jets with a distance parameter R = 0.4, this calibration accounts for the noncompensating nature of the ATLAS calorimeters and for energy deposited outside the reconstructed clusters and in non-sensitive regions of the calorimeters. However, it is neither optimized for the cone size used to measure the \u03c4 had-vis momentum ( R = 0.2) nor for the specific mix of hadrons observed in tau decays; and it does not correct for the underlying event or for pile-up contributions. Thus an additional correction is needed to obtain an energy scale which is in agreement with the true visible energy scale, thereby also improving the \u03c4 had-vis energy resolution. This correction (also referred to as a response curve) is computed as a function of E \u03c4 LC using Z \u2192 \u03c4 \u03c4 , W \u2192 \u03c4 \u03bd and Z \u2192 \u03c4 \u03c4 events simulated with Pythia8. Only \u03c4 had-vis candidates with reconstructed E T > 15 GeV and |\u03b7| < 2.4 matched to a true \u03c4 had-vis with E true T,vis > 10 GeV are considered. Additionally, they are required to satisfy medium tau identification criteria and to have a distance R > 0.5 to other reconstructed jets. The response is defined as the ratio of the reconstructed \u03c4 had-vis energy at the LC scale E \u03c4 LC to the true visible energy E true vis . The calibration is performed in two steps: first, the response curve is computed; then, additional small corrections for the pseudorapidity bias and for pile-up effects are derived.",
+            "paragraph_rank": 64,
+            "section_rank": 21
+        },
+        {
+            "section": "Offline \u03c4 had-vis energy calibration",
+            "text": "The response curve is evaluated in intervals of E true vis and of the absolute value of the reconstructed \u03c4 had-vis pseudorapidity for \u03c4 had-vis candidates with one or more tracks. In each interval, the distribution of this ratio is fitted with a Gaussian function to determine the mean value. This mean value as a function of the average E \u03c4 LC in a given interval is then fitted with an empirically derived functional form. The resulting functions are shown in Fig. 15.",
+            "paragraph_rank": 65,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 463,
+                    "text": "Fig. 15",
+                    "end": 470
+                }
+            ]
+        },
+        {
+            "section": "Offline \u03c4 had-vis energy calibration",
+            "text": "After using this response curve to calibrate hadronically decaying tau leptons their reconstructed mean energy is within 2 % of the final scale, which is set using two additional small corrections. First, a pseudorapidity correction is applied, which is necessary to counter a bias due to underestimated reconstructed cluster energies in poorly instrumented regions. The correction depends only on |\u03b7 LC | and is smaller than 0.01 units in the transition region between the barrel and endcap electromagnetic calorimeters and negligible elsewhere, leading to the final reconstructed pseudorapidity \u03b7 rec = \u03b7 LC \u2212 \u03b7 bias .  Fig. 15 Offline \u03c4 had-vis energy response curves as a function of the reconstructed \u03c4 had-vis energy E \u03c4 LC for hadronic tau decays with a one and b more than one associated tracks. One curve per pseudorapidity region |\u03b7 LC | is shown. The region where markers are shown corresponds approximately to a transverse energy E \u03c4 T,LC > 15 GeV. For very low and very high energies, the response curves are assumed to be constant. Uncertainties are statistical only Pile-up causes response variations of typically a few percent. This is corrected by subtracting an amount of energy which is proportional to the number of reconstructed proton-proton interaction vertices n vtx in a given event. The parameter describing the proportionality is derived for different regions of |\u03b7 rec | using a linear fit versus n vtx , for \u03c4 had-vis candidates with one or more tracks. The correction varies in the range 90-420 MeV per reconstructed vertex, increasing with |\u03b7|.",
+            "paragraph_rank": 66,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 622,
+                    "text": "Fig. 15",
+                    "end": 629
+                }
+            ]
+        },
+        {
+            "section": "Offline \u03c4 had-vis energy calibration",
+            "text": "The energy resolution, as determined from simulated data, as a function of the true visible energy after the complete tau calibration is shown in Fig. 16. The resolution is about 20 % at very low E and reduces to about 5 % for energies above a few hundred GeV. The resolution is worst in the transition region 1.3 < |\u03b7| < 1.6.  ",
+            "paragraph_rank": 67,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 146,
+                    "text": "Fig. 16",
+                    "end": 153
+                }
+            ]
+        },
+        {
+            "text": "Additional offline tau calibration corrections and systematic uncertainties",
+            "section_rank": 22
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "The systematic uncertainties on the tau energy scale are evaluated with two complementary methods. The deconvolution method gives access to uncertainties on both the absolute TES (differences between reconstructed and true visible energy) and the modelling (differences between data and simulation) and is based on dedicated measurements (such as test beam data and low-luminosity runs) and simulation. The in-situ method only tests the modelling and uses collision data with typical 2012 LHC run conditions. Both methods are also able to provide small additional data-driven corrections albeit only inclusively in E T and |\u03b7| due to the limited statistical power of the dataset. They thus depend on the first calibration step explained in the previous section to remove any significant TES dependencies on kinematics or pile-up.",
+            "paragraph_rank": 68,
+            "section_rank": 22
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "The deconvolution method is almost identical to the method employed to measure the jet energy scale for ATLAS in 2010 [49] and is only briefly described here. The central idea is to decompose each tau lepton into its decay products and to combine the calorimeter responses according to the branching ratios of tau leptons to the various hadronic final states. The response to charged hadrons is estimated from different sources depending on the momentum and pseudorapidity; in-situ E/ p measurements are used at low momentum, combined test beam measurements are used at high momentum in the central region (|\u03b7| < 0.8), and simulation is used otherwise (here, the uncertainty is estimated using events simulated using different hadronic shower models). The response to electromagnetic showers was studied in Z \u2192 ee decays and is used for neutral pions. Pseudo-experiments are used to propagate the singleparticle response uncertainties to the reconstructed hadronically decaying tau lepton. In each pseudo-experiment, the tau decay product energies are varied randomly using Gaussian distributions centred on the observed ratio of the response in data and simulation and with a width corresponding to the statistical uncertainty, and Gaussian distributions centred at unity and with widths given by each systematic uncertainty. These distributions depend on particle type, energy and pseudorapidity. The TES shift for a single pseudo-experiment is given by the mean of the energy ratio of the \u03c4 had-vis to an identical pseudo-experiment in which only statistical uncertainties of the measurement are considered by Gaussian distributions centred at unity. The distribution of TES shifts for a large number of pseudo-experiments is fitted with a Gaussian function. The mean of the fit is the expected scale shift between data and simulation, and its standard deviation the contribution to the TES uncertainty.",
+            "paragraph_rank": 69,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 118,
+                    "text": "[49]",
+                    "end": 122
+                }
+            ]
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "Additional contributions considered are uncertainties due to the detector modelling in the simulation, the underlying event, the effect of pile-up, the non-closure of the calibration method (meaning the difference between the reconstructed and the true \u03c4 had-vis energy, when applying the calibration to the same sample it was derived from) and the hadronicshower model, as shown in Table 5. The total TES uncertainty for E T > 20 GeV and |\u03b7| < 2.5 is between 2 and 3 % for \u03c4 had-vis with one track and between 2 and 4 % for \u03c4 had-vis with more tracks, depending on E T and |\u03b7|. A TES shift of 1 % is observed with no significant dependence on E T or |\u03b7| and a trend towards slightly higher values for 3-track \u03c4 had-vis candidates. The shift is dominantly due to E/ p response differences between data and simulation.",
+            "paragraph_rank": 70,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_9",
+                    "start": 383,
+                    "text": "Table 5",
+                    "end": 390
+                }
+            ]
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "The in-situ method is based on the fact that the distribution of the reconstructed visible mass m vis in Z \u2192 \u03c4 \u03c4 events where one tau decays hadronically and the other to a muon plus neutrinos can be used to measure a TES shift between data and simulation and its uncertainty. Here, m vis is defined as the invariant mass of the \u03c4 had-vis and the muon. The muon momentum scale is measured independently with high precision. The TES shift \u03b1 is determined by introducing an energy shift E T \u2192 (1 + \u03b1)E T for \u03c4 had-vis objects and finding the value \u03b1 for which the m vis peak position in data and simulation agrees. A fifth-order polynomial fit is used to estimate the m vis peak position as simulation studies show that this gives both the highest sensitivity and robustness. For small values of \u03b1, the m vis peak position depends linearly on E T . The results are based on collision data recorded by the ATLAS detector in 2012 using a muon trigger threshold of 24 GeV. The event selection is similar to the one used by the Z \u2192 \u03c4 \u03c4 tag-and-probe studies described in Sect. 4.1 with the following differences: the \u03c4 had-vis candidates are required to have E T > 20 GeV and to satisfy medium tau identification criteria. No selection requirement is applied to m vis , and a looser cos \u03c6 > \u22120.5 requirement is made. Additionally, a pseudorapidity difference between the \u03c4 had-vis and the muon smaller than 1.5 as well as E \u03c4 T,vis \u2212 E \u03bc T > \u221215 GeV is required. The motivation for the differences is that this measurement requires a highly pure sample of hadronically decaying tau leptons after applying tau identification while the priority of the efficiency measurement is to obtain a largely unbiased sample before applying any identification requirements.",
+            "paragraph_rank": 71,
+            "section_rank": 22
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "The background contributions are estimated in the same way as described in Sect. 4.2. The dominant systematic uncertainties of the in-situ measurement are estimated using pseudo-experiments and are due to a potential bias of the fit, missing transverse momentum resolution and scale, muon momentum resolution, muon trigger efficiency and the normalization of the multi-jet background. They are summarized in Table 6.",
+            "paragraph_rank": 72,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_10",
+                    "start": 408,
+                    "text": "Table 6",
+                    "end": 415
+                }
+            ]
+        },
+        {
+            "section": "Additional offline tau calibration corrections and systematic uncertainties",
+            "text": "The measured TES shift is \u03b1 = 0.8 % \u00b1 1.3 % (stat) \u00b1 0.6 % (syst) and \u03b1 = 1.1 % \u00b1 1.4 % (stat) \u00b1 0.7 % (syst) for \u03c4 had-vis with one or three associated tracks respectively. No significant dependence on \u03b7 or pile-up conditions is observed. The corrections are positive, i.e. the momen- tum of \u03c4 had-vis in data has to be scaled up in order to yield agreement (on average) with simulation, and are in agreement with the bias observed in data using the deconvolution method. The resulting m vis distribution for data and simulation is shown in Fig. 17 before applying any correction (i.e., \u03b1 = 0). The uncertainties given above only account for differences between data and simulation and not in the absolute TES. For the latter, uncertainties due to non-closure and pile-up conditions estimated with the deconvolution method have to be added in quadrature to the systematic uncertainties given above.",
+            "paragraph_rank": 73,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 542,
+                    "text": "Fig. 17",
+                    "end": 549
+                }
+            ]
+        },
+        {
+            "text": "Trigger \u03c4 had-vis energy calibration and resolution",
+            "section_rank": 23
+        },
+        {
+            "section": "Trigger \u03c4 had-vis energy calibration and resolution",
+            "text": "As described in Sect. 3.3, reconstructed \u03c4 had-vis candidates at both L1 and L2 use a dedicated energy reconstruction algorithm which differs from the offline \u03c4 had-vis energy reconstruction and calibration, while at the EF, the same algorithm is used. In this section, comparisons of the online energy calibrations between data and simulation are shown. The measured transverse energy resolution for offline \u03c4 had-vis candidates passing medium tau identification is shown in Fig. 18 at all three trigger levels. This measurement is carried out using the same methodology as described in the previous section. The reconstructed energy at L1 is underestimated since at this level calorimeter energies are calibrated at the EM scale. The overestimation seen at L2 is due to the clustering algorithm used at L2, which does not implement the same noise suppression scheme as offline. At the EF, the energy reconstruction is almost identical to the offline case. The slight difference with respect to the offline energy resolution is mainly due to the pile-up corrections, which are only applied offline. Some discrepancies can be seen between the resolutions measured in data and in simulation. This reinforces the importance of having a trigger efficiency measurement performed directly in data as a function of the offline \u03c4 had-vis p T , as presented in Sect. 4.2. The algorithms developed in the ATLAS experiment at the LHC for tau identification and tau energy calibration are described, along with their optimization and the associated procedures to mitigate the effects of pile-up. These algorithms were employed in the dataset corresponding to 20.3 fb \u22121 of \u221a s = 8 TeV pp collisions. The performance of the tau algorithms have helped to fulfil a variety of physics searches and measurements with hadronically decaying tau leptons, an important part of the ATLAS physics program. The performance of trigger and offline tau identification and calibration is measured, in most cases using Z \u2192 \u03c4 \u03c4 tagand-probe measurements. The uncertainties on the offline (c) Fig. 18 The measured tau trigger transverse energy resolution for the offline \u03c4 had-vis candidates passing medium tau identification at a L1, b L2 and c the EF. The grey hashed area reflects the statistical uncertainties on the sum of the expected signal and background tau identification efficiency measurement are dependent on the working point and are about (2-3) % for \u03c4 had-vis with one associated track, and (4-5) % for the case of three associated tracks, inclusive in \u03b7 and for a visible transverse momentum greater than 20 GeV. A precision of (2-8) % for the tau trigger identification efficiency is measured for hadronic tau decays selected by offline algorithms, depending on the transverse energy. Stability of all algorithms with respect to the pile-up conditions is observed. The reconstructed tau energy scale is measured with a precision of about (2-4) % depending on transverse energy and pseudorapidity, using either a method based on estimating and deconvolving the response uncertainties of the hadronic tau decay products or a direct measurement of the Z \u2192 \u03c4 \u03c4 visible mass using collision data recorded in 2012. ation of the LHC, as well as the support staff from our institutions without whom ATLAS could not be operated efficiently. We acknowledge the support of ANPCyT, Argentina; YerPhI, Armenia; ARC, Australia; BMWFW and FWF, Austria; ANAS, Azerbaijan; SSTC, Belarus; CNPq and FAPESP, Brazil; NSERC, NRC and CFI, Canada; CERN; CONICYT, Chile; CAS, MOST and NSFC, China; COLCIEN-CIAS, Colombia; MSMT CR, MPO CR and VSC CR, Czech Republic; DNRF, DNSRC and Lundbeck Foundation, Denmark; EPLANET, ERC and NSRF, European Union; IN2P3-CNRS, CEA-DSM/IRFU, France; GNSF, Georgia; BMBF, DFG, HGF, MPG and AvH Foundation, Germany; GSRT and NSRF, Greece; RGC, Hong Kong SAR, China; ISF, MINERVA, GIF, I-CORE and Benoziyo Center, Israel; INFN, Italy; MEXT and JSPS, Japan; CNRST, Morocco; FOM and NWO, Netherlands; BRF and RCN, Norway; MNiSW and NCN, Poland; GRICES and FCT, Portugal; MNE/IFA, Romania; MES of Russia and NRC KI, Russian Federation; JINR; MSTD, Serbia; MSSR, Slovakia; ARRS and MIZ\u0160, Slovenia; DST/NRF, South Africa; MINECO, Spain; SRC and Wallenberg Foundation, Sweden; SER, SNSF and Cantons of Bern and Geneva, Switzerland; NSC, Taiwan; TAEK, Turkey; STFC, the Royal Society and Leverhulme Trust, UK; DOE and NSF, USA. The crucial computing support from all WLCG partners is acknowledged gratefully, in particular from CERN and the ATLAS Tier-1 facilities at TRIUMF (Canada), NDGF (Denmark, Norway, Sweden), CC-IN2P3 (France), KIT/GridKA (Germany), INFN-CNAF (Italy), NL-T1 (Netherlands), PIC (Spain), ASGC (Taiwan), RAL (UK) and BNL (USA) and in the Tier-2 facilities worldwide.",
+            "paragraph_rank": 74,
+            "section_rank": 23,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 476,
+                    "text": "Fig. 18",
+                    "end": 483
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2063,
+                    "text": "Fig. 18",
+                    "end": 2070
+                }
+            ]
+        },
+        {
+            "section": "Trigger \u03c4 had-vis energy calibration and resolution",
+            "text": "Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creativecomm ons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. Funded by SCOAP 3 .",
+            "paragraph_rank": 75,
+            "section_rank": 23
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 24
+        },
+        {
+            "section": "Fig. 1",
+            "text": "Fig. 1Tau trigger rates at a Level 1 and b Event Filter as a function of the instantaneous luminosity for \u221a s = TeV. The triggers shown are described inTable 1, with the \u03c4 had-vis +\u03c4 had-vis being the rate for the lowest threshold trigger reported in the table. The rates for the higher threshold triggers are approximately three and five times lower at L1 and HLT, respectively, and are partially included in the rate of the lowest threshold item",
+            "paragraph_rank": 76,
+            "section_rank": 24
+        },
+        {
+            "text": "-",
+            "section_rank": 25
+        },
+        {
+            "section": "-",
+            "text": "Leading track IP significance (S leadtrack ): Transverse impact parameter of the highestp T track in the core region, calculated with respect to the TV, divided by its estimated uncertainty. -Number of tracks in the isolation region (N iso track ): Number of tracks associated with the \u03c4 had-vis in the region 0.2 < R < 0.4. -Maximum R ( R Max ): The maximum R between a track associated with the \u03c4 had-vis candidate and the \u03c4 had-vis direction. Only tracks in the core region are considered. -Transverse flight path significance (S flight T ): The decay length of the secondary vertex (vertex reconstructed from the tracks associated with the core region of the \u03c4 had-vis candidate) in the transverse plane, calculated with respect to the TV, divided by its estimated uncertainty. It is defined only for multi-track \u03c4 had-vis candidates. -Track mass (m track ): Invariant mass calculated from the sum of the four-momentum of all tracks in the core and isolation regions, assuming a pion mass for each track. -Track-plus-\u03c0 0 -system mass (m \u03c0 0 +track ): Invariant mass of the system composed of the tracks and \u03c0 0 mesons in the core region. -Number of \u03c0 0 mesons (N \u03c0 0 ): Number of \u03c0 0 mesons reconstructed in the core region. -Ratio of track-plus-\u03c0 0 -system p T ( p \u03c0 0 +track T / p T ): Ratio of the p T estimated using the track + \u03c0 0 information to the calorimeter-only measurement.",
+            "paragraph_rank": 77,
+            "section_rank": 25
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 26
+        },
+        {
+            "section": "Fig. 2",
+            "text": "Fig. 2Signal and background distribution for the 1-track \u03c4 had-vis decay offline tau identification variables a f cent and b N iso track . For signal distributions, 1-track \u03c4 had-vis decays are matched to true generator-level \u03c4 had-vis in simulated events, while the multi-jet events are obtained from the data",
+            "paragraph_rank": 78,
+            "section_rank": 26
+        },
+        {
+            "text": "Fig. 3",
+            "section_rank": 27
+        },
+        {
+            "section": "Fig. 3",
+            "text": "Fig. 3Signal and background distribution for the 3-track \u03c4 had-vis decay offline tau identification variables a R track and b m \u03c0 0 +track . For signal distributions, 3-track \u03c4 had-vis decays are matched to true generator-level \u03c4 had-vis in simulated events, while the multi-jet events are obtained from data",
+            "paragraph_rank": 79,
+            "section_rank": 27
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 28
+        },
+        {
+            "section": "Fig. 4",
+            "text": "Fig. 4Offline tau identification efficiency dependence on the number of reconstructed interaction vertices, for a 1-track and b 3-track \u03c4 had-vis decays matched to true \u03c4 had-vis (with corresponding number of charged decay products) from SM and exotic processes in simulated data. Three working points, corresponding to different tau identification efficiency values, are shown",
+            "paragraph_rank": 80,
+            "section_rank": 28
+        },
+        {
+            "text": "Fig. 5",
+            "section_rank": 29
+        },
+        {
+            "section": "Fig. 5",
+            "text": "Fig. 5Inverse background efficiency versus signal efficiency for the offline tau identification, for a a low-p T and b a highp T \u03c4 had-vis range. Simulation samples for signal include a mixture of Z , W and Z production processes, while data from multi-jet events is used for background. The red markers correspond to the three working points mentioned in the text. The signal efficiency shown corresponds to the total efficiency of \u03c4 had-vis decays to be reconstructed as 1-track or 3-track and pass tau identification selection",
+            "paragraph_rank": 81,
+            "section_rank": 29
+        },
+        {
+            "text": "Fig. 6",
+            "section_rank": 30
+        },
+        {
+            "section": "Fig. 6",
+            "text": "Fig. 6Distribution of z 0 for the tau trigger at L2 in simulated Z \u2192 \u03c4 \u03c4 events with an average of eight interactions per bunch crossing. The wide Gaussian distribution corresponds to pile-up tracks while the central peak, displayed in the upper-right corner, corresponds to the main interaction tracks. A Breit-Wigner function is fitted to the central peak and 68 % of the signal events are found within a distance \u03c3 = 0.32 mm from the peak",
+            "paragraph_rank": 82,
+            "section_rank": 30
+        },
+        {
+            "text": "Fig. 8",
+            "section_rank": 31
+        },
+        {
+            "section": "Fig. 8",
+            "text": "Fig. 8Signal and background distribution for two of the electron veto variables, a f HT and b f EM . Candidate 1-track \u03c4 had-vis decays are required to not overlap with a reconstructed electron candidate which passes tight electron identification[23]. For signal distributions, 1-track \u03c4 had-vis decays are matched to true generator-level \u03c4 had-vis in simulated Z \u2192 \u03c4 \u03c4 events, while the electron contribution is obtained from simulated Z \u2192 ee events where 1-track \u03c4 had-vis decays are matched to true generator-level electrons",
+            "paragraph_rank": 83,
+            "section_rank": 31,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 246,
+                    "text": "[23]",
+                    "end": 250
+                }
+            ]
+        },
+        {
+            "text": "\u2022",
+            "section_rank": 32
+        },
+        {
+            "section": "\u2022",
+            "text": "On the transverse mass of the lepton and E miss T system (m T = 2 p T \u2022 E miss T (1 \u2212 cos \u03c6( , E miss T ))): m T < 50 GeV. For most backgrounds (e.g. (W \u2192 \u03bd ) + jets), this variable peaks at larger values. \u2022 On the distance in the azimuthal plane between the lepton and E miss T (neutrinos) and between the \u03c4 had-vis and E miss T ( cos \u03c6 = cos \u03c6( , E miss T ) + cos \u03c6(\u03c4 had-vis , E miss T )): cos \u03c6 > \u22120.15.",
+            "paragraph_rank": 84,
+            "section_rank": 32
+        },
+        {
+            "text": "Fig. 10",
+            "section_rank": 33
+        },
+        {
+            "section": "Fig. 10",
+            "text": "Fig. 10Template fit result in the muon channel, inclusive in \u03b7 and p T for p T > 20 GeV for the offline \u03c4 had-vis candidates a before the requirement of tau identification, and b fulfilling the medium tau identification requirement",
+            "paragraph_rank": 85,
+            "section_rank": 33
+        },
+        {
+            "text": "Fig. 11",
+            "section_rank": 34
+        },
+        {
+            "section": "Fig. 11",
+            "text": "Fig. 11Correction factors needed to bring the offline tau identification efficiency in simulation to the level observed in data, for all tau identification working points as a function of \u03b7. The combinations of the muon and electron channels are also shown, and the results are displayed separately for a 1-track and b 3-track \u03c4 had-vis candidates with p T > 20 GeV. The combined systematic and statistical uncertainties are shown",
+            "paragraph_rank": 86,
+            "section_rank": 34
+        },
+        {
+            "text": "Fig. 12",
+            "section_rank": 35
+        },
+        {
+            "section": "Fig. 12",
+            "text": "Fig. 12The tau trigger efficiency for \u03c4 had-vis candidates identified by the offline medium tau identification, as a function of a the offline \u03c4 had-vis transverse energy and b the number of primary vertices. The error bars correspond to the statistical uncertainty in the efficiency",
+            "paragraph_rank": 87,
+            "section_rank": 35
+        },
+        {
+            "text": "> 35",
+            "section_rank": 36
+        },
+        {
+            "section": "> 35",
+            "text": "GeV in order to suppress backgrounds from Z \u2192 \u03c4 \u03c4 events. The probe is required not to overlap geometrically with an identified electron, e.g. in the case ofFig. 14 a looseelectron identification is used. Different veto algorithms are tested in combination with differ-",
+            "paragraph_rank": 88,
+            "section_rank": 36
+        },
+        {
+            "text": "Fig. 14 a",
+            "section_rank": 37
+        },
+        {
+            "section": "Fig. 14 a",
+            "text": "Fig. 14a Visible mass of electron-positron pairs for the offline electron veto efficiency measurement, after tag-and-probe selection, where the probe lepton passes medium tau identification and does not overlap with loose electrons, before the electron veto is applied. b \u03b7 distribution for \u03c4 had-vis candidates (electrons misidentified as hadronic tau decays) after applying a loose electron veto. Uncertainties shown are only statistical",
+            "paragraph_rank": 89,
+            "section_rank": 37
+        },
+        {
+            "text": "Fig. 16",
+            "section_rank": 38
+        },
+        {
+            "section": "Fig. 16",
+            "text": "Fig. 16Offline energy resolution for hadronically decaying tau leptons, separately for a one and b three associated tracks and for different pseudorapidity regions. The resolution shown is the standard deviation of a Gaussian function fit to the distribution of (E reco \u2212 E true vis )/E true vis in a given range of E true vis and |\u03b7 true vis |",
+            "paragraph_rank": 90,
+            "section_rank": 38
+        },
+        {
+            "text": "Fig. 17",
+            "section_rank": 39
+        },
+        {
+            "section": "Fig. 17",
+            "text": "Fig. 17The m vis distribution used for the in-situ offline TES measurement. Shown is the comparison between data and simulation for \u03c4 had-vis with a one or b three associated tracks",
+            "paragraph_rank": 91,
+            "section_rank": 39
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 40
+        },
+        {
+            "section": "Table 1",
+            "text": "Tau triggers with their corresponding kinematic requirements. Examples of physics processes targeted by each trigger are also listed, where \u03c4 had and \u03c4 lep refer to",
+            "paragraph_rank": 92,
+            "section_rank": 40
+        },
+        {
+            "text": "Table 2",
+            "section_rank": 41
+        },
+        {
+            "section": "Table 2",
+            "text": "Discriminating variables used as input to the tau identification algorithm at offline reconstruction and at trigger level, for 1-track and 3-track candidates. The bullets indicate whether a particular variable is used for a given selection. The \u03c0 0 -reconstruction-based variables, m \u03c0 0 +track , N \u03c0 0 , p \u03c0 0 +track",
+            "paragraph_rank": 93,
+            "section_rank": 41
+        },
+        {
+            "text": "Table 4",
+            "section_rank": 42
+        },
+        {
+            "section": "Table 4",
+            "text": "Dominant uncertainties on the loose electron veto efficiency correction factors estimated with the Z tag-and-probe method. The range of the uncertainties reflects their variation with \u03b7",
+            "paragraph_rank": 94,
+            "section_rank": 42
+        },
+        {
+            "text": "Table 5",
+            "section_rank": 43
+        },
+        {
+            "section": "Table 5",
+            "text": "Systematic uncertainties on the tau energy scale estimated using the deconvolution method. In general, the values depend on E T , |\u03b7| and the number of associated tracks. The range of values for E T > 20 GeV is shown",
+            "paragraph_rank": 95,
+            "section_rank": 43
+        },
+        {
+            "text": "Table 6",
+            "section_rank": 44
+        },
+        {
+            "section": "Table 6",
+            "text": "Dominant systematic uncertainties on the tau energy scale estimated using the in-situ method. In general, the values depend on the number of associated tracks. All other systematic uncertainties are smaller than 0.1 %",
+            "paragraph_rank": 96,
+            "section_rank": 44
+        },
+        {
+            "section": "Table 6",
+            "text": "ATLAS uses a right-handed coordinate system with its origin at the nominal interaction point (IP) in the centre of the detector and the z-axis along the beam direction. The x-axis points from the IP to the centre of the LHC ring, and the y-axis points upward. Cylindrical coordinates (r, \u03c6) are used in the transverse (x, y) plane, \u03c6 being the azimuthal angle around the beam direction. The pseudorapidity is defined in terms of the polar angle \u03b8 as \u03b7 = \u2212 ln tan(\u03b8/2). The distance R in the \u03b7-\u03c6 space is defined as R = ( \u03b7) 2 + ( \u03c6) 2 .",
+            "paragraph_rank": 97,
+            "section_rank": 44
+        },
+        {
+            "section": "Table 6",
+            "text": "This is often interpreted as the parton initiating the jet or the highestp T parton within a jet; however, none of these concepts can be defined unambiguously.",
+            "paragraph_rank": 98,
+            "section_rank": 44
+        },
+        {
+            "section": "Table 6",
+            "text": "Calibration of the \u03c4 had-vis energyThe \u03c4 had-vis energy calibration is done in several steps. First, a calibration described in Sect. 5.1 and derived from simulation brings the tau energy scale (TES) into agreement",
+            "paragraph_rank": 99,
+            "section_rank": 44
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 46
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "We thank CERN for the very successful oper-",
+            "paragraph_rank": 100,
+            "section_rank": 46
+        },
+        {
+            "text": "Department of Physics, Boston University, Boston, MA, USA",
+            "paragraph_rank": 101,
+            "section_rank": 48
+        }
+    ]
+}

@@ -1,0 +1,1722 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "The direct measurement of the top quark-Higgs coupling is one of the important questions in understanding the Higgs boson. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The coupling can be obtained through measurement of the top quark pair-associated Higgs boson production cross-section. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Of the multiple challenges arising in this cross-section measurement, we investigate the reconstruction of the partons originating from the hard scattering process using the measured jets in simulated ttH events. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The task corresponds to an assignment challenge of m objects (jets) to n other objects (partons), where m \u2265 n. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We compare several methods with emphasis on a concept based on deep learning techniques which yields the best results with more than 50% of correct jet-parton assignments.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "A direct measurement of the Higgs boson coupling to top quarks is considered one of the most important consistency tests of the Higgs particle discovered in 2012 within the Standard Model of particle physics [1,2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 208,
+                    "end": 211,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 211,
+                    "end": 213,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "In this context, the mass-dependent coupling of the Higgs to matter particles and gauge bosons is expected to be largest for top quarks and close to unity.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "A promising process to measure the strength of the Higgs-top coupling is to determine the cross section of top quark pair-associated Higgs boson production (ttH) with the Higgs boson decaying into two bottom quarks and the top quarks decaying semi-leptonically. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The expected cross-section is sufficiently large to be detected with the LHC experiments using the data recorded thus far. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The analysis is challenged by an irreducible background from top quark pair production with radiated gluons that split into pairs of bottom quarks. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "A combination of advanced analysis methods is required to separate the ttH signal from background processes.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In this work we investigate a central processing step of the analysis, namely the assignment of the jets detected in a detector to the partons of the underlying hard scattering process. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Correct assignments of the jets to the Higgs boson and to the top quarks enable calculation of suitable observables such as invariant masses and increase the separation power of signal and background. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "We compare several methods to determine the jet-parton assignment with emphasis on a method based on deep learning techniques.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The application of deep learning methods in various areas of fundamental research is receiving increasing attention. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "This is motivated by the impressive successes of the deep learning ansatz in handwriting recognition [3,4], speech recognition [5], challenges with humans regarding image identification [6,7], and in playing games [8]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[3,"
+                },
+                {
+                    "start": 104,
+                    "end": 106,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "4]"
+                },
+                {
+                    "start": 127,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[5]"
+                },
+                {
+                    "start": 186,
+                    "end": 189,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[6,"
+                },
+                {
+                    "start": 189,
+                    "end": 191,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "7]"
+                },
+                {
+                    "start": 214,
+                    "end": 217,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "For a review, see [9]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 21,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "Deep neural networks have recently been investigated for challenges in particle physics. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Various network designs have been successfully applied to extract a simulated, new exotic particle or Higgs boson signal from a background-dominated data sample [10][11][12], to identify the underlying parton flavor of a jet or to measure jet substructure [13,14], and to reconstruct the neutrino flavor in neutrino-nucleus interactions [15].",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 161,
+                    "end": 165,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[10]"
+                },
+                {
+                    "start": 165,
+                    "end": 169,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[11]"
+                },
+                {
+                    "start": 169,
+                    "end": 173,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[12]"
+                },
+                {
+                    "start": 256,
+                    "end": 260,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[13,"
+                },
+                {
+                    "start": 260,
+                    "end": 263,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "14]"
+                },
+                {
+                    "start": 337,
+                    "end": 341,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "As a new application category of deep neural networks, we investigate the capability to select the single correct assignment from a number of possibilities of associating m objects with n other objects (m \u2265 n).",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "As we investigate the Higgs boson decaying to bottom quark pairs and top quark pairs in the semi-leptonic decay channel, the desired final state consists of the lepton and neutrino of one of the W boson decays, two light quark jets of the other W decay, and at least four bottom quark jets (b-jets). ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "A typical event situation is shown in Figure 1. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 46,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Note that the b-jets of the top and Higgs decays have similar transverse momenta such that simple kinematic cuts do not yield promising results.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The challenge thus consists of assigning 6 out of m \u2265 6 jets to n = 6 partons. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "Higher-order radiation processes cause the number of jets to exceed m = 6. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "We reduce the number of possible jet-parton assignments (permutations) by ignoring the interchange of the two jets associated with the Higgs decay or the W decay, respectively. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "We also take advantage of bottom quark identification algorithms (b-tag) with high efficiency for correct b-tags and only a small probability of light quark jets being incorrectly b-tagged.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "For events with 6 jets where exactly 4 jets are b-tagged, we assign the two untagged jets to the W boson and obtain 4!",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "/2 = 12 permutations for the b-tagged jets. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Only one of the 12 permutations corresponds to the correct jet-parton assignment. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Owing to higher-order radiation effects with correspondingly more jets observed in the detector, the majority of events allows for a larger number of possible permutations which typically reaches several hundred.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "We will evaluate the efficiency of the deep neural network to find the correct permutations and compare them with the results of a boosted decision tree and a \u03c7 2 measure derived from the hypothetical masses of a permutation.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "text": "This work is structured as follows: Initially, the deep network design is explained. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "The simulated dataset is then introduced and input observables are presented in the following sections. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "We evaluate the efficiencies of finding the correct assignment with different methods. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "We also demonstrate the effect on reconstructed observables which are typically used in ttH analyses. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Finally, we present our conclusions.",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Neural network design",
+            "section_rank": 3
+        },
+        {
+            "text": "For the network architecture we use various technical concepts developed within deep learning research. ",
+            "section": "Neural network design",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "As we work with a fixed number of features, i.e. input observables, our basic concept is a fully connected network consisting of 8 hidden layers with 500 nodes in each layer (Figure 2a, Table 1).",
+            "section": "Neural network design",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 174,
+                    "end": 184,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "(Figure 2a"
+                },
+                {
+                    "start": 186,
+                    "end": 193,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "In addition, we apply the so-called residual network concept [7] where the input to the layer i not only consists of the output of the previous layer i \u2212 1, but also from another previous layer i \u2212 j, where we choose j = 3:",
+            "section": "Neural network design",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "This residual concept is found to accelerate the training of the deep neural network. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "For modeling non-linearities, we apply an exponential linear (ELU) activation function on the output of each node. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The network is trained to find the best match between the partons of the fundamental hard scattering process and the final state particles as measured in a collider detector. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "In Figure 2b we exemplarily show input variables and illustrate the training principle. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figure 2b"
+                }
+            ]
+        },
+        {
+            "text": "The partons b lep , b had , ... and the high level variables calculated from them define the input layer of the network. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "A correct jetparton assignment is represented by jet 1 being the b-jet truly originating from the bottom quark b lep of the leptonic top quark decay, jet 2 truly originating from the bottom quark b had of the hadronic top quark decay, etc. ",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "For the incorrect jet-parton assignments, the order of the jets on input is changed accordingly.",
+            "section": "Neural network design",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The cost function to be minimized in the training process is described by the binomial crossentropy:",
+            "section": "Neural network design",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Here, D DNN is the output of the neural network given the parameters W and b for input observables x, which contain all information on the final state particles.D is the training target whose value is 1 for correct jet-parton assignments and 0 otherwise. ",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "As the number of incorrect permutations by far exceeds the number of correct ones, incorrect permutations are scaled by \u03c9 to give the same weight in the training. ",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "Below we will apply a preselection of at most 50 permutations such that the weights for incorrect permutations vary within \u03c9 \u2208 [1/12, 1/50].  ",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "In order to ensure generalization and reduce prediction errors when applied to a new, independent dataset, we introduce regularization measures. ",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "We use L 2 regularization (last term in eq.",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "(2.2)) which penalizes large weights during training and prevents the network from learning features unique to the training set.",
+            "section": "Neural network design",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "We initialize the weights W according to a Gaussian distribution with squared width \u03c3 2 = 2/(l in + l out ) where l in and l out are the number of ingoing and outgoing connections of a layer [16]. ",
+            "section": "Neural network design",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 191,
+                    "end": 195,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "We also pre-process the input observables using feature scaling where we normalize x to mean 0  and standard deviation 1. ",
+            "section": "Neural network design",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "For the optimization we use the concept of the stochastic gradient descent with an adaptive learning rate (ADAM) [17].",
+            "section": "Neural network design",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 117,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "We use the TensorFlow software package to set up the network [18]. ",
+            "section": "Neural network design",
+            "paragraph_rank": 18,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[18]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 22,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                },
+                {
+                    "start": 31,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "The network training is performed on a cluster with GPU cards of GeForce GTX 1080 type with up to 64 GB of system memory. ",
+            "section": "Neural network design",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "A typical training time amounts to 6 h.",
+            "section": "Neural network design",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "Simulated dataset",
+            "section_rank": 4
+        },
+        {
+            "text": "To simulate ttH events we use the Pythia 8.2.19 program package [19]. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 64,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[19]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                },
+                {
+                    "start": 56,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "The matrix elements for ttH processes include angular correlations of the decay products from heavy resonances. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The beam conditions correspond to LHC proton-proton collisions at \u221a s = 13 TeV. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "We use only the dominant gluon-gluon process and the Higgs boson decay into a bottom quark pair. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Hadronization is performed with the Lund string fragmentation concept.",
+            "section": "Simulated dataset",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "In order to analyze a typical final state as observed in a LHC detector we use the DELPHES package to simulate the CMS detector [20]. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 20,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[20]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 91,
+                    "end": 98,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "The DELPHES project provides a modular framework that simulates a multipurpose detector in a parameterized way. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "It includes all major effects such as pile-up, charged particle deflections in magnetic fields, electromagnetic and hadronic calorimetry, and muon detection systems. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "The simulated output consists of muons, electrons, photons, jets and missing transverse momentum from a particle flow algorithm as well as identifiers for bottom jets and tau leptons.",
+            "section": "Simulated dataset",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "For the jet finding the anti-k t algorithm is used with the size parameter R = 0.5. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "For the b-tag algorithm both the efficiency \u03b5 b of correct b-tags and the probability \u03c1 b of jets from light quarks being incorrectly b-tagged have a dependency on the jet transverse momentum p In our analysis of the simulated data, we select events with lepton transverse momenta above p l t = 20 GeV (electrons or muons) and their pseudorapidities within |\u03b7 l | < 2.1. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "The jet transverse momenta are above p jet t = 25 GeV, with their pseudorapidities being within |\u03b7 jet | < 2.5. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "We require the number of jets to be within 6 \u2264 n jet \u2264 10; of these at least n jet = 2 must be b-tagged.",
+            "section": "Simulated dataset",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "The correct assignment is obtained by matching partons with jets using generator information. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "A match must fulfill \u2206R jet, parton < 0.3 with",
+            "section": "Simulated dataset",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "where \u03c6 is the azimuthal angle in the detector and \u03b7 denotes the pseudorapidity. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Ambiguities are resolved by minimizing the sum \u2206R of all viable matches. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "In order to define valid training targets, we consider only events for which all partons could be matched. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "From the total of 10 8 generated events, we could identify all partons of the hard scattering process in 44% of the events. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "After applying the selection criteria for reconstructed jets and leptons 5.6% of the generated events remained. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "The additional requirement of the above-mentioned jetparton match was then fulfilled by 0.7% of the events. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Therefore, we perform the investigations with 738, 270 events, using 40% for training purposes and 10% for immediate validation. ",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "To determine the correct assignment efficiency we use 50% of the events.",
+            "section": "Simulated dataset",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Detector observables",
+            "section_rank": 5
+        },
+        {
+            "text": "We use two categories of variables as the input observables for solving the jet-parton assignment in ttH events: The neutrino was reconstructed using the charged lepton, and the missing transverse energy according to [21].",
+            "section": "Detector observables",
+            "paragraph_rank": 24,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 217,
+                    "end": 221,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[21]"
+                }
+            ]
+        },
+        {
+            "text": "As an example of how different the distributions are when selecting the correct jet-parton assignment or permutations, respectively, in Figure 3a we show the transverse momentum distribution of the p t leading light quark jet resulting from the W decay. ",
+            "section": "Detector observables",
+            "paragraph_rank": 25,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 136,
+                    "end": 145,
+                    "type": "figure",
+                    "text": "Figure 3a"
+                }
+            ]
+        },
+        {
+            "text": "The full red curve represents the distribution from correct assignments of the jet to a quark from the W decay. ",
+            "section": "Detector observables",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "The dashed blue curve illustrates the distribution resulting from incorrectly assigning a jet to the W decay. ",
+            "section": "Detector observables",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "The combinatorics of wrong assignments by far exceeds the single true assignment solution.",
+            "section": "Detector observables",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "In Figure 3 we show similar distributions for ",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "b) the pseudorapidity of the jet induced by the bottom anti-quark from the Higgs boson decay, ",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "c) the distance \u2206R between the jets originating from the Higgs boson, ",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "d) the azimuthal angular distance of the two jets from the W boson decay, ",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "e) the reconstructed mass of the Higgs boson, and ",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "f) the cosine of the spatial angle \u03b8 * of the leptonic branch as defined in item 2",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "(d) above.",
+            "section": "Detector observables",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "In total, we use 140 basic kinematic observables of the above first category, and 22 combined observables of the second category.",
+            "section": "Detector observables",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "Jet-parton assignments",
+            "section_rank": 6
+        },
+        {
+            "text": "The efficiencies of finding the correct jet-parton assignment using three different methods are described in the following. ",
+            "section": "Jet-parton assignments",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "As a benchmark, drawing the correct jet-parton assignments by chance is largest for events with 6 jets where the four b-jets were correctly tagged: 1/12 \u2248 8%. ",
+            "section": "Jet-parton assignments",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "As the experimental b-tagging efficiency is \u03b5 < 1 and the probability of successfully tagging k = 4 b-jets is small, \u03b5 k 1, this is a rare case within our simulations. ",
+            "section": "Jet-parton assignments",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "The majority of ttH events has more than 6 jets which results in a negligible rate of correct assignments by chance.",
+            "section": "Jet-parton assignments",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "\u03c7 2 method",
+            "section_rank": 7
+        },
+        {
+            "text": "Initially, we use the reconstructed masses of the Higgs boson, both top quarks, and the W boson of the hadronically decaying top quark in the context of a \u03c7 2 measure:",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 29,
+            "section_rank": 7
+        },
+        {
+            "text": "Here, the index H refers to the Higgs boson, (t, lep) to the top quark of the leptonic branch, and (t, had) and (W, had) to the top quark and W boson of the hadronic branch. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "The tilde symbol indicates the reconstructed average massesm using the correct jet-parton assignments, and the corresponding widths\u03c3 of the mass distributions. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "In Figure 4a we show the distribution of our discriminator D \u03c7 2 \u2261 exp (\u2212 \u03c7 2 ) for permutations of an exemplary event. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 4a"
+                }
+            ]
+        },
+        {
+            "text": "We use this definition of D \u03c7 2 for consistency with the subsequent methods, which return better results at higher scores. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "Correspondingly, the permutation with the highest D \u03c7 2 value (smallest \u03c7 2 ) is considered the selected jet-parton assignment and eventually denotes the full event reconstruction. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "The correct jet-parton assignment is typically contained within the 50 permutations with the largest D \u03c7 2 discriminator values. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "Therefore we investigate only these 50 permutations.  ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "resulting from the correct jet-parton assignment as a vertical line which coincides in this event with the reconstructed assignment. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "Also shown in Figure 4b are the D \u03c7 2 distributions for all events with correct assignment (full red curve) and incorrect assignments (dashed blue curve).",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 30,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 14,
+                    "end": 23,
+                    "type": "figure",
+                    "text": "Figure 4b"
+                }
+            ]
+        },
+        {
+            "text": "Using the number of events with correct jet-parton assignments in comparison to the total number of events, we find an efficiency of \u03b5(ttH) = 37% to correctly assign all jets to the ttH parton final state. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "If only the correct reconstruction of the Higgs decay is of interest, the efficiency of the correctly assigned b-jets is greater and amounts to \u03b5(H) = 52% (  Table 2: Efficiency \u03b5(ttH) of finding the correct jet-parton assignments in ttH events, and efficiency \u03b5(H) of finding the correct jets originating from the Higgs boson decay for all methods.",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 31,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 158,
+                    "end": 165,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "In order to obtain more information on the quality of the selected jet-parton assignment, per event we count the permutations with D \u03c7 2 value larger than that of the correct assignment D truth",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "(see Figure 4a):",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 33,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 5,
+                    "end": 15,
+                    "type": "figure",
+                    "text": "Figure 4a)"
+                }
+            ]
+        },
+        {
+            "text": "The distribution of I(D \u03c7 2 ) can be used to assess the quality of a discriminator. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "text": "For correctly selected assignments, I(D \u03c7 2 ) vanishes (full curve in Figure 4c). ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 34,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 79,
+                    "type": "figure",
+                    "text": "Figure 4c"
+                }
+            ]
+        },
+        {
+            "text": "However, in the case of an incorrectly selected assignment, I(D \u03c7 2 ) > 0, it should be as small as possible for good discriminators. ",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "text": "For the \u03c7 2 method, the resulting distribution of I(D \u03c7 2 ) is shown for all events by the dashed blue curve in Figure 4c.",
+            "section": "\u03c7 2 method",
+            "paragraph_rank": 34,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 121,
+                    "type": "figure",
+                    "text": "Figure 4c"
+                }
+            ]
+        },
+        {
+            "text": "Boosted decision trees",
+            "section_rank": 8
+        },
+        {
+            "text": "As an alternative method we use boosted decision trees (BDT) as implemented in [22]. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 35,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "We apply the AdaBoost algorithm for boosting. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "With respect to the default hyperparameters we found improved results when using an increased number of 400 decision trees, but no substantial change when varying the maximum depth of a tree, or the learning rate of the boosting algorithm. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "The discriminator D BDT of the BDT is the weighted average of all decision trees each classifying a given jet-parton assignment as signal or background alternatively.",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "For the BDT we use the same observables as described in section 4. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 36,
+            "section_rank": 8
+        },
+        {
+            "text": "We apply the same training principle as described in section 2 and illustrated in Figure 2b. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 36,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 91,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figure 2b"
+                }
+            ]
+        },
+        {
+            "text": "For training the BDT, a signal indicator is given in the case that the order of the observables follows the correct jet-parton assignment. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 36,
+            "section_rank": 8
+        },
+        {
+            "text": "Correspondingly, a background flag is given for other permutations.",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 36,
+            "section_rank": 8
+        },
+        {
+            "text": "On evaluation of the jet-parton assignment in a reconstructed event, first a preselection is performed using the above-mentioned \u03c7 2 method. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "text": "Only the 50 permutations with the largest D \u03c7 2 discriminator (smallest \u03c7 2 ) values are considered for evaluation by the BDT method. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "text": "The permutation with the largest discriminator D BDT is considered as the selected jet-parton assignment. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "text": "The efficiency of finding the correct parton-jet assignment is \u03b5(ttH)) = 45% which is better compared to the \u03c7 2 method. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "text": "Correspondingly, also the efficiency of providing the correct b-jets of the Higgs decay is improved: \u03b5(H) = 57% (see Table 2).",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 37,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 124,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "As for the \u03c7 2 method, we assess the performance of the BDT discriminator D BDT by examining the number of permutations yielding a higher value than the correct one, I(D BDT ) (5.2). ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "This distribution is shown in Figure 4c by the dashed green curve. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 38,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 39,
+                    "type": "figure",
+                    "text": "Figure 4c"
+                }
+            ]
+        },
+        {
+            "text": "The efficiency of the BDT method is better than that of the \u03c7 2 method as can be seen at I(D BDT ) = 0. ",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Also, the distribution flattens out faster for I(D BDT ) > 0 compared to the \u03c7 2 method, indicating a better overall performance of the BDT method.",
+            "section": "Boosted decision trees",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Neural network",
+            "section_rank": 9
+        },
+        {
+            "text": "In our third method, we investigate the performance of the neural network. ",
+            "section": "Neural network",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Network architecture, training and evaluation procedures are described in section 2, and the observables in section 4.",
+            "section": "Neural network",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "For evaluation of the jet-parton assignment in a reconstructed event, we again preselect only the 50 permutations with the largest D \u03c7 2 values of the \u03c7 2 method. ",
+            "section": "Neural network",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "On these permutations, the network delivers a corresponding discriminator D DNN [0, 1] where the maximum discriminator value leads to the selected jet-parton assignment. ",
+            "section": "Neural network",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "In Figure 4d the distributions of the discriminator D DNN are shown for all events with correct assignment (full red curve) and incorrect assignments (dashed blue curve).",
+            "section": "Neural network",
+            "paragraph_rank": 40,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "text": "Figure 4d"
+                }
+            ]
+        },
+        {
+            "text": "For the majority of the events, the neural network provides the correct jet-parton assignment. ",
+            "section": "Neural network",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "The corresponding efficiency is \u03b5(ttH)) = 52%, which is better than the BDT method (see Table 2). ",
+            "section": "Neural network",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 95,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "In \u03b5(H) = 63% of the events, the network provides the correct jets of the Higgs boson decay.",
+            "section": "Neural network",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "We also compare the performance of the network by counting permutations with the discriminator D DNN value exceeding that of the correct jet-parton assignment. ",
+            "section": "Neural network",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The resulting distribution of I(D DNN ) (5.2) is shown in Figure 4c for all events by the dashed red curve. ",
+            "section": "Neural network",
+            "paragraph_rank": 42,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 67,
+                    "type": "figure",
+                    "text": "Figure 4c"
+                }
+            ]
+        },
+        {
+            "text": "Again, the high efficiency of finding the correct jet-parton assignments is visible at I(D DNN ) = 0. ",
+            "section": "Neural network",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The distribution of the non-zero counts I(D DNN ) is consistently below the distributions of the two other methods.",
+            "section": "Neural network",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Impact on tt H analyses",
+            "section_rank": 10
+        },
+        {
+            "text": "Finding the correct jet-parton assignment in ttH events can have a major impact on the sensitivity of a corresponding cross-section analysis. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "As a quantitative measure of the improvement in analysis sensitivity is beyond the scope of this work, we will show distributions of key observables typically used in such analyses.",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "In Figure 5a we show the distribution of the distance \u2206R of the jets originating from the Higgs boson decay for the correct jet-parton assignment (black curve) in comparison to the three reconstruction methods investigated above. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5a"
+                }
+            ]
+        },
+        {
+            "text": "The result of the neural network is shown by the dashed red curve and consistently depicts the best distribution of correct jet-parton assignments. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "The BDT method is illustrated by the dashed green curve which on average yields \u2206R values that are too large. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "The \u03c7 2 method (dashed blue curve) on average returns \u2206R values that are too small. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 5b shows distributions of the azimuthal angular distance of the two jets of the W boson decay with a similar quality in the description for the BDT and neural network methods but worse for the \u03c7 2 method. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5b"
+                }
+            ]
+        },
+        {
+            "text": "The reconstructed mass of the Higgs boson can be seen in Figure 5c. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 66,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5c"
+                }
+            ]
+        },
+        {
+            "text": "Both the \u03c7 2 and BDT methods have a bias towards the center of the distribution while the best possible reconstruction using the correct jet-parton assignment is less pronounced. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "The latter distribution is best described by the neural network.",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "In Figure 5d we also show the angular characteristics of the leptonic W decay. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5d"
+                }
+            ]
+        },
+        {
+            "text": "This is encoded in the distribution of the angle \u03b8 * between the leptonically decaying W in the rest frame of its top quark, and the charged lepton which is boosted into the W rest frame. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "The neural network yields the best description among the three tested methods. ",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "Overall, the neural network provides the best description of the distributions obtained with the correct jet-parton assignment (truth).",
+            "section": "Impact on tt H analyses",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 11
+        },
+        {
+            "text": "In this work, we investigated the jet-parton assigments in simulated ttH events using deep learning techniques. ",
+            "section": "Conclusions",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "With a high fraction of correct assignments, high-level variables such as reconstructed masses or decay angular characteristics can be determined more precisely, which is advantageous when separating signal from background processes.",
+            "section": "Conclusions",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "Our study was based on simulated ttH events generated with a parameterized detector simulation. ",
+            "section": "Conclusions",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "Our investigations were carried out using events which contain all information for reconstructing the ttH parton final state.",
+            "section": "Conclusions",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "The fully connected architecture of the neural network contained 8 hidden layers with 500 nodes each and additional connections following the approach of residual networks. ",
+            "section": "Conclusions",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "For training, the order of the input variables was according to the correct jet-parton assignment (signal) or a permutation of that order (background), respectively.",
+            "section": "Conclusions",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "During evaluation, a discriminator was calculated for each permutation of the jet-parton assignments, and the assignment with the largest discriminator value was considered the selected assignment which is equivalent to a full event reconstruction. ",
+            "section": "Conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "When compared to two other commonly used methods, the neural network approach returned the best results by far, correctly reconstructing the entire ttH event in 52%, and only the Higgs boson in 63% of the cases.",
+            "section": "Conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 1: Jet-parton assignment challenge in top pair-associated Higgs production processes (ttH).",
+            "section": "Figure 1 :",
+            "paragraph_rank": 50,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 2: ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 51,
+            "section_rank": 13
+        },
+        {
+            "text": "a) Fully connected architecture of the network with additional connections following the concept of residual networks. ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 51,
+            "section_rank": 13
+        },
+        {
+            "text": "b) Permutations of the input variables to the neural network (DNN) or the boosted decision trees (BDT), respectively.",
+            "section": "Figure 2 :",
+            "paragraph_rank": 51,
+            "section_rank": 13
+        },
+        {
+            "text": "jet t with the values \u03b5 b = 0.71 and \u03c1 b = 0.014 at p jet t = 100 GeV.",
+            "paragraph_rank": 52,
+            "section_rank": 14
+        },
+        {
+            "text": "1 . ",
+            "section_rank": 15
+        },
+        {
+            "text": "2 .",
+            "section_rank": 15
+        },
+        {
+            "text": "Basic particle-related variables: ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "Basic",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "(a) For all jets and leptons: four-vector values such as the momenta in both spherical and Cartesian coordinates. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(b) For the charged lepton: isolation variables and sum of transverse momenta \u03a3p T of charged and neutral particles within \u2206R \u2264 0.5 relative to the lepton momentum. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(c) For jets: b-and \u03c4-tag values, jet area, the number of constituents, and electromagnetic and hadronic calorimeter contributions. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "Observables derived from combinations of several objects: ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(a) The masses of the Higgs boson, the top quarks, the hadronically decaying W boson, and the individual \u03c7 2 values compared to the expected masses. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "Also the combined mass of the tt system. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(b) The transverse momenta of the tt system and the ttH system, and the ratio of the jet scalar transverse momentum sum to that of all final state particles including the neutrino.",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(c) The distance \u2206R between the two jets originating from the Higgs boson decay, and their differences in pseudorapidity and in azimuthal angles. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "The distance \u2206R between the two jets originating from the W boson decay, and their differences in pseudorapidity and in azimuthal angles. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "The difference between the pseudorapidities of the lepton and the b-jet of the leptonically decaying top quark.",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "(d) The spatial angle \u03b8 * between the charged lepton in the W boson rest frame and the W boson direction when boosted into the rest frame of its corresponding top quark. ",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "The spatial angle \u03b8 * between the softer jet of the W boson decay in the W boson rest frame and the W boson direction in the rest frame of its corresponding top quark.",
+            "section": "1 . 2 .",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 3 :Figure 4 :",
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 3: Observables used for the training with the correct jet-parton assignment (full red curve) and permutations (dashed blue curve): ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "a) transverse momentum of the leading jet of the W boson decay, ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "b) pseudorapidity of the jet induced by the bottom anti-quark from the Higgs decay, ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "c) directional distance \u2206R of the jets of the Higgs boson decay, ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "d) azimuthal angular distance of the two jets of the W boson decay, ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "e) reconstructed Higgs mass, and ",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "f) the spatial angle cos \u03b8 * of the leptonic branch.",
+            "section": "Figure 3 :Figure 4 :",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 5 :",
+            "section_rank": 17
+        },
+        {
+            "text": "Figure 5: Distributions of reconstructed observables which depend on the correct jet-parton assignments, ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "a) directional distance \u2206R of the b-jet pair of the Higgs boson decay, ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "b) azimuthal angular distance of the two jets of the W decay, ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "c) reconstructed Higgs boson mass, and ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "d) decay angular distribution cos \u03b8 * of the leptonically decaying W boson. ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "The full curve shows the correct assignment and the dashed curves depict the neural network (red), the boosted decision tree (green), and the \u03c7 2 method (blue).",
+            "section": "Figure 5 :",
+            "paragraph_rank": 55,
+            "section_rank": 17
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 18
+        },
+        {
+            "text": "Design parameters of the neural network.",
+            "section": "Table 1 :",
+            "paragraph_rank": 56,
+            "section_rank": 18
+        },
+        {
+            "text": "Table 2",
+            "section_rank": 19
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 21
+        },
+        {
+            "text": "This work is supported by the Ministry of Innovation, Science and Research of the State of North Rhine-Westphalia, and the Federal Ministry of Education and Research (BMBF). ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 58,
+            "section_rank": 21
+        },
+        {
+            "text": "We wish to thank David Walz for his valuable comments on the manuscript.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 58,
+            "section_rank": 21
+        }
+    ]
+}

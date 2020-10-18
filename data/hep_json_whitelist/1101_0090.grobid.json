@@ -1,0 +1,531 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Multivariate machine learning techniques provide an alternative to the rapidity gap method for event-by-event identification and classification of diffraction in hadron-hadron collisions. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Traditionally, such methods assign each event exclusively to a single class producing classification errors in overlap regions of data space. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "As an alternative to this so called hard classification approach, we propose estimating posterior probabilities of each diffractive class and using these estimates to weigh event contributions to physical observables. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "It is shown with a Monte Carlo study that such a soft classification scheme is able to reproduce observables such as multiplicity distributions and relative event rates with a much higher accuracy than hard classification.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "INTRODUCTION",
+            "section_rank": 2
+        },
+        {
+            "text": "Diffraction is usually identified based on large rapidity gaps (LRG) although it is widely acknowledged that this requirement alone leads to insufficient separation between diffractive and non-diffractive events. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This is due to long range correlations that may destroy the LRG. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "In fact, the gap survival probability S 2 of single diffractive events at LHC energies is only of the order of 10% [1]. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 118,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Additionally, because of fluctuations in hadronization, also the non-diffractive background contains a non-negligible amount of LRG events [2]. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 139,
+                    "end": 142,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Moreover, a rapidity gap may just be an experimental artifact due to high detection thresholds. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, in order to achieve more efficient identification of diffraction, alternatives to a simple cut on \u2206\u03b7 should be investigated.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "In this paper, we study the use of multivariate classification algorithms for identification of diffraction and also discriminating between single diffractive and double diffractive events. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Such an approach does not explicitly look for rapidity gaps, but instead considers the full event topology in an optimal manner. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "That is, instead of heuristically determining the type of events to look for, such algorithms are able to learn the event characteristics providing the best discriminative power based on a suitably selected training set of labeled events.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Most classification algorithms perform a mapping of each observation into a single class. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "We call these hard classification algorithms, examples of which are neural networks and support vector machines. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "In our case, hard classification corresponds to classifying each event as either single diffractive, with the diffractive system on the left (SDL) or the right side (SDR), double diffractive (DD) or non-diffractive (ND) 1 . ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 220,
+                    "end": 221,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "As there is inherent mixing between these classes, such an approach is bound to produce classification errors in the overlap regions of the data space. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "This is especially the case with DD events which often exhibit characteristics similar to SD and ND events. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "For this reason, instead of considering a single class only, we propose estimating the probabilities for each event to belong to each of the classes. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "We then use these probabilities to weigh the contribution of an event to physical observables. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "In the spirit of [4], we call such an approach soft classification.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 17,
+                    "end": 20,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "SOFT CLASSIFICATION METHODOLOGY",
+            "section_rank": 3
+        },
+        {
+            "text": "In this work, we estimate the posterior probability of an event x x x to belong to class C i using the k nearest neighbors (kNN) algorithm 2 for which p(C i |x x x) = k i /k, where k i is the number of observations from class C i among the k nearest neighbors of x x x in the training set [5]. ",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 289,
+                    "end": 292,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "The nearest neighbors are found using the Euclidean distance although other distance metrics can be used as well. ",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "In addition to soft classification, kNN can also be used for hard classification in which case the class is selected based on the highest posterior probability.",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Because of an effect known as curse of dimensionality, the performance of the kNN algorithm can be significantly improved by reducing the dimensionality of the data. ",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "To this end, we use the linear discriminant analysis (LDA) algorithm which is a dimensionality reduction algorithm for labeled data [5]. ",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 132,
+                    "end": 135,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "It performs a mapping x x x \u2192 W W W x x x from the original D-dimensional space into a subspace with dimensionality d = C \u2212 1, where C is the number of classes. ",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The matrix W W W is chosen such that the distance between the classes is maximized and the spread of each class is minimized.",
+            "section": "SOFT CLASSIFICATION METHODOLOGY",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "section_rank": 4
+        },
+        {
+            "text": "To study the feasibility of soft classification for distinguishing between the different diffractive classes, we generated a sample of \u221a s = 7 TeV minimum bias events using PYTHIA6 with the D6T tune [6]. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 199,
+                    "end": 202,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The sample contained SDL, SDR, DD and ND events in ratios determined by the MC tune. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Starting from this generator level information, we calculated energy deposits and charged particle multiplicities registered by the IP5 detectors at the LHC based on their geometric acceptances. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "By dividing the CMS central tracker into 3 \u03b7 bins and T1 and T2 on both sides into 2 bins, multiplicity was recorded in 11 \u03b7 bins. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The same amount of bins was also used for energy deposits corresponding to division of the central calorimeters into 3 bins, HF on both sides into 2 bins and a single bin each for CASTOR and the Zero Degree Calorimeters (ZDC) on both sides of the interaction point. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 195,
+                    "end": 199,
+                    "type": "software",
+                    "rawForm": "Zero",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "In the case of the ZDC, only the energy of neutral particles was recorded. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "No thresholds or other detector effects were included in the simulations. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "By computing also the scalar sum of p T and the invariant mass of charged particles within |\u03b7| < 2.5, each event was represented by 24-dimensional data vector x x x. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The MC sample was divided into training, validation and test sets each containing 50000 events followed by a normalization with the mapping x i \u2192 log(x i + 1). ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "After further normalization for mean and variance, the dimensionality of the events was reduced to 3 using LDA. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The optimal value of the parameter k for this data was found based on maximization of efficiency on the validation set. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The kNN algorithm was then used to perform both soft and hard classification of the test set. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "As an additional benchmark, we also trained an MLP neural network [5] with 10 hidden nodes on a single hidden layer to perform hard classification of the same test set.",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "The classification results were then used to reconstruct the multiplicity distributions of the different event types. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The obtained diffractive distributions shown in Figure 1 indicate that soft classification is able to better reproduce the correct distributions than hard classification. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 48,
+                    "end": 56,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Note also that both hard classification algorithms produce very similar outputs while the results of soft classification are qualitatively different from this. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Similar results were also obtained for the \u2211 p T distribution. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "We also observed that the relative event rates estimated using the soft kNN algorithm are very accurate (see Table 1) and clearly better than the ones given by the hard methods. ",
+            "section": "SOFT CLASSIFICATION OF DIFFRACTION",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 116,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "CONCLUSIONS",
+            "section_rank": 5
+        },
+        {
+            "text": "We propose a probabilistic multivariate approach called soft classification for identification and classification of diffraction. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The results obtained using the soft kNN algorithm on a generator level MC sample show that the approach accurately reproduces physical observables. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Soft classification could hence serve as an alternative to the rapidity gap method. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The main drawback of the approach is its dependency on the selection of the training set which makes the classification MC dependent. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The severity of this dependence is a subject of an ongoing study, the preliminary results of which suggest that soft classification is more robust against a misspecified training set than the hard methods. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "In some cases, it might also be possible to use data-driven methods for constructing the training set. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The natural next step of the study is to employ detector level MC and eventually perform a full physics analysis using real data.",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "FIGURE 1 .",
+            "section_rank": 6
+        },
+        {
+            "text": "FIGURE 1. ",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "Charged particle multiplicity distributions for diffractive events when event categories are determined using different classification schemes. ",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "The distribution for the right side single diffraction is essentially a mirror image of the left side distribution shown here. ",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "The plots allow comparison between correctly labeled data (PYTHIA6), soft classification (soft kNN) and hard classification (hard kNN and neural network). ",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "At central rapidities, hard classification underestimates all the diffractive contributions while soft classification is able to better reproduce the correct distributions. ",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "The accuracy of all the algorithms is impaired at large |\u03b7|, where information from only the ZDC detector is available.",
+            "section": "FIGURE 1 .",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "TABLE 1 .",
+            "section_rank": 7
+        },
+        {
+            "text": "Relative event rates and their deviations from PYTHIA6 with the different classification schemes. ",
+            "section": "TABLE 1 .",
+            "paragraph_rank": 11,
+            "section_rank": 7
+        },
+        {
+            "text": "Soft kNN is able to estimate the rates with a very high accuracy while both hard classification algorithms overestimate the non-diffractive contribution and underestimate all the diffractive classes.",
+            "section": "TABLE 1 .",
+            "paragraph_rank": 11,
+            "section_rank": 7
+        },
+        {
+            "text": "See[3] for a feasibility study of such a classification scheme.2 ",
+            "section": "TABLE 1 .",
+            "paragraph_rank": 12,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 6,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 63,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "We also experimented with more advanced soft classification methods such as kernel density estimation and non-linear discriminant analysis but they gave no advantage over kNN.",
+            "section": "TABLE 1 .",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "ACKNOWLEDGMENTS",
+            "section_rank": 9
+        },
+        {
+            "text": "The authors are grateful to the Academy of Finland for financial support and to Hannes Jung, Valery Khoze, Antonio Vilela Pereira and Tapani Raiko for valuable discussions and help with technical matters.",
+            "section": "ACKNOWLEDGMENTS",
+            "paragraph_rank": 13,
+            "section_rank": 9
+        }
+    ]
+}
