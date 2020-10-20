@@ -1,0 +1,1014 @@
+{
+    "level": "sentence",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "(Received November 18, 2019)",
+            "section_rank": 1
+        },
+        {
+            "text": "Physical and biological range uncertainties limit the clinical potential of Proton Beam Therapy (PBT). ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "In these proceedings, we report on two research projects, which we are conducting in parallel and which both tackle the problem of range uncertainties. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "One aims at developing software tools and the other at developing detector instrumentation. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Regarding the first, we report on our development and pre-clinical application of a GPU-accelerated Monte Carlo (MC) simulation toolkit Fred. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 136,
+                    "end": 140,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "Concerning the letter, we report on our investigations of plastic-scintillator-based PET detectors for particle therapy delivery monitoring. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We study the feasibility of Jagiellonian-PET detector technology for proton beam therapy range monitoring by means of MC simulations of the \u03b2 + activity induced in a phantom-by-proton beams and present preliminary results of PET image reconstruction. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Using a GPU-accelerated Monte Carlo simulation toolkit Fred and plastic-scintillator-based PET detectors, we aim at improving the patient treatment quality with protons. ",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 55,
+                    "end": 60,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "DOI:10.5506/APhysPolB.51.9",
+            "section": "(Received November 18, 2019)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The increasing numbers of proton facilities and successful proton treatments [1] indicate that the relevance of Proton Beam Therapy (PBT) as a technique for tumor radiation therapy is rapidly growing. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Krak\u00f3w proton facility has been in clinical operation since October 2016 and more than 10 patients a day are currently treated.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Range uncertainties, i.e. uncertainty of the distance that protons travel inside patient body, currently represent one of the biggest caveats for the exploitation of the full potential of proton therapy treatments [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 214,
+                    "end": 217,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "The protonbeams range is particularly affected by biological and physical uncertainties in a heterogeneous patient body. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Therefore, to assure target coverage, medical physicists currently apply up to about 1 cm safety margins around the tumor volume, which lead to the unwanted irradiation of the healthy tissues surrounding the tumor [2].",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 214,
+                    "end": 217,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "The biological dose, D RBE expressed in Gy(RBE), delivered to the patient is the actual quality of clinical interest. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "It is calculated as D RBE = D \u00d7 RBE, where D is the physical dose expressed in Gy and RBE is the Relative Biological Effectiveness. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "By definition, in conventional therapy with photons RBE = 1.0, therefore, physical and biological doses are equal and correlated with clinical response. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Protons have an increased biological effectiveness compared to photons, i.e. RBE is larger than one. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Currently, in clinical routine, the RBE of protons is assumed to be constant and equal to 1.1 [3]. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 97,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "This convention neglects complex, often nonlinear dependency of the RBE on such parameters as penetration depth, Linear Energy Transfer (LET), dose, fractionation scheme, tissue type and endpoint, cell cycle phase or oxygenation level. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "These dependencies might affect the effective proton range, i.e., introduce biological range uncertainty and thus affect the dose to the surrounding tissue and Organs at Risk (OAR). ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Modification of proton physical dose by RBE, which is an uncertain weighting factor, makes the correlation of proton biological dose and clinical effect of tumor irradiation uncertain, and unification of clinical studies comparing the effectiveness of different radiation modalities challenging.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "An improvement resulting from the correctly applying radiobiological assumptions in PBT could be achieved only under the condition that the physical dose is accurately delivered to the patient. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "In fact, physical range uncertainties, occurring due to patient mispositioning or Computed Tomography (CT) scanner calibration introducing Hounsfield Unit (HU) to stopping power conversion, could cause differences between treatment plan and treatment delivery. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Monte Carlo simulations and range monitoring methods are essential in PBT to guarantee that the physical dose is accurately delivered and, therefore, to reduce the biological and physical range uncertainties in a patient body. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "along with activities of our group (dark gray/orange color) aiming to improve PBT quality. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "We incorporate advanced nuclear physics computational and experimental methods to predict physical and biological dose in patient more accurately and to monitor proton beam range in patient by means of PET imaging.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "section_rank": 3
+        },
+        {
+            "text": "It is recognized that Monte Carlo (MC) methods can offer improved dose calculation accuracy in heterogeneous media and, therefore, predict more accurately therapeutic dose distributions in patients compared to the analytical algorithms that are typically employed in the Treatment Planning Systems (TPS) used in clinical routine [2]. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 329,
+                    "end": 332,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Nowadays, the use of a variable RBE is being discussed among the PBT scientific community. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "We perform biological dose calculations with variable RBE and investigate biological range uncertainties by means of MC simulations of patient CT images exploiting the MC dose calculation tool Fred [4,5]. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 198,
+                    "end": 201,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 201,
+                    "end": 203,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 193,
+                    "end": 198,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Fred offers a unique combination of features: accuracy of an MC code including biological dose computation, flexibility of a research tool, and high-dose calculation speed due to GPU-acceleration. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "These characteristics are impossible to achieve with the currently available commercial TPS and general purpose MC codes such as Geant4/FLUKA [6,7].",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 142,
+                    "end": 145,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6,"
+                },
+                {
+                    "start": 145,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 129,
+                    "end": 135,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                },
+                {
+                    "start": 136,
+                    "end": 142,
+                    "type": "software",
+                    "rawForm": "FLUKA",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "We have successfully implemented in Fred the proton beam model used clinically for patient treatment in the Krak\u00f3w facility. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 36,
+                    "end": 41,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "The Integrated Depth Dose (IDD) profiles of single proton pencil beams in water simulated with Fred MC code for different energies are in excellent agreement with the IDDs obtained during the commissioning measurements (see Fig. 2, left), showing differences of less than 2%. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 224,
+                    "end": 230,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 95,
+                    "end": 103,
+                    "type": "software",
+                    "rawForm": "Fred MC",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "The emittance model, describing lateral beam propagation in air, was implemented in Fred, in accordance with the clinical system. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 84,
+                    "end": 88,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "The longitudinal and lateral pencil beam shapes are modeled in Fred MC with a submillimeter precision.",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 63,
+                    "end": 71,
+                    "type": "software",
+                    "rawForm": "Fred MC",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "We validated the beam model experimentally using the transversal patient treatment plan verification measurements. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Such measurements are routinely performed by medical physicists for treatment plan quality assurance with an array of 1020 ionization chambers (MatriXX IBA) placed in a water phantom. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "A transversal dose plane extracted from Fred MC and the dose distribution measured with the MatriXX detector at the same depth in water, as well as the Gamma Index (GI) map obtained from GI test are presented in Fig. 2. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 212,
+                    "end": 218,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "The GI passing rate (3%/2 mm criteria) greater than 98% was obtained for 182 dose planes measurements for 10 patients. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Based on these results, we can assure that dose distributions of clinical treatment plans can be recalculated accurately.",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "We are currently performing treatment planning studies to quantify the biological range uncertainties exploring various biological models with variable RBE and clinical data of patients treated in Krak\u00f3w.",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "An example of a selected Head and Neck (H&N) patient is presented in Fig. 3, where the radiobiological dose distributions computed with constant and variable RBE using Fred as well as corresponding Dose Volume Histograms (DVHs) are shown. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 69,
+                    "end": 75,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 3"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 168,
+                    "end": 173,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "The MC calculation time for this case was about 10 min (9 \u00d7 10 8 primary protons, 2 \u00d7 10 6 p + s tracking rate). ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "The mean dose to Planning Target Volume (PTV), calculated with Fred using variable RBE model proposed by Carabe [8], is increased with respect to the clinically applied constant RBE = 1.1 assumption of about 3 Gy(RBE), whereas the maximum dose to the brain stem OAR increases by about 4 Gy(RBE). ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 63,
+                    "end": 67,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "Our results show that incorporation of the variable RBE model in patient dose calculation increases the dose in PTV and OAR with respect to constant RBE assumption. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "This is especially important when OARs are very close to or overlap with the PTV as it occurs frequently in H&N patients. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Considering variable RBE hypothesis in the proton therapy clinic could be essential as the increased biological dose deposited to OARs that exceeds clinical dose constraints can be potentially associated with the increased normal tissue complication probability and, therefore, an increased risk of necrosis or secondary cancer. ",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "The use of the fast MC dose computation tool Fred for physical and biological dose recalculation of patient treatment plans (retrospectively and prospectively) can provide additional clinical information for medical physicists and medical doctors, and can potentially prevent inaccuracies in patient treatment.",
+            "section": "Monte Carlo simulations to address physical and biological range uncertainties of proton beams",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 45,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "Fred",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "J-PET detector to address physical range uncertainties of proton beams",
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "software",
+                    "rawForm": "J",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                },
+                {
+                    "start": 2,
+                    "end": 6,
+                    "type": "software",
+                    "rawForm": "PET",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "The proton interactions with patient tissues allow range monitoring during or just after the treatment detecting emitted secondary radiation. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Tracking of prompt-gamma, PET-gamma, and secondary protons and neutrons are examples [9][10][11]. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 88,
+                    "end": 92,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 92,
+                    "end": 96,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "Prototype systems for prompt-gamma and PET-gamma range monitoring were tested clinically and obtained satisfying precision of Bragg peak position monitoring on-line in the PBT treatment room [12][13][14]. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 191,
+                    "end": 195,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 195,
+                    "end": 199,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 199,
+                    "end": 203,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "At the Jagiellonian University in Krak\u00f3w, a novel solution for diagnostic PET imaging, Jagiellonian-PET (J-PET) is being developed [15][16][17][18].",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 135,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 135,
+                    "end": 139,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                },
+                {
+                    "start": 139,
+                    "end": 143,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                },
+                {
+                    "start": 143,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "A single detection unit of the J-PET scanner [19] consists of a 50 cm long and 6 \u00d7 24 mm 2 intersection size scintillator strip. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 49,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "The light pulses produced in the strip by 511 keV back-to-back photons propagate to its edges, where they are converted into electrical signals by photomultipliers (PMT). ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The interaction position of the photon with the detector is estimated from the time difference between the PMT signals located at the ends of the strip.",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "A J-PET module consists of 13 scintillator strips read-out through a single front-end electronics and an FPGA-based DAQ system. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "A modular, lightweight and portable design of J-PET enables flexibility in detector configuration and easy installation. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Increasing the number of J-PET detector layers, increases the detection efficiency of the system.",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "We performed comprehensive MC simulations using the GATE toolkit [20] and reconstructions of 3D \u03b2 + activity distributions using the CASTOR software [21]. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                },
+                {
+                    "start": 149,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "GATE",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "The aim was to characterize the sensitivity of the J-PET for proton beam range detection. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "We investigated single and multi-layer cylindrical and dual-head configurations of the J-PET modules that can be possibly applied for the in-room range monitoring. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The list-mode TOF-MLEM reconstruction (5 iterations with 500 ps TOF resolution without regularization) takes into account random events, scatter, attenuation and normalization corrections. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Eventually, the reconstructed PET-activity profiles can be correlated with the position of dose distal fall-off (Fig. 4, right) and used for proton beam range monitoring. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 127,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "(Fig. 4, right)"
+                }
+            ]
+        },
+        {
+            "text": "In this manuscript, we present preliminary results for one of the investigated setup configurations, i.e. a single layer J-PET barrel (Fig. 5). ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 134,
+                    "end": 142,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "(Fig. 5)"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 illustrates a cross section through the centre of the beam of 3D dose distribution deposited in a 5\u00d75\u00d720 cm 3 PMMA phantom by 10 8 protons of nominal energy 150 MeV (top left) and the same cross section of reconstructed 3D distribution of \u03b2 + activity produced by the beam in the phantom (bottom left). ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "The activity map was reconstructed in the 5 \u00d7 5 \u00d7 5 mm 3 voxel grid. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The scintillator strips' detection efficiency is taken into account in MC simulations. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The expected spatial and time resolutions of J-PET with wavelength-shifting strips (WLS) [22] is taken into account through plastic length discretization used in the simulations and image reconstruction.  ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 (right) presents the MC simulated profiles of: ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "(i) proton dose deposition in the PMMA phantom, ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "(ii) \u03b2 + activity produced in the phantom, and ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "(iii) actual signal detected by J-PET barrel from \u03b2 + activity. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The results show that the J-PET detector is feasible to acquire the \u03b2 + activity produced during proton therapy treatment and that the offline 3D reconstruction of PET activity images is possible using the CASTOR toolkit. ",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The characterization of J-PET sensitivity for proton beam range detection is currently an ongoing research activity.",
+            "section": "J-PET detector to address physical range uncertainties of proton beams",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Summary",
+            "section_rank": 5
+        },
+        {
+            "text": "Within the research projects conducted in the Institute of Nuclear Physics Polish Academy of Sciences in Krak\u00f3w, we investigate physical and biological range uncertainties of proton beams through positron emission tomography (PET) based solutions and Monte Carlo (MC) simulations. ",
+            "section": "Summary",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "Taking advantage of the Fred accuracy and time performance possible due to the GPU acceleration, we aim at improving quality assurance and treatment planing in Krak\u00f3w PBT facility. ",
+            "section": "Summary",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "A Monte Carlo study of J-PET detector feasibility performed in the frame of the project suggests that this technique might be considered as a novel proton beam therapy range monitoring approach.",
+            "section": "Summary",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 1 Fig. 1 .",
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 1illustrates which role could play each of the two topics reported in this manuscript in the clinical treatment workflow.Clinical diagnosis",
+            "section": "Figure 1 Fig. 1 .",
+            "paragraph_rank": 16,
+            "section_rank": 6
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 7
+        },
+        {
+            "text": "Fig. 2. ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Integrated depth dose distributions of proton pencil beams simulated in Fred and obtained experimentally during the facility commissioning (left), an example of transversal 2D dose distribution in isocentre plane obtained from Fred MC simulations (middle left), measured with MatriXX detector in water (middle right) and a GI map computed from simulation and measurement using GI (3%/2 mm) method (right). ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 276,
+                    "end": 284,
+                    "type": "software",
+                    "rawForm": "MatriXX",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "GI passing rate is 98.64%.",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Fig. 3 .",
+            "section_rank": 8
+        },
+        {
+            "text": "Fig. 3. ",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 18,
+            "section_rank": 8
+        },
+        {
+            "text": "Left: the RBE-weighted dose with constant RBE = 1.1, middle-left: the RBE-weighted dose with variable RBE (Carabe model[8]), middle-right: dose difference between constant and variable RBE. ",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 18,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 119,
+                    "end": 122,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "DVH for constant and variable RBE for PTV and brain stem.",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 18,
+            "section_rank": 8
+        },
+        {
+            "text": "Fig. 4 .",
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 4. ",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "The results of MC simulations. ",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "Top left: 2D distribution of dose deposited by 150 MeV proton beam in PMMA phantom; bottom left: \u03b2 + activity distribution detected in J-PET and reconstructed with CASTOR software; right: dose, \u03b2 + production in PMMA, reconstructed signal from \u03b2 + activity detected with J-PET.",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 5 .",
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 5. ",
+            "section": "Fig. 5 .",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "Single-layer modular J-PET barrel with isocentrically positioned PMMA phantom.",
+            "section": "Fig. 5 .",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        }
+    ]
+}

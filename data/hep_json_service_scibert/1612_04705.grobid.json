@@ -1,0 +1,2482 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Techniques for performing model-independent searches for direct CP violation in three and four-body decays are discussed. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Comments on the performance and the optimisation of a binned \u03c7 2 approach and an unbinned approach, known as the energy test, are made. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The use of the energy test in the presence of background is also studied. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The selection and treatment of the coordinates used to describe the phase-space of the decay are discussed. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The conventional model-independent techniques, which test for P -even CP violation, are modified to create a new approach for testing for P -odd CP violation. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "An implementation of the energy test using GPUs is described.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The study of Charge-Parity (CP ) violation allows for a sensitive probe of new physics from beyond the Standard Model of particle physics. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "CP violation is incorporated in the Standard Model of particle physics through a complex phase in the Cabibbo-Kobayashi-Maskawa (CKM) matrix [1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 141,
+                    "end": 144,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Contributions from new particles, at mass scales that cannot be directly probed, can enhance the amount of CP violation observed. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This paper discusses model-independent searches for direct CP violation, i.e. CP violation in decays, in multi-body final states. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The rich phase-space of interfering resonances in multi-body decays provides excellent opportunities for CP violation measurements. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Two techniques that have been used in the literature are discussed in Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "2. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "These are a binned \u03c7 2 test and an unbinned technique based on the average weighted distance between events in phase-space known as the energy test. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The performance and optimisation of these techniques is discussed. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "An approach to study CP violation in the presence of background events using unbinned techniques is presented in Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "3 through the extension of the energy test formalism.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The selection of the coordinates used for analysing the CP violation are discussed in Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "4. A novel method for analysing P -odd CP violation, which is accessible in any decay for which a parity violating observable can be defined such as decays to four pseudo-scalar particles, is presented in Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "5. This method is applicable for use with any two sample comparison test. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5"
+                }
+            ]
+        },
+        {
+            "text": "The first application of this technique [2], using the energy test to compare the samples, has given rise to a result 2.7\u03c3 away from the no-CP violation hypothesis.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 43,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "The implementation of the energy test method in a computationally efficient manner using GPUs is discussed in Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "6.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Techniques",
+            "section_rank": 3
+        },
+        {
+            "text": "Model-independent searches for direct CP violation have been carried out using a number of different techniques. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Tests have often been performed using a binned \u03c7 2 approach to compare the relative density in the Dalitz plot [3] of a decay and its CP -conjugate sample (see for example [4] for three-body and [5] for a generalisation to the phase-space of fourbody decays). ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 111,
+                    "end": 114,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 172,
+                    "end": 175,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 195,
+                    "end": 198,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "This method is discussed further below. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "More recently unbinned techniques have also been applied. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "A technique known as the energy test has been applied (see [6] for three-body and [2] for four-body), again this is discussed below. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 82,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "A nearest neighbours approach has been used in Ref. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "[7], albeit with a very small number of neighbours, and the angular moments of the cosine of the helicity angle of the studied particle have also been utilised [4] in three-body decays. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 160,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "A class of measurements based on triple products of momenta in four-body meson decays have also been performed [8]. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 111,
+                    "end": 114,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "The P -odd CP violation test proposed in Sect. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "5 is related to these. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "P -odd CP violation can also be accessed in the baryon sector owing to significant P -parity violation even in two-body decays of baryons. ",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "This type of CP asymmetry can be measured by comparing P asymmetries for baryon and anti-baryon decays [9].",
+            "section": "Techniques",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 103,
+                    "end": 106,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "Binned \u03c7 2",
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "\u00cf\u0087",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "The simplest and most commonly applied technique used in the literature, here referred to as S CP [4,10], is a two-sample binned \u03c7 2 test. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 6,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 101,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "10]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 93,
+                    "end": 98,
+                    "type": "software",
+                    "rawForm": "S CP",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "The phase-space is divided into bins. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "text": "The statistical significance of the difference in number of entries in the bin for the X andX samples is computed.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 6,
+            "section_rank": 4
+        },
+        {
+            "text": "where N i (X) and N i (X) are the numbers of X andX candidates in the i th bin, and the N i values are sufficiently large that Gaussian uncertainties may be assumed. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "\u03b1 is the ratio between the total yield of X andX events. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The parameter \u03b1 is introduced to account for global asymmetries which may occur due to production effects. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The small correction to the significance term in the denominator varies in the literature [4,5] where the form given here is recommended.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 90,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 93,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "In the absence of local CP asymmetries the S i CP are distributed according to a Gaussian of unit width and zero mean. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The \u03c7 2 test value is computed from \u03c7 2 = (S i CP ) 2 . ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The corresponding p-value for the compatibility of the observed data with the no CP violation hypothesis can be computed directly from the observed \u03c7 2 value and the number of degrees of freedom; here equal to number of bins\u22121. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The test is straightforward to implement and requires only minimal computing resources.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The number, size and location of the bins need to be selected by the analysts. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "General advice for \u03c7 2 comparison tests is that the number of bins must be sufficient not to miss local regions of asymmetry but limited to ensure sufficient numbers of entries in the bins to not affect the sensitivity.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The number of bins used in the method in the literature have varied significantly. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "The initial application and discussion of the method [4,10] divided the Dalitz plane into O(10 3 ) bins. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 10,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 53,
+                    "end": 56,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 56,
+                    "end": 59,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "10]"
+                }
+            ]
+        },
+        {
+            "text": "Applications of the method have also used a smaller number of bins, O (10) to O(10 2 ) [5,11].",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 10,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "(10)"
+                },
+                {
+                    "start": 87,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5,"
+                },
+                {
+                    "start": 90,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "11]"
+                }
+            ]
+        },
+        {
+            "text": "We recommend that the number of bins used in the method should be kept to a relatively small number. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "The number of degrees of freedom increases for every additional bin used and consequently the sensitivity of the method is decreased. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "This is illustrated in Fig. 1, where the increased sensitivity of using a smaller number of bins is clearly observed. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 29,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "In this study simulation samples of 100,000 events were generated using the analysis package Laura++ [12] according to the simple model in Ref. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 105,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 93,
+                    "end": 101,
+                    "type": "software",
+                    "rawForm": "Laura++",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "[13]. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "CP violation was introduced by changing the amplitude of the resonance with the largest fraction in that model. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "In a binned approach there is a clear trade-off between minimising the number of bins used and retaining sensitivity to the rich phase-space of interfering amplitudes in the decay. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "This is particularly true in the case of four-body decays where five coordinates are required to describe the phase-space (see Sect. 4).",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Binned distributions of the CP asymmetry in the phase-space can also be used to test for CP violation. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "This technique was successfully applied in [14,15]  Figure 1: p-value versus number of bins in S CP method for simulation samples with CP violation introduced at the (left) 3% and (right) 5% level in one amplitude (see text). ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 43,
+                    "end": 47,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14,"
+                },
+                {
+                    "start": 47,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "15]"
+                }
+            ]
+        },
+        {
+            "text": "1000 samples were generated and the mean p-values are shown by the points and the one-sigma confidence level range indicated by the yellow-band.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "asymmetries in B + \u2192 h + h + h \u2212 decays with h = \u03c0, K. In this application of O(10 2 ) bins were used. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The placement of the bins was physically motivated by the observed location of the resonances. ",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The bin sizes varied across the plane to equalise the number of entries in each bin.",
+            "section": "Binned \u03c7 2",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Energy test",
+            "section_rank": 5
+        },
+        {
+            "text": "A wide range of unbinned two sample tests exist in the literature [16]. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 70,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "Well-known examples include the nearest neighbour approach, which has previously been applied to CP violation tests [7], and multi-dimensional extensions of the Kolmogorov-Smirnov test, commonly used in the astronomy literature [17]. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 228,
+                    "end": 232,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "The former has previously been shown to be relatively insensitive for this class of problem [18] and studies by the authors have concluded similarly for the latter. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 96,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "The class of multi-variate tests based on distances between observables are of particular interest. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "A statistical method called the energy test was introduced in Refs. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "[19,20]. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19,"
+                },
+                {
+                    "start": 4,
+                    "end": 7,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "20]"
+                }
+            ]
+        },
+        {
+            "text": "Reference [13] suggests applying this method to Dalitz plot analyses and demonstrates the potential to obtain improved sensitivity to CP violation over the standard binned approach. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 10,
+                    "end": 14,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "The distribution of the test statistic is not known, and the permutation method is required to be applied in order to determine the significance of a result. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "This method was applied in [6] and is described below and used in the studies in this paper. ",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 27,
+                    "end": 30,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "Many other tests of this class are known, including cases where the exact distribution is known under the null-hypothesis, and hence no permutations would be required (e.g. Cross-match statistic test [21]).",
+            "section": "Energy test",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 200,
+                    "end": 204,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                }
+            ]
+        },
+        {
+            "text": "In the energy test method a test statistic, T , is used to compare average distances in phase-space, based on a distance function, \u03c8 ij , of pairs of events ij belonging to two samples. ",
+            "section": "Energy test",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "In the standard test the two samples are those of different flavours, particle and anti-particle. ",
+            "section": "Energy test",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "The test statistic is defined as",
+            "section": "Energy test",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "where the first and second terms correspond to a weighted average distance of events within the n events of the first sample and the n events of the second sample, respectively. ",
+            "section": "Energy test",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "The third term measures the weighted average distance of events in one flavour sample to events of the opposite flavour sample. ",
+            "section": "Energy test",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "The normalisation factors in the denominator remove the impact of global asymmetries between the two samples.",
+            "section": "Energy test",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "If the distributions of events in both samples are identical the measured T value will fluctuate around a value close to zero; differences between these distributions increase the value of T . ",
+            "section": "Energy test",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "This is translated into a p-value under the hypothesis of CP symmetry by comparing the measured T value to a distribution of T values obtained from permutation samples. ",
+            "section": "Energy test",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "The permutation samples are constructed by randomly assigning events to either of the samples, thus simulating a situation without CP violation. ",
+            "section": "Energy test",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "The p-value for the no-CP -violation hypothesis is obtained as the fraction of permutation T values greater than the observed T value.",
+            "section": "Energy test",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "If large CP violation is observed, the observed T value is likely to lie outside the range of permutation T values. ",
+            "section": "Energy test",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "In this case the permutation T distribution can be fitted with a generalised-extreme-value (GEV) function, as demonstrated in Refs. ",
+            "section": "Energy test",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "[19,20] and used in Ref. ",
+            "section": "Energy test",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19,"
+                },
+                {
+                    "start": 4,
+                    "end": 7,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "20]"
+                }
+            ]
+        },
+        {
+            "text": "[2,6]. ",
+            "section": "Energy test",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2,"
+                },
+                {
+                    "start": 3,
+                    "end": 5,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "6]"
+                }
+            ]
+        },
+        {
+            "text": "The p-value from the fitted T distribution can be calculated as the fraction of the integral of the function above the observed T value.",
+            "section": "Energy test",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "The distance function should be falling with increasing distance d ij between events i and j, in order to increase the sensitivity to local asymmetries. ",
+            "section": "Energy test",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "A Gaussian function is chosen, defined as \u03c8 ij \u2261 \u03c8(d ij ) = e \u2212d 2 ij /2\u03c3 2 with a tunable parameter \u03c3, which describes the effective radius in phase-space within which a local asymmetry is measured. ",
+            "section": "Energy test",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "Thus, this parameter should be larger than the resolution of d ij but small enough not to dilute locally varying asymmetries.",
+            "section": "Energy test",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "The performance of the energy test method, based on one of the samples used in Fig. 1, is shown in Fig. 2. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 85,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                },
+                {
+                    "start": 99,
+                    "end": 105,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "The sensitivity to the parameter \u03c3 is shown. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The improved performance of this method over S CP in this case of a 3% asymmetry in amplitude is seen by comparing the figures; indeed, a 5% amplitude asymmetry results in p-values from the energy test below 10 \u221210 . ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Studies from the authors show this enhancement in sensitivity is common but not universal: cases have been found in three-body decays in which S CP showed better sensitivity than the energy test for optimal binning and CP violation in the amplitude or phase of some resonances. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The uncertainty on the p-value in Fig obtained by randomly resampling the fit parameters within their uncertainties, taking into account their correlations, and by extracting a p-value for each of these generated T distributions. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 37,
+                    "type": "figure",
+                    "text": "Fig"
+                }
+            ]
+        },
+        {
+            "text": "This uncertainty is found to arise mainly from the uncertainty on the width of the GEV function (Fig. 2). ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 104,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "(Fig. 2)"
+                }
+            ]
+        },
+        {
+            "text": "The sensitivity of the optimal \u03c3 to various parameters of a three-body decay model was studied. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The value was found to be largely independent of the Dalitz plot structure or the width of the resonance in which CP violation was introduced. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "A variable \u03c3 set according to the density of points in the plot was also studied but not demonstrated to have any advantage over a fixed \u03c3. ",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "As trivially expected, the optimal \u03c3 is dependent quadratically on the mother particle mass in a three-body decay.",
+            "section": "Energy test",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Presence of background",
+            "section_rank": 6
+        },
+        {
+            "text": "CP violation is expected to appear in relatively low rate decays where two amplitudes of similar magnitude interfere. ",
+            "section": "Presence of background",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "The samples of signal events under study may be significantly polluted by additional background events from different physics processes that contribute at a similar rate to signal. ",
+            "section": "Presence of background",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "Such pollution reduces the fraction of signal events (the purity) of the sample under study, and requires the use of additional techniques such that any significant effect can be associated with CP violation in the signal process.",
+            "section": "Presence of background",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "The presence of background is problematic when studying local CP violation in the case that the purity is different in the two samples that are being compared. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "This can be generated, for example, through the presence of global production asymmetries between the two samples that are different for signal and background, even if no CP violation is present. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "Similarly problematic is the case where the background process itself exhibits CP violation. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "In these scenarios the local densities of events will differ between the two samples, since background populates the phase space differently to signal. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "For the binned S CP test different yields will be found in the phase space bins (even after normalising for the overall yield), and a significant effect could be inferred. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The effect of background on the S CP test is typically removed by fitting the invariant mass distribution in each bin to determine the number of signal events in each bin, and then comparing these between the two samples. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The energy test also exhibits similar complications. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "Differences in purity between the two samples are not reproduced when events are randomly assigned a flavour, since the purities and event densities will be consistent for the permuted samples; the densities of samples used in the permutation studies will not accurately model differences in density between the two 'real' data samples. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "Consequently background events can lead to significant T values and p-values being calculated even when the signal process exhibits no CP violation. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "It is therefore important to consider techniques to remove the effect of background from the energy test, so that any significant T value can be associated with CP violation in the studied decay. ",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "This section sets out such an approach.",
+            "section": "Presence of background",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The weighting of events to remove the effect of background was considered in Ref. ",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "[13]. ",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "Such weights give the relative purity of each sample in the particular region of phase-space that the event is drawn from. ",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "Therefore, when T is calculated two weights are used for each pair of events, with one weight for each event. ",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "This allows each pair of events to be weighted according to the relative number of pairs of signal events expected to contribute to the calculation of T from such locations within the phase space, and allows the estimation of the T value that would be found if only signal were present. ",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "However, this approach relies on knowledge of the signal density within the phase-space, which in many practical cases is not known.",
+            "section": "Presence of background",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "An alternative method is suggested here to remove the bias introduced by background if additional representative samples of background events are available, for example from signal side-bands. ",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "This method will be equally applicable to other unbinned model independent two sample tests but is discussed here for the energy test. ",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "These additional samples will be labelled here as 'background samples', as opposed to the 'main samples' which are being explicitly tested for differences in local event densities. ",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "The events in the background samples can be used to subtract off the effect of signal and background event pairs, and background and background event pairs that arise when considering the T value set out in Eq. ",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "2 when background is present in the main samples. ",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "This can be achieved by altering the test statistic to",
+            "section": "Presence of background",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "where 2 is the inclusion here also of terms with j < i when the sums are over the same sample. ",
+            "section": "Presence of background",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "This is balanced with an additional factor of 1 2 , and is included for simplicity when considering all terms. ",
+            "section": "Presence of background",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "Assuming that the density of events in the background samples reflects the density of background events in the main samples (up to an overall normalisation factor), this T value provides an unbiased estimate of the T -value that would be calculated in the presence of signal alone.",
+            "section": "Presence of background",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "An example of the effect of background on the energy test is shown in Fig. 3. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 76,
+                    "type": "figure",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "Here, 4,000 signal events were generated (without CP violation) using the same model as in Ref. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "[13], and assigned a flavour randomly, with a 50% chance of each flavour. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "Background events were generated assuming no variation in event density across the 3-body phase space, with 1,600 events contaminating the main samples. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Again, the flavour was assigned randomly, though on average 75% of events were assigned one flavour and 25% the other. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "An additional 1,600 events (with the same 3:1 asymmetry in flavour) were used to create additional background samples that could be used to remove any bias introduced by background in the main samples. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "This was performed 250 times, and in each trial the energy test was calculated using a \u03c3 parameter of 0.25. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Such a scenario can generate large T -values if Eq. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "2 is used to calculate the T -value, and the permutation method yields significant p-values. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "However, if the background samples are also considered, and Eq. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "3 is used to remove the effects of background on average, an unbiased estimate of the T -value of signal events is recovered. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "This allows the use of the permutation method to estimate p values (using the same method to remove background from the randomly permuted samples), and allows any significant effect to be associated clearly with the signal channel. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Therefore, for the rest of this article, the case where background is present is neglected. ",
+            "section": "Presence of background",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Coordinate selection",
+            "section_rank": 7
+        },
+        {
+            "text": "A decay of a pseudo-scalar particle M into n pseudo-scalar particles (A, B, C...) M \u2192 ABC...(n) can be described by n four-vectors p \u00b5 A , p \u00b5 B , p \u00b5 C ..., and consequently 4n parameters. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "The known masses of the identified final state particles A, B, C... remove n degrees of freedom. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "E,p conservation removes an additional four degrees of freedom. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "The system can be rotated freely around all spatial axes, removing a further three degrees of freedom. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "Hence, 3n \u2212 7 degrees of freedom remain. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "Consequently a three-body decay phase-space is fully described by the two variables conventionally used in Dalitz plot analyses. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "The phase-space of a four-body decay can be fully described by five parameters. ",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "The selection of the variables used to describe the phase-space is discussed in this section.",
+            "section": "Coordinate selection",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "Distances in Phase-Space",
+            "section_rank": 8
+        },
+        {
+            "text": "The S CP method requires the division of the decay phase-space into bins. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The energy test method relies on the distance between events in the phase-space. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The result of model-independent two-sample comparison tests will typically depend on the distance metric, not only the coordinates chosen.",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The distance between two points in phase-space in a three-body decay is usually measured as the Euclidean distance in the Dalitz plot. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "However, this distance depends on the choice of the axes of the Dalitz plot. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "This dependence can be removed by using all three invariant masses to determine the distance, d ij , calculated as the length of the displacement vector \u2206 x ij = (m 2,j 12 \u2212 m 2,i 12 , m 2,j 23 \u2212 m 2,i 23 , m 2,j 13 \u2212 m 2,i 13 ), where the 1, 2, 3 subscripts indicate the final-state particles. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "Using all three invariant masses does not add information, but it avoids an arbitrary choice that could impact the sensitivity of the method to different CP violation scenarios. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "This symmetrisation was applied in Ref. ",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "[22].",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "In describing a four-body decay phase-space with invariant masses a mixture of two and three-body masses may be preferred, with no directly analogous symmetrisation, as discussed below.",
+            "section": "Distances in Phase-Space",
+            "paragraph_rank": 30,
+            "section_rank": 8
+        },
+        {
+            "text": "Coordinates in four-body decays",
+            "section_rank": 9
+        },
+        {
+            "text": "Four-body decays offer both challenges and opportunities with respect to three-body decays. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 31,
+            "section_rank": 9
+        },
+        {
+            "text": "A four-body decay phase-space is obviously more complicated and five coordinates are needed for its full description [23]. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 31,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "No unique choice of variables exists and depending on the decay dynamics and the purpose of the measurement one can try and optimize the set of coordinates.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 31,
+            "section_rank": 9
+        },
+        {
+            "text": "For cascade-type decays proceeding via resonances in a three-body subsystem and followed by two-body decays (e.g. D 0 \u2192 a 1 (1260) + (\u2192 \u03c1 0 (770)\u03c0 + )\u03c0 \u2212 ) a three-body invariant mass and a Dalitz-style distribution of the three-body decay would be a preferred option. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "For decays occurring through two two-body resonances, in particular ones with non-zero spins, (e.g. D 0 \u2192 \u03c1 0 (770)\u03c1 0 (770)) the natural choice is the so called transversity basis [24] comprising invariant masses of two-body subsystems, their helicity angles and the acoplanarity angle between decay planes of the two resonances. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 32,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 181,
+                    "end": 185,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                }
+            ]
+        },
+        {
+            "text": "In some decays both decay types may contribute significantly (e.g. both of the examples given here contribute to D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 decays). ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "The most general amplitude analysis that aims at a description of decay dynamics is performed in the phase-space constructed with the four-momenta of the final state particles and any coordinates are chosen only to illustrate the results.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 32,
+            "section_rank": 9
+        },
+        {
+            "text": "The energy test is a statistical method comparing the events distributions in phasespace (see Sect. 2). ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "Therefore it is sensitive to the position of an event in phase-space and to the choice of coordinates building this phase-space. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "All choices are not equivalent in terms of the sensitivity of the analysis as it will change the distance between events in the phase-space.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 33,
+            "section_rank": 9
+        },
+        {
+            "text": "There are many possible choices for the variables to describe the degrees of freedom of the phase-space. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 34,
+            "section_rank": 9
+        },
+        {
+            "text": "A natural set of invariants is p i p j , or equivalently s ij defined as",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 34,
+            "section_rank": 9
+        },
+        {
+            "text": ". ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 35,
+            "section_rank": 9
+        },
+        {
+            "text": "There are 1 2 n(n \u2212 1) such invariants; for four-body decays there are six of them.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 35,
+            "section_rank": 9
+        },
+        {
+            "text": "Three-body mass invariants, s ijk , can be made from linear combinations of the twobody invariants:",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "k , so can be used interchangeably (for n > 3) for the s ij . ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "While they carry the same information as s ij , the choice will change the distance measure between events used in the CP violation search. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "There are 1 3! n(n \u2212 1)(n \u2212 2) such invariants; there are four of them in four body decays. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 10,
+                    "end": 11,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Consequently there are ten mass invariants, six two-body and four three-body, which can be used to characterise a four-body decay. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "We consider a physically motivated choice of the coordinates. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "Invariant mass combinations corresponding to 'unphysical' doubly-charged meson resonances may be excluded. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "A further reduction in coordinates can be made by  Table 1: Coordinates used, and those excluded, in the measurement of [2] and coordinates suggested for",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 37,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 51,
+                    "end": 58,
+                    "type": "table",
+                    "text": "Table 1"
+                },
+                {
+                    "start": 120,
+                    "end": 123,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Excluding the mass marked in brackets would reduce to the minimal five coordinates that span the phase-space.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "excluding mass combinations with small resonance contributions. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "An additional complication in many decays of interest will be the presence of identical final state particles (e.g. D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 ). ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Identical particles of the same charge can be swapped; as a result in the example decay each event can be placed in four points in phase-space. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "The energy test is sensitive to such particle swapping as well. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "To get a unique output from the energy test, as well as to get optimal sensitivity, the order of the particles, i.e. the input variables of energy test need to be determined.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Consider the experimentally interesting example of the singly Cabibbo suppressed D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 decay. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The charge order of the particles in the D 0 decay \u03c0 1 \u03c0 2 \u03c0 3 \u03c0 4 is fixed to \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 . ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "For a D 0 decay, the order of \u03c0 1 \u03c0 2 \u03c0 3 \u03c0 4 is the C-conjugated one: \u03c0 \u2212 \u03c0 + \u03c0 \u2212 \u03c0 + . ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The invariant masses of all possible \u03c0 + \u03c0 \u2212 pairs are calculated and sorted for each event. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "Once the \u03c0 + \u03c0 \u2212 pair with the largest invariant mass is fixed to be \u03c0 3 \u03c0 4 , the order of all four pions is fully determined. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "As only a small fraction of the \u03c1(770) resonance, either produced directly from D 0 or through a 1 (1260) decays, contributes to the largest m(\u03c0 + \u03c0 \u2212 ), the \u03c0 3 \u03c0 4 combination is excluded [24]. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 190,
+                    "end": 194,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                }
+            ]
+        },
+        {
+            "text": "Two-body masses except for the m(\u03c0 3 \u03c0 4 ) and three-body mass combinations that do not contain the \u03c0 3 \u03c0 4 are kept. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "In that way we end up with exactly five invariant masses, which contain most of the dominant resonance contributions, as listed in Table 1. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 138,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "This choice has been adopted in [2]. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 35,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Simulation studies comparing the performance of the test with these five coordinates and with the eight 'physical' mass combinations have been performed. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "No significant difference in sensitivity was obtained, though the optimal sigma is larger when using eight coordinates.",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The other singly Cabibbo suppressed D 0 decay with charged long-lived hadrons in the final state is D 0 \u2192 K + K \u2212 \u03c0 + \u03c0 \u2212 . ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "In this case no significant three-body resonances containing K + K \u2212 are observed [25], and thus these masses can be excluded as coordinates. ",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "The other coordinates have significant contributions and thus for an energy test method of this final state a physically motivated choice would be to proceed with six coordinates, as shown in Table 1, or to reduce to five coordinates by further excluding the mass combination with the smallest resonance contribution (m 234 ).",
+            "section": "Coordinates in four-body decays",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 192,
+                    "end": 199,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Parity-even and Parity-odd CP Violation Tests",
+            "section_rank": 10
+        },
+        {
+            "text": "The choice of only invariant masses as coordinates, as discussed in the previous section, has a limitation. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 42,
+            "section_rank": 10
+        },
+        {
+            "text": "Invariant masses, of both two-and three-body systems, can be expressed through the double product of particle momenta ( p a \u2022 p b ) and, as such, are even under the P -parity transformation (changing p into \u2212 p). ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 42,
+            "section_rank": 10
+        },
+        {
+            "text": "Thus, invariant masses allow only P -even CP asymmetries to be probed. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 42,
+            "section_rank": 10
+        },
+        {
+            "text": "This is also true of helicity angles.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 42,
+            "section_rank": 10
+        },
+        {
+            "text": "In three-body decays only P -even amplitudes can be present and the conventional model-independent test of comparing particle and anti-particle samples is sufficient. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "In four-body decays P -odd amplitudes can be present and accessed with P -odd quantities. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "These are triple products of a general form p a \u2022 ( p b \u00d7 p c ); the acoplanarity angle between decay planes of two resonances is one example. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "There is a class of measurements based on the triple products, often called T -odd measurements 1 , which probe the P -odd type of CP asymmetry only [26].",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 43,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 149,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "An asymmetry of this P -odd kind is induced by interferences between P -even and P -odd decay amplitudes, thus the sensitivity to CP violation depends on the P -odd amplitude contribution in the decay. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "However, it is proportional to the cosine of the strong-phase difference between the interfering partial waves [27] and thus will be enhanced where P -even CP asymmetry, proportional to sine of the strong-phase difference, lacks sensitivity.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 44,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 111,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                }
+            ]
+        },
+        {
+            "text": "Consider again the general four-body decay M \u2192 ABCD and its antiparticle equivalent M . ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "A triple product",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "is constructed for M decays. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The p A , p B and p C are vector momenta of particles A, B, C in the M centre-of-mass frame. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The corresponding triple product for the M decays is obtained by applying the CP parity transformation, CP (C T ) = \u2212C(C T ) = \u2212C T . ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The C T is constructed with the anti-particles A, B, C, being the C-conjugations of the ones entering C T . ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The total sample may be divided into four subsamples according to the particle/antiparticle flavour and the triple product sign:",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The relationships between the samples under symmetry transformations is illustrated in Fig. 4 Consider the more familiar case of asymmetries, these may be measured in the C T regions using the number of events populating the four samples in Eq. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 47,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 93,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "4:",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 47,
+            "section_rank": 10
+        },
+        {
+            "text": "In the absence of CP Violation both of the asymmetries are expected to be compatible with zero. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 48,
+            "section_rank": 10
+        },
+        {
+            "text": "CP asymmetries can be extracted from these samples that are P -even or P -odd (i.e. even and odd with respect to C T ) simply by adding or subtracting the asymmetries measured in the C T regions:",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 48,
+            "section_rank": 10
+        },
+        {
+            "text": "The A P \u2212even CP test corresponds to integrating over C T , and is equivalent (within normalisation) to the default sample comparison test in which particle (samples [I] and [II]) and anti-particle samples (samples [III] and [IV]) are compared in the phase-space built with invariant masses only. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "A binned or unbinned comparison of the phase-spaces of the decays is then performed using techniques such as those described in Sect. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "2.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "The A P \u2212odd CP from Eq. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "6 is equivalent to the quantity measured in the T -odd analyses. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "The asymmetry is typically measured integrated over the whole phase-space or asymmetries can be measured in the phase-space regions [26].",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 50,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 132,
+                    "end": 136,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "Unbinned model independent techniques do not allow for an asymmetry measurement. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "However, the P -odd CP asymmetry can be tested by comparing the combined sample I + IV with the combined sample II + III. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "This comparison may be performed in the same phase-space as the default P -even approach and allows the probing of the P -odd contribution into the CP asymmetry; the P -even contribution cancels out.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "In the case of four-body meson decays, P -odd amplitudes can contribute only if the intermediate-resonance configuration is V V , V T or T T (V and T stand for vector and tensor meson respectively) and if both resonances have helicities of either \u00b11 or \u00b12. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "For example, In the D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 decays there is one significant P -odd amplitude. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "It is the one describing perpendicular helicity (A \u22a5 ) of the D 0 \u2192 \u03c1 0 (770)\u03c1 0 (770) decays. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "Alternatively, in the partial wave basis, it is the amplitude corresponding to the P -wave D 0 \u2192 \u03c1 0 (770)\u03c1 0 (770) decays, meaning relative orbital momentum of the two \u03c1(770) mesons equal to 1. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "In such cases, the default approach may be extended to make a complementary test of the P -odd CP asymmetry.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "The complementarity of the P -even and P -odd CP violation tests can be illustrated in a simple simulation. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Simulated data samples, containing one million D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 decays, are produced with MINT, a software package for amplitude analysis of multi-body decays that has also been used by the CLEO collaboration [25]. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 214,
+                    "end": 218,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 95,
+                    "end": 99,
+                    "type": "software",
+                    "rawForm": "MINT",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "The amplitude model used is based on a preliminary version of that given in Ref. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "[28]. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                }
+            ]
+        },
+        {
+            "text": "CP violation is introduced by changing the amplitude or phase of the P -wave D 0 \u2192 \u03c1 0 (770)\u03c1 0 (770) decays compared with the D 0 decays. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Table 2 shows that clear sensitivity to the amplitude change is obtained in the P -even test and to the phase change in the P -odd test.  ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "Table 2: p-values for D 0 \u2192 \u03c0 + \u03c0 \u2212 \u03c0 + \u03c0 \u2212 simulation samples with phase and amplitude CP asymmetries in D 0 \u2192 \u03c1 0 (770)\u03c1 0 (770)(P -wave) (see text). ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "Results from both P -even and P -odd CP violation tests are given. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "The p-values are extracted from fits with a GEV function. ",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "The cells shaded in gray demonstrate sensitivity to the simulated CP violation scenarios.",
+            "section": "Parity-even and Parity-odd CP Violation Tests",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Implementation of unbinned techniques",
+            "section_rank": 11
+        },
+        {
+            "text": "The principal drawback of a number of unbinned statistical methods is the computational time required for large sample sizes. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "In methods, such as the energy test, that require the pairwise distance between all events in the sample to be calculated, the computational time grows quadratically with the sample size. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Furthermore, in the energy test a significant number of permutations are required for the random comparison samples to get a sufficient precision on the probabilistic interpretation of the T value, for example to demonstrate that evidence (> 3\u03c3) for CP violation was observed over one thousand permutations would be needed. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "In probing CP violation in b-hadron decays the computational constraints are typically not a limitation in these methods currently. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "However, in multi-body decay channels of interest in charm physics data samples of order one million events are available at the LHCb experiment. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "At this sample size one permutation for the energy tests requires around one day of CPU time on a typical computing node. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Consequently the generation of 1000 permutations would require significant computational resources. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Even though modern multi-core CPUs have realised thread-level parallelism, the number of parallel threads is still very limited. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "This has been overcome in our studies by implementation on Graphical Processing Units (GPUs). ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "A GPU is a specialised electronic circuit designed to rapidly manipulate and alter memory to accelerate the creation of images for output to a display. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Their highly parallel structure makes them more efficient than CPUs for algorithms where large blocks of data are processed in parallel. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Our implementation utilises the Compute Unified Device Architecture (CUDA) and Thrust library developed by NVIDIA [29]. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 114,
+                    "end": 118,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 32,
+                    "end": 75,
+                    "type": "software",
+                    "rawForm": "Compute Unified Device Architecture (CUDA)",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                },
+                {
+                    "start": 107,
+                    "end": 114,
+                    "type": "publisher",
+                    "rawForm": "NVIDIA",
+                    "resp": "service",
+                    "id": "#software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "The parallelisation is utilised for the calculation of the pairwise event distances. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "One permutation for one million events takes approximately 30 minutes to be computed on the two GPU systems utilised (NVIDIA M2070, NVIDIA K40c). ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "Both manual and Grid submissions systems have been used. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "This implementation has made the energy test computationally feasible for the first time in CP violation searches with large data sets. ",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "The code of this implementation of the energy test, Manet, has been made available [30].",
+            "section": "Implementation of unbinned techniques",
+            "paragraph_rank": 54,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "Manet",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 12
+        },
+        {
+            "text": "The performance and optimisation of two techniques for model-independent searches for direct CP violation in multi-body decays is discussed. ",
+            "section": "Conclusions",
+            "paragraph_rank": 55,
+            "section_rank": 12
+        },
+        {
+            "text": "It is shown that binned comparisons are best performed with a smaller number of bins than has previously been used in some of the literature. ",
+            "section": "Conclusions",
+            "paragraph_rank": 55,
+            "section_rank": 12
+        },
+        {
+            "text": "The potential advantages of unbinned techniques are discussed and demonstrated, and an approach to account for the presence of background is suggested. ",
+            "section": "Conclusions",
+            "paragraph_rank": 55,
+            "section_rank": 12
+        },
+        {
+            "text": "An implementation of the unbinned energy test technique is provided on GPUs, which renders this method feasible for the largest data sample sizes currently available at experiments.",
+            "section": "Conclusions",
+            "paragraph_rank": 55,
+            "section_rank": 12
+        },
+        {
+            "text": "Considerations in the choice, and symmetrisation, of the coordinates used to describe the phase-space of three and four-body decays are discussed, with specific examples given. ",
+            "section": "Conclusions",
+            "paragraph_rank": 56,
+            "section_rank": 12
+        },
+        {
+            "text": "A novel method for analysing P -odd CP violation in multi-body decays in unbinned model independent searches is presented.",
+            "section": "Conclusions",
+            "paragraph_rank": 56,
+            "section_rank": 12
+        },
+        {
+            "text": "to observe local CP number of bins per axis",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 2: (top) T-values and (bottom) p-values versus \u03c3 in the energy test method for simulation samples with CP violation introduced at the 3% level in one amplitude (see text). ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "The p-values are evaluated using 100 permutation samples where their distribution is fitted with a GEV function. ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "The width of the GEV function and its uncertainty is also shown on the top plot. ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "The yellow band on the lower plot shows the uncertainty on the p-value accounting for the uncertainties in the GEV fit, including the correlation of the fitted parameters.",
+            "section": "Figure 2 :",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "w andw are the number of signal events in the main samples, and b andb are the number of background events in the main samples, while b s andb s denote the number of background events in the background samples. ",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "The additional terms in comparison with Eq. ",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "2 sum over pairs of events in the background and main samples or sum over pairs of events in the background samples, removing on average the effects of pairs of background and signal events and pairs of background events, when calculating T . ",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "The other notable difference with Eq.",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "6 T calculated using Eq. ",
+            "section_rank": 16
+        },
+        {
+            "text": "2 T calculated using Eq. ",
+            "section_rank": 16
+        },
+        {
+            "text": "3 Figure 3 :",
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 3: The T -value relative to the T -value found from only considering signal events (T signal ), when calculated using Eq. ",
+            "section": "6 T calculated using Eq. 2 T calculated using Eq. 3 Figure 3 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "2, where background is not removed, and Eq. ",
+            "section": "6 T calculated using Eq. 2 T calculated using Eq. 3 Figure 3 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "3, which subtracts (on average) the effect of background. ",
+            "section": "6 T calculated using Eq. 2 T calculated using Eq. 3 Figure 3 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "The first case shows a clear bias; the presence of background can lead to small p-values when the permutation method is used to determine significance. ",
+            "section": "6 T calculated using Eq. 2 T calculated using Eq. 3 Figure 3 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "The mean of the second distribution is consistent with zero, removing the bias associated with background.",
+            "section": "6 T calculated using Eq. 2 T calculated using Eq. 3 Figure 3 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 17
+        },
+        {
+            "text": "Figure 4: Symmetry transformation relationships of the four data samples used in the CP violation tests.",
+            "section": "Figure 4 :",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "Two-body masses Three-body masses Unphysical m 13 , m 24 Physical m 12 , m 14 , m 23 , m 34 m 123 , m 124 , m 134 , m 234 Selected m 12 , m 14 , m 23 m Physical m 12 , m 14 , m 23 , m 34 m 123 , m 124 , m 134 , m 234 Selected m 12 , m 14 , m 23 , m 34 m 134 , (m 234 )",
+            "paragraph_rank": 62,
+            "section_rank": 18
+        },
+        {
+            "text": ". ",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "Samples [I] and [III] are related by CP transformation; and so are [II] and [IV]. ",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "There are thus two potential sample comparison tests for CP violation using the full data sample: comparing a sample consisting of data set [I] and [II] with a sample containing data [III] and [IV]; or comparing the combined [I]+[IV] with the combined [II]+[III]. ",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "Both tests span the full C T space.",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "Triple products are also odd under T -parity, although time reversal is not what is typically measured.",
+            "paragraph_rank": 64,
+            "section_rank": 19
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 21
+        },
+        {
+            "text": "The authors wish to acknowledge the contributions to this work from the following MPhys and summer students at the University of Manchester over the past three years: William Fawcett, Constantin Weisser, Nicholas Bedford, Jezabel Boni, Samuel Dysch, Connor Graham. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "We wish to thank Samuel Harnew, Jonas Rademacker, Gediminas Sarpis, and Mike Williams for illuminating discussions. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "We thank Mike Sokoloff, Andrew McNab and Sabah Salih for their assistance with computing. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "GPU facilities at the University of Manchester and the Ohio Supercomputer centre have been utilised in this work. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "This work was supported by the STFC grant numbers ST/J004332/1, ST/K003410/1, and ST/N000374/1.",
+            "section": "Acknowledgements",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        }
+    ]
+}

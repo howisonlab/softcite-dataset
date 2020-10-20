@@ -1,0 +1,1652 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "In proton-proton collisions at LHC energies, Z 0 and low mass Higgs bosons would be produced with high and predominantly longitudinal boost with respect to the beam axis. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This note describes a new analysis tool devised to handle this situation in cases when such bosons decay to a pair of \u03c4 -leptons. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The tool reconstructs the rest frame of the \u03c4 + \u03c4 \u2212 pair by finding the boost that minimises the acollinearity between the visible \u03c4 decay products. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "In most cases this gives a reasonable approximation to the rest frame of the decaying boson. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "It is shown how the reconstructed rest frame allows for a new method of mass estimation. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Also a considerable gain in sensitivity to helicity correlations is obtained by analysing the \u03c4 -jets in the reconstructed frame instead of using the laboratory momenta and energies, particularly when both \u03c4 -leptons decay hadronically.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Experimental precision data strongly suggest that the Higgs boson should be relatively light. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "While experimental data exclude Standard Model Higgs, H, masses below 114.4 GeV/c 2 , the lightest neutral supersymmetric Higgs can have a mass as low as 92.8 GeV/c 2 [1], which is very close to the mass of the Z 0 . ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 167,
+                    "end": 170,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "In the mass range below 160 GeV/c 2 the \u03c4 + \u03c4 \u2212 decay mode is of particular importance in searches for neutral H, as demonstrated in Tevatron searches [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 151,
+                    "end": 154,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "In this mass region, H production in proton-proton (pp) collisions at LHC energies is dominated by gluon-gluon fusion [3], and a search for gg \u2192 H \u2192 \u03c4 + \u03c4 \u2212 production at the LHC is very important, as emphasised in [4].",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 118,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[3]"
+                },
+                {
+                    "start": 215,
+                    "end": 218,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Together, these facts strongly motivates a careful study of the \u03c4 + \u03c4 \u2212 system as produced at the LHC, and the development of analysis tools that enhance sensitivity to measure properties of H bosons. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Furthermore, since Z 0 production is an irreducible background for this channel it is also important to fully understand the behaviour of Z 0 \u2192\u03c4 + \u03c4 \u2212 events and to look for possible contributions from other processes in a selected sample of \u03c4 + \u03c4 \u2212 pairs. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The sensitivity of such a study can be enhanced by exploiting the fact that the parity violating \u03c4 decays carry helicity information. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Thus, \u03c4 -leptons can be used as spin analysers, and provide information that could be helpful in distinguishing the existence of a scalar H in a background of Z 0 decays.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "In [5] some variables that could be used for a spin analysis are proposed. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 6,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "However, these are all defined in the rest frame of the decaying boson, a frame that cannot be found in any straight forward manner because of the escaping neutrinos produced in the \u03c4 -decays.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Methods have been proposed to assign the measured missing transverse energy, / E T , to the neutrinos to obtain unbiased estimates of \u03c4 + \u03c4 \u2212 mass [6,7]. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 147,
+                    "end": 150,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[6,"
+                },
+                {
+                    "start": 150,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "7]"
+                }
+            ]
+        },
+        {
+            "text": "The resulting estimates of the neutrino momenta also gives access to an approximation of the rest frame of the decaying boson, but implications of this beyond mass estimation is not discussed. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Further, these methods only work in a fraction of the events with a suitable topology whereas the technique proposed in this paper is applicable for all event topologies.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "JHEP01(2012)043",
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 6,
+                    "type": "version",
+                    "rawForm": "01",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                }
+            ]
+        },
+        {
+            "text": "This note presents a new simple algorithm that finds an approximation to the rest frame of the decaying boson. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "This will be shown to result in an improved sensitivity to spin, and to an alternative variable that could be of use for the estimation of the mass of the decaying boson.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "2 Reconstructing the \u03c4 + \u03c4 \u2212 rest frame Because of their short life time \u03c4 -leptons are typically studied indirectly through their decay products. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Due to the one or two neutrinos produced in the decay, the 4-momentum of the visible \u03c4 -decay products, the \u03c4 -jet, has a broad spectrum, often carrying less that half the energy of their mother \u03c4 . ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, reconstructing the rest frame, RF, of a particle decaying into a \u03c4 + \u03c4 \u2212 system is in principle not possible.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "However, for a sufficiently massive particle decaying into a \u03c4 + \u03c4 \u2212 pair, the directions of the \u03c4 -jets are expected to be close to that of their mother \u03c4 -leptons. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Thus, one expects the \u03c4 -jet pair to have only a slight deviation from being back-to-back in the rest frame of the massive particle. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "It is useful to define the acollinearity -the angular deviation of the \u03c4 -jets from being back-to-back. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "This acollinearity is a well defined positive number in any frame of reference. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Henceforth, \u03b1 will denote the acollinearity between two \u03c4 -jets, and furthermore \u03b1 RF the acollinearity in the heavy particle rest frame.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Simulations show that at 7 TeV pp-collisions, the Z 0 and a light H, are mostly produced with a high and predominantly longitudinal boost, \u03b2 z . ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Thus, measured 4-momenta will deviate significantly from those in the heavy particle RF. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Exploiting that \u03b1 RF should be small and assuming that \u03b2 T is small, the method proposed in this paper consists in searching for the \u03b2 z that minimises \u03b1. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "When restricting \u03b2 to be parallel to the beam axis, the \u03b1 as a function of \u03b2 has a single minimum and hence can be reliably minimised.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "The method can also be extended to look for the transverse component of the boost if one has a good estimate of the direction of the heavy particle in the transverse plan. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The transverse direction of the heavy particle, can be estimated by summing up the transverse momenta of the \u03c4 -jets and the reconstructed missing transverse energy, / E T . ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Our algorithm minimises \u03b1 in two steps; first, by varying the longitudinal boost, \u03b2 z , secondly when a suitable minimum is found, the transverse boost is varied along the found transverse direction. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "In both steps the \u03b1 is 1-dimensional function with a single global minimum and no secondary minima.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "In this paper, we will denote the two search strategies as the Z-or XYZ-method depending on whether we only will try to estimate the longitudinal component of the boost of the heavy particle or estimate the transverse component as well.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Since particle directions are well measure quantities these methods are robust and can be applied in every collision event for any pair of measured particles or jets.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "Performance. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The performance of the methods were studied using \u03c4 + \u03c4 \u2212 pairs from simulated Z 0 and 114 GeV/c 2 gluon-gluon fusion H events produced in 7 TeV pp-collisions. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Anticipating that backgrounds could be difficult to handle in multi-prong \u03c4 decays, only decays with exactly one charged particle in the final state were considered here. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "However, JHEP01(2012)043   the inclusion of \u03c4 decays with more than one charged hadron is not expected to change the performance of this method significantly. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "10 7 Z 0 and H events were generated with Pythia8 [8] and subsequent \u03c4 -decays were done with TAUOLA [9] to correctly include spin and polarisation effects. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[8]"
+                },
+                {
+                    "start": 101,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 50,
+                    "type": "version",
+                    "rawForm": "8",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                },
+                {
+                    "start": 94,
+                    "end": 101,
+                    "type": "software",
+                    "rawForm": "TAUOLA",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "Detector resolution effects were not included. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "However, an angular cut requiring the two jets to have |\u03b7| < 2.5 was imposed to match the acceptance of a typical tracker in an LHC experiment.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "As shown in figure 1",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "(a) the polar angle distributions for both H and Z 0 decays are predominantly parallel to the beam axis. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, assuming a boost direction parallel to the beam seems to be a reasonable guess for a very large fraction of the events and we therefore only expect the XYZ-method to be slightly better in reconstructing the rest frame than the Z-method for these events. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 163,
+                    "end": 166,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "In figure 1",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "(b) it is seen that the true \u03b1 RF is concentrated at small values, with \u03b1 RF = 4.5 \u2022 for Z 0 events, while the acollinearity distributions in the reconstructed frames are peaked towards low acollinearities as expected. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "The effect of working in the collinear frame (\u03b1 = 0) instead of in the true RF should have a small effect if the direction of the boost is correctly estimated. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "In the collinear frame closest to the true RF, the momenta of the two \u03c4 -jets will deviate with a factor cos(\u03b1 RF ) from the truth, meaning a typical deviation of 0.3%.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Since the \u03b1 is always positive, it is easy to minimise with respect to the applied \u03b2 z,T of the two tau jets. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "For a selection of ranges in the generated \u03b2 of a produced Z 0 -boson, figure 2 shows how, on average, \u03b1 varies as a function of an applied longitudinal boost to the two jets. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "The minimal acollinearity is always at a longitudinal boost that is close to the generated one. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "The actual value of \u03b1 is reflecting to which extent there might be a transverse boost present, ignored in figure 2.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "To estimate the goodness of the reconstruction of the RF, the vectorial difference |\u03b2 gen \u2212 \u03b2 reco | is shown in figure 3(a) for both reconstruction methods. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "The reconstructed RFs are seen to be closer to the generated RF for the XYZ-method as expected.   ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 72,
+                    "end": 75,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Comparisons of both reconstructed and generated rest frames in Z 0 \u2192 \u03c4 + \u03c4 \u2212 events.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "In conclusion both methods reconstructs the boost very reasonably, with a distribution around the true value with a mean deviation around 0.076 for the XYZ-method and 0.149 for the Z-method, when averaging over all events. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 18,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 152,
+                    "end": 155,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "Due to the exclusion of the transverse component, a small offset away from zero in the most probable value is seen in the Z-method. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "Although figure 1(a) shows that the bosons are mostly boosted longitudinally, improvements are found when also estimating the transverse components of the boost. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "However, these improvements will be very dependent on the ability to estimate the transverse direction of the bosons correctly in the detector. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore the two methods act complementary; for events with a small transverse boost and low precision on the / E T the Z-method should be applied, whereas for events with good precision in / E T and a high transverse boost, improvements will be gained by using the XYZ-method.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 18,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 267,
+                    "end": 270,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "JHEP01(2012)043 3 Estimating the boson mass",
+            "section_rank": 4
+        },
+        {
+            "text": "Due to the neutrinos in the \u03c4 decays, the visible invariant mass, M vis , distribution peaks far below the real mass of the resonance produced. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "A method correcting for this is the so called collinear approximation [6]. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 73,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "This method assumes the neutrinos are collinear with the decaying \u03c4 -lepton, and includes / E T by projecting it to the \u03c4 -jets. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "However, this projection is only possible and reliable in a fraction of events with large transverse boost and well aligned / E T [10,11]. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 130,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[10,"
+                },
+                {
+                    "start": 134,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "11]"
+                }
+            ]
+        },
+        {
+            "text": "In [7] the performance of a likelihood based technique is presented for simulations of Higgs and Z 0 events in antiproton-proton collisions at 1.96 TeV, and also for data collected by the CDF experiment. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 6,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "For fully hadronic decaying tau-leptons, unsmeared simulations show a mass reconstruction resolution of 8%, and more realistic simulation shows a mass resolution of 14%, and finally the CDF Z 0 \u2192 \u03c4 + \u03c4 \u2212 events show a resolution of 16% with this technique. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The smeared results are obtained for events within |\u03b7| < 1, smearing of hadron momenta of 10% and of / E T of 5 GeV in each of the transverse components. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "At the LHC the events are much more boosted, and the experiments have larger \u03b7 coverage. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "In [12], CMS expects a likelihood mass resolution of 21% for a 130 GeV Higgs (for leptonic and semi-leptonic \u03c4 -decays), in an analysis covering |\u03b7| < 2.3 for hadronic \u03c4 decays. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 7,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "This is approaching the width of the the M vis distribution which is reported to be 24%. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "A possible explanation for the poorer resolution in CMS could be that / E T measures a smaller fraction of the full neutrino energies for \u03c4 -jets with large \u03b7 than for transverse ones. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Hence, estimates of the full neutrino energies from / E T arises from correspondingly larger scale factors.",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Another mass variable for \u03c4 pairs is the effective mass,",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": ", where p \u03c4 are the visible \u03c4 -jet 4-momentum, and / p T is the missing transverse momentum vector. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "In addition to the M vis and M eff recent result from the ATLAS collaboration [13] has also used a likelihood based method, whereas the recent result from the CMS collaboration [14] simply uses M vis in the analysis.",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 21,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[13]"
+                },
+                {
+                    "start": 177,
+                    "end": 181,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "In the following an alternative variable for mass estimation is described and for simplicity comparisons have been made to distributions of M vis which is a straightforward robust alternative in use by all experiments.",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 22,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 140,
+                    "end": 146,
+                    "type": "software",
+                    "rawForm": "M vis",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "Finding the kinematic edge. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "The mass of a particle decaying to \u03c4 + \u03c4 \u2212 could be inferred by determining the kinematic endpoint of the distribution of twice the leading \u03c4 -jet energy in the boson RF. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "This quantity will henceforth be named as 2E 1 RF . ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "As opposed to the collinear approximation this quantity can be calculated for all events. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "In figure 4 distributions of 2E 1 RF are compared to M vis distributions. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 33,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "This way of estimating the mass becomes particularly useful when both \u03c4 -leptons decay into hadrons, where only one neutrino is present in each \u03c4 decay. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 4 suggests that a first guess to the shape of 2E 1 RF could be a triangle convoluted with some resolution function, although it is clear that the inclusion of effects like the Z 0 /H width and helicity effects modifies such an assumption. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "text": "Figure 4"
+                },
+                {
+                    "start": 56,
+                    "end": 57,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Still the kinematic edge can be found be determining the point of steepest slopes of the distribution.   ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "RF calculated using the XYZ-method and invariant mass of the visible \u03c4 -jets, M vis , for \u03c4 + \u03c4 \u2212 pairs both decaying to single charged hadrons. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "The dotted line marks the position of the steepest slope for the 2E 1 RF distribution. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 is the result for all hadronic decaying events without any selection. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "As mentioned earlier, the decision on which boost reconstruction method to use should depend on the magnitude of the transverse boost. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Therefore, the events have been divided into two classes; one with a large difference in azimuthal angle between the two jets, \u2206\u03c6 jets , compatible with no transverse boost, where the Z-method were used, and one with the rest of the event where the XYZ-method were applied. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Here a threshold of \u2206\u03c6 jets = 170 \u2022 were chosen to separate the two classes. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "The criterion for the choice of boosting method would have to be subject to study in a true experimental environment. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "Furthermore, a cut of 10 GeV on the p T for both \u03c4 -jets were applied to both classes. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "In figure 5, it is shown that 24% of the Z 0 -boson and 16% of the Higgs events can be reasonably subjected to the Z-method. ",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "figure 5"
+                }
+            ]
+        },
+        {
+            "text": "Hence, without any use of / E T an approximation of the centre of mass system is still available of these events.",
+            "section": "JHEP01(2012)043 3 Estimating the boson mass",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "JHEP01(2012)043",
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 6,
+                    "type": "version",
+                    "rawForm": "01",
+                    "resp": "service",
+                    "id": "#software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "Since the distributions of 2E 1 RF are clearly asymmetric and non-gaussian, the spread of the distributions calculated from the most likely value are therefore also asymmetric. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 31,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "For Higgs events with \u2206\u03c6 jets above 170 \u2022 , the spread from the peak position is found to be +17 \u221225 %. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "To evaluate the precision of retrieving the boson mass by finding the kinematic edge, M boost , pseudo-experiments were performed. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "From the 2E 1 RF distribution shown in figure 4(a) several pseudo-distributions were generated with varying number of events and for each distribution the kinematic edge was found as the point of the steepest decent. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 13,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "In table 1, the found values and spread of M boost are listed as a function of the number of events in the pseudo-experiment for the two classes of events, where class 1 refers to the events in which the Z-method has been used, and class 2, refers to the events where the XYZ-method were used. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "For the simple kinematic edge-finder implemented for this analy-    For a triangle function convoluted with a gaussian, numerical calculations have shown that taking the kinematic edge to be the point of the steepest slope overestimates the edge value. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "For a gaussian width of 7-10 GeV, the systematic shift is found to be 0.5-1.0 GeV. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "For an experimental analysis including backgrounds a more sophisticated edge finding method, e.g. template fitting, should be deployed.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "Intuitively, constructing a mass variable that accumulates towards the real mass should help distinguishing different masses. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "One way to distinguish distributions is to compare the largest difference of the cumulative distributions, D L which is input to the Kolmogorov-Smirnov test. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "It is found that while D L between the calculated 2E 1 RF distributions (using JHEP01(2012)043  Figure 6. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 25,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 53,
+                    "end": 54,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                },
+                {
+                    "start": 96,
+                    "end": 104,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Correlations between M vis and 2E 1 RF using the XYZ-method in Z 0 \u2192 \u03c4 + \u03c4 \u2212 events with all decay channels of the \u03c4 -leptons included.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "the XYZ-method) for Z 0 and H events is 0.35, it is only 0.24 when comparing the two M vis distributions. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 7,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "It is not clear if the tails towards high values of 2E 1 RF seen to be more important in figure 4 than figure 4(a) is helpful in a search scenario, because clearly the Z 0 contribution is non-negligible for values well beyond the kinematic edge. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 114,
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "text": "figure 4 than figure 4(a)"
+                }
+            ]
+        },
+        {
+            "text": "At present, it cannot be concluded that this variable will be better than any of the other proposition in a real experiment. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "However it seems to be worthwhile to consider the use this variable in an experimental search for the Higgs boson.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "In figure 6, the correlation between M vis and 2E 1 RF is shown for Z 0 events. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 27,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "text": "figure 6"
+                },
+                {
+                    "start": 50,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Thus, since the correlation is significantly lower than 1, the 2E 1 RF variable is adding information, and it should be studied for use in a search scenario.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "Helicity correlations",
+            "section_rank": 6
+        },
+        {
+            "text": "Several powerful variables for studying \u03c4 polarisation in Z 0 decays were developed for the LEP experiments [15]. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 28,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 108,
+                    "end": 112,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "These variables are defined in the rest frame of the decaying boson. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "While this is close to identical to the laboratory frame at LEP, this is not true at the LHC, and this paper proposes to study these variables in a reconstructed RF instead.",
+            "section": "Helicity correlations",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "For \u03c4 \u00b1 \u2192 \u03c0 \u00b1 \u03bd \u03c4 events, the distribution of the decay angle in the \u03c4 -lepton rest frame, that is the angle between the direction of the \u03c4 -lepton and its visible decay product, is determined by the \u03c4 helicity. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "In the rest frame of the heavy boson producing a \u03c4 + \u03c4 \u2212 pair this translates to a well determined distribution in the fraction of \u03c4 energy carried by \u03c0. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "The quantity used in the following figures is the energy of visible particles in the decay, E vis , normalised to the kinematic endpoint (half the mass of the decaying boson). ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Weaker energy-energy correlations also shows for the \u03c4 \u00b1 \u2192 \u00b1 \u03bd \u03c4 \u03bd and \u03c4 \u00b1 \u2192 h \u00b1 \u03bd \u03c4 nh 0 modes. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "The E vis distributions for single \u03c0 decay modes shown in figure 7 for the generated and reconstructed heavy boson RFs show that the true correlations are partly recovered in the reconstructed RF using the XYZ-method proposed in section 2. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 206,
+                    "end": 209,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "Furthermore, it is shown that these correlations are much weakened in the laboratory frame.  ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 7. ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "2E vis /M Z for \u03c4 -leptons with positive and negative helicities decaying into \u03c0 \u00b1 \u03bd \u03c4 shown in the generated and reconstructed RF using the XYZ-method as well as the laboratory frame.  ",
+            "section": "Helicity correlations",
+            "paragraph_rank": 29,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 141,
+                    "end": 144,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "Analysis of the sensitivity to spin",
+            "section_rank": 7
+        },
+        {
+            "text": "Conservation of angular momentum leads to distinctly different helicity configurations when comparing the final states of Z 0 and H decays in their rest frames. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "While the spin components along the direction of flight of the \u03c4 + must add up to \u00b11 for the Z 0 , the sum must be 0 for the H decays. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "Thus the spin effects can be studied by looking at the correlations in E vis of the two \u03c4 -leptons as shown in figure 8.",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "To quantify the observed difference between spin 0 and spin 1 particles, the Z 0 and H samples were split into training and test samples. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "Probability density functions for both spins, P 0 (E \u03c4 \u2212 , E \u03c4 + ) and P 1 (E \u03c4 \u2212 , E \u03c4 + ), were constructed as the fraction of events in a bin of (E \u03c4 \u2212 , E \u03c4 + ) in the corresponding training sample. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "From this a likelihood, L, is created for N events from both training samples by",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "The test samples of Z 0 and H events are divided in sub-samples of N events and the likelihood is calculated for each sub-sample. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "The distribution of log L when N = 1000 and when both \u03c4 -lepton decays to h \u00b1 \u03bd \u03c4 is shown in figure 9.",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "Inspired by [15], a sensitivity, S, is defined such that the number of standard deviations between the means of the two distributions, n \u03c3 , is given by Table 2 shows values obtained for S in the reconstructed RFs using the Z-and XYZ-method as well as in the laboratory frame for the different \u03c4 decay modes. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 33,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 16,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[15]"
+                },
+                {
+                    "start": 153,
+                    "end": 160,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "For all decay channels sensitivity is gained when using the reconstructed RF over the laboratory frame. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "When just applying the Z-method, differences in the transverse momentum of the bosons are kept in the distributions, while the XYZ-boost approximates the RF more correctly. ",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "The Z-method thus analyses a combination of the two effects, the boson p T and spin, while the sensitivities determined using the XYZ-method are largely only due to differences in spin.",
+            "section": "Analysis of the sensitivity to spin",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "JHEP01(2012)043",
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 6,
+                    "type": "version",
+                    "rawForm": "01",
+                    "resp": "service",
+                    "id": "#software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "Finally, further sensitivity would be gained by using ratios between neutral and charged energy for h \u00b1 \u03bd \u03c4 nh 0 final states. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "An exhaustive analysis of spin should probably make use of these ratios. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "These ratios remain almost unchanged in any boosted frame. ",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "The purpose of this note is to discuss the advantages of finding an approximate rest frame, so the sensitivities when using these variable are not reported here.",
+            "section": "JHEP01(2012)043",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "Conclusions and discussion",
+            "section_rank": 9
+        },
+        {
+            "text": "By minimising the acollinearity, two methods to reconstruct the rest frame of boosted heavy particles decaying to two \u03c4 -leptons have been proposed, and it has been demonstrated that they both find the rest frame reasonably well. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 35,
+            "section_rank": 9
+        },
+        {
+            "text": "Whereas the XYZ-method requires an estimate of the transverse direction of the heavy particle, the Z-method can be used for analyses where one does not have a good estimate of this direction.",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 35,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "A new technique for mass estimation has been proposed using the end-point of the leading \u03c4 -jet energy in the reconstructed rest frame. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "This technique does not introduce assumptions on transfer functions or production mechanisms of the heavy particle as more elaborate reconstruction techniques, and it can be applied to all events within the geometrical acceptance of the experiments. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "The method is complementary to existing methods in the sense that it can be applied without using information on the measured / E T , and since it is not directly correlated with the visible mass it adds information, and thus the two can be combined to gain further sensitivity.",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "Furthermore, a scheme for an event-wise spin analysis of the \u03c4 + \u03c4 \u2212 system has been outlined, and it has been shown that enhanced sensitivity to spin is gained when transforming the 4-momenta as proposed in this paper. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "Both boost methods presented enhance sensitivity to spin when compared to an analysis in the laboratory frame. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "Which method to use depends on whether or not differences in production mechanism of the boson should be taken into account.",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "In summary, a tool has been developed to approximate the rest frame of \u03c4 + \u03c4 \u2212 systems, and two applications thereof have been illustrated. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "These applications could prove to be helpful in the analyses of Z 0 decays or in searches for new particles like H, Z or SUSY particles. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "Additionally, it is possible that a transformation to the rest frame could be beneficial to other variables used in the study of \u03c4 + \u03c4 \u2212 systems.",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "Open Access. ",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "This article is distributed under the terms of the Creative Commons Attribution Noncommercial License which permits any noncommercial use, distribution, and reproduction in any medium, provided the original author(s) and source are credited.",
+            "section": "Conclusions and discussion",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Polar angle, \u03b8, of the Z 0 and 114 GeV/c 2 H bosons. ",
+            "paragraph_rank": 40,
+            "section_rank": 10
+        },
+        {
+            "text": "Typically the bosons are produced at small angles close to the beam axis.",
+            "paragraph_rank": 40,
+            "section_rank": 10
+        },
+        {
+            "text": "Acollinearity, \u03b1, for Z 0 \u2192 \u03c4 + \u03c4 \u2212 in the generated and reconstructed RFs and in the laboratory frame of the Z 0 .",
+            "paragraph_rank": 41,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 1. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 42,
+            "section_rank": 12
+        },
+        {
+            "text": "Angular distributions for simulated heavy boson decays.",
+            "section": "Figure 1 .",
+            "paragraph_rank": 42,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 2. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "Average acollinearity as a function of attempted longitudinal boost for various ranges of true boost.",
+            "section": "Figure 2 .",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "Difference in magnitude between the generated and reconstructed \u03b2.",
+            "paragraph_rank": 44,
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 3. ",
+            "section": "Figure 3 .",
+            "paragraph_rank": 45,
+            "section_rank": 15
+        },
+        {
+            "text": "Comparisons of both reconstructed and generated rest frames in Z 0 \u2192 \u03c4 + \u03c4 \u2212 events.",
+            "section": "Figure 3 .",
+            "paragraph_rank": 45,
+            "section_rank": 15
+        },
+        {
+            "text": "Distributions for Z 0 events.",
+            "paragraph_rank": 46,
+            "section_rank": 16
+        },
+        {
+            "text": "Distributions for H events.",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 4. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 48,
+            "section_rank": 18
+        },
+        {
+            "text": "Distributions for 2E1 RF calculated using the XYZ-method and invariant mass of the visible \u03c4 -jets, M vis , for \u03c4 + \u03c4 \u2212 pairs both decaying to single charged hadrons. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 48,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 21,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 49,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "The dotted line marks the position of the steepest slope for the 2E1 RF distribution.",
+            "section": "Figure 4 .",
+            "paragraph_rank": 48,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 67,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Class 1: Distributions for Z 0 events with \u2206\u03c6 jets > 170 \u2022 .",
+            "paragraph_rank": 49,
+            "section_rank": 19
+        },
+        {
+            "text": "Class 2: Distributions for Z 0 events with \u2206\u03c6 jets < 170 \u2022 .",
+            "paragraph_rank": 50,
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 5. ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 51,
+            "section_rank": 21
+        },
+        {
+            "text": "Distributions for 2E1 RF calculated for the two event classes using the Z and XYZ-method for \u03c4 + \u03c4 \u2212 pairs both decaying to single charged hadrons.",
+            "section": "Figure 5 .",
+            "paragraph_rank": 51,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 21,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 78,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "Figure 8 .",
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 8. ",
+            "section": "Figure 8 .",
+            "paragraph_rank": 52,
+            "section_rank": 22
+        },
+        {
+            "text": "Energy correlations in the reconstructed RF using the XYZ-method of a \u03c4 + \u03c4 \u2212 pair with both \u03c4 -leptons decaying to h \u00b1 \u03bd \u03c4 . ",
+            "section": "Figure 8 .",
+            "paragraph_rank": 52,
+            "section_rank": 22,
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "To avoid effects coming from the mass differences all energies are scaled with the mass of the decaying boson.",
+            "section": "Figure 8 .",
+            "paragraph_rank": 52,
+            "section_rank": 22
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 23
+        },
+        {
+            "text": "Mass estimation M boost as a function of number of events n evt as obtained from pseudoexperiments for the two classes of Z 0 events. ",
+            "section": "Table 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 23
+        },
+        {
+            "text": "Class 1 consists of events with \u2206\u03c6 jets > 170 \u2022 where the Z-method have been applied and class 2 consists of events that has been subject to the XYZ-method. ",
+            "section": "Table 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 23,
+            "entity_spans": [
+                {
+                    "start": 145,
+                    "end": 148,
+                    "type": "software",
+                    "rawForm": "XYZ",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "sis the M boost converges to 90.8 \u00b1 1.4 GeV for 4000 events (for class 1 events). ",
+            "section": "Table 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 23
+        },
+        {
+            "text": "These values indicates that the method could be of interest to investigate further in experimental data.",
+            "section": "Table 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 23
+        },
+        {
+            "text": "Table 2. ",
+            "section": "Table 1 .",
+            "paragraph_rank": 54,
+            "section_rank": 23
+        },
+        {
+            "text": "Sensitivity to spin of the boson for different decay modes of the two \u03c4 -leptons shown in the true and reconstructed RFs as well as in the laboratory frame.",
+            "section": "Table 1 .",
+            "paragraph_rank": 54,
+            "section_rank": 23
+        }
+    ]
+}

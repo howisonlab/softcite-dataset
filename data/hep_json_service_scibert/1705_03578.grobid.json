@@ -1,0 +1,2423 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "This study explores various data-driven methods for performing background-model selection, and for assigning uncertainty on the signal-strength estimator that arises due to the choice of background model. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The performance of these methods is evaluated in the context of several realistic example problems. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Furthermore, a novel strategy is proposed that greatly simplifies the process of performing a bump hunt when little is assumed to be known about the background. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This new approach is shown to greatly reduce the potential bias in the signal-strength estimator, without degrading the sensitivity by increasing the variance, and to produce confidence intervals with valid coverage properties.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Typically in a bump hunt, i.e. a search for unknown particles using a scan of an invariant mass spectrum, model selection involves choosing what type of series best describes the background and at what order it should be truncated. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "If the background-only probability density function (PDF) has sufficient complexity to fully describe the data in the absence of a signal contribution, then the signal-strength estimator\u015c will likely be unbiased. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "One way to achieve this is to add complexity to the background model; however, increasing the background-model complexity increases the variance on\u015c, which degrades the sensitivity of the search. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Conversely, the use of an overly simplistic background model will often produce biased\u015c values, along with invalid confidence intervals (CIs) and p-values. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "How does one know how much complexity is required?",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "A common approach is to simulate ensembles of data samples using plausible background models, then fit each sample to various alternative model PDFs to determine how much complexity is required to achieve an unbiased\u015c. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "This approach works well for cases where the underlying PDFs are well known. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The potential bias on\u015c can be estimated using spurious signal yields observed in fits to simulated data and accounted for as a systematic uncertainty [1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 150,
+                    "end": 153,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Another approach is to use a data-driven method to choose how much complexity is required in the background model, e.g., at what order to truncate a series of background terms. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "It is worth stressing that while many wellknown data-driven methods exist to perform this task, none are guaranteed to provide unbiased\u015c values and, by default, most do not account for uncertainty due to model selection when producing CIs and p-values. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Therefore, these data-driven methods should first be applied to simulated data samples to demonstrate that they correctly select sufficiently complex background models when confronted with simulated data that is expected to be similar to the experimental data. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Both of these approaches quickly become infeasible when scanning over a large mass range-especially at masses O(\u039b QCD ), where QCD resonances and other non-monotonic features are expected to appear (somewhere) in the spectrum. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Furthermore, both approaches really only demonstrate unbiased\u015c values under the small set of background models simulated, which often do not include any peaking structures.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Ideally, a single data-driven method could be applied across the entire mass spectrum, which does not require performing large-scale simulation studies at each mass. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The method should produce unbiased\u015c values, valid CIs and p-values, with minimal input required from the analyst. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Furthermore, it is desirable that the method is robust against the presence of small peaking-background structures that are sufficiently wider than the signal. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Qualitatively, a small structure is one that may go unnoticed by the analyst prior to performing the bump hunt, and sufficiently wide means dissimilar enough to the signal PDF to avoid inducing a huge variance on\u015c. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "A quantitative assessment of these concepts is given below.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "This article explores various data-driven methods for performing background-model selection, and for assigning uncertainty on\u015c that arises due to the choice of background model. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The performance of these methods is evaluated in the context of several realistic example problems. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Furthermore, a novel strategy is proposed that greatly simplifies the process of performing a bump hunt when little is assumed to be known about the background. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "A key aspect of this approach, which seems to have gone unnoticed to date, is that the addition of terms to the background model that are orthogonal to the signal PDF on the fit domain do not-on their own-affect the variance of S. This new approach is shown to greatly reduce the potential bias in the signal-strength estimator without degrading the sensitivity and to produce CIs with valid coverage properties in all examples considered in this study. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The article is structured as follows: various principles and methods are presented in the context of a toy-model example in Sec. 2; two real-world examples are studied in Sec. 3; and a summary with detailed discussion is provided in Sec. 4.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Principles & Methodology",
+            "section_rank": 3
+        },
+        {
+            "text": "The primary quantities of interest in a bump hunt at each test-mass value are\u015c and its CI, from which an upper limit can be derived, and the local p-value, which gives the significance of the signal ignoring the trials factor. ",
+            "section": "Principles & Methodology",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "If a mass scan is performed, the global p-value-which gives the significance of the largest excess including the trials factor-can be obtained either using Monte Carlo (this is a commonly used approach, e.g., see Ref [2] for a discussion on the procedure) or by employing asymptotic formulae [3,4]. ",
+            "section": "Principles & Methodology",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 217,
+                    "end": 220,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 292,
+                    "end": 295,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 295,
+                    "end": 297,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "4]"
+                }
+            ]
+        },
+        {
+            "text": "Since converting local p-values into global ones is well covered in the literature, this step will not be discussed in detail here.",
+            "section": "Principles & Methodology",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "NULL Hypothesis & Wide Model",
+            "section_rank": 4
+        },
+        {
+            "text": "The NULL hypothesis, against which the signal-plus-background hypothesis is tested, is generally implicitly taken to be the absence of any unknown particles in the mass spectrum; however, in reality, the NULL is the lack of any features in the data that cannot be explained by the backgroundonly PDF. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In the absence of a signal contribution, it is vital that the background model is able to describe the data well enough to provide an unbiased\u015c estimate and a valid CI and p-value. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In this study, the local fit region is always taken to have a length of 25\u03c3 (25 times the mass resolution) and be centered on the test-mass value, which includes a \u00b12.5\u03c3 region potentially containing the signal and a 10\u03c3 -wide region on either side that is virtually signal free. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In principle, the use of a larger fit region can be beneficial if information is known about the form of the background PDF on the larger region; however, if such information is not available, then the use of a larger fit region trades variance for background-model uncertainty (none of the results presented in this article qualitatively depend on the size of the fit region). ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Each local fit region is transformed such that it spans the interval [\u22121, 1] with the test mass at zero. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "All fits performed in this study maximize the binned likelihood, and all fit component values are computed as the integral of the function across each bin; therefore, when transforming the fit range from [m \u2212 12.5\u03c3 , m + 12.5\u03c3 ] to [\u22121, 1] and vice versa, a one-to-one mapping of the bins is used making such transformations trivial to implement. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 1 shows a Gaussian signal PDF, along with peaking-background structures taken here to be Gaussian distributions with widths of two and three times that of the signal, each projected onto a truncated series of Legendre polynomials. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The key observations to make here are as follows:",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 A Gaussian signal is an even function on this transformed fit interval; its odd moments are all zero. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Real-world signals are typically predominantly even functions with minimal odd moments. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Adding a large number of odd modes to the background-only PDF will have minimal impact on the variance of\u015c due to this orthogonality, whereas additional even modes will increase the variance (for reasons discussed in the following bullet). ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The extent to which this statement holds for a non-even signal function is easily assessed by comparing its odd and even moments. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "If the odd moments are roughly an order of magnitude smaller than the even ones, the impact on the variance of odd modes in the background model will be small. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "1 \u2022 The signal can be described well using all even modes with \u2264 20, modulo some ring out that occurs at a level about an order of magnitude smaller than the peak height. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Roughly speaking, the ring out must be comparable to the Poisson uncertainty in each mass bin to disfavor building up a signal-like structure in this manner; therefore, including even modes with 10 forbids discovery of signals with S 10 \u221a B. Furthermore, the extent to which a signal-like structure can be built up by the available even modes will be directly reflected in the variance of\u015c. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "These considerations provide a natural upper limit on to consider. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "I.e. if modes with > 10 are required to describe the background-only data, the sensitivity will be driven by model uncertainty. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "In such a case, a dedicated strategy should be developed for this test mass (see comment on resonances in the next bullet).",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The large-distance (non-peaking) structure of the background PDF will generally be a mixture of even and odd modes with minimal contribution from large modes. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "If this is not the case, e.g., due to the tail of a large resonance contribution just outside of the fit region, then some additional dedicated long-distance terms must be added to the PDF (see Sec. 3.2).",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 A signal-like shape (peaking background) with a width \u2248 3\u03c3 is well described by a PDF consisting of all even modes \u2264 10 (wider structures can be described using fewer even modes). ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Such descriptions, however, are not perfect, and large peaking structures must have dedicated components in the PDF. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "N.b., the presence of such a structure, which is predominantly made up of even modes (just like the signal), will likely result in a biased\u015c near the centroid value of the peaking structure unless both the size and shape of the peaking background are highly constrained, though valid CIs and p-values will still be possible to obtain.",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 Structures with widths 3\u03c3 will not be able to be accommodated by the background-only PDF unless they are insignificant (assuming we choose a maximum of 10); therefore, if such a structure exists and is not assigned a dedicated PDF component, the CI and p-value will likely be invalid-the test will fail.",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Based on these observations, the largest allowed , i.e. the largest mode where the series could be truncated, can be chosen based on the narrowest possible peaking background structure that might occur at the test mass. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Provided that the test regions are defined in terms of the mass resolution, then the relationship between max and the width of a peaking background that can be handled properly is straightforward. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "For example, choosing max = 10 corresponds to a NULL hypothesis of the lack of any significant peaking structure with a width 3\u03c3 . ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "This approach has the desirable feature that the choice of max is largely driven by the potential peaking-background shapes that may occur, which must be considered in detail anyway, rather than on a large-scale simulation study at each mass. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "In the event that no peaking-background structures are possible, the choice of max is driven by the variation of the background-only PDF that is not accounted for by any problem-specific PDF components. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Choosing max = 6 or 8 will adequately describe most possible background PDFs while introducing minimal extra variance on\u015c. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The set of all modes with \u2264 max and any additional problem-specific PDF components defines the largest possible background model (all background models considered will be subsets of this one), which is referred to as the wide model in the literature and this name is adopted throughout this study. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Since adding odd modes to the background model does not directly increase the variance-but does reduce the potential for bias on\u015c-it is sensible to include all odd modes up to (possibly even beyond) max in the background-only model. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Even modes, however, do affect the variance on\u015c; therefore, adding all even modes up to max will reduce the sensitivity of the  Figure 2. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 136,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "Toy-model example for S = 10 \u221a B, where B is the background yield in a \u00b12\u03c3 window around the signal mass (this is the largest S value considered) for (top) bkg = 10 6 and (bottom )10 9 . ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The left panels show the PDFs, including the (red) exponential background, (solid black) Gaussian signal, and (dashed black) total. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The middle panels present the signal-to-background ratios for S = 10 \u221a B. The right panels display example data sets sampled from the PDFs, with the background PDFs shown to help illuminate the signal contribution (though the signal is too small to be seen in the bkg = 10 9 data sample). ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The signal has a mass of 1.00 and a width of 0.04 (in arbitrary units), making the full mass range considered a 25\u03c3 window.",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "search. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Because of this, it is desirable to employ a data-driven model-selection procedure to remove unnecessary even modes from the background-only model. ",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Such a procedure will introduce its own contribution to the uncertainty, which must be accounted for to construct valid CIs and p-values.",
+            "section": "NULL Hypothesis & Wide Model",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Toy-Model Example",
+            "section_rank": 5
+        },
+        {
+            "text": "A toy-model example problem is used throughout this section that consists of a Gaussian signal and an exponential background. ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The expected background yield is taken to be bkg = 10 6 or 10 9 and the expected signal yield is S = s \u221a B, where B is the background yield in a \u00b12\u03c3 window around the signal mass and values of s = 0, 1, 2, 5 and 10 are considered. ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "An ensemble of 1000 data sets is generated using this PDF for each expected background and signal yield, a total of 2 \u00d7 5 = 10 ensembles. ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The yield in each mass bin is sampled from a Poisson distribution, an example data set is shown in Fig. 2. ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 99,
+                    "end": 105,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "In this toy-model example, only one mass value is considered (no scan in mass is performed). ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Nothing will be assumed to be known about the background-only PDF, except that it could contain a small peaking-background structure with a width 3\u03c3 ; therefore, max = 10 is chosen as the largest value that will be considered for the background model. ",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Despite its simplicity, this example suffices to illustrate the key principles of bump hunting.",
+            "section": "Toy-Model Example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Model Selection & Uncertainty",
+            "section_rank": 6
+        },
+        {
+            "text": "The literature on data-driven model selection is vast (see, e.g., Ref. [5]). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 71,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "The general strategy is to reward goodness of fit while punishing model complexity. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "The most commonly used methods are based on the penalized likelihood",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 15,
+            "section_rank": 6
+        },
+        {
+            "text": "whereL is the maximum likelihood value, n(par) is the number of unknown parameters in the model, and c is a constant where:",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 16,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 c = 0 corresponds to adding no penalty term to the likelihood;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 c = 2 is the Akaike Information Criterion (AIC) [6], which (in the asymptotic limit) estimates the Kullback-Leibler (KL) divergence between the model and the truth, up to an unknown constant (i.e. the model with the minimum AIC value is the one that minimizes the KL divergence in the asymptotic limit);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 18,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 and c = log [n(bins)] (or log [n(candidates)] for an unbinned fit) is the Bayesian Information Criterion (BIC) [7], which is derived using a Bayesian approach and under certain conditions asymptotically selects the true model (if the true model is in the set of models considered).",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 19,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 116,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "Other penalty terms also exist in the literature (see, e.g., Ref. [8] and references therein). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Since log [n(bins)] > 2 for n(bins) > 7, the BIC penalty term is always larger than that of AIC in a bump hunt; therefore, the model selected by BIC will be at most as complex as the one selected by AIC (often, it will be less complex). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "This results in larger potential biases when using BIC, though also possibly smaller variance. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "In this work, I will focus on AIC-based strategies, leaving discussion of alternative methods, including performing a data-driven optimization of c, until Sec. 2.4. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "N.b., the value c = 2 is optimal under the AIC assumptions for any model space, i.e. using c = 2 is not specific to the choice here of using Legendre polynomials. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "Within the context of the toy-model problem presented in the previous subsection, the following approaches for determining\u015c, the CI, and local p-value are considered (all based on binned maximum-likelihood fits):",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "(true) c = 0 using the true background PDF, representing the best-possible performance (this is assumed to be unachievable in reality, but is shown to provide a benchmark);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "(wide) c = 0 using a background PDF that includes all Legendre modes with \u2264 10, this is the largest model considered (recall that this is referred to as the wide model);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "(step) a stepwise-in approach with c = 0, where the background model is initially chosen as only the = 0 mode, and higher-order modes are added successively but only if \u2206\u039b > 1; 2 (aic) the standard AIC approach, where background models with max from 0 to 10 are considered and the one that minimizes \u039b with c = 2 is selected;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 23,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 178,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "(aic-o) an AIC-based approach, where each background model contains every odd mode with \u2264 9, and all possible subsets of even modes with \u2264 10 are considered (2 6 = 64 total models), with the background model that minimizes \u039b with c = 2 selected;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 24,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 160,
+                    "end": 161,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "6"
+                }
+            ]
+        },
+        {
+            "text": "(avg) and a frequentist model averaging approach with c = 2, where all models considered in the previous bullet are averaged over to obtain\u015c (no model is selected).",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "The frequentist model averaging approach [9] is natural to consider in a bump hunt, since one has no interest in the background model beyond its impact on\u015c, the CI, and local p-value. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 44,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "The variation considered here defines a weight for each of the 64 models w m \u221d exp(\u2212\u039b m /2), where m denotes the model and \u039b is defined using c = 2 (this results in the exponent being half the AIC value for each model); the weights are then normalized such that they sum to unity. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "The signal strength is the weighted average of the\u015c values obtained from each of the 64 models\u015c avg = \u2211 w m\u015cm .",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Traditionally, once a model is selected (however that is done), the CI for\u015c and the p-value are determined using the profile likelihood-and any uncertainty due to the choice of model is ignored, though possibly investigated during separate systematic studies using an ad hoc approach. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Ignoring the model-selection uncertainty is, of course, valid when using the true background PDF, and assumed to be valid by construction when using the wide model. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Recall that the wide model is defined such that it has sufficient complexity to accommodate any structure that could be manifest in the data in the absence of a signal; therefore, by construction using the wide model results in an unbiased\u015c, a valid CI and p-value, and no model-selection uncertainty is required (provided that the assumptions made about the background when constructing the wide model are valid) since the model uncertainty is incorporated into the variance. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Otherwise, model-selection uncertainty can be sizable, even when using a well-known data-driven approach like AIC, and must be accounted for to obtain valid CIs and p-values.",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 27,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 110,
+                    "end": 113,
+                    "type": "software",
+                    "rawForm": "AIC",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "There are a number of prescriptions for handling model-selection uncertainty in the literature, though most require calculating complicated problem-specific functions (see, e.g., Ref. [10]). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "Ref. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "[11] proposed a simple \u039b-based approach that works as follows: \u039b is calculated for all models with a non-zero choice for c (c = 2 is used in this study); then the CI is obtained from a profile of \u039b, including the penalty term, where the model index m is treated as a discrete nuisance parameter. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "This results in the \u039b value for each signal strength being taken as the minimum \u039b value from all models (including the model-dependent penalty term); i.e. \u039b is minimized at each signal-strength value in the same way it is for a continuous nuisance parameter. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "The CIs are then defined as usual, e.g., a 68.3% interval is defined as the region where \u039b \u2212 \u039b(\u015c) \u2261 \u2206\u039b < 1. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "Finally, in the frequentist model averaging approach, a symmetric CI is assigned about\u015c avg defined using a variance of",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": ", where the first term provides an estimate of the bias for each model and the second is the per-model variance. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Figures 3 and 4 show the results of applying each method to the toy-model problem described in Sec. 2.2 for bkg = 10 6 and 10 9 , respectively. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 29,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 15,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figures 3 and 4"
+                }
+            ]
+        },
+        {
+            "text": "The results are summarized as:",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 the stepwise-in and standard AIC approaches yield large biases in\u015c at larger S, 3 while all other methods are found to be unbiased (the potential bias is 10 times smaller than the statistical variance, which is comparable to the uncertainty due to ensemble sample size);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 30,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 the 68.3% CI for the wide model is about twice the ideal value, which sets the scale of what can be gained by performing model selection (i.e. since, by construction, the wide model is unbiased and produces valid CIs and p-values, if this loss of sensitivity is acceptable, the wide model can be used and no model selection is required);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 31,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 including all odd modes has minimal impact on the variance as expected (c.f. green to purple lines, dashed or solid, in the top-right panels);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 conversely, and also as expected, including all odd modes greatly reduces the potential bias on\u015c (c.f. green to purple lines in the top-left panels);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 33,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 including the model-selection uncertainty in the AIC-based methods increases the lengths of the CIs by about 10-20%, these CIs are about 10-20% shorter than the ones reported by the model-averaging approach;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 34,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 the stepwise-in and standard AIC approaches do not yield proper coverage, and while including model-selection uncertainty greatly improves the standard-AIC coverage, the method still undercovers at large S;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 35,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 all other methods have good coverage properties, though this is only true for the AIC-based approach that includes all odd modes if model-selection uncertainty is accounted for;",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 the significance when S = 0 is overestimated for the stepwise-in method, and for both AICbased approaches if model-selection uncertainty is not included, but shows good (possibly conservative) performance for all other approaches (including the AIC-based methods that account for model-selection uncertainty);",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 37,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 for S = 10 \u221a B the significance reported by the wide model is about half that of the true model, which is expected given that the wide-model CI is about twice as long as that of the true model (quantitatively, this relationship will depend on the value chosen for max );",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 38,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 and finally, for S = 10 \u221a B the significance reported by the AIC-based method including all odd modes is only about 10% larger than that reported by the wide model, while the modelaveraging approach reports a significance about halfway between the true and wide models. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "4 It is also interesting to examine how the 68.3% CI lengths are distributed in the ensembles. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "4"
+                }
+            ]
+        },
+        {
+            "text": "Figure 5 shows this for the toy-model example for bkg = 10 6 and S = 10 \u221a B. Since no model-selection criteria are applied for the true and wide models, they report approximately the same CI length for each data sample. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "The stepwise-in approach is bimodal here, since it chooses to truncate the background PDF at either = 3 or 4 in each data set, and the standard AIC approach is similar. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "Both the AIC-based method including all odd modes and the model-averaging approach have much smoother distributions, especially when the model-selection uncertainty is included for the former.  ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 3. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Results for the toy-model example with bkg = 10 6 versus the true signal S relative to \u221a B, where B is the background yield in a \u00b12\u03c3 window around the signal mass (see Table 1 for legend label definitions). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 168,
+                    "end": 175,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Based on these results, it is clear that even in a simple problem like this-one that has no peaking-background structures-the stepwise-in approach is prone to bias, undercoverage, and overestimation of significance. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "Conversely, the wide model produces unbiased\u015c values, CIs, and pvalues. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "The only drawback to using the wide model is that the lengths of its CIs are about twice the optimal length. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "The potential bias in the AIC-based approach is greatly reduced by only considering background models containing all odd modes included in the wide model when performing the model selection. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "Furthermore, to obtain proper coverage and p-values from this AIC-based method requires accounting for model-selection uncertainty. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "Frequentist model averaging also produces valid results, though its CIs are typically 10-20% longer than those of AIC (after including modelselection uncertainty).",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "In this example, the best performance is achieved by the AIC-based approach to arbitrating the legend label background PDF used in the fit true the PDF used to generate the data with no free shape parameters wide all even and odd modes up to the maximum considered ( \u2264 10 here) step model selected by the stepwise-in approach aic model selected by the standard AIC approach aic-o all odd modes in the wide model plus even modes selected by AIC avg frequentist averaging over models (all models contain all odd modes) Table 1. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 517,
+                    "end": 524,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Labels used to denote the various methods in figure legends. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "The uncertainty due to model selection is (by construction) not required for the true and wide models and not included for the stepwise-in approach (it is not clear how this would be done for the stepwise-in method). ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "The AIC-based results are shown both with and without accounting for model-selection uncertainty, while this uncertainty is always included for frequentist model averaging. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "N.b., the solid-purple-line aic results are the c = 2 method of Ref. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "[11] (the same method but with c = 1 was used by CMS in H \u2192 \u03b3\u03b3 [12]).",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 63,
+                    "end": 67,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "inclusion of even modes in the background model, where model-selection uncertainty is accounted for using the discrete-nuisance-parameter profiling technique. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "For highly significant signals, however, the model uncertainty drives the p-values to be close to those obtained by simply using the wide model. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "This is expected since if one does not expect all components of the wide model to be relevant at the 5\u03c3 level then why include them? ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "An alternative approach for assigning local p-values is to take those obtained using the wide model with no additional model selection and, therefore, no additional model-selection uncertainty, which provides a mildly conservative significance estimate relative to the model-selection-based one. ",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "Either way, following the procedures outlined above should yield valid results-provided that a proper wide model is chosen; i.e. provided that the wide model has sufficient complexity to accommodate any structure that could be manifest in the data in the absence of a signal, or equivalently, that the assumptions made about the background when constructing the wide model are valid.",
+            "section": "Model Selection & Uncertainty",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "Alternative Methods",
+            "section_rank": 7
+        },
+        {
+            "text": "In the previous subsection, only the cases of c = 0 and c = 2 were considered, i.e. no likelihood penalty and the AIC penalty. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "One alternative approach is to instead choose c for each data set using cross validation. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 6 shows the distribution of optimal c values chosen using 10-fold cross validation for the toy-model problem. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "In 10-fold cross validation, the data sample is divided into 10 subsamples, where each background model is determined by fitting to 9 subsamples, and thenwith all parameters fixed-the mean square error (MSE) is computed for the remaining subsample, i.e. the one not used in the fit. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "This process is repeated 10 times, and the total MSE for each model is computed as the mean of the 10 MSE values obtained. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "The value of c is chosen as the one that selects the model with the smallest MSE. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "5 The c values determined using cross validation are, on average, close to the AIC value of c = 2, though determining c in this way introduces sizable noise. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5"
+                }
+            ]
+        },
+        {
+            "text": "Indeed, it is well known that asymptotically AIC is equivalent to leave-one-out cross validation [13]. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "While this approach is feasible, determining c using cross validation substantially from cross validation c  Figure 6. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 117,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Data-driven determination of the penalty parameter c using 10-fold cross validation for S = 0. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "The mean values are 1.9 and 1.8 for the 10 6 and 10 9 samples, respectively. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "As expected, the c values determined using cross validation are, on average, close to the AIC value of c = 2, though determining c this way introduces sizable noise.",
+            "section": "Alternative Methods",
+            "paragraph_rank": 42,
+            "section_rank": 7
+        },
+        {
+            "text": "increases the CPU required with no obvious benefits over using the AIC-based method from the previous subsection.",
+            "section": "Alternative Methods",
+            "paragraph_rank": 43,
+            "section_rank": 7
+        },
+        {
+            "text": "Another alternative approach is to regularize the fitting process, which involves modifying the likelihood according to",
+            "section": "Alternative Methods",
+            "paragraph_rank": 44,
+            "section_rank": 7
+        },
+        {
+            "text": "where \u03bb is a constant that controls the degree of regularization, \u03b1 i are the model parameters, \u03b2 = 2 corresponds to Ridge regression, and \u03b2 = 1 is the LASSO [14]. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 158,
+                    "end": 162,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "Both methods reduce overfitting by penalizing large |\u03b1 i | values, since overfitting often involves some parameters being driven to large positive values and others to large negative ones (induced by the fact that the overall normalization must match the observed data counts). ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "The value of \u03bb is determined using 10-fold cross validation for each data sample. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 7 shows the bias and 68.3% CI lengths obtained by applying the Ridge and LASSO to the toy-model problem. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "For both methods, the CIs are obtained using the bootstrap [15] due to the presence of the regularization term; however, in this example, the likelihood-based CIs are consistent with the bootstrap-based ones. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 63,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "The Ridge penalty decreases quickly as \u03b1 i \u2192 0; therefore, the Ridge does not perform model selection, i.e. it does not zero out terms in the model. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Because of this, one can see that the Ridge results are similar to those of the wide model, with the Ridgebased CIs \u2248 5% shorter than those obtained using the wide model. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "The LASSO does perform model selection (it zeroes out model components), and produces CIs with similar lengths to those obtained using the AIC-based model-selection approach in the previous subsection; however, in this example, the LASSO results have a small bias in\u015c. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "The advantage of the LASSO is that it does not require running a separate fit for all possible models under consideration (though it does require determining \u03bb from cross validation). ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Since in this case only 64 models are considered, it is possible to determine the \u039b value (with c = 2) for all models and perform the model selection. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "For applications where the model space is large (see, e.g., Ref. [16]), the LASSO is likely the best feasible option. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "For a bump hunt, however, regularization does not perform as well as the AIC- based approach, where all odd modes are included in all models and model-selection uncertainty is accounted for.",
+            "section": "Alternative Methods",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Finally, an alternative to the frequentist model averaging approach used above is Bayesian model averaging, where the AIC values in the model weights are replaced by the corresponding BIC values (i.e. c = 2 is replaced by c = log [n(bins)]). ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 46,
+            "section_rank": 7
+        },
+        {
+            "text": "This type of model averaging is natural in the Bayesian framework, since the BIC values provide approximations of the Bayes factors from which the model weights discussed above are easily obtained by assuming a uniform prior over models. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 46,
+            "section_rank": 7
+        },
+        {
+            "text": "Indeed, the form of the model weights in the frequentist model averaging method studied in this article were inspired by their Bayesian counterparts. ",
+            "section": "Alternative Methods",
+            "paragraph_rank": 46,
+            "section_rank": 7
+        },
+        {
+            "text": "However, since our field is focused on frequentist CIs and p-values, I will not present any detailed study of Bayesian methods here.",
+            "section": "Alternative Methods",
+            "paragraph_rank": 46,
+            "section_rank": 7
+        },
+        {
+            "text": "Peaking Background",
+            "section_rank": 8
+        },
+        {
+            "text": "The most difficult background to confront in a bump hunt is an unexpected peaking structure. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 47,
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 8 shows the toy-model background modified to include a Gaussian structure with a width 3 times larger than that of the signal, and an expected yield of 100 \u221a B. Such a structure is potentially large enough to result in rejecting the NULL hypothesis even when using the wide model chosen above (this situation violates the assumptions made when choosing max for the wide model). ",
+            "section": "Peaking Background",
+            "paragraph_rank": 47,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "0.7 100 1.5 0.5 0.5 Table 2. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 47,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 27,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "Results obtained for the peaking background shown in Fig. 8.",
+            "section": "Peaking Background",
+            "paragraph_rank": 47,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 53,
+                    "end": 59,
+                    "type": "figure",
+                    "text": "Fig. 8"
+                }
+            ]
+        },
+        {
+            "text": "background-only PDF for this peaking structure. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "N.b., the case considered here is where the peaking background is centered on the signal mass. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "For a Gaussian background, this is where the largest bias is expected. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "As the peaking structure is moved away from the signal mass, the bias decreases before flipping sign and then gradually becomes smaller as the peaking structure is moved farther from the signal mass. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "Table 2 gives the results of applying each method to this challenging problem. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The stepwisein approach totally fails in this case because the peaking-background structure is an even function; therefore, the stepwise-in procedure terminates when adding = 5 does not provide significant reduction in \u039b, even though adding = 6, 8, and 10 would each significantly reduce \u039b. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "Interestingly, the AIC-based and model-averaging approaches effectively select the wide model, which is the best possible choice given the model space provided for consideration. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "While\u015c is biased and there is about 5% undercoverage, the model-selection and model-uncertainty procedures have performed as well as possible given the wide model provided. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "Indeed, in this situation, the analyst has failed to provide an adequate wide model (a peaking-background component is clearly required), though the consequences are rather mild. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "pairs at the APEX experiment, while the second is a search for the decay of a Higgs boson into muon-antimuon. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "The APEX study includes regions where the background is steeply increasing, steeply decreasing, and nearly uniform. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "The H \u2192\u00b5 + \u00b5 \u2212 study is complicated by a huge Z \u2192 \u00b5 + \u00b5 \u2212 contribution that extends into the fit region, and by a non-Gaussian signal PDF that arises due to bremsstrahlung. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "In both studies, it is again assumed that small peaking-background structures with widths 3\u03c3 could appear in the spectra and max = 10 is chosen. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "While the real-world backgrounds for these specific problems may not be so difficult, allowing for such narrow peaking backgrounds provides the opportunity for more stringent testing of the bump-hunting strategies. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "N.b. the use of examples with parametric backgrounds facilitates performing these studies without using vast CPU resources. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "The same approach can be applied to situations where the background must be obtained from simulation, provided that the resources exist to generate the required background ensembles.",
+            "section": "Peaking Background",
+            "paragraph_rank": 48,
+            "section_rank": 8
+        },
+        {
+            "text": "3.1 A \u2192 e + e \u2212 Figure 9 shows the PDF used for the APEX A \u2192 e + e \u2212 search, where the background function is sin 2 (x)/(1 + x 2 ) which gives a similar background shape as that of APEX, and the expected total background yield is chosen to be 10 9 (this is about 10 times larger than the expected APEX data sample at each beam energy, which is chosen to provide a more stringent test) [17]. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 49,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 16,
+                    "end": 24,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 9"
+                },
+                {
+                    "start": 385,
+                    "end": 389,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "Five test masses are selected, and signal strengths of 0 \u2264 S \u2264 10 \u221a B are considered, where for each mass B is again defined as the expected background yield in a \u00b12\u03c3 region centered on the test mass value (see Fig. 9); the signal PDFs are each Gaussian. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 49,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 211,
+                    "end": 217,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Fig. 9"
+                }
+            ]
+        },
+        {
+            "text": "The same studies performed in the previous section on the toy-model problem are repeated for each test-mass value considered in the APEX problem. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 49,
+            "section_rank": 8
+        },
+        {
+            "text": "The full results are presented in the appendix, while the mass-dependence for a single S value is shown in Fig. 10.",
+            "section": "Peaking Background",
+            "paragraph_rank": 49,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 114,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 10"
+                }
+            ]
+        },
+        {
+            "text": "Overall, the results obtained in the APEX example are consistent with those from the toymodel example, except for the m = 1.1 test mass value. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "At this mass, the APEX background is close to uniform, which results in less bias in the stepwise-in and standard-AIC approaches (though the stepwise-in coverage is still not valid). ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "An interesting feature is that the size of the CIs increases at large and small masses where the background PDF undergoes its most rapid variations. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "In this example, no dedicated mass-dependent long-range components are added to the wide model; therefore, this rapid background variation must be accounted for entirely by the Legendre modes, which requires using most of the wide model. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "This works-\u015c is not biased, the coverage is valid, etc.-but is not optimal. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "The sensitivity would be improved by adding some problem-specific PDF components that roughly capture the long-distance background behavior. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "The Legendre modes would then be left free to accommodate any local deficiencies in these terms, including any unexpected peaking-background-like structures. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "The example presented next provides an excellent opportunity to examine this topic in greater detail. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 11 shows the H \u2192 \u00b5 + \u00b5 \u2212 PDF, where the background is taken to be a Breit-Wigner distribution for the Z boson convolved with a Gaussian resolution function and the signal PDF is a Crystal Ball function [18]. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 11"
+                },
+                {
+                    "start": 209,
+                    "end": 213,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "Signal strengths are again studied in the range 0 \u2264 S \u2264 10 \u221a B, where S \u2248 \u221a B is the SM value using about 50/fb of LHC data collected at 13 TeV. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "This example is similar to the toy-model one, with two important differences: the signal PDF is not a pure even function; and the tail of the Z boson provides a much more difficult background, one that varies by a factor of \u2248 50 over the 25\u03c3 mass window. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "Fitting the Z background using only the Legendre-based wide model with max = 10 results in the full wide model being selected in every data sample for all model-selection methods-but still provides a poor description of the data as determined using the wide-model \u03c7 2 . ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "A fit that uses the full wide model and includes a signal component should not be rejected at a high confidence level if the wide model is adequate. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "Situations where the wide model is inadequate can often be identified using this \u03c7 2 , which does not spoil the blinding provided that the value of\u015c is not inspected. ",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "A potential strategy is to first perform a fit at every test-mass value using the full wide model including a signal component whose peak value is free to vary to ensure that all such models are capable of adequately describing the data.",
+            "section": "Peaking Background",
+            "paragraph_rank": 50,
+            "section_rank": 8
+        },
+        {
+            "text": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "section_rank": 9
+        },
+        {
+            "text": "It is clear that some dedicated background PDF components are required to properly handle the tail of the Z boson. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "While the optimal approach certainly utilizes the known properties of the  Figure 11. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 84,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 11"
+                }
+            ]
+        },
+        {
+            "text": "Higgs-decay model for S = \u221a B, where B is the background yield in a \u00b12\u03c3 window around 125 GeV (this is approximately the Standard Model value of S for 50/fb at 13 TeV). ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "The left panel shows the PDFs, including the (red) Z boson background, (solid black) Crystal Ball signal, and (dashed black) total. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "The middle panel presents the signal-to-background ratio. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "The right panel displays an example data set sampled from the PDF, with the background PDF shown (the signal contribution is too small to be visible). ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "The signal has a mass of 125 GeV and a Gaussian-core-width of 2 GeV, making the full mass range considered a 25\u03c3 window.",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 51,
+            "section_rank": 9
+        },
+        {
+            "text": "Z, for illustrative purposes this information is not used here. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "Instead, three exponential terms are added to the wide model, which enables obtaining a decent description of the data as evaluated using the wide-model \u03c7 2 . ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "Figure 12 shows the results, which are similar to those obtained for the toy-model example. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 12"
+                }
+            ]
+        },
+        {
+            "text": "I stress here that, unlike in a traditional bump-hunt approach, the quality of the problem-specific PDF components does not need to be exceedingly high. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "The Legendre modes in the wide model are available to the model-selection procedure and can account for discrepancies in the problem-specific PDF, including any small unexpected peaking structures. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "Indeed, in this example using only three exponentials to describe the Z-boson line shape results in some structure in the residuals, nevertheless valid results are obtained. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "Despite the extreme challenges presented in this example, the same AIC-based strategy-including all odd modes and accounting for model-selection uncertainty-produces unbiased\u015c values, CIs, and p-values after dedicated Zboson background components are added (despite the fact that the Z-boson terms used here are not optimal). ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "N.b., quantitatively the lengths of the AIC-based CIs depend on the choice max = 10. ",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "The use of a smaller max , corresponding to a less conservative wide model, will produce AIC-based CI lengths closer to the optimal values.",
+            "section": "H \u2192 \u00b5 + \u00b5 \u2212",
+            "paragraph_rank": 52,
+            "section_rank": 9
+        },
+        {
+            "text": "Summary & Discussion",
+            "section_rank": 10
+        },
+        {
+            "text": "A critical aspect of searching for unknown particles is properly assessing the uncertainty in the background model, including the model-selection contribution which can be large when the signalto-background ratio S/B is small. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Background-model selection involves a tradeoff between bias and variance, since increasing the background-model complexity decreases the potential bias on\u015c while increasing its variance. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "The key principles to take away from the studies presented in this article are:",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 The NULL hypothesis is generally implicitly taken to be the absence of any unknown particles in the mass spectrum; however, in reality, the NULL is the lack of any features in the data that cannot be explained by the background-only PDF.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 It is vital that the wide model, i.e. the model containing all background PDF components under consideration, is able to describe the data in the absence of a signal contribution well enough to provide unbiased\u015c estimates and valid CIs and p-values.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 55,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 I proposed transforming each fit region onto the interval [\u22121, 1] centered on the test mass.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 56,
+            "section_rank": 10
+        },
+        {
+            "text": "Provided that the length of each fit region (prior to this transformation) is defined in terms of the mass resolution, it is straightforward to relate the highest-order even mode included in the background PDF, max , to the width of the narrowest peaking-background structure that can be accommodated by the NULL hypothesis. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 57,
+            "section_rank": 10
+        },
+        {
+            "text": "This approach has the desirable feature that the choice of max for the wide model is largely driven by the potential peaking backgrounds that may occur, which must be considered in detail anyway, rather than on some large-scale simulation study at each mass.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 57,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 Furthermore, on the [\u22121, 1] interval signals are predominantly even functions; therefore, adding complexity to the background PDF in the form of odd modes has minimal impact on the variance of\u015c (due to orthogonality), while greatly reducing the potential bias. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 58,
+            "section_rank": 10
+        },
+        {
+            "text": "Therefore, undercoverage, and overestimation of significance; clearly this approach should not be used.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 58,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 Conversely, the wide model produced unbiased\u015c values, CIs, and p-values. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "The only drawback to using the wide model is that the lengths of its CIs are about twice the optimal length (specifically, this value is for max = 10 and will vary depending on how much complexity is required in the wide model for each fit region in each search).",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 While the AIC-based approach is well known and widely used outside of physics, it is prone to producing biased\u015c values and invalid CIs and p-values. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 10
+        },
+        {
+            "text": "The potential bias in a bump hunt is greatly reduced by including all odd modes from the wide model in all submodels considered in the background-model selection process; however, obtaining proper coverage and p-values still requires accounting for model-selection uncertainty. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 10
+        },
+        {
+            "text": "In this study, the discrete-nuisance-parameter approach of Ref. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 10
+        },
+        {
+            "text": "[11] was employed due to its simplicity, and was found to produce valid CIs and p-values in all problems studied.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 Frequentist model averaging was also found to produce valid results, though its CIs were typically 10-20% longer than those of AIC (including model-selection uncertainty).",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 61,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 129,
+                    "end": 133,
+                    "type": "software",
+                    "rawForm": "AIC",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "In all examples studied in this work, the best results for\u015c and its CI were obtained using the novel approach proposed here. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "This involves transforming the fit interval onto [\u22121, 1] centered on the test mass and choosing an appropriate wide model, i.e. choosing a wide model that is capable of describing the data well enough in the absence of a signal contribution to provide an unbiased\u015c and a valid CI and p-value. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "Model selection is then performed using the AIC-based approach, where all odd modes are included in every model considered and all even modes are arbitrated on. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "The model-selection uncertainty is determined by treating the model index as a discrete nuisance parameter in the profile likelihood. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "This same approach can also be used to obtain the local p-values; however, for highly significant signals, model uncertainty drives the p-values to be close to those obtained using the wide model as expected. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "An alternative approach for assigning local p-values is to take those obtained using the wide model with no additional model selection and, therefore, no additional model-selection uncertainty, which provides a mildly conservative significance estimate relative to the model-selection-based one.",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "The key role of the analyst then is to input an adequate wide model for each test-mass value in their bump hunt. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 63,
+            "section_rank": 10
+        },
+        {
+            "text": "This is accomplished largely using knowledge about any potential peakingbackground structures and any long-distance rapid variation in the background PDF, e.g. due to a large resonance contribution nearby, and can be aided by studying simulated backgrounds. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 63,
+            "section_rank": 10
+        },
+        {
+            "text": "It is not possible to guarantee that any method will provide unbiased\u015c estimates and valid CIs and p-values in all possible situations; however, given the range of backgrounds studied here, and the consistently good performance observed from the method proposed in this article, valid results are expected provided that an adequate wide model is chosen-and a background model with max = 10 and any dedicated resonance terms is likely to be appropriate in the absence of a large and narrow peaking background. ",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 63,
+            "section_rank": 10
+        },
+        {
+            "text": "Finally, I note that this method was successfully employed by LHCb in a recent search for dark photons [19].",
+            "section": "Summary & Discussion",
+            "paragraph_rank": 63,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 103,
+                    "end": 107,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 1. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 64,
+            "section_rank": 11
+        },
+        {
+            "text": "Gaussian distributions with widths (left) \u03c3 , (middle) 2\u03c3 , and (right) 3\u03c3 projected onto truncated series of Legendre polynomials (the legend labels denote the largest included in each truncated set).",
+            "section": "Figure 1 .",
+            "paragraph_rank": 64,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3. ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "Results for the toy-model example with bkg = 10 6 versus the true signal S relative to \u221a B, where B is the background yield in a \u00b12\u03c3 window around the signal mass (seeTable 1for legend label definitions).",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "(top left) ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "The mean bias in signal estimator\u015c relative to (left axis) \u221a B and (right axis) B. (top right) The mean full length of the 68.3% CI relative to \u221a B as reported by the profile likelihood, where the dashed lines show the aic and aic-o results without accounting for model-selection uncertainty. ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "(bottom left) ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "Coverage reported at 95% CL by each method, where the solid black line shows the expected 95% and the dashed black lines show the approximate uncertainty in all results due to ensemble size. ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "(bottom right) ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "The fraction of data sets that report a p-value corresponding to a significance > 3\u03c3 for the NULL hypothesis (the expected value is 0.27% when S = 0 as a two-sided test is performed due to the limited number of data sets). ",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "N.b., in all examples in this study, the statistical uncertainty on \u015c \u2212 S / \u221a B is small and well approximated by ||\u2206\u039b < 1|| / \u221a B /(2 \u221a 1000) \u2208 [0.03, 0.06].",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 4. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 66,
+            "section_rank": 13
+        },
+        {
+            "text": "Same asFig. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 66,
+            "section_rank": 13
+        },
+        {
+            "text": "3but for bkg = 10 9 .",
+            "section": "Figure 4 .",
+            "paragraph_rank": 66,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 5. ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 67,
+            "section_rank": 14
+        },
+        {
+            "text": "Distributions of the full length of the 68.3% CIs relative to \u221a B as reported by the profile likelihood for the toy-model example for bkg = 10 6 and S = 10 \u221a B. In the aic and aic-o plots, the dashed lines show the CI lengths without accounting for model-selection uncertainty.",
+            "section": "Figure 5 .",
+            "paragraph_rank": 67,
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 7 .",
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 7. ",
+            "section": "Figure 7 .",
+            "paragraph_rank": 68,
+            "section_rank": 15
+        },
+        {
+            "text": "Results using Ridge and LASSO regularization for the toy-model example for (top) bkg = 10 6 and (bottom) 10 9 . ",
+            "section": "Figure 7 .",
+            "paragraph_rank": 68,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "Ridge",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "(left) ",
+            "section": "Figure 7 .",
+            "paragraph_rank": 68,
+            "section_rank": 15
+        },
+        {
+            "text": "The mean bias in signal estimator\u015c relative to (left axis) \u221a B and (right axis) B. (right) The mean full length of the 68.3% CI relative to \u221a B as determined using the bootstrap resampling approach. ",
+            "section": "Figure 7 .",
+            "paragraph_rank": 68,
+            "section_rank": 15
+        },
+        {
+            "text": "For both the Ridge and LASSO, the \u03bb parameter is determined using 10-fold cross validation.",
+            "section": "Figure 7 .",
+            "paragraph_rank": 68,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 13,
+                    "end": 18,
+                    "type": "software",
+                    "rawForm": "Ridge",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "Figure 9 .",
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 9. ",
+            "section": "Figure 9 .",
+            "paragraph_rank": 69,
+            "section_rank": 16
+        },
+        {
+            "text": "APEX model for S = 10 \u221a B and bkg = 10 9 : (top) the PDF, showing the (red) background, (solid black) Gaussian signals, and (dashed black) total (the edges of each 25\u03c3 mass window are denoted by the vertical dotted lines); (middle) the signal-to-background ratio at each signal mass for S = 10 \u221a B (the largest S values considered in this study); and (bottom) an example data set sampled from the PDF shown in the top panel (the signals are not visible, their peak locations are denoted by the vertical dashed lines).",
+            "section": "Figure 9 .",
+            "paragraph_rank": 69,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "APEX",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "Figure 10 .",
+            "section_rank": 17
+        },
+        {
+            "text": "Figure 10. ",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17
+        },
+        {
+            "text": "Results for the APEX example problem with S = 10 \u221a B versus test mass value. ",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "APEX",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "(top left) ",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17
+        },
+        {
+            "text": "The mean bias in signal estimator\u015c relative to \u221a B. (top right) The mean full length of the 68.3% CI relative to \u221a B as reported by the profile likelihood, where the dashed lines show the aic and aic-o results without accounting for model-selection uncertainty. ",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17
+        },
+        {
+            "text": "(bottom) ",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17
+        },
+        {
+            "text": "Coverage reported at 95% CL by each method, where the solid black line shows the expected 95% and the dashed black lines show the approximate uncertainty in all results due to ensemble size.",
+            "section": "Figure 10 .",
+            "paragraph_rank": 70,
+            "section_rank": 17
+        },
+        {
+            "text": "That said, it is interesting to investigate what happens if no dedicated component is added to the",
+            "paragraph_rank": 71,
+            "section_rank": 18
+        },
+        {
+            "text": "This is also the case if the signal mass is not known precisely, e.g. if the uncertainty on the peak position is \u2248 \u03c3 /5, the odd moments are an order of magnitude smaller than the even ones. ",
+            "paragraph_rank": 72,
+            "section_rank": 18
+        },
+        {
+            "text": "While this article focuses on discovery, the same approach advocated here can also be employed to perform mass measurements.",
+            "paragraph_rank": 72,
+            "section_rank": 18
+        },
+        {
+            "text": "This stepwise-in approach is certainly ad hoc, but since it has been commonly used in physics analyses I choose to study its performance here rather than any of the better-motivated stepwise-based methods. ",
+            "paragraph_rank": 73,
+            "section_rank": 18
+        },
+        {
+            "text": "For example, in nondiscovery analyses, it is not uncommon for the background model to be chosen by fitting with a low-order function and then deciding manually whether higher-order terms are required based on the change in the \u03c7 2 value. ",
+            "paragraph_rank": 73,
+            "section_rank": 18
+        },
+        {
+            "text": "Such an approach is equivalent to the stepwise-in one implemented here and is often mistaken for being the F test.",
+            "paragraph_rank": 73,
+            "section_rank": 18
+        },
+        {
+            "text": "The sign of the bias changes going from 10 6 to 10 9 background events, which occurs because, on average, the order at which the background model is truncated increases by one for this specific example.",
+            "paragraph_rank": 74,
+            "section_rank": 18
+        },
+        {
+            "text": "I have not found any direct discussion about p-values in the frequentist model-averaging literature; therefore, here the p-value is computed under a Gaussian assumption using\u015c avg and \u03c3 avg . ",
+            "paragraph_rank": 75,
+            "section_rank": 18
+        },
+        {
+            "text": "While this approach works for the problems studied, one could certainly question its validity-especially for small p-values.",
+            "paragraph_rank": 75,
+            "section_rank": 18
+        },
+        {
+            "text": "The model selection could be done without determining c by choosing the model with the smallest MSE; however, c must be known to incorporate the model-selection uncertainty using the method employed above.",
+            "paragraph_rank": 76,
+            "section_rank": 18
+        },
+        {
+            "text": ". ",
+            "paragraph_rank": 77,
+            "section_rank": 18
+        },
+        {
+            "text": "Real-World ExamplesHaving fully explored the toy-model example of Sec. 2, the same study will now be repeated on two (simulated) real-world examples. ",
+            "paragraph_rank": 77,
+            "section_rank": 18
+        },
+        {
+            "text": "The first is a search for dark photon decays to electron-positron",
+            "paragraph_rank": 77,
+            "section_rank": 18
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 20
+        },
+        {
+            "text": "I thank N. Toro for suggesting the APEX problem, M. Klute for suggesting the Higgs-decay one, and N. Wardle for helpful feedback. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 78,
+            "section_rank": 20
+        },
+        {
+            "text": "This work was supported by DOE grant DE-SC0010497 and NSF grant PHY-1607225.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 78,
+            "section_rank": 20
+        },
+        {
+            "text": ". ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "Results for the Higgs-decay model versus the generated signal S relative to \u221a B, where B is the background yield in a \u00b12\u03c3 window around the Higgs mass. (top left) The mean bias in signal estimator\u015c relative to (left axis) \u221a B and (right axis) B. (top right) The mean full length of the 68.3% CI relative to \u221a B as reported by the profile likelihood, where the dashed lines show the aic and aic-o results without accounting for model-selection uncertainty. ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "(bottom left) ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "Coverage reported at 95% CL by each method, where the solid black line shows the expected 95% and the dashed black lines show the approximate uncertainty in all results due to ensemble size. ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "(bottom right) ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "The fraction of data sets that report a p-value corresponding to a significance > 3\u03c3 for the NULL hypothesis (the expected value is 0.27% when S = 0 as a two-sided test is performed due to the limited number of data sets in the ensemble). ",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "all odd modes up to (possibly even beyond) max should be included in every background model considered in the model-selection process.",
+            "paragraph_rank": 79,
+            "section_rank": 22
+        },
+        {
+            "text": "\u2022 Even modes, however, do affect the variance on\u015c; therefore, adding all even modes up to max will reduce the sensitivity of the search, which means that some form of data-driven model selection is required to arbitrate between background models that include different subsets of the even modes contained in the wide model. ",
+            "paragraph_rank": 80,
+            "section_rank": 22
+        },
+        {
+            "text": "The common principle invoked by data-driven model-selection methods is to reward goodness of fit while punishing model complexity, though different methods employ different approaches in practice.",
+            "paragraph_rank": 80,
+            "section_rank": 22
+        },
+        {
+            "text": "This study explored various data-driven methods for performing background-model selection, and for assigning uncertainty on\u015c that arises due to the choice of background model. ",
+            "paragraph_rank": 81,
+            "section_rank": 22
+        },
+        {
+            "text": "Various realistic example problems were considered, and the results are summarized as follows:",
+            "paragraph_rank": 81,
+            "section_rank": 22
+        },
+        {
+            "text": "\u2022 It was demonstrated that the stepwise-in approach often used in physics is prone to bias,  Figure 13. ",
+            "paragraph_rank": 82,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 93,
+                    "end": 102,
+                    "type": "figure",
+                    "text": "Figure 13"
+                }
+            ]
+        },
+        {
+            "text": "Results for the APEX example for m = 0.2 versus the true signal S relative to \u221a B, where B is the background yield in a \u00b12\u03c3 window around the signal mass (see Table 1 for legend label definitions).  ",
+            "paragraph_rank": 82,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 159,
+                    "end": 166,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Figure 17. ",
+            "paragraph_rank": 82,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "text": "Figure 17"
+                }
+            ]
+        },
+        {
+            "text": "Same as Fig. 13 but for m = 2.9.",
+            "paragraph_rank": 82,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 8,
+                    "end": 15,
+                    "type": "figure",
+                    "text": "Fig. 13"
+                }
+            ]
+        }
+    ]
+}

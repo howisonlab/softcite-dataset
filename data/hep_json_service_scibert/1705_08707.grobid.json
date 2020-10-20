@@ -1,0 +1,853 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Identifying the flavour of neutral B mesons production is one of the most important components needed in the study of time-dependent CP violation. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The harsh environment of the Large Hadron Collider makes it particularly hard to succeed in this task. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We present an inclusive flavour-tagging algorithm as an upgrade of the algorithms currently used by the LHCb experiment. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Specifically, a probabilistic model which efficiently combines information from reconstructed vertices and tracks using machine learning is proposed. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The algorithm does not use information about underlying physics process. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "It reduces the dependence on the performance of lower level identification capacities and thus increases the overall performance. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The proposed inclusive flavour-tagging algorithm is applicable to tag the flavour of B mesons in any proton-proton experiment.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "B mesons contain either a b or ab quark, which defines their flavour. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The flavour-tagging (FT) algorithms determine the flavour of a reconstructed signal B meson candidate at the production point in proton-proton collisions. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The FT algorithms are used to measure differences in the behaviour of particles and antiparticles (e.g. measurements of flavour oscillations of B 0 (s) mesons) and CP asymmetries to probe the validity of the Standard Model of particle physics.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The production of a B meson is usually accompanied by the production of another b hadron and other particles like kaons, pions, and protons (see Figure 1). ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 145,
+                    "end": 153,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "At hadron collider experiments the FT algorithms are usually divided into two groups:",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 opposite side (OS) taggers use the decay products of b hadrons that are produced together with the signal B (see [1]); \u2022 same side (SS) taggers exploit light particles that evolve from the hadronisation process of the signal B meson like kaons, pions, and protons (see [2]).",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 118,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 271,
+                    "end": 274,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "The current version of the FT algorithm used by the LHCb [1,2,3], CMS [4], Atlas [5], CDF [6] and D0 [7] experiments tries to identify tracks and vertices produced on the OS/SS sides (SS tagging is done only by LHCb and CDF). ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 60,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 60,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2,"
+                },
+                {
+                    "start": 62,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3]"
+                },
+                {
+                    "start": 70,
+                    "end": 73,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 81,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 90,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 75,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "Atlas",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "It works as follows:",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "(i) the first step finds all tagging tracks and tagging vertices, where the latter is only used in OS taggers 1 . ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 110,
+                    "end": 111,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "Both the OS and SS algorithms find one, maybe several, tagging track, while the OS algorithm also finds one tagging vertex. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "(a) for the OS algorithm only lepton, kaon tracks and b hadron decay, secondary charm hadron vertices are considered; ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "(b) for the SS algorithm only pion, proton or kaon tracks are considered; ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "(c) other physically motivated selections are applied to leave only tracks/vertices which have the characteristics that help to define the flavour; ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "(d) if more than one track (vertex) is left after the previous steps for the OS or SS, a special rule is applied to select an appropriate track (vertex);",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "(ii) each of the OS/SS algorithms predicts a flavour based on the charge of the tagging track (vertex). ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "Other characteristics of the track (vertex) are used to estimate the probability of incorrectly predicted flavour (i.e. misclassification, or mistag probability). ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "(iii) finally, the predictions of the OS and SS taggers are usually combined in the flavour-tagged analyses.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The first step naturally follows our physics intuition, but requires setting ad-hoc conditions, which require a deep understanding of the physics processes. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "From an analysis point of view, this pipeline causes some disadvantages:",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 the algorithm relies heavily on the particle identification and reconstructed variables during the selection of the tagging tracks (vertices); \u2022 the process of selecting a tagging particle is based on physics assumptions. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "This prevents the use of complex selection rules; \u2022 a lot of information is lost since only a couple of tracks (vertices) are selected.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "This paper describes a new approach to define the signal B flavour that exploits all available information in an event without using information about the underlying physics processes, like a tagging track (vertex) search.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "text": "Inclusive Probabilistic Model",
+            "section_rank": 3
+        },
+        {
+            "text": "The algorithm starts using an inclusive probabilistic model, which combines information from all tracks and vertices for each selected event containing a B candidate to tag. ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "It uses an assumption similar to a naive Bayes model. ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Specifically, it assumes a strong independence of the tagging information available in the tracks and vertices 2 .",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "choices for a tagging track are pion, kaon or proton tracks involved in the SS tagger and lepton or kaon tracks coming from a b hadron decay in the OS tagger. ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Ideal choice of a tagging vertex for the OS is a b hadron decay vertex or charm hadron vertex coming from a b hadron decay.",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Let \"components\" refer to both tracks and vertices. ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "Additionally, let s p be the charge sign of a component (+1 or \u22121) and s b be the flavour of the signal B (+1 forb and \u22121 for b). ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "Then, assume the following: This approach has several key properties:",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 it combines all available information from the components of the events under the naive probabilistic model; \u2022 it implicitly determines the tagging tracks and vertices by the value of the ratio of the probabilities. ",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Most of the particles will have a very small contribution; \u2022 it does not depend on the tagging particle type (i.e. pion, kaon, electron, muon, proton) and it is not split into OS and SS tagging algorithms; \u2022 it is symmetric with respect to matter/antimatter due to model definition.",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Thus, the proposed FT algorithm is an inclusive model.",
+            "section": "Inclusive Probabilistic Model",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Inclusive Training",
+            "section_rank": 4
+        },
+        {
+            "text": "Charged B meson can be tagged using the charge of its decay components. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "Thus, the flavour of the meson can be defined (b for B + and b for B \u2212 ). ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "B \u00b1 \u2192 J/\u03c8[\u00b5 + \u00b5 \u2212 ]K \u00b1 decays are used for training. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The charge of the kaon in the signal decay is used to independently infer the flavour of the B meson at production: P (b) = P (B + ), P (b) = P (B \u2212 ). ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The inclusive model is applied to the LHCb data samples that contain reconstructed signal decays B \u00b1 \u2192 J/\u03c8[\u00b5 + \u00b5 \u2212 ]K \u00b1 . ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The set of all tracks with the low probability to be ghost (fake track) and vertices for all events form the tracks and vertices datasets. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "Note the tracks and vertices forming the reconstructed signal decay are excluded.",
+            "section": "Inclusive Training",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "In the probabilistic model conditional probabilities P (s b \u2022 s p > 0|B, component) and P (s b \u2022 s p < 0|B, component) are unknown. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "We can estimate them using a classification model. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "The target for this classification model is:",
+            "section": "Inclusive Training",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Two gradient boosted decision tree (GBDT) algorithms are trained to predict the conditional probability P (s b \u2022 s p > 0|B, component) for tracks and vertices. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Kinematic properties of the tracks, vertices and signal B meson, information from the particle identification algorithm based on machine learning methods and track quality criteria are used as input observables. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "For the B meson the following features are used: transverse momentum, polar angle, impact parameter with respect to the primary interaction, pseudorapidity. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "For tracks, the particle identification algorithm output, polar angle, momentum, transverse momentum are used. ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Finally, for vertices, the number of tracks forming the vertex, mean of tracks impact parameters and mean of their transverse momenta, mass and momentum, which are calculated assuming pion mass for the incoming tracks, lifetime, angle between the signal B and the vertex are used.  ",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Estimation of the frequency based probability is used as a true probability in each bin for percentile 10 binning.",
+            "section": "Inclusive Training",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Symmetric Calibration",
+            "section_rank": 5
+        },
+        {
+            "text": "The conditional probability P (s b \u2022 s p > 0|B, component) predicted by a classification model (i.e. by the GBDT) may be biased (see [8], [9]). ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 19,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 133,
+                    "end": 136,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[8]"
+                },
+                {
+                    "start": 138,
+                    "end": 141,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 112,
+                    "type": "software",
+                    "rawForm": "GBDT",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Additionally, P (b) and P (b) computed by the probabilistic model may not be true probabilities due to the naive Bayes assumption. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "To compensate for these biases, the classifier output must be calibrated. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "Furthermore, the model should have the same behaviour for particles and antiparticles except small asymmetry of the production and detectors. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "This means that distributions for P (B + ) and P (B \u2212 ) should be symmetric around 0.5.",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "To calibrate the GBDT output, Platt scaling [10] and isotonic regression [11] were used. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 44,
+                    "end": 48,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[10]"
+                },
+                {
+                    "start": 73,
+                    "end": 77,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 17,
+                    "end": 22,
+                    "type": "software",
+                    "rawForm": "GBDT",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                },
+                {
+                    "start": 30,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "Platt",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "Platt scaling provides better results than isotonic regression and the uncalibrated probabilities. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "Platt",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "When calibrating P (B + ) and P (B \u2212 ), symmetric isotonic regression is used to preserve symmetry in the distributions. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The calibration rule, f , is required to be symmetric, i.e. f (1\u2212x) = 1\u2212f (x), where x is P (B + ). ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 2 shows distributions for B + and B \u2212 before and after the isotonic regression calibration. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "The comparison between the probability obtained from the inclusive model and frequency based estimation of the true probability is shown in Figure 3 before and after the calibration procedure. ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 140,
+                    "end": 148,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Distributions for P (B + ) and P (B \u2212 ) are checked to be symmetric around 0.5 after calibration (see Figure 4). ",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 111,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 4)"
+                }
+            ]
+        },
+        {
+            "text": "After the calibration the inclusive model has improved Brier and logarithmic scores (see the scoring rules [12]), while the Platt scaling gives worse scores than isotonic regression.",
+            "section": "Symmetric Calibration",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 111,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[12]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 124,
+                    "end": 129,
+                    "type": "software",
+                    "rawForm": "Platt",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "Quality Metric",
+            "section_rank": 6
+        },
+        {
+            "text": "The figure of merit of a FT algorithm is the effective efficiency (see [1,2,3]) since the overall statistical power of the flavour-tagged sample is proportional to it. ",
+            "section": "Quality Metric",
+            "paragraph_rank": 21,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 71,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 74,
+                    "end": 76,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2,"
+                },
+                {
+                    "start": 76,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3]"
+                }
+            ]
+        },
+        {
+            "text": "As a proxy metric of the effective efficiency the ROC curve is used in the analysis to optimize the FT algorithm. ",
+            "section": "Quality Metric",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "After the effective efficiency is checked to have increased value with respect to the previous results.",
+            "section": "Quality Metric",
+            "paragraph_rank": 21,
+            "section_rank": 6
+        },
+        {
+            "text": "We analyze the ROC curves and check that the new version has a higher ROC curve at each  point. ",
+            "section": "Quality Metric",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The comparison of the ROC curve is shown in Figure 5 and the AUC (area under the ROC curve) values are 0.566 for the current OS FT. ",
+            "section": "Quality Metric",
+            "paragraph_rank": 22,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 44,
+                    "end": 52,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "The AUC for the proposed inclusive model is 0.641. ",
+            "section": "Quality Metric",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The ROC curve and AUC values were computed for all events including untagged events to compute the overall quality of the algorithm 3 .",
+            "section": "Quality Metric",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 7
+        },
+        {
+            "text": "We proposed a simple flavour tagging technique, which efficiently combines information from vertices and tracks using a machine learning approach. ",
+            "section": "Conclusion",
+            "paragraph_rank": 23,
+            "section_rank": 7
+        },
+        {
+            "text": "The inclusive flavour tagging algorithm does not use information about underlying physics process and it is applicable to FT of B mesons in proton-proton experiments. ",
+            "section": "Conclusion",
+            "paragraph_rank": 23,
+            "section_rank": 7
+        },
+        {
+            "text": "The results demonstrate significant improvement in LHCb data, as seen in the ROC AUC score improvement from 0.566 to 0.641.",
+            "section": "Conclusion",
+            "paragraph_rank": 23,
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 1. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 24,
+            "section_rank": 8
+        },
+        {
+            "text": "Schematic view of the different sources of information available to define the initial flavour of a signal B candidate.",
+            "section": "Figure 1 .",
+            "paragraph_rank": 24,
+            "section_rank": 8
+        },
+        {
+            "text": "component) sp The last equality assumes that the spurious asymmetries introduced by different detection efficiencies for particles and antiparticles in the different regions of the detectors are negligible. ",
+            "paragraph_rank": 25,
+            "section_rank": 9
+        },
+        {
+            "text": "The usage of this formula, however, requires estimating probabilities P (s b \u2022 s p > 0|B, component) and P (s b \u2022 s p < 0|B, component). ",
+            "paragraph_rank": 25,
+            "section_rank": 9
+        },
+        {
+            "text": "Note that these probabilities are established using different parameters of the signal B meson and a track/vertex, but not using their charges.",
+            "paragraph_rank": 25,
+            "section_rank": 9
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 2. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "P (B + ) distribution for B + (blue) and B \u2212 (green) before calibration (left) and after isotonic regression calibration (right).",
+            "section": "Figure 2 .",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3. ",
+            "section": "Figure 3 .",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "Calibration and symmetry check before (left) and after (right) isotonic regression. ",
+            "section": "Figure 3 .",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "Estimation of the frequency based probability is used as a true probability in each bin for percentile 10 binning.",
+            "section": "Figure 3 .",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 4. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "P (B + ) for B + (blue) and P (B \u2212 ) for B \u2212 (green) distributions. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Kolmogorov-Smirnov distance is 0.0163.",
+            "section": "Figure 4 .",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 5.ROC curves for the current LHCb OS FT algorithm (blue) and proposed inclusive model (red).",
+            "section": "Figure 5 .",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "Note, a tagging track/vertex is a track/vertex whose charge is used to predict the flavour of the signal B. Ideal arXiv:1705.08707v1 [hep-ex] 24 May 2017",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 13
+        },
+        {
+            "text": "Note that the use of a varying number of multipliers for each event is atypical for a naive Bayes approach in machine learning.",
+            "section": "Figure 5 .",
+            "paragraph_rank": 31,
+            "section_rank": 13
+        },
+        {
+            "text": "Untagged events are those events for which all tracks and vertices did not pass selections; for them probabilities are set P (B + ) = P (B \u2212 ) = 0.5.",
+            "section": "Figure 5 .",
+            "paragraph_rank": 32,
+            "section_rank": 13
+        }
+    ]
+}

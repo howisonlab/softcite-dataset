@@ -1,0 +1,1847 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "We describe the conversion of simulated and recorded data by the Belle experiment to the Belle II format with the software package b2bii. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "It is part of the Belle II Analysis Software Framework. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This allows the validation of the analysis software and the improvement of analyses based on the recorded Belle dataset using newly developed analysis tools.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The Belle experiment recorded a dataset of approximately 1 ab \u22121 during its runtime; mainly at the \u03a5(4S) resonance. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The physics program was very successful with milestones such as the measurement of mixinginduced CPV in B 0 \u2192 J/\u03a8 K 0 S decays leading to the Noble Prize for Kobayashi and Maskawa in 2008 [1], the precise measurement of the CKM matrix elements [2], and the discovery of tetra quarks [3]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 188,
+                    "end": 191,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 244,
+                    "end": 247,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 283,
+                    "end": 286,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Its successor, the Belle II experiment, will soon start to record the first collisions. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "To allow for the envisaged 40-times higher peak luminosity, the collider and detector were upgraded. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In addition, the Belle II Analysis Software Framework (BASF2) [4] was developed from scratch. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 17,
+                    "end": 62,
+                    "type": "software",
+                    "rawForm": "Belle II Analysis Software Framework (BASF2)",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "An thorough validation of the software is necessary to ensure the integrity of upcoming analyses. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In this article we describe the software package (b2bii) based on [5], which converts simulated and recorded Belle events into the Belle II format.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 50,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "b2bii",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "The Belle & Belle II Detector",
+            "section_rank": 3
+        },
+        {
+            "text": "The design of the Belle II detector resembles it predecessor. ",
+            "section": "The Belle & Belle II Detector",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Each individual sub-detector is upgraded with a modern version of itself. ",
+            "section": "The Belle & Belle II Detector",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "For a detailed description of the Belle and Belle II detectors see reference [6] and [7], respectively.",
+            "section": "The Belle & Belle II Detector",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 85,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "Going outwards from the interaction point (IP) the Belle detector consisted of a four layer silicon strip detector (SVD), a central drift chamber (CDC), an Aerogel Cherenkov counter (ACC), a time-of-flight (TOF) detector system, an electromagnetic calorimeter (ECL), a superconducting solenoid which provided a homogeneous magnetic field of 1.5 T, and a return yoke, which was instrumented with glass-electrode resistive plate counters for K L and muon detection (KLM).",
+            "section": "The Belle & Belle II Detector",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Going outwards from the IP the Belle II detector consists of a two layer pixel detector (PXD), a four layer silicon strip detector (SVD), a central drift chamber (CDC), a proximity-focusing Aerogel ring-imaging Cherenkov detector (ARICH), a time-of-propagation counter (TOP), an electromagnetic calorimeter (ECL), a superconducting solenoid which provides a homogeneous magnetic field of 1.5 T, and a return yoke, which is instrumented with glass-electrode resistive plate coun-B2BII ters in the barrel region and scintillator strips in the end-caps for K L and muon detection (KLM).",
+            "section": "The Belle & Belle II Detector",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Recorded Belle Data",
+            "section_rank": 4
+        },
+        {
+            "text": "Most of the Belle data was recorded at the center-ofmass energy of the \u03a5(4S) resonance. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In addition, data was also recorded at the \u03a5(1S), \u03a5(2S), \u03a5(3S) and \u03a5(5S) resonances. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Moreover, off-resonance data, mostly used to study non-resonant background processes, was recorded.",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The raw data coming from the detector was calibrated, reconstructed and stored on tape using PANTHERbased data summary tape (DST) files. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "PANTHER is a custom serialization format [8]. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 44,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "After each experiment the calibration constants were recomputed by detector experts or computed directly from data, and stored in the Belle Condition Database, based on PostgreSQL. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 169,
+                    "end": 179,
+                    "type": "software",
+                    "rawForm": "PostgreSQL",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Finally, the data of the completed experiment was reprocessed and stored in a compact form called mDST files, a reduced and compressed form of the data summary tape files. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The reconstruction and the processing of the mDST files is handled by the Belle Analysis Framework (BASF) [9]. ",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 109,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "Different types of events were simulated using the EvtGen [10] and GEANT3 [11] packages, and reconstructed with the same software as was used for the detector data.",
+            "section": "Recorded Belle Data",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[10]"
+                },
+                {
+                    "start": 74,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "EvtGen",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                },
+                {
+                    "start": 72,
+                    "end": 74,
+                    "type": "version",
+                    "rawForm": "3",
+                    "resp": "service",
+                    "id": "#software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "Anticipated Belle II Data",
+            "section_rank": 5
+        },
+        {
+            "text": "By 2025, Belle II will record 50 ab \u22121 of data, which corresponds to 50 times the integrated luminosity of Belle. ",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The same software framework is used in online data taking and offline reconstruction, Monte Carlo production, and physics analysis. ",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "After time-dependent calibration parameters are determined, the raw data is reconstructed and stored at the KEK computing center 1 . ",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 129,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                }
+            ]
+        },
+        {
+            "text": "The time-dependent calibration parameters are stored in the Belle II Condition Database [12]  [13]. ",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 92,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[12]"
+                },
+                {
+                    "start": 94,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "Monte Carlo production and reconstruction will be distributed to data centers around the world. ",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The reconstructed information is stored in ROOT-based [14] mDST files.",
+            "section": "Anticipated Belle II Data",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 54,
+                    "end": 58,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[14]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 47,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                },
+                {
+                    "start": 59,
+                    "end": 64,
+                    "type": "software",
+                    "rawForm": "mDST",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "Data Processing Levels",
+            "section_rank": 6
+        },
+        {
+            "text": "In the above discussion of the recorded Belle and anticipated Belle II dataset, four levels of data processing can be distinguished:",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "1. online reconstruction -the read-out of the detector and the trigger system, producing the raw-data (DST files); ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "2. offline reconstruction -cluster reconstruction, track finding and fitting, producing the mDST data; ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 11,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 92,
+                    "end": 96,
+                    "type": "software",
+                    "rawForm": "mDST",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "3. mDST analysis -creation of final state particle hypotheses, reconstruction of intermediate particle candidates and vertex fitting, producing flat ntuples; ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 11,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 3,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "mDST",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "4. and n-tuple analysis -fit to theoretical predictions in order to extract interesting observables, producing scientific papers.",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "Converting the raw-data is in principle possible, but the differences between the Belle and Belle II detector render this a difficult and ill-defined task. ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 12,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 92,
+                    "end": 100,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "While this would allow for the validation of the Belle II reconstruction software (e.g. the track finding and fitting algorithms) on Belle data, this would be only of limited use due to the differences between the Belle and the Belle II detector, the vastly different expected background, and the availability of events recorded by Belle II from cosmic runs.",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 12,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 49,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                },
+                {
+                    "start": 228,
+                    "end": 236,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                },
+                {
+                    "start": 332,
+                    "end": 340,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "The Belle to Belle II dataset conversion converts the Belle mDST data, which contains mostly detector independent objects like tracks and calorimeter clusters, into the new mDST format used by BASF2. ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 13,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                },
+                {
+                    "start": 193,
+                    "end": 198,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "This enables the validation of the Belle II analysis software, and (re-)production of Belle measurements using the improved software.",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 44,
+                    "type": "software",
+                    "rawForm": "Belle II",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "By comparing the original Belle results, the results obtained from converted data in BASF2, and Belle II sensitivity studies on Belle II Monte Carlo, it is possible to assign improvements in the sensitivity and occurring issues to the analysis and reconstruction algorithms, separately.",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 14,
+            "section_rank": 6
+        },
+        {
+            "text": "The Belle experiment provides a large amount of Monte Carlo simulated events, which can be processed using b2bii. ",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 107,
+                    "end": 109,
+                    "type": "software",
+                    "rawForm": "b2",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "However, the production of additional Monte Carlo simulated Belle events still requires BASF and is not part of b2bii.",
+            "section": "Data Processing Levels",
+            "paragraph_rank": 15,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 112,
+                    "end": 114,
+                    "type": "software",
+                    "rawForm": "b2",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "Method",
+            "section_rank": 7
+        },
+        {
+            "text": "The software responsible for reading in the old PANTHER data-format and representing the data in memory was isolated, cleaned up and compiled into a new library named belle_legacy. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 167,
+                    "end": 179,
+                    "type": "software",
+                    "rawForm": "belle_legacy",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "A new package was introduced in BASF2 called b2bii (Belle to Belle II). ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 32,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                },
+                {
+                    "start": 58,
+                    "end": 69,
+                    "type": "publisher",
+                    "rawForm": "to Belle II",
+                    "resp": "service",
+                    "id": "#software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "It contains three BASF2 modules developed with the help of the belle_legacy library. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 18,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                },
+                {
+                    "start": 63,
+                    "end": 76,
+                    "type": "software",
+                    "rawForm": "belle_legacy",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                }
+            ]
+        },
+        {
+            "text": "The conversion process is visualized in Figure 1. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 48,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The B2BIIMdstInput module opens the PANTHER-based Belle mDST files and reads the data event-by-event into the main memory. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 19,
+                    "type": "software",
+                    "rawForm": "B2BIIMdstInput",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                }
+            ]
+        },
+        {
+            "text": "The data of the current event is represented in the memory by a series of PANTHER tables. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "The B2BIIFixMdst module applies various calibration factors onto the PANTHER tables, for instance on the beam-energy, the momenta and error matrices of the fitted tracks, the energy deposition in the ECL, and the particle identification information of the CDC and TOF. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 17,
+                    "type": "software",
+                    "rawForm": "B2BIIFixMdst",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "It also performs standard cuts to ensure that the selection of the detector data and simulated events is identical to the one obtained with BASF. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "Finally, \u03c0 0 candidates are reconstructed from the \u03b3 particle objects and the corrected ECL clusters. ",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "The index of each entry can be used to relate entries to other entries, for instance, to express a mother-daughter relationship between particles (a particle which decays inside the detector is called the mother of its decay-products, which are the daughters).",
+            "section": "Method",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "BASF processes the data event-by-event, meaning the inmemory representation of the PANTHER tables contains only a single event at a given point. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "BASF",
+                    "resp": "service",
+                    "id": "software-simple-s24"
+                },
+                {
+                    "start": 83,
+                    "end": 91,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "After each event the tables are flushed and filled with the next event. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The Belle II data format is based on ROOT. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The ROOT framework takes care of serialization including potential migrations to ensure backward-compatibility. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Conceptually we distinguish different types of ROOT objects. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Array objects are the equivalent to the tables used by PANTHER. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 55,
+                    "end": 62,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                }
+            ]
+        },
+        {
+            "text": "The entries of different array objects can be connected by adding so-called relations, which are stored in a separate array object. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The relations allow the expression of many-to-many connections between arbitrary entries of the array objects, for instance the relation between a track and the associated clusters: this allows the analyst to easily access all clusters which are associated to a given track. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Single objects are used to store the remaining event-wise information, for instance the meta data of each event, or particle lists created by the analyst. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "A particle list is a list of Particle array entries used to organize the reconstruction of decay-chains in BASF2. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 107,
+                    "end": 111,
+                    "type": "software",
+                    "rawForm": "BASF",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "BASF2 processes the data event-by-event, meaning the in-memory representation of most ROOT objects contains only a single event at a given point. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "After each event the objects are filled with the next event. ",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Some ROOT objects are persistent in the sense that they are only stored and loaded once per file, for instance, the meta data of each file or statistics of the execution time and memory consumption used for profiling.",
+            "section": "Method",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Implementation Details",
+            "section_rank": 8
+        },
+        {
+            "text": "The detailed matching between PANTHER tables and corresponding BASF2 data-objects is shown in Figure 2. ",
+            "section": "Implementation Details",
+            "paragraph_rank": 18,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 102,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 30,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "In the following we describe the conversion process in detail for future reference.",
+            "section": "Implementation Details",
+            "paragraph_rank": 18,
+            "section_rank": 8
+        },
+        {
+            "text": "Event Information",
+            "section_rank": 9
+        },
+        {
+            "text": "Event information like the beam energy and position of the IP are loaded from the Belle condition database and stored in BeamParameters objects that can be uploaded to the Belle II condition database. ",
+            "section": "Event Information",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "The BeamParameters of the entire detector data was converted and uploaded. ",
+            "section": "Event Information",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "The BeamParameters of simulated events are only stored on the local machine.",
+            "section": "Event Information",
+            "paragraph_rank": 19,
+            "section_rank": 9
+        },
+        {
+            "text": "The description of the magnetic field differs between Belle and Belle II. ",
+            "section": "Event Information",
+            "paragraph_rank": 20,
+            "section_rank": 9
+        },
+        {
+            "text": "The conversion uses a magnetic field map which is consistent with the track parametrization in Belle data.",
+            "section": "Event Information",
+            "paragraph_rank": 20,
+            "section_rank": 9
+        },
+        {
+            "text": "Monte Carlo",
+            "section_rank": 10
+        },
+        {
+            "text": "The Monte Carlo information of Belle is stored in the so-called Gen_hepevt table. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 21,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 64,
+                    "end": 75,
+                    "type": "software",
+                    "rawForm": "Gen_hepevt",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "It contains the four momenta of the generated particles and the indices of the mother and all daughter particles. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 21,
+            "section_rank": 10
+        },
+        {
+            "text": "The table is converted into an array of MCParticle objects, which contains the same information. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 21,
+            "section_rank": 10
+        },
+        {
+            "text": "Consequently, the finegrained unified Monte Carlo matching algorithm of BASF2 can be used, and problems contained in algorithms used by BASF are avoided [15, sec. 4.3].",
+            "section": "Monte Carlo",
+            "paragraph_rank": 21,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 153,
+                    "end": 167,
+                    "type": "bibr",
+                    "text": "[15, sec. 4.3]"
+                }
+            ]
+        },
+        {
+            "text": "The Gen_hepevt table includes special entries for a common mother of beam-background particles (PDG code 911) and for virtual photons (PDG code 0). ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 22,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "Gen_hepevt",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                }
+            ]
+        },
+        {
+            "text": "These entries are ignored during the conversion, because there are no corresponding concepts in Belle II. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 22,
+            "section_rank": 10
+        },
+        {
+            "text": "For instance, in BASF2 beam-background is indicated by a motherless Monte Carlo particle.",
+            "section": "Monte Carlo",
+            "paragraph_rank": 22,
+            "section_rank": 10
+        },
+        {
+            "text": "The original Belle software does not provide Monte Carlo information for KLM clusters, following the approach of [16, sec. 5.2] true K 0 L are matched to the closest reconstructed Monte Carlo K 0 L within \u00b115 degrees in both \u03b8 and \u03c6.",
+            "section": "Monte Carlo",
+            "paragraph_rank": 23,
+            "section_rank": 10
+        },
+        {
+            "text": "Furthermore, unlike Belle II simulated events, the Belle simulated events do not provide information on the differentiation between photons generated directly by the fundamental matrix-element calculated by the Monte Carlo generator EvtGen (hereinafter referred to as gamma) and photons generated afterwards for instance by PHOTOS [17] or the simulation (hereinafter referred to as final state radiation) (see [18,Appendix C]). ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 24,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 331,
+                    "end": 335,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[17]"
+                },
+                {
+                    "start": 410,
+                    "end": 414,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[18,"
+                },
+                {
+                    "start": 414,
+                    "end": 425,
+                    "type": "bibr",
+                    "text": "Appendix C]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 233,
+                    "end": 240,
+                    "type": "software",
+                    "rawForm": "EvtGen",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                },
+                {
+                    "start": 324,
+                    "end": 331,
+                    "type": "software",
+                    "rawForm": "PHOTOS",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                }
+            ]
+        },
+        {
+            "text": "Often a reconstructed particle which misses final state radiation is considered as signal, whereas a reconstruction with a missing gamma is considered as wrong. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 24,
+            "section_rank": 10
+        },
+        {
+            "text": "A simple heuristic is applied to distinguish the two cases: Photons from a decay M \u2192 AB...\u03b3 are flagged as final state radiation, and photons from a decay M \u2192 A\u03b3 are flagged as gammas. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 24,
+            "section_rank": 10
+        },
+        {
+            "text": "In particular photons from \u03c0 0 \u2192 \u03b3 \u03b3 and D * \u2192 D\u03b3 are considered gammas. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 24,
+            "section_rank": 10
+        },
+        {
+            "text": "Other cases like B \u2192 \u00b5\u03bd\u03b3 are regarded by the heuristic as final state radiation and have to be treated by the analyst themself 2 .",
+            "section": "Monte Carlo",
+            "paragraph_rank": 24,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 127,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "The official Belle Monte Carlo campaigns produced ten times the real integrated luminosity in BB events and six times that in continuum events, however some inconsistencies were encountered during the development of the conversion software, which were fixed if possible: The Monte Carlo campaign deleted the 8 leftmost bits of the 32 bit long PDG codes during the Monte Carlo simulation 3 . ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "During the conversion these corrupted PDG codes are restored by matching their lower 24 bit to known PDG codes. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "In the official Belle Monte Carlo campaign from 2010 for B \u2192 u \u03bd and other rare B decays, the mass of almost all MC particles is set to zero, which can lead to wrong results if this quantity is used during the analysis. ",
+            "section": "Monte Carlo",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "However, this information is redundant since the correct mass of the MC particles can be calculated using either the PDG values or the MC four-momenta.",
+            "section": "Monte Carlo",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "Tracks",
+            "section_rank": 11
+        },
+        {
+            "text": "The track reconstruction output of BASF is stored in the so-called Mdst_charged and Mdst_trk tables. ",
+            "section": "Tracks",
+            "paragraph_rank": 26,
+            "section_rank": 11
+        },
+        {
+            "text": "They contain the 5D track parametrization for up to five different final state particle hypotheses. ",
+            "section": "Tracks",
+            "paragraph_rank": 26,
+            "section_rank": 11
+        },
+        {
+            "text": "The track parametrization is transformed and stored into Track and associated TrackFitResult array objects. ",
+            "section": "Tracks",
+            "paragraph_rank": 26,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 57,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "Track",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                },
+                {
+                    "start": 78,
+                    "end": 93,
+                    "type": "software",
+                    "rawForm": "TrackFitResult",
+                    "resp": "service",
+                    "id": "software-simple-s36"
+                }
+            ]
+        },
+        {
+            "text": "The transformation is unique but non-trivial because the two experiments employ different 5D track parameterizations and conventions for the reference point of the track.",
+            "section": "Tracks",
+            "paragraph_rank": 26,
+            "section_rank": 11
+        },
+        {
+            "text": "ECL Clusters",
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "ECL",
+                    "resp": "service",
+                    "id": "software-simple-s37"
+                }
+            ]
+        },
+        {
+            "text": "The output of the ECL cluster algorithm of Belle is stored in the so-called Mdst_ecl and Mdst_ecl_aux tables. ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 27,
+            "section_rank": 12
+        },
+        {
+            "text": "They contain information about the energy, position and shape of the clusters. ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 27,
+            "section_rank": 12
+        },
+        {
+            "text": "The ECL information is converted and stored in the ECLCluster array object.",
+            "section": "ECL Clusters",
+            "paragraph_rank": 27,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 62,
+                    "type": "software",
+                    "rawForm": "ECLCluster",
+                    "resp": "service",
+                    "id": "software-simple-s38"
+                }
+            ]
+        },
+        {
+            "text": "Information is mapped to the corresponding representation, e.g. the energy and position of the clusters with the corresponding covariance matrix and shower variables, such as the E9E25 ratio (which is stored in the field for the E9E21 ratio as this is the one now used in Belle II). ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Advanced shower variables like Zernike moments were not available for Belle and are therefore not set. ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "In addition two ParticleList objects are created containing the \u03b3 and \u03c0 0 candidates, which were created by B2BIIFixMdst earlier. ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 28,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 29,
+                    "type": "software",
+                    "rawForm": "ParticleList",
+                    "resp": "service",
+                    "id": "software-simple-s39"
+                }
+            ]
+        },
+        {
+            "text": "The lists are named gamma:mdst and pi0:mdst, respectively. ",
+            "section": "ECL Clusters",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "The ParticleList objects provide a fast and easy access to the possible \u03b3 and \u03c0 0 candidates, used by the analyst during their analysis.",
+            "section": "ECL Clusters",
+            "paragraph_rank": 28,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 17,
+                    "type": "software",
+                    "rawForm": "ParticleList",
+                    "resp": "service",
+                    "id": "software-simple-s41"
+                }
+            ]
+        },
+        {
+            "text": "KLM Clusters",
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "KLM",
+                    "resp": "service",
+                    "id": "software-simple-s42"
+                }
+            ]
+        },
+        {
+            "text": "The output of the KLM cluster algorithm of Belle is stored in the so-called Mdst_klm_cluster and Mdst_klong tables. ",
+            "section": "KLM Clusters",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "The KLM information is converted and stored in the KLMCluster array object. ",
+            "section": "KLM Clusters",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "In addition a ParticleList is filled containing K 0 L candidates. ",
+            "section": "KLM Clusters",
+            "paragraph_rank": 29,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 27,
+                    "type": "software",
+                    "rawForm": "ParticleList",
+                    "resp": "service",
+                    "id": "software-simple-s43"
+                }
+            ]
+        },
+        {
+            "text": "The list is named K_L0:mdst.",
+            "section": "KLM Clusters",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "V0 Objects",
+            "section_rank": 14
+        },
+        {
+            "text": "A V0 object is a pair of tracks with a common vertex usually outside of the beam pipe. ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "Such a signature indicates the decay of a particle with a relatively long lifetime like a K 0 S . ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "The output of the V0 Finder of Belle is stored in the so-called Mdst_vee_daughters and Mdst_vee tables. ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "Additional information is created on-the-fly by the nisKsFinder, which provides quality information. ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "nisKsFinder",
+                    "resp": "service",
+                    "id": "software-simple-s44"
+                }
+            ]
+        },
+        {
+            "text": "The V0 information is directly transformed into ParticleList objects containing candidates for \u03b3 , K 0 S and \u039b. ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "ParticleList",
+                    "resp": "service",
+                    "id": "software-simple-s45"
+                }
+            ]
+        },
+        {
+            "text": "The lists are named gamma:v0mdst, K_S0:mdst and Lambda0:mdst, respectively. ",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "The additional quality information is stored in the ExtraInfo field of the Particle array entries under the keys goodKs, ksnbVLike, ksnbNoLam and ksnbStandard.",
+            "section": "V0 Objects",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "PID Information",
+            "section_rank": 15
+        },
+        {
+            "text": "The PID information provided by the different Belle sub-detectors is stored in the so-called kid_acc, Mdst_tof. ",
+            "section": "PID Information",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "kid_cdc, eid and Mdst_klm_mu_ex tables. ",
+            "section": "PID Information",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "It is mapped to similar Belle II sub-detectors, so that the physical meaning of the information is partially preserved. ",
+            "section": "PID Information",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "In particular the Belle time-of-flight (TOF) and Aerogel Cherenkov counter (ACC) detectors are mapped to the Belle II time-of-propagation (TOP) and Aerogel ring imaging Cherenkov (ARICH) detectors, respectively. ",
+            "section": "PID Information",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "The converted information is stored in the PIDLikelihood array object.",
+            "section": "PID Information",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "Relations",
+            "section_rank": 16
+        },
+        {
+            "text": "Finally, some of the created array entries are related to one another (see Figure 2). ",
+            "section": "Relations",
+            "paragraph_rank": 32,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 84,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2)"
+                }
+            ]
+        },
+        {
+            "text": "Discussion",
+            "section_rank": 17
+        },
+        {
+            "text": "In order to ensure the correctness of the conversion, a study was performed with 200 000 recorded data and 600 000 simulated Belle events at the center of mass energy of the \u03a5(4S) resonance.",
+            "section": "Discussion",
+            "paragraph_rank": 33,
+            "section_rank": 17
+        },
+        {
+            "text": "The events were processed with the old BASF framework and more than 360 quantities; for instance kinematic quantities like four-momenta, Monte Carlo information, PID information and beam-parameters were extracted from the PANTHER tables shown in Figure 2. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 246,
+                    "end": 254,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 39,
+                    "end": 44,
+                    "type": "software",
+                    "rawForm": "BASF",
+                    "resp": "service",
+                    "id": "software-simple-s46"
+                },
+                {
+                    "start": 222,
+                    "end": 230,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s47"
+                }
+            ]
+        },
+        {
+            "text": "The complete list of extracted quantities can be found in [5, app. A]. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 69,
+                    "type": "bibr",
+                    "text": "[5, app. A]"
+                }
+            ]
+        },
+        {
+            "text": "Afterwards the events were processed a second time with the new BASF2 software using the b2bii conversion and the same quantities were extracted.",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 64,
+                    "end": 70,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s48"
+                }
+            ]
+        },
+        {
+            "text": "Observed Differences",
+            "section_rank": 18
+        },
+        {
+            "text": "Most quantities do not differ at all between the original Belle Software and the converted data using b2bii.",
+            "section": "Observed Differences",
+            "paragraph_rank": 35,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 58,
+                    "end": 73,
+                    "type": "software",
+                    "rawForm": "Belle Software",
+                    "resp": "service",
+                    "id": "software-simple-s49"
+                },
+                {
+                    "start": 102,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "b2bii",
+                    "resp": "service",
+                    "id": "software-simple-s50"
+                }
+            ]
+        },
+        {
+            "text": "The observed differences between BASF and b2bii were further investigated and either corrected or ensured to be harmless. ",
+            "section": "Observed Differences",
+            "paragraph_rank": 36,
+            "section_rank": 18
+        },
+        {
+            "text": "Minor differences occur due to small shifts caused by numerical imprecision leading to the migration of events between adjacent bins, especially for values near zero, and differences in the treatment of special floating point values such as infinity and NaN (Not a Number) leading to migration from the overflow/underflow bin to the bin including zero in rare cases (see Figure 3a).",
+            "section": "Observed Differences",
+            "paragraph_rank": 36,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 371,
+                    "end": 381,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 3a)"
+                }
+            ]
+        },
+        {
+            "text": "Further differences are found: in the PDG codes of the MCParticle object due to the recovery of the full 32 bit as mentioned above; the number of daughters of the MCParticle object due to the unconverted virtual photons occurring in nuclear interactions between the hadronic final state particles and the detector material (see Figure 3b); and in all kinematic quantities of V 0 and \u03c0 0 objects after the mass-constrained vertex fit caused by different software employed to fit the vertices.   ",
+            "section": "Observed Differences",
+            "paragraph_rank": 37,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 328,
+                    "end": 338,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 3b)"
+                }
+            ]
+        },
+        {
+            "text": "In order to validate BASF2 on a global level, physics analyses have been performed and compared to results published by the Belle collaboration [5,[19][20][21][22][23]. ",
+            "section": "Observed Differences",
+            "paragraph_rank": 37,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5,"
+                },
+                {
+                    "start": 147,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[19]"
+                },
+                {
+                    "start": 151,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[20]"
+                },
+                {
+                    "start": 155,
+                    "end": 159,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[21]"
+                },
+                {
+                    "start": 159,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[22]"
+                },
+                {
+                    "start": 163,
+                    "end": 167,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[23]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 21,
+                    "end": 27,
+                    "type": "software",
+                    "rawForm": "BASF2",
+                    "resp": "service",
+                    "id": "software-simple-s51"
+                }
+            ]
+        },
+        {
+            "text": "Other measurements using the b2bii conversion are in preparation.",
+            "section": "Observed Differences",
+            "paragraph_rank": 37,
+            "section_rank": 18
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 19
+        },
+        {
+            "text": "Furthermore, b2bii is used to study the performance differences between the Belle and Belle II experiment, and to optimize the latter as soon as first data has been collected.",
+            "section": "Conclusion",
+            "paragraph_rank": 38,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 13,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "b2",
+                    "resp": "service",
+                    "id": "software-simple-s52"
+                }
+            ]
+        },
+        {
+            "text": "Finally, the conversion ensures the preservation of the legacy of the Belle experiment: The full recorded dataset of approximately 1 ab \u22121 of data, which led to the verification of the CKM mechanism and the observation of tetra-quarks.",
+            "section": "Conclusion",
+            "paragraph_rank": 39,
+            "section_rank": 19
+        },
+        {
+            "text": "Hence, BASF2 relations are created: from the ECLCluster entries to the MCParticle and Track entries which are responsible for the creation of the cluster; similarly from the KLMCluster entries to the ECLCluster and Track entries; from the Track entries to the MCParticle entries that created it; and from the Track entries to the corresponding PIDLikelihood entries. ",
+            "paragraph_rank": 40,
+            "section_rank": 20
+        },
+        {
+            "text": "Additional relations are created between the Particle entries in the created ParticleList objects and the corresponding MCParticle and PIDLikelihood entries. ",
+            "paragraph_rank": 40,
+            "section_rank": 20
+        },
+        {
+            "text": "The links between TrackFitResult to Track; Track to Particle; and ECLCluster and KLMCluster to Particle are not represented by relations in BASF2.",
+            "paragraph_rank": 40,
+            "section_rank": 20
+        },
+        {
+            "text": "Fig. 2 :",
+            "section_rank": 21
+        },
+        {
+            "text": "Fig. 2: Matching of the Belle PANTHER Tables (light blue) to the Belle II ROOT objects (blue) and relations (orange).",
+            "section": "Fig. 2 :",
+            "paragraph_rank": 41,
+            "section_rank": 21,
+            "entity_spans": [
+                {
+                    "start": 30,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s53"
+                }
+            ]
+        },
+        {
+            "text": "Example of minor differences on recorded data: Momentum of Tracks in z direction exhibiting migration during the conversion due to numerical imprecision and special floating point values. ",
+            "paragraph_rank": 42,
+            "section_rank": 22
+        },
+        {
+            "text": "Example of major differences on simulated events: The number of daughters of the Monte Carlo particle objects is shifted to smaller values because virtual photons are ignored during the conversion.",
+            "paragraph_rank": 42,
+            "section_rank": 22
+        },
+        {
+            "text": "Fig. 3 :",
+            "section_rank": 23
+        },
+        {
+            "text": "Fig. 3: Comparison of BASF (Belle) and b2bii (Belle II). ",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 43,
+            "section_rank": 23,
+            "entity_spans": [
+                {
+                    "start": 39,
+                    "end": 41,
+                    "type": "software",
+                    "rawForm": "b2",
+                    "resp": "service",
+                    "id": "software-simple-s54"
+                }
+            ]
+        },
+        {
+            "text": "The leftmost (rightmost) bin represents the underflow (overflow) bin. ",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 43,
+            "section_rank": 23
+        },
+        {
+            "text": "The upper plots show the superimposed Belle (each component is shown individually) and Belle II Monitoring Histograms (the total number of entries is shown as a black line). ",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 43,
+            "section_rank": 23
+        },
+        {
+            "text": "The lower plots show the differences between Belle and Belle II, hence a positive (negative) difference means there are less (more) entries for the respective bin in the Belle II Monitoring Histogram.",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 43,
+            "section_rank": 23
+        },
+        {
+            "text": "An equivalent module named FixMdst was already used by BASF. ",
+            "paragraph_rank": 44,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 27,
+                    "end": 35,
+                    "type": "software",
+                    "rawForm": "FixMdst",
+                    "resp": "service",
+                    "id": "software-simple-s55"
+                }
+            ]
+        },
+        {
+            "text": "The B2BIIConvertMdst module converts the information stored in the Belle PANTHER tables into the corresponding Belle II ROOT objects. ",
+            "paragraph_rank": 44,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 6,
+                    "type": "software",
+                    "rawForm": "B2",
+                    "resp": "service",
+                    "id": "software-simple-s56"
+                },
+                {
+                    "start": 73,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s57"
+                }
+            ]
+        },
+        {
+            "text": "The beam-energy and IP-profile is collected in the BASF2 BeamParameters object and stored in the condition Database of Belle II. ",
+            "paragraph_rank": 44,
+            "section_rank": 24
+        },
+        {
+            "text": "2.1 Data Formats The Belle data format is based on a custom serialization format called PANTHER. ",
+            "paragraph_rank": 44,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 88,
+                    "end": 95,
+                    "type": "software",
+                    "rawForm": "PANTHER",
+                    "resp": "service",
+                    "id": "software-simple-s58"
+                }
+            ]
+        },
+        {
+            "text": "It consists of tables compressed by the zlib library. ",
+            "paragraph_rank": 44,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 40,
+                    "end": 45,
+                    "type": "software",
+                    "rawForm": "zlib",
+                    "resp": "service",
+                    "id": "software-simple-s59"
+                }
+            ]
+        },
+        {
+            "text": "The table formats are defined by ASCII header files. ",
+            "paragraph_rank": 44,
+            "section_rank": 24
+        },
+        {
+            "text": "Each table consists of multiple rows, called entries.",
+            "paragraph_rank": 44,
+            "section_rank": 24
+        },
+        {
+            "text": "The Belle to Belle II Conversion enables Belle II physicists to analyze the dataset recorded by Belle using BASF2. ",
+            "paragraph_rank": 45,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "start": 112,
+                    "end": 113,
+                    "type": "version",
+                    "rawForm": "2",
+                    "resp": "service",
+                    "id": "#software-simple-s59"
+                }
+            ]
+        },
+        {
+            "text": "The conversion process was validated on a basic level by ensuring the same output for a large number of quantities. ",
+            "paragraph_rank": 45,
+            "section_rank": 25
+        },
+        {
+            "text": "Differences which emerged were studied and explained.",
+            "paragraph_rank": 45,
+            "section_rank": 25
+        },
+        {
+            "text": "Other computing centers will store additional copies of the raw data.",
+            "paragraph_rank": 46,
+            "section_rank": 25
+        },
+        {
+            "text": "In this case, photons from initial and final state radiation are physically indistinguishable, since the corresponding amplitudes interfere. ",
+            "paragraph_rank": 47,
+            "section_rank": 25
+        },
+        {
+            "text": "Actually, there is no correct answer to the question of whether the photon is final state radiation or not. ",
+            "paragraph_rank": 47,
+            "section_rank": 25
+        },
+        {
+            "text": "Hence, the behavior of the heuristic is not wrong, but probably unexpected by the analyst, because the initial state radiation amplitude dominates in this decay.3 ",
+            "paragraph_rank": 47,
+            "section_rank": 25
+        },
+        {
+            "text": "BASF already implemented a function for recovering the lost bits, but it was apparently not applied.",
+            "paragraph_rank": 47,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "BASF",
+                    "resp": "service",
+                    "id": "software-simple-s60"
+                }
+            ]
+        }
+    ]
+}

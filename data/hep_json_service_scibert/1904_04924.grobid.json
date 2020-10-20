@@ -1,0 +1,1733 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "The reconstruction of the invariant mass of lepton pairs is important for analyses containing Higgs and Z bosons decaying to + \u2212 , but highly challenging due to the neutrinos from the lepton decays, which cannot be measured in the detector. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "In this paper, we demonstrate how artificial neural networks can be used to reconstruct the mass of a di-system and compare this procedure to an algorithm used by the CMS Collaboration for this purpose. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We find that the neural network output shows a smaller bias and better resolution of the di-mass reconstruction and an improved discrimination between a Higgs boson signal and the Drell-Yan background with a much shorter computation time.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Tau leptons can be produced singly or in pairs through the decay of heavier mesons and baryons, or through the decay of Standard Model bosons that are created in particle collisions. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The 0 \u2215 * and Higgs (H) bosons are the only particles that can mediate resonant di-production, and Higgs boson production has been recently observed in this decay by the CMS and ATLAS experiment at CERN [1,2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 203,
+                    "end": 206,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 206,
+                    "end": 208,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "The reconstruction of the di-system invariant mass is fundamental in distinguishing between the Z and the Higgs boson. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The dominant background in identifying the H \u2192 \u2212 + signal is the Drell-Yan (DY) process of di-production, therefore, it is important to distinguish between the two processes. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "However, the reconstruction of the mass of the disystem is challenging. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The lepton decays after a short time into leptons or hadrons, both accompanied by neutrinos. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Charged leptons and hadrons can be observed in the detector, thus they are called visible particles in this paper. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Neutrinos, on the other hand, interact very weakly with matter and escape the experiment undetected, but can be identified in a relatively hermetic detector as used in the CMS and ATLAS experiments [3,4] as an imbalance in the measured momentum calculated in the transverse plane. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 198,
+                    "end": 201,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 201,
+                    "end": 203,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "4]"
+                }
+            ]
+        },
+        {
+            "text": "The missing transverse momentum (MET) is defined as the negative vectorial sum of momenta in the transverse plane of all the visible particles produced in the collision. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The momentum of the neutrinos in the beam direction, on the other hand, cannot be quantified, because it depends on the momentum of the quarks and gluons within the proton before the collision, which is only known statistically and not in any individual event.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The CMS Collaboration makes use of two different SVfit algorithms for the reconstruction of the di-mass. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "One is based on a likelihood method to reconstruct the mass on an event-by-event basis [5], while the second, improved algorithm employs a likelihood function of arbitrary normalization [6]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 186,
+                    "end": 189,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The latter algorithm is additionally able to reconstruct the kinematic properties of the di-system. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The ATLAS and CDF Collaborations use a Missing Mass Calculation (MMC) method that is based on minimizing a likelihood function in the kinematically allowed detector phase space [7]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "The method presented in this paper is based on an artificial neural network (called neural network or NN from now on) to reconstruct the mass of the di-system. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The neural network is implemented with the Python deep learning library ''Keras'' [8] and can be trained with a data set of simulated di-events, which contain all the known parameters of the visible particles and missing energy from neutrinos as input, and the mass of the simulated di-system as a training target. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "Python",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                },
+                {
+                    "start": 74,
+                    "end": 79,
+                    "type": "software",
+                    "rawForm": "Keras",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "After the training, the neural network is able to calculate an approximate value of the mass of the di-system using the known parameters of the visible particles and the missing energy for any event with two leptons.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The paper is structured as follows: in Section 2, events with simulated -lepton pairs are described, and are used to train and test the neural network. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 3 focuses on the specific configuration of the neural network used to deliver the best predictions in comparison with the true mass of the simulated di-system. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The performance of the neural network is compared to a standard tool for the di-mass reconstruction used by the CMS Collaboration in ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Simulation and selection of lepton pair events",
+            "section_rank": 3
+        },
+        {
+            "text": "Monte Carlo simulation is used to generate + \u2212 events at different masses. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The events are generated using MadGraph_aMC@NLO 2.5.5 [9], and then showered using PYTHIA 8.226 [10,11]. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 54,
+                    "end": 57,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 96,
+                    "end": 100,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10,"
+                },
+                {
+                    "start": 100,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 54,
+                    "type": "version",
+                    "rawForm": "2.5.5",
+                    "resp": "service",
+                    "id": "#software-simple-s2"
+                },
+                {
+                    "start": 90,
+                    "end": 96,
+                    "type": "version",
+                    "rawForm": "8.226",
+                    "resp": "service",
+                    "id": "#software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "The detector response is modeled using a simplified fast simulation (DELPHES 3.4.1 [12]) of the phase-0 CMS detector with the acceptance and expected performance of the detector [3]. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 178,
+                    "end": 181,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 77,
+                    "end": 83,
+                    "type": "version",
+                    "rawForm": "3.4.1",
+                    "resp": "service",
+                    "id": "#software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "No additional proton-proton collisions (pile-up) are simulated.",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "DY events occur when a mediator 0 \u2215 * is produced through quarkantiquark annihilation. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "This mediator can then decay into a pair of leptons.",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "In proton collisions, the main production processes for the Higgs boson, ordered from largest cross section to smallest, are gluon-gluon fusion, vector boson fusion, W and Z associated production, and t associated production. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Events are simulated using the most dominant production mode via gluon-gluon fusion, which occurs through an intermediate heavy-quark loop that is dominated by the top quark [13]. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 174,
+                    "end": 178,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "In order to increase the mass range over which the NN can reconstruct the di-system, the Higgs boson mass is artificially varied from 80 to 300 GeV in 5 GeV steps. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The fully leptonic, semi-leptonic and fully hadronic Higgs decay channels are included.",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Events with produced Higgs bosons must pass selection requirements similar to those applied in the CMS H \u2192 + \u2212 search [6]. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 118,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The MET must be greater than 20 GeV for all events, in order to make sure that the neutrino momenta are not pointing in opposite directions. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "For events where both leptons decay leptonically, the \u2215 with the higher T must satisfy T > 20 GeV and | | < 2.4, with the other \u2215 satisfying T > 10 GeV and | | < 2.4. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "For events where only one lepton decays leptonically, the \u2215 must satisfy T > 20 GeV and | | < 2.1, with the vectorial sum of the visible decay products of the hadronically decaying lepton having T > 30 GeV and | | < 2.3. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "For the case of events with two leptons decaying hadronically, both vectorial sums must have T > 20 GeV and | | < 2.1. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Fig. 1 shows the generated mass and visible mass spectrum for the simulated Higgs boson decaying to leptons. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "The mass corresponds to the true value of the mediator, while the visible mass is obtained by summing the momenta of the final state decay particles, not including the neutrinos. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The digen mass spectrum is not flat due to selection requirements that are related to detector acceptance and identification effects. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The visible mass of the di-system (visible digen mass) shows a much different spectrum. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "In order to separate signal from background, it is desirable to achieve a di-mass as close to the generated value as possible, and so information about the neutrino products must be inferred to improve the mass resolution. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "To prevent the neural network from learning the mass distribution of the training sample instead of the relationship between the inputs and the training target, the training sample consists of events from all the different Higgs boson masses, with the same number of events for each mass value.",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The neural network is trained with 270'000 events and the performance of the neural network is tested with 100'000 independent events. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The inputs for the neural network are the following parameters: 4 binary numbers classifying the decay channel (fully leptonic, semileptonic or fully hadronic), the T , , , energy, and invariant mass of the visible decay products from each lepton, the MET and of the MET vector, and the collinear di-mass. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The collinear di-mass is the mass of the di-system computed assuming that the vectorial sum of the visible lepton decay products point along the original lepton direction. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The collinear di-mass can be calculated as shown in Eq. ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "(1) [14]:",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 8,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "where coll stands for the collinear di-mass, vis for the visible dimass, T vis1,2",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "and MET 1,2 for the visible transverse momentum and missing transverse momentum of 1 and 2 , respectively.  ",
+            "section": "Simulation and selection of lepton pair events",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 8,
+                    "end": 9,
+                    "type": "version",
+                    "rawForm": "1",
+                    "resp": "service",
+                    "id": "#software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "Model of the neural network",
+            "section_rank": 4
+        },
+        {
+            "text": "The neural network used is feedforward, has fully connected layers, and is written with the Python deep learning library, Keras [8]. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 92,
+                    "end": 99,
+                    "type": "software",
+                    "rawForm": "Python",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                },
+                {
+                    "start": 122,
+                    "end": 128,
+                    "type": "software",
+                    "rawForm": "Keras",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "Keras is a set of high-level building blocks that implement the deep learning model, and it interfaces with a backend, which handles operations such as tensor products and convolutions. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "software",
+                    "rawForm": "Keras",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "The backends used in this work are Theano [15] for running on CPU and Tensorflow [16] for running on GPU. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 81,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "Theano",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                },
+                {
+                    "start": 70,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "Tensorflow",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "The model used for reconstructing the Higgs boson mass from the di-system is shown in Table 1.",
+            "section": "Model of the neural network",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 93,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Batch sizes of 128 and 400 epochs are used for the training. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The activation function used is the commonly employed ''rectified linear unit (ReLU)'' and the loss function is the mean squared error (MSE), which is described by Eq. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "(2):",
+            "section": "Model of the neural network",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "where\u0302is the prediction, is the training target value, is the number of the training events, are the weights and are the biases used for the prediction\u0302. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The optimizer used is called adam which stands for Adaptive Moment Estimation [17]. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 29,
+                    "end": 34,
+                    "type": "software",
+                    "rawForm": "adam",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "While the choice of network structure has been evaluated carefully and seems rather optimal for the problem and data set under investigation, the structure would have to be adjusted in case of adding or removing variables.",
+            "section": "Model of the neural network",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Once the neural network is trained, the performance can be tested with an independent second sample of simulated events. ",
+            "section": "Model of the neural network",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "A good quantifier for the performance of the neural network is the mean squared error of the deviation between the predicted value and the true value of the mass from the simulated di-system of the test sample, as well as the reconstructed di-mass resolution.",
+            "section": "Model of the neural network",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Results",
+            "section_rank": 5
+        },
+        {
+            "text": "SVfit",
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "The performance of the neural network is evaluated with respect to other current working methods for the reconstruction of the di-mass. ",
+            "section": "SVfit",
+            "paragraph_rank": 16,
+            "section_rank": 6
+        },
+        {
+            "text": "For example the CMS Collaboration uses SVfit [5], which reconstructs the mass of the di-system using dynamical likelihood techniques. ",
+            "section": "SVfit",
+            "paragraph_rank": 16,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 48,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 39,
+                    "end": 45,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "The term dynamical likelihood techniques refers to likelihood-based methods used for the reconstruction of kinematic quantities on an event-by-event basis. ",
+            "section": "SVfit",
+            "paragraph_rank": 16,
+            "section_rank": 6
+        },
+        {
+            "text": "The inputs to SVfit are the visible decay products of the leptons, METx and METy as well as the MET covariance matrix. ",
+            "section": "SVfit",
+            "paragraph_rank": 16,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "The MET covariance matrix represents the expected resolution of the MET reconstruction in the detector (since the MET measurement is affected by the accuracy of the energy calibrations).",
+            "section": "SVfit",
+            "paragraph_rank": 16,
+            "section_rank": 6
+        },
+        {
+            "text": "Comparison between neural network and SVfit",
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 38,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "If not specified differently, events with fully leptonic, semi-leptonic and fully hadronic decays are used. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The predictions of the neural network are shown in Fig. 2 in comparison with the results from SVfit and with the mass of the simulated events (digen mass). ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 51,
+                    "end": 57,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 94,
+                    "end": 100,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "The shape of the digen mass distribution originates from the applied cuts. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The predictions of the neural network show deviations at the limits of the mass range. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Because there are more events in the higher mass range, this effect can most significantly be seen in the range of 250 GeV to 300 GeV. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The deviations at the mass range limits are most probably caused by the distribution of events in the training sample, which does not contain any events below 80 GeV or above 300 GeV. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "However, the results from the neural network show less of a deviation than that of SVfit. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 83,
+                    "end": 88,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "Such a deviation in the mean of the reconstructed di-mass would not lead to a wrong result in an analysis as the same function would be applied to both data and simulation.",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "In Fig. 3, the loss (mean squared error) on the training and on the test sample can be seen. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "The loss shows no sign of overtraining. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Overtraining would lead to a discrepancy between the loss on the training and on the test sample and is caused by the neural network describing minor fluctuations in the training sample instead of the underlying relationship.",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "In Fig. 4, the relative differences per event between the predictions of the neural network and SVfit are shown for the different decay modes. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 19,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Fig. 4"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 96,
+                    "end": 102,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "The relative difference per event is calculated as shown in formula (3).",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "relative difference per event = digen mass \u2212 di-mass digen mass .",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 20,
+            "section_rank": 7
+        },
+        {
+            "text": "The mean and the standard deviation of the histograms in Fig. 4 refer to the bias and the resolution of the di-mass reconstruction, respectively. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 63,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "The bias is the systematic deviation of the predictions in comparison with the target values, and is independent of the bias used in the neural network, while the resolution is a measure of the accuracy of the reconstruction. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7
+        },
+        {
+            "text": "The bias in the mass determined from the neural network approach using all decay modes is \u22120.001, which corresponds to only \u22120.1% of the mean, and is smaller than the bias using SVfit, which is 0.06 or 6% of the mean. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 178,
+                    "end": 183,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "The mass resolution determined from the neural network using all decay modes is 0.084 while SVfit has 0.17, which is twice as large. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 92,
+                    "end": 98,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "The relative differences are also shown for all the events containing only fully leptonic decays, semileptonic decays, and fully hadronic decays. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7
+        },
+        {
+            "text": "The smallest resolution is achieved for both the neural network and SVfit for events which contain the least number of neutrinos, which are the fully hadronic decays. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 68,
+                    "end": 74,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "The resolution is larger for events containing semi-leptonic decays and largest for events which contain fully leptonic decays. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7
+        },
+        {
+            "text": "In Fig. 5, the bias of the di-reconstruction and its standard error for each digen mass is shown for the neural network and SVfit in comparison. ",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Fig. 5"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 124,
+                    "end": 130,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "The neural network and SVfit have their smallest bias around 250 GeV and 100 GeV, respectively.",
+            "section": "Comparison between neural network and SVfit",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 23,
+                    "end": 29,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                }
+            ]
+        },
+        {
+            "text": "Computation time of neural network and SVfit",
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 39,
+                    "end": 44,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                }
+            ]
+        },
+        {
+            "text": "An important part of the comparison between the neural network and SVfit is the computation time. ",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 67,
+                    "end": 73,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                }
+            ]
+        },
+        {
+            "text": "The benchmark SVfit algorithm requires 6 s of computation time for one event in our computer architecture. ",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 14,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "Our neural network algorithm requires 110 microseconds per event, a factor of fifty thousand times faster than the SVfit algorithm in the same architecture. ",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 115,
+                    "end": 121,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s24"
+                }
+            ]
+        },
+        {
+            "text": "The neural network algorithm, however, requires about 17 h to train on 270'000 events with 400 epochs. ",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8
+        },
+        {
+            "text": "But once the neural network is trained, the model architecture and the model weights can be saved and used later to make new predictions. ",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8
+        },
+        {
+            "text": "In a different computing architecture, using a GPU accompanied by Tensorflow [16] as the backend, the computation time to train the neural network was reduced down to 1.4 h, with a prediction time of 7 \u03bcs per event.",
+            "section": "Computation time of neural network and SVfit",
+            "paragraph_rank": 22,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 81,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 66,
+                    "end": 77,
+                    "type": "software",
+                    "rawForm": "Tensorflow",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 73,
+                    "end": 76,
+                    "type": "software",
+                    "rawForm": "NN",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                },
+                {
+                    "start": 80,
+                    "end": 85,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "A better discrimination between signal and background events can be achieved by an improved performance of the mass reconstruction, which can be estimated using the metric:",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 23,
+            "section_rank": 9
+        },
+        {
+            "text": "to ascertain the signal significance for finding a signal of known cross section and efficiency over that of a known background, and , for a given integrated luminosity, \ue238. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 7 shows the mass  reconstruction for a Higgs boson mass of 125 GeV, consistent with the CMS and ATLAS observations [18,19], also shown with the DY background peaking at the Z boson mass. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Fig. 7"
+                },
+                {
+                    "start": 120,
+                    "end": 124,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18,"
+                },
+                {
+                    "start": 124,
+                    "end": 127,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "19]"
+                }
+            ]
+        },
+        {
+            "text": "The Higgs boson signal and the DY background have the same number of events and are not normalized according to their cross section. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "The signal to background significance in the range of 115-135 GeV for SVfit is 11.2 \u00b1 0.1 and for the neural network 16.5\u00b10.2, where the cross section taken for the DY background is = 1418 \u00b1 1 pb and the cross section assumed for the production of a 125 GeV mass Higgs boson is = 0.7002 \u00b1 0.0006 pb for a centerof-mass energy of 13 TeV, both as obtained with MadGraph [9]. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 368,
+                    "end": 371,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 70,
+                    "end": 76,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                },
+                {
+                    "start": 359,
+                    "end": 368,
+                    "type": "software",
+                    "rawForm": "MadGraph",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "The integrated luminosity is set to a value of \ue238 = 100 fb \u22121 , similar to the data sets collected by the ATLAS and CMS experiments until the end of 2017. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "The efficiency is the number of events in the signal range divided by the total number of events passing the requirements in Section 2. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "The DY background events are slightly biased towards higher masses since the neural network is only trained for masses of 80 GeV and above. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "Using a larger mass range of the training sample would lead to a smaller deviation for the DY background and therefore to an even larger signal to background significance. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 6 shows the comparison of the resolution per di-mass using either the neural network or SVfit. ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Fig. 6"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 93,
+                    "end": 98,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "The resolution of both the neural network and SVfit is constant over the mass range and is larger for SVfit as already shown in Fig. 4.  ",
+            "section": "Discrimination between Higgs boson Signal and Drell-Yan background using NN and SVfit",
+            "paragraph_rank": 24,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 134,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Fig. 4"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                },
+                {
+                    "start": 102,
+                    "end": 108,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s32"
+                }
+            ]
+        },
+        {
+            "text": "Discussion of neural network and SVfit",
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                }
+            ]
+        },
+        {
+            "text": "In Section 4.2, it can be seen that the reconstruction using a neural network shows a significantly smaller bias and better resolution in comparison with SVfit. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 154,
+                    "end": 159,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                }
+            ]
+        },
+        {
+            "text": "The computation time, once the neural network is trained, is much shorter than using SVfit, as shown in Section 4.3. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 85,
+                    "end": 90,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "Despite those advantages, the neural network has a few drawbacks. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "The construction of a neural network model, which delivers predictions close to the target values, is time consuming because a slight modification in the model can change the predictions drastically. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "This is due to the fact that the neural network is trained multiple times with a large sample of events. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "Unlike SVfit, a large sample of simulated events is required for training the neural network.",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 25,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 12,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s36"
+                }
+            ]
+        },
+        {
+            "text": "Using a neural network for reconstruction has a lot of potential, which warrants further study. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "A neural network is, in general, not restricted to one target parameter as used here. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "For example, the whole 4-vector of the di-system could be reconstructed if T , , and the mass are set as target parameters. ",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "If the target parameters vary over different scales, like T as compared to , finding a model, and especially an activation function, which delivers predictions close to the target values for all the target parameters, is more difficult than for just one target parameter.",
+            "section": "Discussion of neural network and SVfit",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 11
+        },
+        {
+            "text": "We presented a technique for the reconstruction of the mass of a disystem using a neural network. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "The predictions of the neural network are compared to the results using the SVfit likelihood technique, which is currently used by the CMS Collaboration to reconstruct the di-mass. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 76,
+                    "end": 82,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s37"
+                }
+            ]
+        },
+        {
+            "text": "For the neural network, the bias in the reconstructed mass is \u22120.1% and the mass resolution is 8.4%, whereas SVfit has a bias of 6% and a mass resolution of 17%. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 109,
+                    "end": 115,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s38"
+                }
+            ]
+        },
+        {
+            "text": "The signal to background significance of a Higgs boson signal with a mass of 125 GeV and Drell-Yan background using the neural network is 16.5\u00b10.2 and shows an improvement with respect to SVfit, which has a signal to background significance of 11.2 \u00b1 0.1. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 188,
+                    "end": 193,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s39"
+                }
+            ]
+        },
+        {
+            "text": "Using a neural network instead of SVfit improves the performance of the di-mass reconstruction significantly. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s40"
+                }
+            ]
+        },
+        {
+            "text": "The neural network predicts the di-mass approximately fifty thousand times faster than SVfit. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 87,
+                    "end": 92,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s41"
+                }
+            ]
+        },
+        {
+            "text": "With the neural network technique, one must factor a few hours of retraining each time the detector reconstruction or data conditions change in order to ensure that it performs without bias. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "This extra computing time is not significant, and is commonplace in other machine learning software algorithms in today's experiments. ",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "Using a carefully-optimized neural network for reconstruction of the invariant mass of di-resonances has significant advantages over common approaches, delivering better mass resolution, reduced bias, and a much faster computation time.",
+            "section": "Conclusion",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "text": "Section 4. ",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Conclusions are presented in the final section. ",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "https://doi.org/10.1016/j.nima.2019.03.029 Received 30 October 2018; Received in revised form 20 February 2019; Accepted 11 March 2019 Available online 14 March 2019 0168-9002/\u00a9 2019 The Authors. ",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Published by Elsevier B.V. This is an open access article under the CC BY license (http://creativecommons.org/licenses/by/4.0/).",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "text": "Fig. 1 .",
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 1. ",
+            "section": "Fig. 1 .",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "Mass distribution of the generated events with applied cuts.",
+            "section": "Fig. 1 .",
+            "paragraph_rank": 29,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 2. ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "Reconstructed mass of di-system. ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 30,
+            "section_rank": 14
+        },
+        {
+            "text": "Di-refers to the simulated mass values, di-and di-to the reconstructed mass values using the neural network and SVfit, respectively.",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 30,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 112,
+                    "end": 117,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s42"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 3 .",
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 3. ",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "The loss, as determined by the MSE, for the training and testing samples of the neural network.",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 4 .",
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 4. ",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 32,
+            "section_rank": 16
+        },
+        {
+            "text": "Relative differences per event, as defined in the text, between the generated mass and the calculated mass determined from both the neural network and SVfit approaches.",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 32,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 151,
+                    "end": 157,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s43"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 5 .",
+            "section_rank": 17
+        },
+        {
+            "text": "Fig. 5. ",
+            "section": "Fig. 5 .",
+            "paragraph_rank": 33,
+            "section_rank": 17
+        },
+        {
+            "text": "Bias in the di-mass reconstruction per di-mass.",
+            "section": "Fig. 5 .",
+            "paragraph_rank": 33,
+            "section_rank": 17
+        },
+        {
+            "text": "Fig. 6 .",
+            "section_rank": 18
+        },
+        {
+            "text": "Fig. 6. ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 34,
+            "section_rank": 18
+        },
+        {
+            "text": "The resolution of the di-mass reconstruction per di-mass.",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 34,
+            "section_rank": 18
+        },
+        {
+            "text": "Fig. 7 .",
+            "section_rank": 19
+        },
+        {
+            "text": "Fig. 7. ",
+            "section": "Fig. 7 .",
+            "paragraph_rank": 35,
+            "section_rank": 19
+        },
+        {
+            "text": "Reconstructed di-mass for a generated Higgs boson (S) and Drell-Yan background (B). ",
+            "section": "Fig. 7 .",
+            "paragraph_rank": 35,
+            "section_rank": 19
+        },
+        {
+            "text": "Di-refers to the simulated mass values, di-and di-to the reconstructed mass values using the neural network and SVfit, respectively.",
+            "section": "Fig. 7 .",
+            "paragraph_rank": 35,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 112,
+                    "end": 117,
+                    "type": "software",
+                    "rawForm": "SVfit",
+                    "resp": "service",
+                    "id": "software-simple-s44"
+                }
+            ]
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 20
+        },
+        {
+            "text": "Neural network model for reconstructing the Higgs boson mass from the di-system.",
+            "section": "Table 1",
+            "paragraph_rank": 36,
+            "section_rank": 20
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 22
+        },
+        {
+            "text": "We wish to thank the Swiss National Science Foundation and the University of Z\u00fcrich for their support.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 37,
+            "section_rank": 22
+        }
+    ]
+}

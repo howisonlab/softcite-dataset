@@ -1,0 +1,2695 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "The CMS experiment at the CERN LHC developed the Workflow Management Archive system to persistently store unstructured framework job report documents produced by distributed workflow management agents. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "In this paper we present its architecture, implementation, deployment, and integration with the CMS and CERN computing infrastructures, such as central HDFS and Hadoop Spark cluster. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The system leverages modern technologies such as a document oriented database and the Hadoop eco-system to provide the necessary flexibility to reliably process, store, and aggregate O(1M) documents on a daily basis. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "We describe the data transformation, the short and long term storage layers, the query language, along with the aggregation pipeline developed to visualize various performance metrics to assist CMS data operators in assessing the performance of the CMS computing system.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The success of physics programs at CERN would be impossible without reliable data management systems.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "section_rank": 3
+        },
+        {
+            "text": "Geneva, Switzerland, demonstrated the ability to handle petabytes of data on a regular basis. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "In CMS, we rely on a tiered computing infrastructure. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "The data collected with the detector are streamed to the high level trigger (HLT) farm and organized into trigger streams. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Later they are archived at the Tier-0 center at CERN and distributed to CMS Analysis facilities at CERN and Tier-1 centers around the globe. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Many Tier-2 centers worldwide share a portion of the data for further processing and Monte Carlo (MC) generation. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Finally, the Tier-3 centers (mostly at Universities) are used for various analysis tasks. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "More details about CMS Computing Model can be found elsewhere [1].",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "To accomplish various processing tasks, both real and MC data are handled by a distributed set of agents at various computing centers. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The chain of high energy physics (HEP) workflows is performed within an individual agent. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "For instance, a job can run an MC simulation where the CMS software (CMSSW) framework generates new data in a distributed fashion, collects various pieces of data frame the workflow pipeline, and publishes results in the central Data Bookkeeping System (DBS). ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 69,
+                    "end": 74,
+                    "type": "software",
+                    "rawForm": "CMSSW",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "At every step, the associated metadata information are collected in \"framework job report\" (FWJR) documents. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "This information can be further analyzed and used to monitor the entire process both in terms of various metrics, e.g. successfull job throughput, or capture various errors in different steps of the workflow pipeline. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "In addition, the information can be used to plan future jobs and better manage the resources. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Initially, ad-hoc solutions were used by various data-operations teams, but it soon became clear it was necessary to unify the various solutions under a single system.",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Here, we present the Worklfow Management Archive system (WMArchive), which was designed to provide a long term solution for FWJR document storage along with flexible queries and visualization to help data ops in their daily operations.",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 21,
+                    "end": 67,
+                    "type": "software",
+                    "rawForm": "Worklfow Management Archive system (WMArchive)",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "This paper is organized as follows. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "In Sec. 2 we present the overall architecture of the system starting by describing the CMS workflow management system (Sec. 2.1), followed by discussion of the requirements (Sec. 2.2). ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 179,
+                    "end": 183,
+                    "type": "bibr",
+                    "text": "2.2)"
+                }
+            ]
+        },
+        {
+            "text": "We then present the system components, storage layers, and interfaces in Secs. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "2.3, 2.4, and 2.5, respectively. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "In Sec. 3 we show various benchmarks and discuss query language used in the WMArchive in Sec. 4. ",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 76,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "We finish our discussion with current use of the system in Sec. 5 and provide an overview of the monitoring tools based on stored metadata.",
+            "section": "During the Run 1 and Run 2 data taking periods four experiments at the Large Hadron Collider (LHC) in",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "WMArchive architecture",
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 10,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "The WMArchive system architecture is quite complex. ",
+            "section": "WMArchive architecture",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "Here, we start our discussion with overview of the CMS workflow management system followed by set of requirements imposed by our data operations teams.",
+            "section": "WMArchive architecture",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "CMS Workflow Management System",
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "CMS Workflow Management System",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "The CMS Workflow Management System [3] contains several applications to process the workflows defined by physics groups. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 38,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 35,
+                    "type": "software",
+                    "rawForm": "CMS Workflow Management System",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "The overview of the procedure is as follows. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "When a workflow is fed into the system (Request Manager), it divides the work into smaller units which are placed into a queue (WorkQueue). ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Individual Workflow Manager Agents (WMAgents), distributed among computing centers, pull down work from the queue depending on resource availability and other various conditions, e.g. priority of the work, etc. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Each WMAgent is responsible for splitting the work into smaller chunks (jobs) and sending them to the CMS Global Pool [4], an HTCondor [5] batch system overlayed, using Glidein-WMS [6], on the CMS-accessible grid resources. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 118,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[4]"
+                },
+                {
+                    "start": 135,
+                    "end": 138,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[5]"
+                },
+                {
+                    "start": 181,
+                    "end": 184,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[6]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 126,
+                    "end": 135,
+                    "type": "software",
+                    "rawForm": "HTCondor",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                },
+                {
+                    "start": 169,
+                    "end": 181,
+                    "type": "software",
+                    "rawForm": "Glidein-WMS",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "The batch system then distributes the jobs to computing resources all over the world-the tiered system mentioned above. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Each WMAgent is also responsible for tracking and accounting for the jobs and publishing the results in other applications in CMS (DBS, PhEDEx, WMArchive). ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "We have about a dozen WMAgents running concurrently.",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "When a job has finished sucessfully or failed, WMAgent will generate an FWJR which contains job specific information, such as the input/out datasets and files, CPU and memory usage, log file and its location, and so on.",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "WMAgent",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "The current set of WMAgents can produce on average 500K FWJRs per day but could not keep the doc-uments in the system indefinitely. ",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "FWJR reports are published and stored in WMArchive for further analysis and as a solution for long term storage needs.",
+            "section": "CMS Workflow Management System",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 51,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "Requirements",
+            "section_rank": 6
+        },
+        {
+            "text": "In CMS we rely on the distributed nature of WMAgents. ",
+            "section": "Requirements",
+            "paragraph_rank": 12,
+            "section_rank": 6
+        },
+        {
+            "text": "At the time of initial design of the system, we assumed the WMAgents would generate 200-300 000 FWJR documents per day, with a document size of O(10 KB) which would yield 3 GB total/day or about 1-2 TB/year of metadata information. ",
+            "section": "Requirements",
+            "paragraph_rank": 12,
+            "section_rank": 6
+        },
+        {
+            "text": "Each FWJR document is in a JSON data format whose structure is specific to the job. ",
+            "section": "Requirements",
+            "paragraph_rank": 12,
+            "section_rank": 6
+        },
+        {
+            "text": "For example, the FWJR of a successful job will be different from a failed job. ",
+            "section": "Requirements",
+            "paragraph_rank": 12,
+            "section_rank": 6
+        },
+        {
+            "text": "Here, is a list of requirements we gathered from CMS data management and workflow management teams:",
+            "section": "Requirements",
+            "paragraph_rank": 12,
+            "section_rank": 6
+        },
+        {
+            "text": "store FWJR for the lifetime of the experiment in persistent storage for data lookup anytime; losing data is not acceptable; provide data-ops quick and flexible queries to retrieve the log files of any particular job for debugging; the statistics to be collected include, but are not limited to, CMSSW version, CPU/wallclock and memory information, log files and their locations, input and output datasets, number of files and events, job error codes, etc. authenticated via CMSWeb by providing proxy GRID certificates at front-end servers. ",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 295,
+                    "end": 301,
+                    "type": "software",
+                    "rawForm": "CMSSW",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                },
+                {
+                    "start": 474,
+                    "end": 481,
+                    "type": "software",
+                    "rawForm": "CMSWeb",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "The pushed data are submitted as a bulk collection in certain time intervals defined by WMAgent configuration. ",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 88,
+                    "end": 96,
+                    "type": "software",
+                    "rawForm": "WMAgent",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "1 The received data are routed to internal short-term storage (STS) based on the document-oriented MongoDB database [7]. ",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "1"
+                },
+                {
+                    "start": 116,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 99,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                }
+            ]
+        },
+        {
+            "text": "Then, a separate daemon reads data from STS, merges records together, converts the JSON data to Avro [10] data format, and writes Avro files to the local file system. ",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 105,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "Finally, we rely on a migration script to push data from the local file system into long-term storage (LTS) based on HDFS. ",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Once data are written to LTS we use an aggregation script to collect hourly and daily statistics and push them into STS and the CERN MONIT systems.",
+            "section": "Requirements",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Storage layers",
+            "section_rank": 7
+        },
+        {
+            "text": "Based on the system requirements (see discussion in Sec. 2.2), we decided to develop a set of abstract interfaces to provide access to available storage solutions.",
+            "section": "Storage layers",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "Later, we provided a common implementation of Ba-seIO, FileIO, MongoIO, and HdfsIO interfaces, which were used for rapid prototyping of APIs and understanding interprocess communications. ",
+            "section": "Storage layers",
+            "paragraph_rank": 15,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 53,
+                    "type": "software",
+                    "rawForm": "Ba-seIO",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                },
+                {
+                    "start": 55,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "FileIO",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                },
+                {
+                    "start": 63,
+                    "end": 70,
+                    "type": "software",
+                    "rawForm": "MongoIO",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                },
+                {
+                    "start": 76,
+                    "end": 83,
+                    "type": "software",
+                    "rawForm": "HdfsIO",
+                    "resp": "service",
+                    "id": "software-simple-s24"
+                }
+            ]
+        },
+        {
+            "text": "After several trials (see Sec. 3), we decided on the short and long term storage solution described above. ",
+            "section": "Storage layers",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "The former is responsible for keeping up with the injection rate while the latter used for permanent storage of FWJR documents.",
+            "section": "Storage layers",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "In other words, we use STS as a buffer to keep up with our agents' load, while LTS serves as persistent storage. ",
+            "section": "Storage layers",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "Among the various candidates, we decided to use MongoDB with WiredTiger document-level concurrency control as our STS solution. ",
+            "section": "Storage layers",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "We estimated that our injection rate should stay within 1 KHz and tested that MongoDB will sustain such load. ",
+            "section": "Storage layers",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 78,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                }
+            ]
+        },
+        {
+            "text": "While we did not impose any constraint on the incoming document structure, we complemented each document with auxiliary information such as WMArchive unique id and storage type (e.g. fileio, mongoio, Avroio) attributes. ",
+            "section": "Storage layers",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 140,
+                    "end": 150,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "The latter was used by migration and clean-up scripts to dynamically handle the size of STS within budget constraints.",
+            "section": "Storage layers",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "For the LTS, we decided to use HDFS provided by the CERN IT infrastructure; several issues we faced justifyied this choice. ",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "First, our FWJR documents were quite small (about 10 KB) to be stored individually on HDFS. ",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Therefore, we accumulated our data into larger groups before storing them to HDFS. ",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "However, we also needed to satisfy another requirement (see Sec. 2.2), and provide flexible queries over a large portion of stored data. ",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "As a result, we decided to convert our data into the Avro [10] data format, which was a more natural fit for both tasks. ",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "It guarantees data consistency within a single file and optimization for the HDFS ecosystem such as efficient use of Spark jobs to process large amounts of data.",
+            "section": "Storage layers",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "We complemented the WMArchive service with three cron jobs, one, to continuously accumulate data from STS to Avro files on local filesystem, another to move Avro files from staging area to HDFS, and a third to clean-up STS. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 20,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "The first was designed to collect enough documents to fit into the HDFS block boundaries. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "The CERN HDFS system is using 256 MB block boundaries and was adjusted by CERN IT to the needs of experiments based on different use-cases. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 74,
+                    "end": 79,
+                    "type": "publisher",
+                    "rawForm": "CERN",
+                    "resp": "service",
+                    "id": "#software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "This constrain was added as one of the configuration parameters of WMArchive system. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Within this boundary we collected roughly 50 000 documents into a single Avro file. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "The actual number of documents in Avro file varied based on a file size growth up-to a given threshold (in our case 256 MB) rather than fixed number of stored documents. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "These files were then moved into a staged area where they were periodically purged once relocated to HDFS by the second cronjob. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Afterwards, the underlying script flipped the document's storage type attribute in STS from mongoio to Avroio. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "These values of the attributes were used by the third cronjob which performed a cleanup in STS of documents with the Avroio storage type value based on a predefined threshold. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "We determined this threshold based on the disk capacity of the production system and the desire to keep documents in STS. ",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "In our case, we keep documents in STS for 1 month after they are moved to LTS.",
+            "section": "Storage layers",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "The data movement was optimized with respect to the accumulation rate of documents into a single Avro file. ",
+            "section": "Storage layers",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "Empirically, we found that a ten minute interval is sufficient to accumulate 50 000 (256 MB) docs into a single Avro file. ",
+            "section": "Storage layers",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "Therefore, the overall latency of data appearance on HDFS was approximately 10-20 minutes. ",
+            "section": "Storage layers",
+            "paragraph_rank": 19,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 53,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "HDFS",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "Minimization of this interval was important for the developement of monitoring tools based on the aggregated information from LTS (see Sec. 5).",
+            "section": "Storage layers",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "Interfaces",
+            "section_rank": 8
+        },
+        {
+            "text": "Users communicate with the WMArchive service via REST APIs. ",
+            "section": "Interfaces",
+            "paragraph_rank": 20,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 27,
+                    "end": 37,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "The POST APIs are used both for data injection and placing queries into WMArchive. ",
+            "section": "Interfaces",
+            "paragraph_rank": 20,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 72,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                }
+            ]
+        },
+        {
+            "text": "The latter is done in real time in STS or via batch submission of Spark jobs on LTS. ",
+            "section": "Interfaces",
+            "paragraph_rank": 20,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 66,
+                    "end": 72,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s32"
+                }
+            ]
+        },
+        {
+            "text": "To distinguish these use cases, we rely on a document representation rather than individual APIs. ",
+            "section": "Interfaces",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "text": "For example, the data injection is done in a bulk using the following document structure:",
+            "section": "Interfaces",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "text": "while end-user queries are represented as:",
+            "section": "Interfaces",
+            "paragraph_rank": 21,
+            "section_rank": 8
+        },
+        {
+            "text": "{\"spec\":{conditions}, \"fields\":[list_of_attributes_to_retrieve]} .",
+            "section": "Interfaces",
+            "paragraph_rank": 22,
+            "section_rank": 8
+        },
+        {
+            "text": "These requests are acknowledged by the system which provides a response with a unique token id to look-up their data at a later time, e.g.",
+            "section": "Interfaces",
+            "paragraph_rank": 23,
+            "section_rank": 8
+        },
+        {
+            "text": "{\"job\": {\"results\":{results_of_job}, \"wmaid\":wma_unique_id}} .",
+            "section": "Interfaces",
+            "paragraph_rank": 24,
+            "section_rank": 8
+        },
+        {
+            "text": "This approach allows us to process user-based queries on the HDFS/Spark cluster independently from data injection tasks and other user communications with the system. ",
+            "section": "Interfaces",
+            "paragraph_rank": 25,
+            "section_rank": 8
+        },
+        {
+            "text": "The results of the Spark jobs are stored back into STS and users are able to look-up the results later via a GET request based on the provided token. ",
+            "section": "Interfaces",
+            "paragraph_rank": 25,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "STS",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                }
+            ]
+        },
+        {
+            "text": "For example, to fetch the set of data from WMArchive endusers rely on the GET API, e.g.",
+            "section": "Interfaces",
+            "paragraph_rank": 25,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 53,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                }
+            ]
+        },
+        {
+            "text": "/wmarchive/data/wma_unique_id .",
+            "section": "Interfaces",
+            "paragraph_rank": 26,
+            "section_rank": 8
+        },
+        {
+            "text": "To minimize the execution time and to avoid a situation when user queries can span the entire data collection (millions of documents per year), we require each query to provide a time range attribute which specifies the boundaries of scanned documents on HDFS. ",
+            "section": "Interfaces",
+            "paragraph_rank": 27,
+            "section_rank": 8
+        },
+        {
+            "text": "If both ranges of the time range are below a certain threshold (implied by STS capacity) the query is executed in real time on STS, otherwise a job submission is executed on LTS. ",
+            "section": "Interfaces",
+            "paragraph_rank": 27,
+            "section_rank": 8
+        },
+        {
+            "text": "The LTS job, i.e. Spark job on HDFS, is routed to the CERN analytics cluster. ",
+            "section": "Interfaces",
+            "paragraph_rank": 27,
+            "section_rank": 8
+        },
+        {
+            "text": "We performed various benchmarks to determine latencies of queries executed on STS and LTS.",
+            "section": "Interfaces",
+            "paragraph_rank": 27,
+            "section_rank": 8
+        },
+        {
+            "text": "WMArchive Benchmarks",
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "WMArchive Benchmarks",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "To ensure that our python based code scales, we performed various benchmarks using the STS and LTS back-ends. ",
+            "section": "WMArchive Benchmarks",
+            "paragraph_rank": 28,
+            "section_rank": 9
+        },
+        {
+            "text": "The benchmarks were designed to test data injection, parsing, and access patterns on a local node and a Spark cluster provided by CERN IT. ",
+            "section": "WMArchive Benchmarks",
+            "paragraph_rank": 28,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 130,
+                    "end": 137,
+                    "type": "publisher",
+                    "rawForm": "CERN IT",
+                    "resp": "service",
+                    "id": "#software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "For local tests we used a Linux node with 24 GB of RAM and 12 cores; the CERN Spark cluster consists of 39 nodes with 64 GB of RAM and 32 cores per node.",
+            "section": "WMArchive Benchmarks",
+            "paragraph_rank": 28,
+            "section_rank": 9
+        },
+        {
+            "text": "Short-Term Storage benchmark",
+            "section_rank": 10
+        },
+        {
+            "text": "CouchDB and MongoDB have been used by the group in different projects. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 29,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "CouchDB",
+                    "resp": "service",
+                    "id": "software-simple-s36"
+                },
+                {
+                    "start": 12,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s37"
+                }
+            ]
+        },
+        {
+            "text": "Initially, CouchDB was chosen to implement the WMArchive DB short-term storage backend. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 29,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 11,
+                    "end": 19,
+                    "type": "software",
+                    "rawForm": "CouchDB",
+                    "resp": "service",
+                    "id": "software-simple-s38"
+                },
+                {
+                    "start": 47,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s39"
+                }
+            ]
+        },
+        {
+            "text": "However, it was not possible to have flexible queries nor the required volume of data storage. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 29,
+            "section_rank": 10
+        },
+        {
+            "text": "MongoDB was chosen for these reasons:",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 29,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s40"
+                }
+            ]
+        },
+        {
+            "text": "it enables horizontal scaling of data; it provides a flexible query language; it is possible to exchange data beween the current CouchDB documents and MongoDB (WMAgents use CouchDB as temporate storage for FWJRs).",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 30,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 129,
+                    "end": 137,
+                    "type": "software",
+                    "rawForm": "CouchDB",
+                    "resp": "service",
+                    "id": "software-simple-s41"
+                },
+                {
+                    "start": 151,
+                    "end": 159,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s42"
+                },
+                {
+                    "start": 173,
+                    "end": 181,
+                    "type": "software",
+                    "rawForm": "CouchDB",
+                    "resp": "service",
+                    "id": "software-simple-s43"
+                }
+            ]
+        },
+        {
+            "text": "One disadvantage of MongoDB is that the query speed depends on indices which should fit into the RAM of the node, for details see [8]. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 31,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 130,
+                    "end": 133,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 20,
+                    "end": 28,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s44"
+                }
+            ]
+        },
+        {
+            "text": "If not, the lookup time increases significantly due to reading indices from the disk. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "text": "We studied our data in MongoDB regarding the data size, index size, insertion speed, and query response times.",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 31,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 23,
+                    "end": 31,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s45"
+                }
+            ]
+        },
+        {
+            "text": "We injected 1 542 513 real FWJR documents into MongoDB and created 13 indices on the database. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 32,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s46"
+                }
+            ]
+        },
+        {
+            "text": "The total data size in the database was 15.3 GB and the total index size was 3.5 GB.",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 32,
+            "section_rank": 10
+        },
+        {
+            "text": "Based on this profile we estimated that we should be able to hold about 10 M docs with our hardware and still have all the indices be able to fit into the RAM (24 GB). ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 33,
+            "section_rank": 10
+        },
+        {
+            "text": "Found that the time to insert 1000 documents in bulk is less than 0.5 seconds. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 33,
+            "section_rank": 10
+        },
+        {
+            "text": "In addition, the insertion speed was not affected by the database size. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 33,
+            "section_rank": 10
+        },
+        {
+            "text": "Uploading data into MongoDB has a mininual effect on WMAgent performance. ",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 33,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 20,
+                    "end": 28,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s47"
+                },
+                {
+                    "start": 53,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "WMAgent",
+                    "resp": "service",
+                    "id": "software-simple-s48"
+                }
+            ]
+        },
+        {
+            "text": "Based on our studies, we concluded it was feasible to store one month of data in MongoDB with the current hardware and still maintain acceptable performance.",
+            "section": "Short-Term Storage benchmark",
+            "paragraph_rank": 33,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 81,
+                    "end": 89,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s49"
+                }
+            ]
+        },
+        {
+            "text": "Data lookup on a single node",
+            "section_rank": 11
+        },
+        {
+            "text": "To test data access on a single node we used custom code to translate FWJR documents from the JSON format into the Avro format. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "We generated an Avro file with 50 000 FWJR documents of identical structure. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "The total file size in Avro format was about 190 MB. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "The bzip'ed Avro file shrank to 26 MB. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "bzip",
+                    "resp": "service",
+                    "id": "software-simple-s50"
+                }
+            ]
+        },
+        {
+            "text": "Even though we achieved such a large compression level, we decided to proceed with plain Avro files on HDFS while rolling our system to production. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "The usage of zipped Avro files was postponed to a later time to become more familiar with all aspects of the system in the production environment.",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 34,
+            "section_rank": 11
+        },
+        {
+            "text": "We used Spark scripts to run a simple map-reduce job over the set of Avro files. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 8,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s51"
+                }
+            ]
+        },
+        {
+            "text": "For this benchmark we decided to use a rate of 200 000 documents/day, so we put four Avro files into a single directory. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "Then we cloned that directory to simulate two months of CMS data. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "In total we collected 12 million records. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "We ran Spark jobs and measured the time we spent to find individual records based on provided logical file name (LFN) patterns. ",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 13,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s52"
+                }
+            ]
+        },
+        {
+            "text": "We found that one day of data can be processed in about a minute, while 2 months of data (12 million records) will require about 1 hour of processing time.",
+            "section": "Data lookup on a single node",
+            "paragraph_rank": 35,
+            "section_rank": 11
+        },
+        {
+            "text": "Data lookup on a Spark cluster",
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 17,
+                    "end": 23,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s53"
+                }
+            ]
+        },
+        {
+            "text": "After benchmarking data access patterns on a single node, we moved our tests to the CERN IT Spark cluster. ",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 36,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 92,
+                    "end": 98,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s54"
+                }
+            ]
+        },
+        {
+            "text": "In addition to the search time we also measured the overhead between the Java and Python processes' communication and found it satisfactory for our needs.",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 36,
+            "section_rank": 12
+        },
+        {
+            "text": "The tests were done in two modes:",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 37,
+            "section_rank": 12
+        },
+        {
+            "text": "-yarn-cluster: all Spark execution actors were included inside the cluster (driver and executors). ",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 38,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 1,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "yarn",
+                    "resp": "service",
+                    "id": "software-simple-s55"
+                },
+                {
+                    "start": 19,
+                    "end": 25,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s56"
+                }
+            ]
+        },
+        {
+            "text": "This is the default setup provided by CERN IT. ",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 38,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 38,
+                    "end": 45,
+                    "type": "publisher",
+                    "rawForm": "CERN IT",
+                    "resp": "service",
+                    "id": "#software-simple-s56"
+                }
+            ]
+        },
+        {
+            "text": "-yarn-client: the Spark driver was spawned in the local node meanwhile executors were inside the cluster. ",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 38,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 18,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s57"
+                }
+            ]
+        },
+        {
+            "text": "This setup was preferred for us since we were able to control our production node utilization.",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 38,
+            "section_rank": 12
+        },
+        {
+            "text": "For both modes we used two months of data and placed a query to find a pattern in task names across all documents stored on HDFS. ",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 39,
+            "section_rank": 12
+        },
+        {
+            "text": "The Spark jobs were configured to use 4 executors, 4 GB of memory, and 4 cores each.",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 39,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 10,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s58"
+                }
+            ]
+        },
+        {
+            "text": "We obtained the following results: search results across one day of data was finished in O(10) seconds, one month required O(100) seconds, and a search pattern over two months of data fits into O(200) seconds.",
+            "section": "Data lookup on a Spark cluster",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "WMArchive Query Language",
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "WMArchive Query Language",
+                    "resp": "service",
+                    "id": "software-simple-s59"
+                }
+            ]
+        },
+        {
+            "text": "Our users, the CMS data-operations teams, require a flexible query language (QL) to communicate with the WMArchive system. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 105,
+                    "end": 115,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s60"
+                }
+            ]
+        },
+        {
+            "text": "Since we didn't base our system on an RDBMS solution nor impose live-query requirements, we opted in favor of a JSON based QL similar to the MongoDB QL [9]. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 152,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 141,
+                    "end": 149,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s61"
+                }
+            ]
+        },
+        {
+            "text": "Due to the nested structure of stored metadata within FWJR documents we used dot notations, e.g. output.inputDataset, to specify query conditions. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "We also allow users to use flexible conditions such as $gt, $lt operators as well as use an alternative set of conditions via \"$or\" : [JSON 1, JSON 2] structure. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 143,
+                    "end": 150,
+                    "type": "bibr",
+                    "text": "JSON 2]"
+                }
+            ]
+        },
+        {
+            "text": "These choices helped us to initially place and test queries in STS and later adopt them to LTS via customized python classes. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "To clarify QL syntax here is a simple example:",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "{\"spec\": {\"task\": \"/Abc*\", \"timerange\":[20160801,20160820]}, \"fields\":[\"error.exitCode\"]} , which lists a set of conditions defined by a spec dictionary, e.g. task name pattern along with mandatory timerange constraint, and output fields which end-users requested for their result set, e.g. error.exitCode specify a list of error codes to retrive.",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 42,
+            "section_rank": 13
+        },
+        {
+            "text": "It is worth to mention that usage of non-SQL language (JSON) in queries was easily adopted. ",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 43,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 45,
+                    "type": "software",
+                    "rawForm": "SQL",
+                    "resp": "service",
+                    "id": "software-simple-s62"
+                }
+            ]
+        },
+        {
+            "text": "Its rich syntax and expresiveness covers many use cases and usage of JSON in other data-management applications made this transition effortless.",
+            "section": "WMArchive Query Language",
+            "paragraph_rank": 43,
+            "section_rank": 13
+        },
+        {
+            "text": "User queries",
+            "section_rank": 14
+        },
+        {
+            "text": "Users place their queries via POST API and fetch the end results via GET API. ",
+            "section": "User queries",
+            "paragraph_rank": 44,
+            "section_rank": 14
+        },
+        {
+            "text": "Here, we provide a complete example of an end-user interaction with the system via a python client.",
+            "section": "User queries",
+            "paragraph_rank": 44,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 85,
+                    "end": 92,
+                    "type": "software",
+                    "rawForm": "python",
+                    "resp": "service",
+                    "id": "software-simple-s63"
+                }
+            ]
+        },
+        {
+            "text": "A client posts a request which is immediately acknowledged by the system: # post request to the server wma_client.py --spec=query.json # response from server {\"result\": [ {\"status\": \"ok\", \"input\": {\"fields\": [\"wmaid\"], \"spec\": {\"task\": \"/Abc*\"}}, \"storage\": \"mongodb\", \"results\": [{\"wmaid\": \"6b0bac\"}]}]} .",
+            "section": "User queries",
+            "paragraph_rank": 45,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 103,
+                    "end": 117,
+                    "type": "software",
+                    "rawForm": "wma_client.py",
+                    "resp": "service",
+                    "id": "software-simple-s64"
+                },
+                {
+                    "start": 259,
+                    "end": 266,
+                    "type": "software",
+                    "rawForm": "mongodb",
+                    "resp": "service",
+                    "id": "software-simple-s65"
+                }
+            ]
+        },
+        {
+            "text": "The user query is supplied via the query.json JSON file which has the following content:",
+            "section": "User queries",
+            "paragraph_rank": 46,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 46,
+                    "type": "software",
+                    "rawForm": "json",
+                    "resp": "service",
+                    "id": "software-simple-s66"
+                }
+            ]
+        },
+        {
+            "text": "{\"spec\":{\"task\": \"/Abc*\", \"timerange\":[20160801,20160820]}, \"fields\":[\"meta_data\"]} . ",
+            "section": "User queries",
+            "paragraph_rank": 47,
+            "section_rank": 14
+        },
+        {
+            "text": "At a later time the results were accessible via GET API, e.g. GET /wmarchive/data/6b0bac yields the following results:",
+            "section": "User queries",
+            "paragraph_rank": 47,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 48,
+                    "end": 51,
+                    "type": "software",
+                    "rawForm": "GET",
+                    "resp": "service",
+                    "id": "software-simple-s67"
+                },
+                {
+                    "start": 83,
+                    "end": 84,
+                    "type": "version",
+                    "rawForm": "b",
+                    "resp": "service",
+                    "id": "#software-simple-s67"
+                }
+            ]
+        },
+        {
+            "text": "{\"result\": [ {\"status\": \"ok\", \"input\": {\"fields\": [\"meta_data\"], \"spec\": {\"task\": \"/Abc*\", \"timerange\":[20160801,20160820]}}, \"storage\": \"mongodb\", \"results\": [ {\"meta_data\": {\"agent_ver\": \"1.0.13.pre8\", \"fwjr_id\": \"100-0\", \"host\": \"vocms008.cern.ch\", \"ts\": 1454617125}}]}]} .",
+            "section": "User queries",
+            "paragraph_rank": 48,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 192,
+                    "end": 193,
+                    "type": "version",
+                    "rawForm": "0",
+                    "resp": "service",
+                    "id": "#software-simple-s67"
+                }
+            ]
+        },
+        {
+            "text": "We didn't provide any specific way to know up-front readiness of the query and relied on HDFS native solution to look-up job status via its web UI.",
+            "section": "User queries",
+            "paragraph_rank": 49,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 89,
+                    "end": 94,
+                    "type": "software",
+                    "rawForm": "HDFS",
+                    "resp": "service",
+                    "id": "software-simple-s68"
+                }
+            ]
+        },
+        {
+            "text": "Usage of the system",
+            "section_rank": 15
+        },
+        {
+            "text": "The WMArchive system was deployed to production in the middle of June 2016. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 50,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s69"
+                }
+            ]
+        },
+        {
+            "text": "Since then it has proved to be stable and capable of sustaining the projected load from the CMS production WMAgents. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 50,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 2 shows the data injection rate for the period from July 2016 until mid March 2017.",
+            "section": "Usage of the system",
+            "paragraph_rank": 50,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "We anticipated that load from production agents will eventually grow, and, as can be seen from Fig 2 it was the case. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 51,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 103,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig 2 it"
+                }
+            ]
+        },
+        {
+            "text": "Initially, we operated at the level of O(200-300K) docs/day and lately we started seeing 5 times higher rate, reaching 1.5M docs/day during busy time of CMS production. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "These peaks correspond to a higher data production demand of CMS collaboration, e.g. the time of the major conferences where end-users requested more data from data-operations teams to prepare their results for a conferences.",
+            "section": "Usage of the system",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "Since deploying the system into production we monitored its usage and didn't see significant load on CPU and I/O of the backend node. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 52,
+            "section_rank": 15
+        },
+        {
+            "text": "The RAM usage is correlated with the STS size (MongoDB) whose data-lookup load depends on index size of the stored records, see discussion in Sec. 3.1. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 52,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 54,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s70"
+                }
+            ]
+        },
+        {
+            "text": "Therefore we anticipate that scaling of WMArchive system is more related to Disk and RAM components rather then CPU and I/O.",
+            "section": "Usage of the system",
+            "paragraph_rank": 52,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 40,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s71"
+                }
+            ]
+        },
+        {
+            "text": "The overall cost of the system had minimal impact on CMS budget. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "We were able to operate using two CERN VMs, and we relied on centraly supported CERN HDFS cluster, see Sec 3 for more details. ",
+            "section": "Usage of the system",
+            "paragraph_rank": 53,
+            "section_rank": 15
+        },
+        {
+            "text": "The production and development nodes were configured via puppet and maintained by CMS.",
+            "section": "Usage of the system",
+            "paragraph_rank": 53,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 57,
+                    "end": 64,
+                    "type": "software",
+                    "rawForm": "puppet",
+                    "resp": "service",
+                    "id": "software-simple-s72"
+                }
+            ]
+        },
+        {
+            "text": "Data lookup",
+            "section_rank": 16
+        },
+        {
+            "text": "One of the use cases supported by WMArchive is flexible data lookup. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 44,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s73"
+                }
+            ]
+        },
+        {
+            "text": "This task is divided into two categories, the data lookup in STS and in LTS. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "The former was easy to achive since our QL, see Sec. 4, is natively translated into MongoDB queries. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 84,
+                    "end": 92,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s74"
+                }
+            ]
+        },
+        {
+            "text": "The harder part was to provide ability to look up documents in LTS. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "For that we developed custom Python based classes abstracted from a single interface to follow the map-reduce paradigm. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "We provide code examples for common use cases such as couting the number of documents for a given set of conditions, finding records, finding failed records, and record aggregation. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "These classes are fed into a Spark Python wrapper which applied their logic to a set of documents found on HDFS. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 29,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "Spark Python",
+                    "resp": "service",
+                    "id": "software-simple-s75"
+                }
+            ]
+        },
+        {
+            "text": "This approach helped us to accommodate more sophisticated tasks required by CMS data-operations teams. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "Here, we want to outline the most difficult use case we faced so far. ",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "The task is to find LogCollect files for a given output LFN.",
+            "section": "Data lookup",
+            "paragraph_rank": 54,
+            "section_rank": 16
+        },
+        {
+            "text": "A workflow in an individual CMS WMAgent follows a series of steps where each step creates its own set of FWJR documents. ",
+            "section": "Data lookup",
+            "paragraph_rank": 55,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 32,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "WMAgent",
+                    "resp": "service",
+                    "id": "software-simple-s76"
+                }
+            ]
+        },
+        {
+            "text": "The normal processing chain contains the following job sequence: processing or production job \u2192 merge job which creates a final set of output files. ",
+            "section": "Data lookup",
+            "paragraph_rank": 55,
+            "section_rank": 16
+        },
+        {
+            "text": "The merge jobs are omitted if the processing or production job creates a file bigger than some threshold. ",
+            "section": "Data lookup",
+            "paragraph_rank": 55,
+            "section_rank": 16
+        },
+        {
+            "text": "In that case, the output of the production or processing job is the final output file.",
+            "section": "Data lookup",
+            "paragraph_rank": 55,
+            "section_rank": 16
+        },
+        {
+            "text": "For each job, log-archive files are created and the FWJR contains log-archive's logical file name. ",
+            "section": "Data lookup",
+            "paragraph_rank": 56,
+            "section_rank": 16
+        },
+        {
+            "text": "Then a LogCollect job creates tar files when enough log-archive files are collected. ",
+            "section": "Data lookup",
+            "paragraph_rank": 56,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 18,
+                    "type": "software",
+                    "rawForm": "LogCollect",
+                    "resp": "service",
+                    "id": "software-simple-s77"
+                }
+            ]
+        },
+        {
+            "text": "The LogCollect job is a separate and independent job which takes log-archive files as input and produce a tar file as an output.",
+            "section": "Data lookup",
+            "paragraph_rank": 56,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "LogCollect",
+                    "resp": "service",
+                    "id": "software-simple-s78"
+                }
+            ]
+        },
+        {
+            "text": "The common task is to find records from the output file created by merge job (or processing, production job) and look-up a corresponding tar file created by the Log-Collect job. ",
+            "section": "Data lookup",
+            "paragraph_rank": 57,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 161,
+                    "end": 173,
+                    "type": "software",
+                    "rawForm": "Log-Collect",
+                    "resp": "service",
+                    "id": "software-simple-s79"
+                }
+            ]
+        },
+        {
+            "text": "Also, to find the corresponding log-archive file from processing or production job.",
+            "section": "Data lookup",
+            "paragraph_rank": 57,
+            "section_rank": 16
+        },
+        {
+            "text": "To accomplish this task we are forced to perform multi-step look-up of documents stored on HDFS. ",
+            "section": "Data lookup",
+            "paragraph_rank": 58,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 91,
+                    "end": 95,
+                    "type": "software",
+                    "rawForm": "HDFS",
+                    "resp": "service",
+                    "id": "software-simple-s80"
+                }
+            ]
+        },
+        {
+            "text": "Here, are the steps we followed:",
+            "section": "Data lookup",
+            "paragraph_rank": 58,
+            "section_rank": 16
+        },
+        {
+            "text": "look up FWJR documents with provided file name which is present in LFNArray FWJR list attribute; check the job type and, in the case of merge jobs, iterate and retrieve all input files read in the merge job; retrieve all unmerged input files from LFNArray list; for each input file look-up FWJR documents associated with unmerged files in LFNArray; find the file which ends with logArchive.tar.gz in LFNArray list in the same document; search again the documents with LogCollect job type which contain logArchive.tar.gz file above as input file; return the list of intermediate files along with logarchive and LogCollect job files.",
+            "section": "Data lookup",
+            "paragraph_rank": 59,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 468,
+                    "end": 479,
+                    "type": "software",
+                    "rawForm": "LogCollect",
+                    "resp": "service",
+                    "id": "software-simple-s81"
+                },
+                {
+                    "start": 610,
+                    "end": 621,
+                    "type": "software",
+                    "rawForm": "LogCollect",
+                    "resp": "service",
+                    "id": "software-simple-s82"
+                }
+            ]
+        },
+        {
+            "text": "This procedure quite often causes three iterations over the data on HDFS to find the final results. ",
+            "section": "Data lookup",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "But due to the excellent parallel processing pipeline on Spark platform we were able to quickly (O(10) minutes/week worth of data) find the desired documents on HDFS.",
+            "section": "Data lookup",
+            "paragraph_rank": 60,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 57,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s83"
+                }
+            ]
+        },
+        {
+            "text": "Data Aggregation and Monitoring",
+            "section_rank": 17
+        },
+        {
+            "text": "Next to long-term storage and flexible access to individual FWJRs, it is one objective of the WMArchive service to assist CMS data operators in monitoring the CMS computing infrastructure through an interactive web interface. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 94,
+                    "end": 104,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s84"
+                }
+            ]
+        },
+        {
+            "text": "Of course, to access the performance data in the long-term HDFS storage it is necessary to schedule jobs that retrieve the data, and such tasks can take a significant amount of time. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "So to provide a responsive user interface we constructed an aggregation pipeline that regularly processes the distributed database of FWJRs to collect performance metrics and cache the aggregated data in the MongoDB short-term storage, where it is quickly accessible by the REST server and the user interface. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 208,
+                    "end": 215,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s85"
+                }
+            ]
+        },
+        {
+            "text": "The primary aggregation procedure based on Apache Spark [14] reduces the original long-term storage data to a cache of limited size where only selected information is preserved that data operators may want to commonly monitor. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "Apache Spark",
+                    "resp": "service",
+                    "id": "software-simple-s86"
+                }
+            ]
+        },
+        {
+            "text": "This cache is not data from each individual job report but is instead aggregated data grouped only by a number of attributes, for example the job success state, its host, or its processing site. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "During implementation of the aggregation procedure we made several choices to keep reasonable query times under control. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "We took particular care in selecting a suitable temporal granularity for the aggregation procedure. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "While daily aggregated data turned out to be generally sufficient, we keep hourly aggregated data for a limited time to allow data operators to find failures in current operations. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "Stored back in the short-term storage, a secondary MongoDB aggregation query over the cached data are produced data for visualizations on timescales suitable for a responsive user interface.",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 61,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s87"
+                }
+            ]
+        },
+        {
+            "text": "To interactively present the aggregated data, we originally developed the user interface depicted in Fig.  3 based on open web technologies such as the D3.js JavaScript data visualization library [11]. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 108,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig.  3"
+                },
+                {
+                    "start": 196,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 152,
+                    "end": 169,
+                    "type": "software",
+                    "rawForm": "D3.js JavaScript",
+                    "resp": "service",
+                    "id": "software-simple-s88"
+                }
+            ]
+        },
+        {
+            "text": "We collected feedback from CMS data operators to construct a user interface that allows them to comfortably perform commonly needed queries. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17
+        },
+        {
+            "text": "They may select any number of performance metrics, such as the total job computation time, CPU consumption, and storage usage, as well as a set of visualization axes from the attributes we chose to preserve in the aggregation procedure. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17
+        },
+        {
+            "text": "The service performs the secondary MongoDB aggregation query for each combination of the selected metrics and axes in realtime and visualizes the results in a way that is suitable for the query. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "MongoDB",
+                    "resp": "service",
+                    "id": "software-simple-s89"
+                }
+            ]
+        },
+        {
+            "text": "The user may refine the scope of his or her query through regular expression filters by any of the available attributes, as well as by specifying a timeframe. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17
+        },
+        {
+            "text": "Filters are also applied by interactive user interface elements that allow data operators to comfortably navigate through the data.",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 62,
+            "section_rank": 17
+        },
+        {
+            "text": "With the aggregated data available in the shortterm storage we also investigated visualization platforms such as Kibana [12] and Grafana [13] for monitoring the performance data. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 63,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 120,
+                    "end": 124,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[12]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 113,
+                    "end": 120,
+                    "type": "software",
+                    "rawForm": "Kibana",
+                    "resp": "service",
+                    "id": "software-simple-s90"
+                },
+                {
+                    "start": 129,
+                    "end": 137,
+                    "type": "software",
+                    "rawForm": "Grafana",
+                    "resp": "service",
+                    "id": "software-simple-s91"
+                }
+            ]
+        },
+        {
+            "text": "This service is provided by the CERN Monitoring system that we feed with the data from the primary aggregation procedure. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 63,
+            "section_rank": 17
+        },
+        {
+            "text": "Complementing the WMArchive Performance Service web interface that is tailored to specific workflows of data operators, these platforms allow for flexible inspection  of the entire aggregated dataset and particularly excel at presenting time series data, as shown in Fig. 4. ",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 63,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 267,
+                    "end": 273,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 4"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 18,
+                    "end": 28,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s92"
+                }
+            ]
+        },
+        {
+            "text": "Although these tools are well adopted and the majority of CMS data-services use them for central monitoring dashboards we found that there are certain limitations in their capacity above certain limit, e.g. slowness of making plots from millions of documents, which are under investigation by CERN IT.",
+            "section": "Data Aggregation and Monitoring",
+            "paragraph_rank": 63,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 293,
+                    "end": 300,
+                    "type": "publisher",
+                    "rawForm": "CERN IT",
+                    "resp": "service",
+                    "id": "#software-simple-s92"
+                }
+            ]
+        },
+        {
+            "text": "Error handling",
+            "section_rank": 18
+        },
+        {
+            "text": "The error handling is an important component of every system. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18
+        },
+        {
+            "text": "Apart from usual programming bugs catched via Exception mechanism in the Python code, we mostly struggled to handle errors on the Spark side. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 130,
+                    "end": 135,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s93"
+                }
+            ]
+        },
+        {
+            "text": "The PySpark framework is a wrapper around Java Spark libraries. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "software",
+                    "rawForm": "PySpark",
+                    "resp": "service",
+                    "id": "software-simple-s94"
+                },
+                {
+                    "start": 47,
+                    "end": 53,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s95"
+                }
+            ]
+        },
+        {
+            "text": "As such, the nested, often very long and cum-bersome, errors were hard to debug and understand. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18
+        },
+        {
+            "text": "Most of them came from JVM memory issues due to incorrect data handling on a worker node. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18
+        },
+        {
+            "text": "This was caused by a sequential data model in our code rather than a distributed lazy processing offered by PySpark APIs. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 116,
+                    "type": "software",
+                    "rawForm": "PySpark",
+                    "resp": "service",
+                    "id": "software-simple-s96"
+                }
+            ]
+        },
+        {
+            "text": "We must admit that a there is learning curve to efficiently use PySpark and adapt it to the Python code we were dealing with before implementing this system. ",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 64,
+                    "end": 72,
+                    "type": "software",
+                    "rawForm": "PySpark",
+                    "resp": "service",
+                    "id": "software-simple-s97"
+                }
+            ]
+        },
+        {
+            "text": "Due to this nature, the errors caused by our Spark jobs were separately examined and debugged in collaboration with CERN IT, while other errors were captured in server logs and invetigated by developers.",
+            "section": "Error handling",
+            "paragraph_rank": 64,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 45,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s98"
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 19
+        },
+        {
+            "text": "We have provided a detailed description of the WMArchive system for distributed workflow management agents in the CMS collaboration. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s99"
+                }
+            ]
+        },
+        {
+            "text": "The system is designed according to a specific set of requirements imposed by CMS data-operations teams and it has been deployed into production since mid 2016. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "Since then we have collected more than 125 million FWJR documents and have not experienced any significant problems with system maintenance. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "The introduction of short-term and long-term storage systems has helped us to maintain the injection rate and isolate it from user-based queries. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "We found that complex search queries are desired by the CMS data-operations teams and we are able to accommodate them via a flexible query language discussed in the paper. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "We plan to expand our system and include a new data steam coming out from CMS CRAB [15] analysis facilities which process user-analysis jobs across the globe. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "This will roughly double the demands on the deployed system where we may face new challenges. ",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "But the flexible design of the system and almost a year of running in production environment allow us to be optimistic about such an expansion.",
+            "section": "Summary",
+            "paragraph_rank": 65,
+            "section_rank": 19
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 20
+        },
+        {
+            "text": "Fig. 2Data rate from production CMS WMAgents for a period of July 2016 till March 2017. ",
+            "section": "Fig. 2",
+            "paragraph_rank": 66,
+            "section_rank": 20
+        },
+        {
+            "text": "More than 125M documents are collected in WMArchive over this period.",
+            "section": "Fig. 2",
+            "paragraph_rank": 66,
+            "section_rank": 20,
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s100"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 3",
+            "section_rank": 21
+        },
+        {
+            "text": "Fig. 3The WMArchive Performance Service web interface gives CMS data operators flexible access to a range of commonly needed data aggregation queries.",
+            "section": "Fig. 3",
+            "paragraph_rank": 67,
+            "section_rank": 21,
+            "entity_spans": [
+                {
+                    "start": 10,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "WMArchive Performance Service",
+                    "resp": "service",
+                    "id": "software-simple-s101"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 22
+        },
+        {
+            "text": "Fig. 4The Kibana data visualization platform exposes the entire aggregated WMArchive Performance Service dataset.",
+            "section": "Fig. 4",
+            "paragraph_rank": 68,
+            "section_rank": 22,
+            "entity_spans": [
+                {
+                    "start": 10,
+                    "end": 17,
+                    "type": "software",
+                    "rawForm": "Kibana",
+                    "resp": "service",
+                    "id": "software-simple-s102"
+                },
+                {
+                    "start": 75,
+                    "end": 85,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s103"
+                }
+            ]
+        },
+        {
+            "text": "Right now every WMAgent sends data every 5 minutes, 1000 docs per polling cycle with rate of 200 docs per single HTTP request.",
+            "section": "Fig. 4",
+            "paragraph_rank": 69,
+            "section_rank": 22,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "WMAgent",
+                    "resp": "service",
+                    "id": "software-simple-s104"
+                }
+            ]
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 24
+        },
+        {
+            "text": "We would like to thank our colleagues Seangchan Ryu (FNAL) and Alan Malta (Univ. of Nebraska) for numerous feedback and guidance across various details of CMS Workflow Management System. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 70,
+            "section_rank": 24
+        },
+        {
+            "text": "Special thanks goes to Eric Vaandering (FNAL) for initiating the idea of WMArchive system in CMS and his constant support along development cycle. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 70,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 73,
+                    "end": 83,
+                    "type": "software",
+                    "rawForm": "WMArchive",
+                    "resp": "service",
+                    "id": "software-simple-s105"
+                }
+            ]
+        },
+        {
+            "text": "We also would like to thank Luca Menichetti from CERN IT who provided support for development, maintenance and deployment of our scripts on Spark platform.",
+            "section": "Acknowledgements",
+            "paragraph_rank": 70,
+            "section_rank": 24,
+            "entity_spans": [
+                {
+                    "start": 140,
+                    "end": 146,
+                    "type": "software",
+                    "rawForm": "Spark",
+                    "resp": "service",
+                    "id": "software-simple-s106"
+                }
+            ]
+        }
+    ]
+}
