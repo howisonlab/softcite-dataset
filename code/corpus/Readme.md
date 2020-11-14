@@ -189,3 +189,32 @@ Using the service method, after having started the software-mention recognizer s
 Annotations are added with `"resp": "service"` following this method.
 
 When the indicated method is none, `--method none`, no extra annotations are added and the text is simply converted to sentence-level text.
+
+
+## Creating a XML TEI corpus file from TagWorks CSV result file
+
+The following script uses TagWorks CSV result file to inject annotations in the JSON full text files used to create the TagWorks annotation tasks. The script produces a TEI XML corpus file similar to the SoftCite dataset with inline annotations.
+
+```
+usage: mapTagWorksResult2TEI.py [-h] [--tagworks-file TAGWORKS_FILE]
+                                [--json-corpus JSON_CORPUS] [--output OUTPUT]
+
+Convert a TEI XML file into CORD-19-style JSON format
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --tagworks-file TAGWORKS_FILE
+                        path to the TagWorks result CSV file (cleanup-up
+                        version)
+  --json-corpus JSON_CORPUS
+                        path to the directory of full text JSON files from
+                        which the tasks have been extracted
+  --output OUTPUT       path to an output directory where to write the TEI XML
+                        file augmented with the TagWorks annotations
+```
+
+For example:
+
+```shell
+python3 mapTagWorksResult2TEI.py --tagworks-file /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/Pipeline-2D-SoftciteDetails-Test-2020-11-07T1940-DataHunt-Reduced.csv --json-corpus ../../data/json_raw/ --output /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/tei/
+```
