@@ -25,6 +25,7 @@ import csv
 import argparse
 import gzip
 from lxml import etree
+import lxml.html
 from collections import OrderedDict
 from xml.sax import saxutils
 
@@ -32,13 +33,10 @@ from xml.sax import saxutils
 fields = ["software", "version", "url", "publisher", "used"]
 p_indent = "            "
 
-def enrich_tei_files(tagworks_file, json_corpus_path, output_path, collection=None):
+def enrich_tei_files_via_json(tagworks_file, json_corpus_path, output_path, collection=None):
     # the following will not work on windows...
     base_tagworks_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(tagworks_file)))))
-    #print(base_tagworks_dir)
-
     document_ids, documents = _parse_tagworks_result_cvs(tagworks_file, base_tagworks_dir)
-
     documents = _resolve_conflicting_annotations(documents)
 
     # init the TEI corpus file for the tagworks snippets and labels - we use mustache style templates
@@ -286,6 +284,295 @@ def enrich_tei_files(tagworks_file, json_corpus_path, output_path, collection=No
     with open(os.path.join(output_path, "softcite_corpus_tagworks.tei.xml"), "w") as out_file:
         out_file.write(corpus_template)
 
+def enrich_tei_files_via_tei_corpus(tagworks_file, tei_corpus_path, output_path, collection=None):
+    # the following will not work on windows...
+    base_tagworks_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(tagworks_file)))))
+    document_ids, documents = _parse_tagworks_result_cvs(tagworks_file, base_tagworks_dir)
+    documents = _resolve_conflicting_annotations(documents)
+
+    # init the TEI corpus file for the tagworks snippets and labels - we use mustache style templates
+    with open('resources/corpus.template.tei.xml', mode='r') as f:
+        corpus_template = f.read()
+
+    # init the doc level template    
+    with open('resources/document-element.tei.xml', mode='r') as f:
+        doc_template = f.read()
+
+    # read the id mapping file associated to the TEI Corpus file
+    base_tei_dir = os.path.dirname(os.path.realpath(tei_corpus_path))
+    # used to map SoftCite corpus id and document identifiers (DOI, PMCID, PMID)
+    identifiers = read_id_map(os.path.join(base_tei_dir, "ids.csv"))
+
+    # read the existing TEI corpus file
+    parser = etree.XMLParser(remove_blank_text=False)
+    root_corpus = etree.parse(tei_corpus_path, parser).getroot()
+
+    # go through the documents
+    doc_tei = []
+    for doc_id in document_ids:
+        print("processing", doc_id)
+        document = documents[doc_id]
+        #print(document)
+
+        if 'annotations' not in document:
+            continue
+
+        # python string are immutable...
+        local_doc_template = doc_template
+        local_doc_template = local_doc_template.replace("{{ORIGIN}}", doc_id)
+
+        if collection is None:
+            local_doc_template = local_doc_template.replace("{{COLLECTION}}", "")
+        else:
+            local_doc_template = local_doc_template.replace("{{COLLECTION}}", 'subtype="'+collection+'" ')
+
+        '''
+        paragraph_ranks = []
+        section_ranks = []
+        for the_file_path in document["file_paths"]:
+            map_file_path = os.path.join(base_tagworks_dir,the_file_path.replace('text.txt.gz','map.csv.gz'))
+            #print(map_file_path)
+            with gzip.open(map_file_path, mode='rt') as csv_file:
+                # map is pretty complex, we are interested in local and global offsets
+                # file_path,article,entity_json_start,entity_json_end,entity_type,entity_rawForm,entity_resp,entity_used,entity_id,entity_cert,entity_start_in_chunk,entity_end_in_chunk,entity_start_in_text,entity_end_in_text,entity_count_val,text,text_num,text_modify,text_chr_count,text_end_chr,text_start_chr,chunk_offset_end,chunk_offset_start,chunk_length,chunk_entity_count,orig_text,section_rank,paragraph_rank,is_section_title,max_text_in_paragraph,is_paragraph_end,num_in_chunk,test_entity_rawForm_by_offset_chunk,test_entity_rawForm_by_offset_text,selected_by_mention,chunk_selected_by     
+                csv_reader = csv.DictReader(csv_file)
+                for row in csv_reader:
+                    if row['paragraph_rank'] == 'NA':
+                        continue
+                    paragraph_rank = row['paragraph_rank']
+                    section_rank = row['section_rank']
+                    if paragraph_rank not in paragraph_ranks:
+                        paragraph_ranks.append(paragraph_rank)
+                    if section_rank not in section_ranks:
+                        section_ranks.append(section_rank)
+        '''
+        #print(paragraph_ranks)
+        #print(section_ranks)
+
+        # access the corresponding TEI entry in the TEI corpus document
+        softcite_doc_id = identifiers[doc_id]
+        if softcite_doc_id is None:
+            print("ERROR: the SoftCite unique doc id cannot be retrieved from TagWorks file doc identifier:", doc_id)
+            continue
+
+        local_doc_template = local_doc_template.replace("{{DOCUMENT_UID}}", softcite_doc_id)
+
+        expression = "//tei:TEI[descendant::tei:fileDesc[@xml:id='"+softcite_doc_id+"']]/tei:text/tei:body/tei:p"
+        paragraphs = root_corpus.xpath(expression, namespaces={'tei': 'http://www.tei-c.org/ns/1.0'})
+        #print("found", str(len(paragraphs)), "paragraphs for", softcite_doc_id)
+        
+        all_p_tei = []
+
+        #print(paragraphs)
+        for element in paragraphs:
+            markups = []
+
+            # set reference markers
+            current_pos = 0
+            for elem in element.getiterator():
+                if elem.attrib.items():
+                    for key, value in elem.attrib.items():
+                        if key == 'type':
+                            the_type = value
+
+                    attributes = []
+                    attributes.append(["type", the_type])
+                    if elem.tag is not None and elem.tag.endswith('ref'):
+                        markup = _create_markup(current_pos, "ref", attributes)
+                        markups.append(markup)
+                if elem.text:
+                    current_pos += len((elem.text))
+
+                if elem.tail:
+                    if elem.tag is not None and elem.tag.endswith('ref'):
+                        markup2 = _create_markup(current_pos, "/ref")
+                        markups.append(markup2)
+                    #print("current pos:", current_pos)
+                    #print('my tail:', elem.tail, "|")
+                    # for some unknown reasons, the lxml parser insert spurious indentation here
+                    if elem.tail.find("\n") == -1 and elem.tail.find("\t") == -1:
+                        current_pos += len((elem.tail))
+            
+            etree.strip_tags(element,'*')
+            p_tei = element.text
+            p_tei_length = len(p_tei)
+            #print(p_tei)
+
+            # then tagworks spans (log warning and discard it when overlapping a reference marker)
+            mentions_done = []
+            for mention_id in document['annotations']:
+                if mention_id in mentions_done:
+                    continue
+                mention_consumed = False
+                software_pos = -1
+                local_annotations = document['annotations'][mention_id]
+                for annotation in local_annotations:
+                    field = annotation['field']
+                    if field == 'used':
+                        continue
+
+                    # determine the offset shift of the paragraph with respect to the task "snippet"
+                    snippet = None
+                    paragraph_pos = -1
+                    if 'context' in annotation:
+                        snippet = annotation['context']
+
+                        paragraph_pos = snippet.find(p_tei)
+                        if paragraph_pos == -1:
+                            # there are two cases to consider here:
+                            # 1) first paragraph is cut, we need to match the first partial paragraph in the snippet text,
+                            #    ajusted offset will be position of the cut
+                            # 2) last paragraph is cut, we need to match the last partial paragraph in the snippet text,
+                            #    ajusted offset will be the start of this cut paragraph in the snippet text
+                            snippet_first = _get_first_paragraph(snippet)
+                            start_pos = p_tei.find(snippet_first)
+                            if start_pos != -1:
+                                #paragraph_pos = - start_pos
+                                paragraph_pos = 0
+                                # we remove the starting part of p_tei not in the snippet
+                                p_tei = p_tei[start_pos:]
+                                # existing bib ref has to be shifted :/
+                                for markup in markups:
+                                    markup['pos'] = markup['pos'] - start_pos
+                            else:
+                                snippet_last, pos_last = _get_last_paragraph(snippet)
+                                if p_tei.find(snippet_last) != -1:
+                                    paragraph_pos = pos_last
+                                    # we remove the tail part of p_tei not present in the snippet
+                                    p_tei = p_tei[:len(snippet_last)]
+
+                            if paragraph_pos == -1:        
+                                print("Error:", "the paragraph is not found in the task snippet!", p_tei, annotation["file_path"])                    
+                    
+                    start = -1
+                    end = -1
+                    if paragraph_pos != -1:                            
+                        if "start" in annotation:
+                            start = annotation["start"] - paragraph_pos
+                        if "end" in annotation:
+                            end = annotation["end"] - paragraph_pos
+                        if start > p_tei_length or end > p_tei_length or start < 0 or end < 0:
+                            continue
+                        # check that the span and the annotation text are matching
+                        if annotation['text'] != p_tei[start:end]:
+                            continue
+                    else:
+                        #continue
+                        # otherwise we try direct match, with a control of software name position in case of software attributes
+                        ind = p_tei.find(annotation['text'])
+                        if ind != -1:
+                            local_matches = [ind]
+                            # more matches?
+                            ind2 = ind
+                            while ind2 != -1:
+                                ind2 = p_tei.find(annotation['text'], ind2+1)
+                                if ind2 != -1:
+                                    local_matches.append(ind2)
+                            if len(local_matches) == 1 and annotation['field'] == 'software':
+                                start = ind
+                                end = start + len(annotation['text'])
+                            elif annotation['field'] != 'software':
+                                # select a match after software name position
+                                if software_pos != -1:
+                                    for local_pos in local_matches:
+                                        if local_pos > software_pos:
+                                            start = local_pos
+                                            end = start + len(annotation['text'])
+                                            break
+                        
+                    if start == -1 or end == -1:
+                        continue
+                    
+                    mention_id = annotation['mention_id']
+
+                    attributes = []
+                    attributes.append(["type", field])
+                    if field == 'software':
+                        attributes.append(["xml:id", mention_id])
+                        is_used = _check_is_used(local_annotations)
+                        if is_used:
+                            attributes.append(["subtype", "used"])
+                        software_pos = start
+                    else:
+                        attributes.append(["corresp", '#'+mention_id])
+                    markup = _create_markup(start, "rs", attributes)
+                    markups.append(markup)
+
+                    markup2 = _create_markup(end, "/rs")
+                    markups.append(markup2)
+
+                    mention_consumed = True
+
+                if mention_consumed:
+                    mentions_done.append(mention_id)
+
+            if len(mentions_done) == 0:
+                # no software mention in this paragraph, we can skip it
+                continue
+
+            for mention_id in mentions_done:
+                del document['annotations'][mention_id]
+
+            # sort the markups by position (bubble sort)
+            for iter_num in range(len(markups)-1,0,-1):
+                for idx in range(iter_num):
+                    if markups[idx]['pos']>markups[idx+1]['pos']:
+                        temp = markups[idx]
+                        markups[idx] = markups[idx+1]
+                        markups[idx+1] = temp
+
+            i = len(markups)-1
+            while i>=0:
+                markup = markups[i]
+                pos = markup['pos']
+                if pos < 0:
+                    # happen for truncated first paragraph of snippet
+                    i -= 1  
+                    continue
+                if pos > len(p_tei):
+                    # happen for truncated last paragraph of snippet
+                    i -= 1  
+                    continue
+                # we use placeholders for xml special characters to ensure correct XML text encoding
+                new_p_tei = p_tei[:pos]+'𐎨'+markup['tag']
+                if 'attributes' in markup:
+                    attributes = markup['attributes']
+                    for attribute in attributes:
+                        new_p_tei += ' ' + attribute[0]+'="'+attribute[1]+'"'
+                new_p_tei +='𐎩'+p_tei[pos:]
+                p_tei = new_p_tei
+                i -= 1    
+
+            p_tei = saxutils.escape(p_tei)
+            # restore placeholders
+            p_tei = p_tei.replace("𐎨", "<")
+            p_tei = p_tei.replace("𐎩", ">")
+            p_tei = p_indent+"<p>"+p_tei+"</p>"
+            all_p_tei.append(p_tei)
+
+        if len(all_p_tei) == 0:
+            # we did not manage to get annotated paragraphs
+            continue
+
+        paragraph_tei_sequence = ''
+        for element_tei in all_p_tei:
+            paragraph_tei_sequence += element_tei + '\n'
+        local_doc_template = local_doc_template.replace("{{PARAGRAPH}}", paragraph_tei_sequence)
+
+        doc_tei.append(local_doc_template)
+
+    doc_tei_sequence = ''
+    for element_tei in doc_tei:
+        doc_tei_sequence += element_tei + '\n'
+
+    corpus_template = corpus_template.replace('{{TEI_ENTRIES}}', doc_tei_sequence)
+
+    # save the TEI corpus file
+    with open(os.path.join(output_path, "softcite_corpus_tagworks.tei.xml"), "w") as out_file:
+        out_file.write(corpus_template)
+
+
+
 def _get_first_paragraph(snippet):
     end_pos = snippet.find('\n\n')
     par = snippet[:end_pos]
@@ -503,20 +790,34 @@ def _resolve_conflicting_annotations(documents):
 
     return documents
 
+def read_id_map(ids_file):
+    identifiers = {}
+    with open(ids_file, 'r') as file:
+        csv_file = csv.DictReader(file)
+        for row in csv_file:
+            identifiers[row['DOI']] = row['id']
+            identifiers[row['origin']] = row['id']
+            identifiers[row["PMCID"]] = row['id']
+            identifiers[row["PMID"]] = row['id']
+            identifiers[row["id"]] = row['origin']
+    return identifiers
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description = "Convert a TEI XML file into CORD-19-style JSON format")
     parser.add_argument("--tagworks-file", type=str, help="path to the TagWorks result CSV file (cleanup-up version)")
     parser.add_argument("--json-corpus", type=str, help="path to the directory of full text JSON files from which the tasks have been extracted")
+    parser.add_argument("--xml-corpus", type=str, help="path to the SoftCite corpus TEI XML file from which the tasks have been extracted")
     parser.add_argument("--output", type=str, 
         help="path to an output directory where to write the TEI XML file augmented with the TagWorks annotations")
 
     args = parser.parse_args()
     tagworks_file = args.tagworks_file
     json_corpus_path = args.json_corpus
+    tei_corpus_path = args.xml_corpus
     output_path = args.output
 
-    if tagworks_file is None or json_corpus_path is None:
+    if tagworks_file is None or (json_corpus_path is None and tei_corpus_path is None):
         print("Invalid usage, check expected parameters with --help")
         exit()
 
@@ -524,6 +825,10 @@ if __name__ == "__main__":
     if tagworks_file is not None and not os.path.isfile(tagworks_file):
         print("the path to the TagWorks CSV file is not valid: ", tagworks_file)
     elif json_corpus_path is not None and not os.path.isdir(json_corpus_path):
-        print("the path to the directory of source TEI files is not valid: ", xml_corpus_path)
+        print("the path to the directory of source JSON files is not valid: ", json_corpus_path)
+    elif tei_corpus_path is not None and not os.path.isfile(tei_corpus_path):
+        print("the path to the source corpus TEI XML file is not valid: ", tei_corpus_path)
     elif json_corpus_path is not None:
-        enrich_tei_files(tagworks_file, json_corpus_path, output_path)
+        enrich_tei_files_via_json(tagworks_file, json_corpus_path, output_path)
+    elif tei_corpus_path is not None:
+        enrich_tei_files_via_tei_corpus(tagworks_file, tei_corpus_path, output_path)    
