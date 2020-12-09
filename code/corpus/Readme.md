@@ -197,7 +197,8 @@ The following script uses TagWorks CSV result file to inject annotations in the 
 
 ```
 usage: mapTagWorksResult2TEI.py [-h] [--tagworks-file TAGWORKS_FILE]
-                                [--json-corpus JSON_CORPUS] [--output OUTPUT]
+                                [--json-corpus JSON_CORPUS]
+                                [--xml-corpus XML_CORPUS] [--output OUTPUT]
 
 Convert a TEI XML file into CORD-19-style JSON format
 
@@ -209,12 +210,22 @@ optional arguments:
   --json-corpus JSON_CORPUS
                         path to the directory of full text JSON files from
                         which the tasks have been extracted
+  --xml-corpus XML_CORPUS
+                        path to the SoftCite corpus TEI XML file from which
+                        the tasks have been extracted
   --output OUTPUT       path to an output directory where to write the TEI XML
                         file augmented with the TagWorks annotations
+
 ```
 
-For example:
+For example for aligning with the JSON files used to create the annotator tasks:
 
 ```shell
 python3 mapTagWorksResult2TEI.py --tagworks-file /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/Pipeline-2D-SoftciteDetails-Test-2020-11-07T1940-DataHunt-Reduced.csv --json-corpus ../../data/json_raw/ --output /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/tei/
+```
+
+For aligning with the SoftCite corpus in TEI XML when the annotator tasks use the corpus documents:
+
+```shell
+python3 mapTagWorksResult2TEI.py --tagworks-file /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/Pipeline-2D-SoftciteDetails-Test-2020-11-07T1940-DataHunt-Reduced.csv --xml-corpus ../../data/corpus/softcite_corpus.tei.xml --output /home/lopez/tools/utaustin-tagworks-prep/softcite_data/results_from_tagworks/test_results-2020-11-07/tei/
 ```
