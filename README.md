@@ -12,4 +12,6 @@ _softcite-dataset: from manual annotation of PDF documents to a corpus for machi
 
 [API for knowledgebase access](https://github.com/kermitt2/softcite-api)
 
+[CiteAs.org](http://citeas.org) helps find the requested citation for software (and will eventually use data from the knowledge base).
+
 Thanks to the Sloan Foundation for funding.
