@@ -4,7 +4,7 @@ We are building a dataset of software mentions in research publications. We have
 
 Visibility is important to the underacknowledged software work in science, which is critical for unleashing scientific progress. We hope our effort can help software work achieve its due credit on the honor wall of science, and thus facilitate more investment in quality software work for better science.
 
-![softcite-dataset: from PDF annotation to output](https://raw.githubusercontent.com/caifand/softcite-dataset/f20811c3ddc565441228e37c60e4e8205538512b/docs/images/pdf-tei-annotated-example.png)
+![softcite-dataset: from PDF annotation to output](https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/docs/images/pdf-tei-annotated-example.png)
 
 _softcite-dataset: from manual annotation of PDF documents to a corpus for machine learning use_
 
