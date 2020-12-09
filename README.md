@@ -9,3 +9,7 @@ Visibility is important to the underacknowledged software work in science, which
 _softcite-dataset: from manual annotation of PDF documents to a corpus for machine learning use_
 
 [Documentation](https://howisonlab.github.io/softcite-dataset/)
+
+[API for knowledgebase access](https://github.com/kermitt2/softcite-api)
+
+Thanks to the Sloan Foundation for funding.
