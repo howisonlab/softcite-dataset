@@ -17,13 +17,15 @@ _Image: Snapshot of an annotated article entry with encoded software annotations
 
 
 ## Use scenarios
-We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du] [mailto:cfdu@utexas.edu]. We advocate the proper use of all data.
+We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du] (mailto:cfdu@utexas.edu). We advocate the proper use of all data.
 
 
 ## The Softcite approach
 Understanding data provenance is important for data reuse. We have [a forthcoming publication](https://github.com/howisonlab/softcite-dataset/raw/master/docs/papers/Softcite_Dataset_Description_RC.pdf) that details the design consideration and creation process of the Softcite dataset. It also documents the annotation schema of the Softcite dataset.
 
-To ensure data consistency across the whole pipeline, we used [GROBID](https://github.com/kermitt2/grobid), an open source machine learning library, to convert thousands of open access publication PDFs into TEI/XML text. Our annotation team consists of experts in NLP and research software, and students from UT Austin who had been through group training. (Training materials can be consulted [here](https://howisonlab.github.io/softcite-dataset/)) The annotation team read through every PDF publication, annotated mentions of software and their details. We conducted an inter-annotator agreement check to ensure training was effective. We collected all the annotation data input from annotators via GitHub and validated the incoming data via a test suite deployed on Travis CI, coupled with senior annotators' manual examination.
+To ensure data consistency across the whole pipeline, we used [GROBID](https://github.com/kermitt2/grobid), an open source machine learning library, to convert thousands of open access publication PDFs into TEI/XML text. Our annotation team consists of experts in NLP and research software, and students from UT Austin who had been through group training. (Training materials can be found [here](https://howisonlab.github.io/softcite-dataset/)) The annotation team read through every PDF publication, annotated mentions of software and their details. We conducted an inter-annotator agreement check to ensure training was effective. We collected all the annotation data input from annotators via GitHub and validated the incoming data via a test suite deployed on Travis CI, coupled with senior annotators' manual examination.
+
+![collective annotation workflow]()
 
 After the annotation, we checked the annotation consistency across the whole dataset via a script and expert review. All the software mentions in the Softcite dataset have been reviewed by expert annotators, ensuring its gold standard quality. We encoded the annotations in the converted TEI/XML article text using GROBID.
 
@@ -36,13 +38,13 @@ See our [changelog](https://raw.githubusercontent.com/howisonlab/softcite-datase
 
 
 ## Implementation
-We have utilized the Softcite dataset to train a set of machine learning models and implemented them as a [GROBID module for software mention recognition](https://github.com/ourresearch/software-mentions). The software mention recognizer is further used to seed a Software Knowledge Base. The Software Knowledge Base provides capabilities such as software entity extraction, disambiguation, citation information retrieval, and cross-entity inference. A [REST API](https://github.com/kermitt2/softcite-api) is provided for leveraging the Software Knowledge Base.
+We have utilized the Softcite dataset to train a set of machine learning models and implemented them in a [GROBID module for software mention recognition](https://github.com/ourresearch/software-mentions). The software mention recognizer is further used to seed a Software Knowledge Base. The Software Knowledge Base provides capabilities such as software entity extraction, disambiguation, citation information retrieval, and cross-entity inference. A [REST API](https://github.com/kermitt2/softcite-api) is provided for leveraging the Software Knowledge Base capabilities.
 
 
 ## Roadmap
 * We hope to build interoperability with other existing datasets and resources about software mentions in scientific text. Interoperable datasets can scale up ML-based efforts for software entity recognition and increasing research software visibility.
-* We also have developed [CiteAs.org](http://citeas.org/) in collaboration with [Our Research](https://our-research.org/). [CiteAs.org](http://citeas.org/) is an interactive search engine for discovering software and other research outputs online. It offers citation recommendation and provenance according to your search query, and our goal is to integrate the Software Knowledge Base into [CiteAs.org](http://citeas.org/) for enhanced recommendation capability.
-* We have crowdsourced more software annotation data based on our annotation scheme in different domain literature. We expect to release these data for the community working on software entity recognition in the future.
+* We also have developed [CiteAs.org](http://citeas.org/) in collaboration with [Our Research](https://our-research.org/). [CiteAs.org](http://citeas.org/) is an interactive search engine for discovering software and other research outputs online. It offers citation recommendation and provenance according to your search query, and our goal is to integrate the Software Knowledge Base into [CiteAs.org](http://citeas.org/) for enhanced recommendation.
+* We have crowdsourced more software annotation data based on our annotation scheme in different domain literature. We expect to release this data for the community working on software entity recognition in the future.
 
 If you have suggestions, comment, welcome to contact [Fan Du](mailto:cfdu@utexas.edu), or start an issue in the repository.
 
