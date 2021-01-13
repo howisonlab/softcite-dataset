@@ -25,7 +25,8 @@ Understanding data provenance is important for data reuse. We have [a forthcomin
 
 To ensure data consistency across the whole pipeline, we used [GROBID](https://github.com/kermitt2/grobid), an open source machine learning library, to convert thousands of open access publication PDFs into TEI/XML text. Our annotation team consists of experts in NLP and research software, and students from UT Austin who had been through group training. (Training materials can be found [here](https://howisonlab.github.io/softcite-dataset/)) The annotation team read through every PDF publication, annotated mentions of software and their details. We conducted an inter-annotator agreement check to ensure training was effective. We collected all the annotation data input from annotators via GitHub and validated the incoming data via a test suite deployed on Travis CI, coupled with senior annotators' manual examination.
 
-![collective annotation workflow]()
+![collective annotation workflow](https://github.com/howisonlab/softcite-dataset/raw/master/docs/images/collective_annotation_workflow.png)
+_Image: Collective annotation workflow for Softcite dataset creation_
 
 After the annotation, we checked the annotation consistency across the whole dataset via a script and expert review. All the software mentions in the Softcite dataset have been reviewed by expert annotators, ensuring its gold standard quality. We encoded the annotations in the converted TEI/XML article text using GROBID.
 
