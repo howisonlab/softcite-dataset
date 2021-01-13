@@ -17,7 +17,7 @@ _Image: Snapshot of an annotated article entry with encoded software annotations
 
 
 ## Use scenarios
-We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du] (mailto:cfdu@utexas.edu). We advocate the proper use of all data.
+We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du](mailto:cfdu@utexas.edu). We advocate the proper use of all data.
 
 
 ## The Softcite approach
