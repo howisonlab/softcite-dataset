@@ -6,7 +6,7 @@
 ## Why creating this dataset
 Software lays a critical foundation for measureless research activities today. However, researchers are often frustrated by redundant, incompatible, or poorly supported pieces of software ([Howison et al., 2015](https://academic.oup.com/rev/article/24/4/454/1518466)). One pathway to improve software for research is to increase the visibility of software in the bibliometric-based system of research impact. So that software contributions to research can be well acknowledged, software creators, funders, and other stakeholders have more incentives to cooperate and provide more sound, quality-assured software work.
 
-We have spent the past years on the manual annotation of ~5k open access research publications in areas of life sciences and social sciences. As a result, we annotated 5,171 software mentions in published research. Largely these software mentions are not indexed, formal citations ([Howison & Bullard, 2016](https://asistdl.onlinelibrary.wiley.com/doi/pdf/10.1002/asi.23538?casa_token=2HjchVhidz8AAAAA:kHyNwZA_kwysafi_7_H3HtcBCAhAgqG96LB9z0_iNtv1lviA7Xo1riWv59IEx-_8hLGVq2SU_iMkGg)). So we have ferreted out a lot of software that contribute to research but currently are not visible to academic databases and systems of information retrieval.
+We have annotated ~5k open access research publications in areas of life sciences and social sciences. As a result, we annotated 5,171 software mentions in published research. Largely these software mentions are not indexed, formal citations ([Howison & Bullard, 2016](https://asistdl.onlinelibrary.wiley.com/doi/pdf/10.1002/asi.23538?casa_token=2HjchVhidz8AAAAA:kHyNwZA_kwysafi_7_H3HtcBCAhAgqG96LB9z0_iNtv1lviA7Xo1riWv59IEx-_8hLGVq2SU_iMkGg)). So we have ferreted out a lot of software that contributed to research but currently are not visible to academic databases and systems of information retrieval.
 
 
 ## Dataset content
@@ -17,7 +17,7 @@ _Image: Snapshot of an annotated article entry with encoded software annotations
 
 
 ## Use scenarios
-We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand)). We advocate the proper use of all data.
+We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to create a [Discussion](discussions/) (or email [Fan Du](mailto:cfdu@utexas.edu) if for some reason discussion on a public forum is not possible).
 
 
 ## The Softcite approach
@@ -47,7 +47,7 @@ We have utilized the Softcite dataset to train a set of machine learning models 
 * We also have developed [CiteAs.org](http://citeas.org/) in collaboration with [Our Research](https://our-research.org/). [CiteAs.org](http://citeas.org/) is an interactive search engine for discovering software and other research outputs online. It offers citation recommendation and provenance according to your search query, and our goal is to integrate the Software Knowledge Base into [CiteAs.org](http://citeas.org/) for enhanced recommendation.
 * We have crowdsourced more software annotation data based on our annotation scheme in different domain literature. We expect to release this data for the community working on software entity recognition in the future.
 
-If you have suggestions, comments, welcome to contact [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand)), or start an issue in the repository.
+If you have suggestions, comment, welcome to contact [Fan Du](mailto:cfdu@utexas.edu), or start an issue or discussion in this repository.
 
 
 ## License
@@ -59,6 +59,8 @@ We thank Alfred P. Sloan Foundation for supporting this work. We also appreciate
 
 
 ## References
-Howison, J., Deelman, E., McLennan, M. J., Ferreira da Silva, R., & Herbsleb, J. D. (2015). Understanding the scientific software ecosystem and its impact: Current and future measures. _Research Evaluation_, 24(4), 454-470.
+Howison, J., Deelman, E., McLennan, M. J., Ferreira da Silva, R., & Herbsleb, J. D. (2015). Understanding the scientific software ecosystem and its impact: Current and future measures. _Research Evaluation_, 24(4), 454-470. DOI: 10.1093/reseval/rvv014
 
-Howison, J., & Bullard, J. (2016). Software in the scientific literature: Problems with seeing, finding, and using software mentioned in the biology literature. _Journal of the Association for Information Science and Technology_, 67(9), 2137-2155.
+Howison, J., & Bullard, J. (2016). Software in the scientific literature: Problems with seeing, finding, and using software mentioned in the biology literature. _Journal of the Association for Information Science and Technology_, 67(9), 2137-2155. DOI: 10.1002/asi.23538
+
+Du, C., Cohoon, J., Lopez, P., & Howison, J. (_forthcoming_). Softcite Dataset: A Dataset of Software Mentions in Biomedical and Economic Research Publications. _Journal of the Association for Information Science and Technology_. DOI: 10.1002/asi.24454
