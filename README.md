@@ -1,6 +1,6 @@
 # Softcite dataset
 
-**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition.**
+**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and Science-miner.**
 
 
 ## Why creating this dataset
@@ -17,7 +17,7 @@ _Image: Snapshot of an annotated article entry with encoded software annotations
 
 
 ## Use scenarios
-We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du](mailto:cfdu@utexas.edu). We advocate the proper use of all data.
+We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to contact [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand)). We advocate the proper use of all data.
 
 
 ## The Softcite approach
@@ -47,7 +47,7 @@ We have utilized the Softcite dataset to train a set of machine learning models 
 * We also have developed [CiteAs.org](http://citeas.org/) in collaboration with [Our Research](https://our-research.org/). [CiteAs.org](http://citeas.org/) is an interactive search engine for discovering software and other research outputs online. It offers citation recommendation and provenance according to your search query, and our goal is to integrate the Software Knowledge Base into [CiteAs.org](http://citeas.org/) for enhanced recommendation.
 * We have crowdsourced more software annotation data based on our annotation scheme in different domain literature. We expect to release this data for the community working on software entity recognition in the future.
 
-If you have suggestions, comment, welcome to contact [Fan Du](mailto:cfdu@utexas.edu), or start an issue in the repository.
+If you have suggestions, comments, welcome to contact [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand)), or start an issue in the repository.
 
 
 ## License
