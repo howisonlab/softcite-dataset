@@ -1,0 +1,940 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "We describe a strategy for constructing a neural network jet substructure tagger which powerfully discriminates boosted decay signals while remaining largely uncorrelated with the jet mass. This reduces the impact of systematic uncertainties in background modeling while enhancing signal purity, resulting in improved discovery significance relative to existing taggers. The network is trained using an adversarial strategy, resulting in a tagger that learns to balance classification accuracy with decorrelation. As a benchmark scenario, we consider the case where large-radius jets originating from a boosted resonance decay are discriminated from a background of nonresonant quark and gluon jets. We show that in the presence of systematic uncertainties on the background rate, our adversarially-trained, decorrelated tagger considerably outperforms a conventionally trained neural network, despite having a slightly worse signal-background separation power. We generalize the adversarial training technique to include a parametric dependence on the signal hypothesis, training a single network that provides optimized, interpolatable decorrelated jet tagging across a continuous range of hypothetical resonance masses, after training on discrete choices of the signal mass.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "I. INTRODUCTION",
+            "section_rank": 2
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "The enormous center-of-mass energy of the Large Hadron Collider (LHC) enables the production of particles at such extreme velocities that the decay products of even massive particles can become collimated. Rather than producing distinct deposits of energy in the calorimeter, hadronic decay products of such boosted objects can overlap, creating a single large jet. Distinguishing between jets originating from a single particle (such as a quark or gluon), and those which contain two or three hadronic decay products, is known as jet tagging, and has become an essential component of searches for new physics at the LHC [1][2][3][4][5].",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 621,
+                    "text": "[1]",
+                    "end": 624
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 624,
+                    "text": "[2]",
+                    "end": 627
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 627,
+                    "text": "[3]",
+                    "end": 630
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 630,
+                    "text": "[4]",
+                    "end": 633
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 633,
+                    "text": "[5]",
+                    "end": 636
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "However, optimizing the LHC discovery potential requires balancing the competing constraints of signal discrimination and systematic uncertainties. We consider the case posed in Ref. [6] in which a spectrum of jet masses is examined for the presence of a signal-like resonance peak. The background is dominated by QCD jets, while the hypothetical signal is produced via the hadronic decay of a boosted resonance.",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 183,
+                    "text": "[6]",
+                    "end": 186
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "On one hand, there has been intense theoretical work to develop jet substructure tagging tools [7,8] with powerful discrimination between these types of jets. On the other hand, the processes that produce backgrounds to these searches are often not well understood or are poorly modeled by simulation tools. As a result, experiments in practice rely on the assumption of a smooth background spectrum in jet mass which can be interpolated under a signal peak from observed sidebands in data. This allows the background to be estimated without incurring large systematic effects that would be difficult to control due to the limited understanding of the background processes. The existence of well-developed techniques designed to search for a localized signal over a smooth continuum background gives the jet mass a special importance as an observable; however, these techniques are only effective to the extent that the background may be well described by a simple functional form. Unfortunately, the jet-tagging discrimination quantities may be correlated with jet mass, resulting in a distortion of the background shape [9] when used in the analysis selection. Hence, the desire for optimal discrimination and reduced sensitivity to systematic uncertainties in general (and jet mass interpolation in this particular example) are naturally at tension with each other.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 95,
+                    "text": "[7,",
+                    "end": 98
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 98,
+                    "text": "8]",
+                    "end": 100
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 1122,
+                    "text": "[9]",
+                    "end": 1125
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "One solution, Designing Decorrelated Taggers (DDT) [9], uses a simple parametric function to construct a modified version of one tagging variable (e.g. \u03c4 21 ), adjusted specifically to avoid distorting the mass spectrum. This has been shown [10] to effectively balance the issues of discrimination and systematic uncertainty for the quantity \u03c4 21 .",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 51,
+                    "text": "[9]",
+                    "end": 54
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "However, a multivariate classifier (such as a neural network) utilizing the full suite of tagging variables will have considerably greater discrimination power than any individual variable, or pair of variables [11]. In principle, the DDT approach could be generalized to handle multiple variables, or even the output of a machine-learning-based combination of these variables, but the more complex and non-linear response will require increasingly complex and non-linear corrections.",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 211,
+                    "text": "[11]",
+                    "end": 215
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "In this paper, we incorporate the decorrelation requirement directly into the machine learning strategy by modifying the learning rule to include a constraint which attempts to penalize solutions that distort the background mass spectrum. The training strategy is adversarial [12][13][14][15], in which a pair of networks, a classifier and an adversary, are trained simultaneously with different objectives. The classifier is trained in the traditional manner to maximize classification accuracy. As proposed by Ref. [16], the adversary is trained to infer the value of one of the classifier inputs from the classifer response. In this scheme, the two networks together perform a constrained optimization which maximizes classification accuracy while minimizing the dependence of the classifier response on the selected input. Here, one network performs jet substruture classification, while the adversary attempts to infer the jet mass solely from the classifier response.",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 276,
+                    "text": "[12]",
+                    "end": 280
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 280,
+                    "text": "[13]",
+                    "end": 284
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 284,
+                    "text": "[14]",
+                    "end": 288
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 288,
+                    "text": "[15]",
+                    "end": 292
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 517,
+                    "text": "[16]",
+                    "end": 521
+                }
+            ]
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "Lastly, we generalize the adversarial decorrelation technique to include the case where both the classifier and its adversary are parameterized by some external quantity, such as a theoretical hypothesis for the mass of a new particle or a field coupling strength. This is motivated by the fact that resonance searches, such as the one described here, are often performed as scan over a range of potential masses. Generally the optimal classifier for each hypothesis will differ. However, the signal simulations used for training can usually only be sampled for a small number of hypotheses values due to the computational expense of producing them.",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "section": "I. INTRODUCTION",
+            "text": "Networks parameterized in this way [17,18] can interpolate to provide optimal classification for hypotheses which were not included in the training, allowing sensitivity to be evaluated without generating simulations at those points. We show that a single adversarially-trained classifier, parameterized in the hypothesis signal mass, remains decorrelated over the range of values upon which it is trained.",
+            "paragraph_rank": 9,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 35,
+                    "text": "[17,",
+                    "end": 39
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 39,
+                    "text": "18]",
+                    "end": 42
+                }
+            ]
+        },
+        {
+            "text": "II. BENCHMARK DATA",
+            "section_rank": 3
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "Simulated samples are used to model the kinematics of the signal and background processes. As a benchmark signal, we use the Z model from Ref. [6], which produces a hadronically-decaying resonance boosted by its recoil against an initial state photon (Fig. 1). The same model can be used to study recoil against initial-state gluons or W bosons; we choose the photon channel due to the simpler event topology. Signal events in which a hypothetical Z boson decays to quarks are simulated at parton level with madgraph5 [19]  The measurement of jet masses is sensitive to the presence of additional in-time pp interactions, referred to as pile-up events. We overlay such interactions in the simulation chain, with an average number of interactions per event of \u00b5 = 15, which is comparable to the level observed in ATLAS 2015 data, with the LHC delivering collisions at a 25ns bunch crossing interval. Effects due to out-of-time pile-up are not modeled or accounted for.",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 143,
+                    "text": "[6]",
+                    "end": 146
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 251,
+                    "text": "(Fig. 1",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 518,
+                    "text": "[19]",
+                    "end": 522
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "To mitigate the impact of pile-up events on largeradius jet reconstruction, we apply a jet-trimming algorithm [24] which is designed to remove contituents of the jet cluster originating from pileup interactions, while preserving the two-pronged substructure characteristic of boson decay. Jets are trimmed by reclustering into k T subjets, with R trim = 0.2, and dropping subjets with less than 3% of the original jet p T . Only jets reconstructed with m trim > 20 GeV are considered in this analysis.",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 110,
+                    "text": "[24]",
+                    "end": 114
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "As the angular separation of the quarks may be quite small in the case of a high-p T Z , we reconstruct a single large-radius jet with distance parameter R = 1.0. To reflect the thresholds imposed by the ATLAS trigger, we require p \u03b3 T > 150 GeV and p jet T > 150 GeV. In the case of multiple large-R jets, the one with greatest p T is selected.",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "For the large-radius jets, we calculate various jet substructure variables such as the N -subjettiness ratio \u03c4 21 [7,25], and the Energy Correlation Functions [8,26]. Recent studies have shown that deep neural networks applied to lower-level calorimeter information can match the performance of several of these higher-level variables in combination [11], but these higher-level variables capture most of the discriminative information and are theoretically well understood.",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 114,
+                    "text": "[7,",
+                    "end": 117
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 117,
+                    "text": "25]",
+                    "end": 120
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 159,
+                    "text": "[8,",
+                    "end": 162
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 162,
+                    "text": "26]",
+                    "end": 165
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 350,
+                    "text": "[11]",
+                    "end": 354
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "Distributions of the various kinematic quantities for jets selected in signal and background processes are shown in Fig. 2. The neural networks described below use eleven variables:",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 116,
+                    "text": "Fig. 2",
+                    "end": 122
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "\u2022 Jet pseudo-rapidity, azimuthal angle, transverse momentum, and invariant mass;",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "\u2022 Jet energy correlation variables, C 2 and D 2 [8];",
+            "paragraph_rank": 16,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 48,
+                    "text": "[8]",
+                    "end": 51
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "\u2022 Jet N-subjettiness (\u03c4 21 ) [7]; and",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 29,
+                    "text": "[7]",
+                    "end": 32
+                }
+            ]
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "\u2022 Photon energy, pseudo-rapidity, azimuthal angle, transverse momentum.",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "section": "II. BENCHMARK DATA",
+            "text": "For comparison with Ref. [9], we additionally apply the DDT procedure to produce a modified variable, \u03c4 21 , which has reduced correlation with jet mass. However, no simple linear relationship was seen between the profile of \u03c4 21 and the jet mass, and a linear correction does not remove the dependence; this may be due to the application of jet trimming, which differs from the treatment in Ref. [9]. To provide a fair comparison, we extend the DDT-style approach to use a second-order correction, producing a variable \u03c4 21 , which demonstrates reasonable indepenence from the jet mass ( Fig. 5). , jet invariant mass, and N-subjettiness(\u03c421) [7]. There are five additional input variables described in the text (not shown).",
+            "paragraph_rank": 19,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 25,
+                    "text": "[9]",
+                    "end": 28
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 397,
+                    "text": "[9]",
+                    "end": 400
+                },
+                {
+                    "type": "figure",
+                    "start": 589,
+                    "text": "Fig. 5",
+                    "end": 595
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 644,
+                    "text": "[7]",
+                    "end": 647
+                }
+            ]
+        },
+        {
+            "text": "III. NEURAL NETWORKS",
+            "section_rank": 4
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "The strategy outlined in Ref. [16] describes how to train a classifier which is uncorrelated with a nuisance parameter. Here, we apply this strategy to the closely-related problem of decorrelating the classifier with respect to the jet invariant mass, as the nuisance parameter is not well defined; further discussion of this issue is found below in Sec. V. In Sec. VII, we extend this strategy to a problem requiring a parameterized solution.",
+            "paragraph_rank": 20,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 30,
+                    "text": "[16]",
+                    "end": 34
+                }
+            ]
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "Two neural networks -a jet classifier and an adversary -constitute two distinct segments of the feedforward architecture shown in Fig. 3. The loss of the tagger is defined as",
+            "paragraph_rank": 21,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 130,
+                    "text": "Fig. 3",
+                    "end": 136
+                }
+            ]
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "where \u03bb is a positive constant, and L classification and L adversary are the standard classification-error loss functions for each segment. The two neural networks are trained concurrently; the tagger's objective is to minimize L tagger , while adversary minimizes only L adversary . The hyperparameter \u03bb represents a tradeoff between the two objective terms; we found that a value of \u03bb = 100 was a good tradeoff for our task, but in general this hyperparameter can be optimized like any other.",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "The classifier network in this experiment consisted of eleven input features, three fully-connected hidden layers each with 300 nodes having hyperbolic tangent activation functions, and a single logistic output node with the binomial cross-entropy classification objective. The adversarial network consisted of a single input, 50 nodes with hyperbolic tangent activation functions, and a softmax output layer with 10 classes corresponding to binned values of the jet invariant mass (each bin representing one decile of the background), and the multi-class cross-entropy classification objective.",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "Because the adversary is challenged with adapting to an ever-changing input as the classifier is trained, and also because its task is relatively easy, two strategies were used to train the adversary faster than the classifier. First, the adversary was given a head start at the beginning of training with 100 updates while the classifier was fixed. Second, the adversary was trained with a larger learning rate of 1.0 compared to 10 \u22123 for the tagger objective.",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "The data set used for experiments was divided into training (80%), validation (10%, used for hyperparameter tuning), and testing (10%) subsets. Each classifier input feature was log-scaled if the empirical skew estimate was greater than 1.0, then standardized to zero mean and unit variance. Model parameters were initialized from a scaled normal distribution [27].",
+            "paragraph_rank": 25,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 360,
+                    "text": "[27]",
+                    "end": 364
+                }
+            ]
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "Training was performed using stochastic gradient descent, applied to mini-batches of 100 examples from each class. During training, the event weights were scaled so that the average weight for each class was 1.0. However, in the adversarial loss function L adversary , the signal events were given zero weight, rendering them invisible to the adversary.",
+            "paragraph_rank": 26,
+            "section_rank": 4
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "Updates were made using a training momentum term of 0.5; the learning rate decayed by a factor of 10 \u22125 after each update. Training was stopped after 100 epochs, where an epoch was defined as a single pass through the background samples (\u2248 400k training events). Models were implemented in Keras [28] and Theano [29], and hyperparameters were optimized on a cluster of Nvidia Titan Black processors.",
+            "paragraph_rank": 27,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 296,
+                    "text": "[28]",
+                    "end": 300
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 312,
+                    "text": "[29]",
+                    "end": 316
+                }
+            ]
+        },
+        {
+            "section": "III. NEURAL NETWORKS",
+            "text": "Architecture of the neural networks in the adversarial training strategy. The classifying network distinguishes signal from background using the eleven variables (X) described in the text. The adversarial network attempts to predict the invariant mass using only the output of the classifier, fc(X); note that the adversary has multiple binary classification outputs, corresponding to bins in jet invariant mass, rather than a single regression output.",
+            "paragraph_rank": 28,
+            "section_rank": 4
+        },
+        {
+            "text": "IV. PERFORMANCE",
+            "section_rank": 5
+        },
+        {
+            "section": "IV. PERFORMANCE",
+            "text": "We compare the discrimination power of five candidate classifiers: the NN trained without an adversary, the adversarially-trained NN, the unmodified \u03c4 21 , and the two DDT-modified variables \u03c4 21 , and \u03c4 21 . The performance can be characterized by measuring the signal efficiency and background rejection of various thresholds on these discriminators (Fig. 4).",
+            "paragraph_rank": 29,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 352,
+                    "text": "(Fig. 4)",
+                    "end": 360
+                }
+            ]
+        },
+        {
+            "section": "IV. PERFORMANCE",
+            "text": "The variable \u03c4 21 , which is modified to reduce correlation with the mass, results in a modest decrease in its classification power relative to the unmodified \u03c4 21 at m Z = 100 GeV, though note that these effects are mass-dependent for both \u03c4 21 and \u03c4 21 . Similarly, the adversarial network does not match the discrimination power of the traditional classification network, due to the additional constraint imposed in its optimization. However, both NNs are clearly able to take advantage of the combined power of the substructure variables, and offer a large improvement in background rejection for similar signal efficiencies compared to classification based on \u03c4 21 alone.",
+            "paragraph_rank": 30,
+            "section_rank": 5
+        },
+        {
+            "section": "IV. PERFORMANCE",
+            "text": "The focus of this study, however, is to look beyond the pure discriminatory power of these tools and study their effect on the jet mass spectrum. In Fig. 5, it can be seen that the adversarial network output for background events has a profile which is largely independent of jet mass, while the classifying network is strongly dependent on jet mass. Similarly, \u03c4 21 and \u03c4 21 have a lessened dependence on jet mass, compared to \u03c4 21 . Figure 7 shows the effect on the jet mass distribution of successively stricter requirements on these variables. Note that the adversarial network's dependence on jet mass is diminished, but not eliminated, as can be seen in the contour plot of Fig. 5. This is a reflection of the trade-off inherent in balancing classification power with jet mass dependence.",
+            "paragraph_rank": 31,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 149,
+                    "text": "Fig. 5",
+                    "end": 155
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 435,
+                    "text": "Figure 7",
+                    "end": 443
+                },
+                {
+                    "type": "figure",
+                    "start": 680,
+                    "text": "Fig. 5",
+                    "end": 686
+                }
+            ]
+        },
+        {
+            "section": "IV. PERFORMANCE",
+            "text": "In Fig. 5, we also show the profile of the neural network output versus jet mass, for various thresholds on the jet p T , which shows some small p T -dependent effects, but no large features. As an alternative strategy, we trained a network using an adversarial strategy with respect to log(m/p T ), which more closely mimics the approach used in Ref. [9]; the training succeeded in finding a network with a flat response in log(m/p T ), but the distortion in jet mass was much more significant. In principle, it is possible to use the adversary to enforce a two-dimensional decorrelation, but since the p T -dependence is not severe here, we leave this for future study. ",
+            "paragraph_rank": 32,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 3,
+                    "text": "Fig. 5",
+                    "end": 9
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 352,
+                    "text": "[9]",
+                    "end": 355
+                }
+            ]
+        },
+        {
+            "text": "V. STATISTICAL INTERPRETATION",
+            "section_rank": 6
+        },
+        {
+            "section": "V. STATISTICAL INTERPRETATION",
+            "text": "The ability to discriminate jets due the hadronic decay of a boosted object from those due to a quark or gluon is an important feature of a jet substructure tagging tool, but as discussed above it is not the only requirement. Due to the necessity of accurately modeling the background, it is desirable that the jet tagger avoid distortion of the background distribution. Simpler background shapes are especially preferred because they allow for robust estimates that are constrained by the sidebands; backgrounds that can be modeled with fewer parameters and inflections avoid degeneracy with signal features, such as a peak. Figs. 5 and 6 shows qualitatively that the adversarial network's response is not strongly dependent on jet mass. But a quantitative assessment is more difficult. Mass-independence is not in itself the goal; instead, we seek reduced dependence on knowledge of the background shape and reduced sensitivity to the systematic uncertainties that tend to dilute the statistical significance of a discovery.",
+            "paragraph_rank": 33,
+            "section_rank": 6
+        },
+        {
+            "section": "V. STATISTICAL INTERPRETATION",
+            "text": "However, our lack of knowledge of the true background model in general also makes it non-trivial to rigorously define and estimate the background uncertainty. In practice, experimentalists use an assumed functional form, with parameters constrained by background-dominated sidebands to predict the background in the signal region. These assumptions may be validated by examining control regions in which the signal is not present, and the background processes are expected to exhibit physically similar properties. For example, the tagger selection may be inverted to yield a sample with high background purity which may be used as a template. If the tagger selection induces a distortion of the spectrum, these techniques are ineffective. Moreover, when taggerinduced distortion depletes data from the sidebands (as is typically the case), any background model becomes more difficult to constrain. To demonstrate these effects on the overall statistical performance of a search, we construct a simplified statistical test which has the desired behavior of penalizing discriminators which yield excessive distortion of the background shape.",
+            "paragraph_rank": 34,
+            "section_rank": 6
+        },
+        {
+            "section": "V. STATISTICAL INTERPRETATION",
+            "text": "A threshold is placed on the discriminator output, after which a likelihood fit is performed, binned in the distribution of reconstructed large-radius jet masses using signal and background templates from simulated samples 1 . An uncertainty on the rate of the background is included in order to model our lack of knowledge of the background. We calculate expected discovery significance using a profile likelihood ratio [30] with the CLs technique [31,32], marginalizing over the unknown background rate.",
+            "paragraph_rank": 35,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 223,
+                    "text": "1",
+                    "end": 224
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 421,
+                    "text": "[30]",
+                    "end": 425
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 449,
+                    "text": "[31,",
+                    "end": 453
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 453,
+                    "text": "32]",
+                    "end": 456
+                }
+            ]
+        },
+        {
+            "section": "V. STATISTICAL INTERPRETATION",
+            "text": "Any background model used (whether a template or functional form) will necessarily incorporate nuisance parameters corresponding to unknown properties of the background; what is important in practice is that these parameters can be effectively constrained in the observed data. Though the shape of the background model considered here is fixed via the template, the uncertainty on the rate provides the statistical behavior we seek. Specifically, if the uncertainty in the rate of the background is large enough, then the discovery significance is sensitive also to the shape of the background distribution as follows. In the case that the background is fairly flat, there are background-dominated sidebands which can constrain the rate uncertainty. In the opposite case that the background is distorted to mimic the signal, these sideband constraints have reduced power, and the signal and background are more difficult to distinguish statistically. Hence, the presence of rate uncertainties penalizes a solution which distorts the background spectrum as desired. Although this simple approach likely underestimates the true impact of more realistic systematics, it is sufficient to illustrate the effect on sensitivity. In the following, we take for the small (large)-uncertainty case a relative uncertainty of 5% (50%) on the overall background rate.",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "section": "V. STATISTICAL INTERPRETATION",
+            "text": "Examples of the final jet mass distribution are shown in Figs. 8 and 9 for thresholds on the discriminants which result in signal efficiency of 90% and 50% respectively.",
+            "paragraph_rank": 37,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 57,
+                    "text": "Figs. 8 and 9",
+                    "end": 70
+                }
+            ]
+        },
+        {
+            "text": "VI. RESULTS",
+            "section_rank": 7
+        },
+        {
+            "section": "VI. RESULTS",
+            "text": "The discovery significance is measured for varying thresholds on the discriminator outputs. While all of the discriminators exhibit some degree of classification power, this study explores the question of whether they provide additional discovery significance. Figure 10 shows the discovery significance as a function of the signal efficiency of the discriminator threshold, for two choices of background uncertainty. In the case of the small uncertainty (5% relative), applying a tighter threshold on the discriminator improves the discovery significance, despite lowering the signal efficiency, due to the heightened background suppression. Even at fairly low signal efficiencies of 50%, where the background is sculpted to look like the signal (see Fig. 9), the discovery significance is improved. This is as expected; if the background rate and shape are well known, then the lack of constraining sidebands is not detrimental.",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 261,
+                    "text": "Figure 10",
+                    "end": 270
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 752,
+                    "text": "Fig. 9",
+                    "end": 758
+                }
+            ]
+        },
+        {
+            "section": "VI. RESULTS",
+            "text": "For the case of the larger background rate uncertainty, thresholds on \u03c4 21 provide a smaller boost to the significance. The large relative uncertainty on the background will penalize configurations in which the background is sculpted to resemble the signal, preventing the data from constraining the background rate in the sidebands. Thresholds on \u03c4 21 and \u03c4 21 are slightly stronger, as expected, due to their decreased correlation with jet mass. Thresholds on the output of the classifier network, which has the strongest discrimination power, only weakens the discovery significance, due to the background mass distortion. However, the adversarial network is still capable of powerful discrimination which improves the discovery power at high signal efficiency, around 90%. Table I shows the maximal discovery significance for each case. The qualitative results persist for other signal-to-background ratios.",
+            "paragraph_rank": 39,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 777,
+                    "text": "Table I",
+                    "end": 784
+                }
+            ]
+        },
+        {
+            "text": "VII. PARAMETERIZED NEURAL NETWORKS",
+            "section_rank": 8
+        },
+        {
+            "section": "VII. PARAMETERIZED NEURAL NETWORKS",
+            "text": "The studies above demonstrate the application for the case of a single example value of the hypothetical Z mass. In this section, we show that the same approach can be generalized to solve a set of closely related problems, jet classification for different Z masses, using a single neural network parameterized in m Z .",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "section": "VII. PARAMETERIZED NEURAL NETWORKS",
+            "text": "These parameterized neural networks [18] address a common problem in physics: solving a classifica- tion task multiple times for different values of an unknown latent variable, like m Z . Simulations used to train jet classifiers are generally performed for a small set of fixed Z mass values. In the traditional approach, a separate neural network classifier is trained for each Z mass value. However, by treating m Z as just another input feature, a single parameterized neural network can learn to solve the related classification tasks all at once (Fig. 11). Furthermore, the classifier can interpolate to other values of m Z if the function is smooth.",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 36,
+                    "text": "[18]",
+                    "end": 40
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 552,
+                    "text": "(Fig. 11)",
+                    "end": 561
+                }
+            ]
+        },
+        {
+            "section": "VII. PARAMETERIZED NEURAL NETWORKS",
+            "text": "For this experiment, some hyperparameters were tuned to this more complex task. The classifier had three hidden layers of 300 tanh nodes, with a learn- ing rate of 10 \u22124 , a momentum of 0.95, and an L2 weight decay factor of 10 \u22123 in each layer. The adversary consisted of two hidden layers of 100 tanh nodes each, with a learning rate of 10 \u22122 , a momentum of 0.95, and an L2 weight decay factor of 10 \u22124 in each layer. The parameter \u03bb was set to 10.",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "section": "VII. PARAMETERIZED NEURAL NETWORKS",
+            "text": "The adversary was also parameterized by including the Z mass as an input along with the classifier output. The resulting classifier predictions for background events are mostly independent of mass when conditioned on each theory mass (Fig. 12). Without this parameterization of the adversary, the marginalized classifier predictions are independent of mass, but not the conditional classifier predictions.  As expected, the resulting classifier demonstrates better performance than the single input features \u03c4 21 , \u03c4 21 or \u03c4 21 at all signal mass hypotheses tested (Fig. 13). As in the non-parameterized case, the traditional NN trained to maximize classification accuracy achieves the best separation. Moreover, the lack of background distortion by the adversarially-trained network preserves the ability to distinguish the background and signal mass distributions, leading to improved discovery signifi- cance; see Fig. 14. The statistical test is performed as for the previous case, fitting a binned likelihood on the jet mass distribution after applying a threshold on the discriminator output. As before, the improved separation of the traditional NN does not translate to improved discovery significance. We note that while the performance shown here is evaluated on hypothesized mass values used for training, Ref. [18] demonstrates this architecture is able to successfully interpolate to other values of m Z .",
+            "paragraph_rank": 43,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 234,
+                    "text": "(Fig. 12)",
+                    "end": 243
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 565,
+                    "text": "(Fig. 13)",
+                    "end": 574
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 917,
+                    "text": "Fig. 14",
+                    "end": 924
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 1322,
+                    "text": "[18]",
+                    "end": 1326
+                }
+            ]
+        },
+        {
+            "text": "VIII. DISCUSSION",
+            "section_rank": 9
+        },
+        {
+            "section": "VIII. DISCUSSION",
+            "text": "We have demonstrated that an adversarial training strategy may yield a jet classification tagger which leverages the powerfully discriminating information obtained by combining several input features, while decorrelating its output from the variable of interest, the jet mass. This allows the classifier to enhance signal to noise ratio while minimizing the tendency of the background distribution to morph into a shape which is degenerate with the observable signal. When the background cannot be reliably predicted a priori, as is often the case, it is important to be able to constrain its rate in sidebands surrounding the signal region. Therefore, avoiding such degeneracy is critical to performing successful measurements. We note that, from Fig. 9, it is clear that applying sufficiently tight cuts to the adversarial classifier causes significant background morphing, particularly when compared to the \u03c4 21 -based discriminants. However, the solid lines of Fig. 10 illustrate the case where the background rate is uncertain and hence benefits from sideband constraints. We see that the optimal significance is realized for the adversarial classifier at a relatively high signal efficiency of roughly 90%, where the background morphing is quite limited (Fig. 8). Hence, the adversarial classifier achieves its goal of optimizing the tradeoff between correlation and discrimination power.",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 748,
+                    "text": "Fig. 9",
+                    "end": 754
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 965,
+                    "text": "Fig. 10",
+                    "end": 972
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 1260,
+                    "text": "(Fig. 8)",
+                    "end": 1268
+                }
+            ]
+        },
+        {
+            "section": "VIII. DISCUSSION",
+            "text": "We also note that the decorrelation could potentially be improved. The contour plot in Fig. 6 shows that while the average NN output is independent of mass, there is certainly still structure that results in the background sculpting still observed. The residual p T dependence could also be removed, possibly with a more sophisticated adversary that is trained to predict multiple variables simultaneously. These improvements we leave for future work.",
+            "paragraph_rank": 45,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 87,
+                    "text": "Fig. 6",
+                    "end": 93
+                }
+            ]
+        },
+        {
+            "section": "VIII. DISCUSSION",
+            "text": "Finally, we extend the strategy to the case of a parameterized network wherein the NN classifier is trained to tag specific signal hypotheses, useful for scanning a range of theoretical parameter space with a search. The resulting combined approach should be readily applicable to experimental measurements and searches, boosting their discovery significance or search sensitivity.",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "IX. ACKNOWLEDGMENTS",
+            "section_rank": 10
+        },
+        {
+            "text": "FIG. 1 .",
+            "section_rank": 11
+        },
+        {
+            "section": "FIG. 1 .",
+            "text": "FIG. 1. Diagram of a hadronically-decaying resonance (Z ) produced recoiling against an initial state photon (\u03b3).",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "FIG. 2 .",
+            "section_rank": 12
+        },
+        {
+            "section": "FIG. 2 .",
+            "text": "FIG. 2.Distributions of jet variables in simulated Z + \u03b3 signal events, with m Z = 100 GeV, as well as \u03b3+jet background events. From top left to bottom right are shown the jet pseudorapidity, transverse momentum, energy correlation variables C2 and D2[8], jet invariant mass, and N-subjettiness(\u03c421)[7]. There are five additional input variables described in the text (not shown).",
+            "paragraph_rank": 48,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 251,
+                    "text": "[8]",
+                    "end": 254
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 299,
+                    "text": "[7]",
+                    "end": 302
+                }
+            ]
+        },
+        {
+            "text": "21 \u03c4FIG. 4 . 21 \u03c4FIG. 5 .",
+            "section_rank": 13
+        },
+        {
+            "section": "21 \u03c4FIG. 4 . 21 \u03c4FIG. 5 .",
+            "text": "FIG. 4.Signal efficiency and background rejection (1/efficiency) for varying thresholds on the outputs of several jet-tagging discriminants: traditional networks trained to optimize classification, networks trained with an adversarial strategy to optimize classification while minimizing impact on jet mass, the unmodified \u03c421, and the two DDT-modified variables \u03c4 21 , and \u03c4 21 . The signal samples have m Z = 100 GeV for this example. Generalization to other masses is shown in Sec. VII.",
+            "paragraph_rank": 49,
+            "section_rank": 13
+        },
+        {
+            "text": "1 FIG. 6 .",
+            "section_rank": 14
+        },
+        {
+            "section": "1 FIG. 6 .",
+            "text": "FIG. 6. Top, profile of neural network output versus jet mass for the adversarial trained network with varying jet pT thresholds. Bottom, contour plot of neural network output versus jet mass in background events for the adversarially-trained network. The signal sample used in training has m Z = 100 GeV; generalization to other masses is shown in Sec. VII.",
+            "paragraph_rank": 50,
+            "section_rank": 14
+        },
+        {
+            "text": "FIG. 7 .",
+            "section_rank": 15
+        },
+        {
+            "section": "FIG. 7 .",
+            "text": "FIG. 7. Jet mass distributions for background events with successively stricter requirements on different substructure discrimination strategies, giving signal efficiencies of \u03b5sig = 50, 60, 70, 80, 90, 100%, shown alternating red and black lines. Shown are the impact of threshold requirements on a neural network output trained to optimize classification, an adversarial network which attempts to minimize depenence on jet mass, \u03c421 and \u03c4 21 .",
+            "paragraph_rank": 51,
+            "section_rank": 15
+        },
+        {
+            "text": "FIG. 8 .",
+            "section_rank": 16
+        },
+        {
+            "section": "FIG. 8 .",
+            "text": "FIG. 8.Distributions of jet mass after selection with signal efficiency of 90% using the NN classifier, the adversarial network, \u03c421 or \u03c4 21 . Background distributions are shown with 50% uncertainty.",
+            "paragraph_rank": 52,
+            "section_rank": 16
+        },
+        {
+            "text": "FIG. 9 .",
+            "section_rank": 17
+        },
+        {
+            "section": "FIG. 9 .",
+            "text": "FIG. 9. Distributions of jet mass after selection with signal efficiency of 50% using the NN classifier, the adversarial network, \u03c421 or \u03c4 21 . Background distributions are shown with 50% uncertainty.",
+            "paragraph_rank": 53,
+            "section_rank": 17
+        },
+        {
+            "text": "FIG. 10. Statistical significance of a hypothetical signal for varying thresholds on the outputs of networks trained to optimize classification compared to adversarial networks trained to optimize classification while minimizing impact on jet mass. Shown are two scenarios, in which the uncertainty on the background level is negligible or large, both with Nsig = 100, N bg = 1000.",
+            "paragraph_rank": 54,
+            "section_rank": 18
+        },
+        {
+            "text": "FIG. 11 .FIG. 12 .",
+            "section_rank": 19
+        },
+        {
+            "section": "FIG. 11 .FIG. 12 .",
+            "text": "FIG. 11. Architecture of the neural networks in the parameterized adversarial training strategy. The classifying network distinguishes signal from background using the eleven variables described in the text (X) plus m Z . The classifying network output is then a function of m Z . The adversarial network attempts to predict the invariant mass using the output of the classifier, fc(X, m Z ) as well as m Z .",
+            "paragraph_rank": 55,
+            "section_rank": 19
+        },
+        {
+            "text": "21 \u03c4FIG. 13 .",
+            "section_rank": 20
+        },
+        {
+            "section": "21 \u03c4FIG. 13 .",
+            "text": "FIG. 13. The AUC metric (Area Under the Curve) for NNs parameterized in m Z and tested at several values (both traditional and adversarial training techniques), compared to the discrimination of the individual features \u03c421, \u03c4 21 , and \u03c4 21 .",
+            "paragraph_rank": 56,
+            "section_rank": 20
+        },
+        {
+            "text": "TABLE I .",
+            "section_rank": 21
+        },
+        {
+            "text": "FIG. 14. Discovery significance for a hypothetical signal after optimizing thresholds on the output of networks parameterized in m Z trained with an adversarial or traditional approaches, compared to thresholds on \u03c421, \u03c4 21 and \u03c4 21 or to placing no threshold. Significance is evaluated for the case of 50% background uncertainty.",
+            "paragraph_rank": 58,
+            "section_rank": 22
+        },
+        {
+            "text": "In principle, the most powerful approach is a likelihood directly on the output of the discriminator, but this requires a valid model of the background, which is lacking in this case.",
+            "paragraph_rank": 59,
+            "section_rank": 22
+        },
+        {
+            "text": "The authors acknowledge useful conversations with Kyle Cranmer, Jesse Thaler, Kevin Bauer, and Dan Guest, helpful comments from Sal Rappoccio, Derek Soeder and Michela Paganini, and are grateful to the Aspen Center for Physics, where much useful discussion occured.",
+            "paragraph_rank": 60,
+            "section_rank": 24
+        }
+    ]
+}

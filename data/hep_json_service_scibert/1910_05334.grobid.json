@@ -1,0 +1,914 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Identification of charmonium states at hadron colliders has mostly been limited to leptonic decays of the J/\u03c8. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "In this paper we present an algorithm to identify hadronic decays of charmonium states (J/\u03c8, \u03c8(2S), \u03c7 c0,c1,c2 ) which make up the large majority of all decays. ",
+            "paragraph_rank": 1,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 110,
+                    "type": "figure",
+                    "text": "(J/\u03c8, \u03c8(2S), \u03c7 c0,c1,c2"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm is able to identify hadronic J/\u03c8 decays with an efficiency of 36% while suppressing a background of quark and gluon jets by a factor 100.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Charmonium states, in particular J/\u03c8, are used both as an analysis and a calibration tool in hadron colliders. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The decay to two muons allows for an efficient identification of this state and its narrow peak in the invariant mass spectrum of the muons is a powerful probe of the momentum resolution of the detector. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Only 6% of the J/\u03c8 states decay to a clean final state of \u00b5 + \u00b5 \u2212 with another 6% decaying to e + e \u2212 . ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The remaining 88% is decaying to hadronic states and are usually ignored. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The other charmonium states are even harder to identify with a small fraction having a clean decay like \u03c8(2S) \u2192 \u00b5 + \u00b5 \u2212 .",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "For some analyses it is desirable to obtain as many events as possible, like the search for the rare decay of the Higgs boson to charmonium and a photon, with a branching ratio of around 3 \u00d7 10 \u22126 for H \u2192 J/\u03c8\u03b3 [1,2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 210,
+                    "end": 213,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 213,
+                    "end": 215,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "In recent searches by the ATLAS and CMS collaborations [3,4] only the leptonic decays of the J/\u03c8 are used. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 55,
+                    "end": 58,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 58,
+                    "end": 60,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "4]"
+                }
+            ]
+        },
+        {
+            "text": "In this paper we present a tagging algorithm for hadronically decaying charmonium states to obtain higher statistics for these rare decay measurements.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Looking at hadronic decays a couple of things can be noted. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The process H \u2192 J/\u03c8\u03b3 does not involve QCD fragmentation and further hadronization like in quark and gluon jets. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The invariant mass of the final state should be the J/\u03c8 mass, which is lower than the average mass of quark and gluon jets and the average multiplicity is also lower. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "This is similar to hadronic tau jets, although with a higher mass and multiplicity. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Basically we are looking for a fat neutral tau-like object and that is the starting point of our algorithm.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "This paper is organized as follows. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 2 describes our simulation set-up. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The observables used to distinguish hadronic charmonium jets are reviewed in Section ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "3. The neural network architecture and parameters are discussed in Section ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "4. In section 5 we present our results and we investigate the performance of the network on different charmonium samples and the overall stability of the network.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Simulated samples",
+            "section_rank": 3
+        },
+        {
+            "text": "We simulate proton-proton collisions at 13 TeV with the Pythia 8 [5] program. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 63,
+                    "end": 65,
+                    "type": "version",
+                    "rawForm": "8",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                }
+            ]
+        },
+        {
+            "text": "Samples for the 1S charmonium states (J/\u03c8 and \u03c8(2S)) are generated using the gluon-gluon to color-singlet cc plus photon or gluon processes (gg2ccbar(3S1) gm/g ). ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "For the 1P charmonium states (\u03c7 c0,1,2 ) the process with the photon is not available and we use the (gg2ccbar(3PJ)g, qg2ccbar(3PJ)q and qq2ccbar(3PJ)g processes which produce an additional gluon or quark. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "We have verified on the 1S samples that the distributions of the relevant charmonium variables are the same when the cc state is produced with a photon or a gluon. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "In Pythia 8 the minimum transverse momentum in the hard process is set to 30 GeV and the invariant mass of the hard process to within 2.5 GeV of the Z 0 mass. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 10,
+                    "end": 12,
+                    "type": "version",
+                    "rawForm": "8",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                }
+            ]
+        },
+        {
+            "text": "This produces jets with very similar momentum distributions as quark jets from Z 0 decays. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Background gluon jets are taken from the charmonium samples, since they have very similar kinematics as the signal charmonium jets. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Background quark jets are taken from a sample of simulated Z 0 decays. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Long lived particles are allowed to decay if c\u03c4 < 100 cm. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "All samples are simulated without additional pile-up interactions except the sample used to estimate the effects of pile-up.",
+            "section": "Simulated samples",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The events are passed through the DELPHES [6] fast detector simulation using the ATLAS detector configuration files where we use particle-flow jets clustered using the anti-k t algorithm [7] with a distance parameter R = 0.4. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 45,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 187,
+                    "end": 190,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "DELPHES",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "The b-tagging settings correspond to an average efficiency for b-jets of 70% with a rejection rate for charm jets of 8.1 and for light quark jets of 440. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Jets are said to be charmonium, quark or gluon if the angular distance to a truth charmonium meson, quark or gluon is \u2206R < 0.2. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Our entire configuration can be found here [8].",
+            "section": "Simulated samples",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 43,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Since we expect charmonium jets to be similar to hadronically decaying taus, we start off with variables used in the identification of hadronic tau decays by the ATLAS experiment [9]. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 179,
+                    "end": 182,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "These variables are using the fact that tau (and charmonium) jets have a lower mass (m j and m tr ) and a lower multiplicity (n ch and n 0 ) than quark and gluon jets, are narrower (\u2206 \u03b7 , \u2206 \u03c6 , R em , R track ) and are not surrounded by further hadronic activity from fragmentation (p core1,2 , f core1,2 ). ",
+            "section": "Simulated samples",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "To these variables we add the absolute values of the total charge and the jet-charge (p T weighted charge sum [10]), which are expected to peak at zero for charmonium and gluon jets, but to have a higher average value for jets originating from quarks. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 110,
+                    "end": 114,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "Using the output of the b-jet identification algorithm provides some discrimination against b-jets, since the lifetime of charmonium mesons is too short to produce a measurable decay length.",
+            "section": "Simulated samples",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "This list of variables is completed with a particular class of generalized angularities [11], which have demonstrated to be efficient in distinguishing quark jets from gluon jets. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 92,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "The angularities depend on two parameters (\u03ba, \u03b2) and are defined as:",
+            "section": "Simulated samples",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "where z i is the momentum fraction of jet constituent i, and \u03b8 i is the normalized rapidityazimuth angle with respect to the jet axis. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "width of the jet in \u03b7 \u2206\u03c6 width of the jet in \u03c6 m tr invariant mass of all charged tracks in the jet m j invariant mass of all constituents of the jet n ch charged particle multiplicity n 0 neutral particle multiplicity abs(Q) absolute value of the total charge abs(q j ) jet charge (p T weighted charge sum,",
+            "section": "Simulated samples",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "output of b-tagging algorithm: 1 = b-tagged jet, 0 = not b-tagged R em Average \u2206R with respect to the jet axis weighted by electromagnetic energy:",
+            "section": "Simulated samples",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "f em fraction of EM energy over total neutral energy of the jet p core1 ratio of sum p T in a cone of \u2206R < 0.1 and the jet p T p core2 ratio of sum p T in a cone of \u2206R < 0.2 and the jet p T f core1 ratio of sum E T in a cone of \u2206R < 0.1 and the jet total E T f core2 ratio of sum E T in a cone of \u2206R < 0.2 and the jet total",
+            "section": "Simulated samples",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "The variables are summarized in Table 1. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 39,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Fig 1 shows the distribution of the variables for J/\u03c8 signal data and a background sample composed of 50% quark jets and 50% gluon jets. ",
+            "section": "Simulated samples",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 11,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig 1 shows"
+                }
+            ]
+        },
+        {
+            "text": "Machine Learning",
+            "section_rank": 4
+        },
+        {
+            "text": "We feed the classifying variables to a fully connected deep network using the TensorFlow [12] and Keras [13] libraries. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 104,
+                    "end": 108,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 78,
+                    "end": 89,
+                    "type": "software",
+                    "rawForm": "TensorFlow",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                },
+                {
+                    "start": 98,
+                    "end": 104,
+                    "type": "software",
+                    "rawForm": "Keras",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "The network architecture and parameters are listed in table 2. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "We used the standard technique of dropout layers [14] to prevent overtraining. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 49,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The network architecture and hyperparameters were optimized by hand on earlier simulation samples. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The network performance turns out to be rather insensitive to their value. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "We use the receiver operating characteristic (ROC) curve as a measure of the separation power of our classifier and in particular the area under the ROC curve (AuC).",
+            "section": "Machine Learning",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "For the training we use a sample of 59k simulated hadronic J/\u03c8 decays, 88k quark jets from Z 0 \u2192 qq events and 54k gluon jets. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "To measure the performance we use independent samples with an equal amount of J/\u03c8, Z 0 \u2192 qq and gluon jets.  ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 2 shows the output distribution for our classifier for both signal and background and the ROC curves. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "A good separation can be observed with an area under the curve of 0.930. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "This corresponds to a signal efficiency of 36(15)% at a background rejection factor of 100(1000). ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "It should be noted that the performance of the classifier is significantly better against a background of gluon jets only (AuC = 0.966, signal efficiency of 55(23)% at 100(1000) times background rejection) than against quarks jets (AuC = 0.894, efficiency of 28(11)% at factor 100(1000) background rejection). ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "For gluons the performance against a single background can be further improved to an AuC of 0.975 by using a gluon only background training sample.  ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "GeV and p T > 50 GeV. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "We notice a maximum drop of 0.009 for the gluon sample and 0.016 for the quark sample in the AuC value, showing that the effect of jet p T is limited. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "We also investigate the stability of the network performance under variations of the simulation parameters. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "For this we applied the recommended variations [15] of the Pythia 8 parton shower and multiple parton interaction parameters based on the NNPDF23LO tune. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 59,
+                    "end": 68,
+                    "type": "software",
+                    "rawForm": "Pythia 8",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "These variations cover a range of data observables from ATLAS Run 1. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Variation 1 is related to the underlying event activity, variation 2 is covering the jet shapes and substructure and the three variations 3 cover the effects of initial and final state radiation. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "As can be seen in table 4, the network performance is very stable for different tunes. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Finally we discuss the effect of concurrent proton-proton interactions or pile-up. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Our setup is not very well suited to evaluate its effects. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "The LHC experiments have been able to mitigate the effects of pile-up by using additional tracking and vertexing information, which is not available in DELPHES and our estimate is in this sense a worst case scenario. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 152,
+                    "end": 160,
+                    "type": "software",
+                    "rawForm": "DELPHES",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "We simulate a sample with a pile-up of \u00b5 = 35, on average 35 concurrent interactions, the average of the recent LHC run. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "The retrained network, without further optimization, shows a drop of 0.05 in the AuC. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "This shows that pile-up has a significant impact but that our method still works in the presence of pile-up. ",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "We would expect that some of the performance loss can be recovered in a full simulation and reconstruction chain.",
+            "section": "Machine Learning",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 5
+        },
+        {
+            "text": "We have presented an algorithm to identify jets from hadronic decay of charmonium states and have demonstrated that it works with a good efficiency of 36% for signal at a 100 times rejection of a background of quarks and gluons. ",
+            "section": "Conclusion",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "Against a background of only gluons the algorithm works even better. ",
+            "section": "Conclusion",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "The method also works for J/\u03c8 and heavier charmonium states and is relatively insensitive to the simulation parameters. ",
+            "section": "Conclusion",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "The algorithm works in the presence of pile-up but at a significant loss of performance. ",
+            "section": "Conclusion",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "This opens the possibility to use hadronic decay modes of charmonium in the search for rare decays to cc states that suffer from low statistics.",
+            "section": "Conclusion",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 1: Distributions of the variables used for charmonium identification. ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "Signal (J/\u03c8) in blue, background of a mixed sample of 50% quark and 50% gluon jets in orange. ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "The distributions are normalized to unity.",
+            "section": "Figure 1 :",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 2: ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "(a) Output of the neural network for signal (blue) and background (red). ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "(b) ROC curves for the network.",
+            "section": "Figure 2 :",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 8
+        },
+        {
+            "text": "Input variables to the charmonium classifier Name Description \u2206\u03b7",
+            "section": "Table 1 :",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 9
+        },
+        {
+            "text": "Hyperparameters of the neural network",
+            "section": "Table 2 :",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "Table 3 :",
+            "section_rank": 10
+        },
+        {
+            "text": "Overview of the training results. ",
+            "section": "Table 3 :",
+            "paragraph_rank": 22,
+            "section_rank": 10
+        },
+        {
+            "text": "Mixed background test samples contain 50% quark and 50% gluon jets",
+            "section": "Table 3 :",
+            "paragraph_rank": 22,
+            "section_rank": 10
+        },
+        {
+            "text": "Table 4 :",
+            "section_rank": 11
+        },
+        {
+            "text": "Variations in the AuC for different Pythia tunes",
+            "section": "Table 4 :",
+            "paragraph_rank": 23,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 36,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "Pythia",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 13
+        },
+        {
+            "text": "NdG would like to thank the Duke University physics department for their hospitality.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 24,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "NdG",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "Test",
+            "section_rank": 15
+        },
+        {
+            "text": "Training sample AuC J/\u03c8 vs mixed J/\u03c8 vs mixed 0.930 J/\u03c8 vs gluon J/\u03c8 vs mixed 0.966 J/\u03c8 vs quark J/\u03c8 vs mixed 0.894 J/\u03c8 vs gluon J/\u03c8 vs gluon 0.975 J/\u03c8 vs quark J/\u03c8 vs quark 0.897 \u03c8(2S) vs mixed J/\u03c8 vs mixed 0.894 \u03c7 c0,1,2 vs mixed J/\u03c8 vs mixed 0.914 \u03c8(2S) vs mixed all cc vs mixed 0.900 \u03c7 c0,1,2 vs mixed all cc vs mixed 0.917",
+            "section": "Test",
+            "paragraph_rank": 25,
+            "section_rank": 15
+        },
+        {
+            "text": "The network performs well on jets from the hadronic decay of other charmonium states like the \u03c8(2S) and \u03c7 c states, with the area under the curve only a few percent lower than for J/\u03c8. ",
+            "section": "Test",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "Some of this difference can be recovered by including the heavier charmonium states in the training sample. ",
+            "section": "Test",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "An overview of the performance of the network for various training and test sets is given in table 3.",
+            "section": "Test",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "We evaluate the network performance dependence on the jet transverse momentum. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "After reconstruction the transverse momentum spectra of the jets is not completely identical. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "Gluon jets of around 40 GeV often extend beyond a \u2206R of 0.4 and not all objects are included in its energy measurement. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "For jets from b and c quarks the neutrinos in semileptonic decays cause a low energy tail to the jet energy spectrum. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "Some of the variables we use, like the width, correlate with the jet energy. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "We verify that the network performance does not depend strongly on jet energy by splitting the test sample in three bins: p T < 35 GeV; 35 < p T < 50 Funding information SC would like to acknowledge support from the Duke REU Program through NSF Grant No. ",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "NSF-PHY-1757783.",
+            "section": "Test",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        }
+    ]
+}

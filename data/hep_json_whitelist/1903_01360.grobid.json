@@ -1,0 +1,2233 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "An evolved real-time data processing strategy is proposed for high-energy physics experiments, and its implementation at the LHCb experiment is presented. ",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        },
+        {
+            "text": "The reduced event model allows not only the signal candidate firing the trigger to be persisted, as previously available, but also an arbitrary set of other reconstructed or raw objects from the event. ",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        },
+        {
+            "text": "This allows for higher trigger rates for a given output data bandwidth, when compared to the traditional model of saving the full raw detector data for each trigger, whilst accommodating inclusive triggers and preserving data mining capabilities. ",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        },
+        {
+            "text": "The gains in physics reach and savings in computing resources already made possible by the model are discussed, along with the prospects of employing it more widely for Run 3 of the Large Hadron Collider.",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        },
+        {
+            "text": "K",
+            "section_rank": 2
+        },
+        {
+            "text": ": Data processing methods; Data reduction methods; Trigger concepts and systems (hardware and software) A X P : 1903.01360",
+            "section": "K",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "1Corresponding author.",
+            "section": "K",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 3
+        },
+        {
+            "text": "Experimental tests of the Standard Model must become ever more precise if small effects due to new physics are to be observed. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "To meet this challenge, at the Large Hadron Collider (LHC) both the centre-of-mass energy of the colliding proton-proton beams and the instantaneous luminosity delivered to the experiments are periodically increased. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The corresponding increase in signal production rate must be balanced against the availability of computational resources required to store the data for offline analysis. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The disk space required is given by the product of the running time of the experiment and the trigger output bandwidth defined as When the output rate of any given trigger is dominated by events containing signal processes, tightening the selection further to reduce the output rate is undesirable. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The size on disk of the full raw detector information cannot be decreased beyond the standard zero-suppression and compression techniques. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, reduced event formats must be employed instead, wherein a subset of the high-level reconstructed event information computed in the final software trigger stage is recorded and sent to permanent storage. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 148,
+                    "end": 156,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "As the rate of signal processes increases, so must the reliance on reduced event formats.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "The CMS, LHCb, and ATLAS experiments utilised their own versions of reduced formats during Run 2 (2015-2018) [1][2][3]. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 112,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 112,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 115,
+                    "end": 118,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Typically, the reduced format contains information pertaining only to the reconstructed physics objects which passed the relevant set of trigger selections, as well as -1 -some event summary information. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "For a jet trigger, for example, the objects may be the momentum vector and particle multiplicity value of the highest energy jet in an event. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "For a heavy flavour decay trigger it may be a set of four momenta and decay vertex positions. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Such an approach provides a maximal reduction in persisted event size whilst still allowing for the analysis performed in the trigger to be continued offline. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "This allows for higher trigger rates for a given output bandwidth, extending the physics reach of an experiment within limited computational resources. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "However, it also restricts the utility of an event for broader analysis and data mining. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Such a reduction is then unsuitable for inclusive triggers, which constitute a large fraction of trigger output rates, as well as for analyses in which other information may be required later, such as performing flavour tagging or isolation studies, the exact input to which is not well-defined at the time of the trigger decision.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "The LHCb experiment has pioneered the widespread usage of a reduced event format since the beginning of Run 2. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "This has been driven by the desire to continue the rich charm physics programme started in Run 1 (2010-2012) in spite of the large charm production rate in the detector acceptance, being 25 times larger than that for beauty [4,5]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 224,
+                    "end": 227,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 227,
+                    "end": 229,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "During Run 2, almost all events selected by charm triggers at LHCb were persisted in a reduced format, enabling a broader physics programme which would otherwise not be possible within the available resources. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "In Run 3 (2021-2023) the instantaneous luminosity delivered to the LHCb experiment will increase by a factor of five. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The rate of events processed by the trigger that contain charm or beauty hadrons will scale not only by this factor, but also by a factor of two due to the implementation of a higher-efficiency full software trigger [6,7]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 216,
+                    "end": 219,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6,"
+                },
+                {
+                    "start": 219,
+                    "end": 221,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 199,
+                    "end": 207,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "Coupled with the larger raw data size produced by the upgraded detector, it is necessary for some fraction of the beauty programme to migrate to reduced event formats in order to fit within available computational resources. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Given the strong reliance the beauty programme has on inclusive triggers [8,9], the style of reduced event formats previously described are not sufficient, and so this model must be extended if the charm and beauty programmes are to be sustained into the future.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 73,
+                    "end": 76,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8,"
+                },
+                {
+                    "start": 76,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "9]"
+                }
+            ]
+        },
+        {
+            "text": "A significant evolution of the reduced event model is proposed here, in which additional reconstructed objects in the event are selected and persisted after the trigger decision has been made. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "When implemented with sufficient flexibility, this allows for fine-grained tuning between trigger output bandwidth and event utility offline. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Since mid-2017, such a scheme has been adopted in the LHCb trigger, resulting in substantial bandwidth savings without a loss of physics reach. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The reduction in bandwidth has allowed for the introduction of new trigger selections, increasing the physics scope of the experiment. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "It is foreseen that the reduced event format will be adopted for a majority of the LHCb physics programme in Run 3 [10]. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "The latest evolution, presented here, now caters to all use cases.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The rest of this paper is organised as follows. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The LHCb detector and trigger system is described in section 2, and the need for a fully flexible reduced event format in Run 2 is motivated quantitatively. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "A technical overview of the new format is given in section 3. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The benefits already achieved in Run 2 and the prospects for Run 3 are presented in sections 4 and 5. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "A summary is given in section 6.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The LHCb detector and trigger strategy",
+            "section_rank": 4
+        },
+        {
+            "text": "The LHCb detector is a forward-arm spectrometer designed to measure the production and decay properties of charm and beauty hadrons with high precision [11,12]. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 152,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11,"
+                },
+                {
+                    "start": 156,
+                    "end": 159,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "12]"
+                }
+            ]
+        },
+        {
+            "text": "Such objects are predominantly -2 -produced at small angles with respect to the proton beam axis [13]. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "A tracking system is used to reconstruct the trajectories of charged particles. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "It consists of a silicon vertex detector surrounding the interaction region (VELO), a silicon strip detector located upstream of a dipole magnet (TT), and three tracking stations downstream of the magnet. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The latter each consist of a silicon strip detector in the high-intensity region close to the beamline (IT) and a straw-tube tracker in the regions further from the beamline (OT). ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Neutral particles are identified with a calorimeter system made of a scintillating pad detector (SPD), an electromagnetic calorimeter (ECAL) preceded by a pre-shower detector (PS), and a hadronic calorimeter (HCAL). ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 176,
+                    "end": 178,
+                    "type": "software",
+                    "rawForm": "PS",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "Charged particle identification is provided by combining information from the ring-imaging Cherenkov detectors (RICH1 and RICH2), wire chambers used to detect muons, and the calorimeter system. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Shower counters located in highrapidity regions either side of the main detector can be used to veto events with particles produced at a very low angle to the beam, mainly used for studies of central exclusive production [14]. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 221,
+                    "end": 225,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The LHC provides proton-proton collisions to the experiment at a rate of 30 MHz during most run periods. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The detector also operates during special physics runs, such as heavy ion collisions with lead and xenon nuclei, and in a fixed target mode where a noble gas is injected in the interaction region [15,16].",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 196,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15,"
+                },
+                {
+                    "start": 200,
+                    "end": 203,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "16]"
+                }
+            ]
+        },
+        {
+            "text": "During proton-proton operation of the LHC, an interesting physics signal process occurs at a rate of around 10 Hz. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "To filter out the large majority of collisions that do not contain interesting information, and to fit the experimental output rate into the available computing resources, a threestage trigger system is employed [9], illustrated in figure 1. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 212,
+                    "end": 215,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "In total, it reduces the event rate by three orders of magnitude, with the output being sent to permanent storage. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The level-0 hardware trigger (L0) uses information from the calorimeter and muon systems to compute a decision using field-programmable gate arrays within a fixed latency of 4 \u00b5s. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Events are selected by the L0 at a rate of about 1 MHz, and are sent to an Event Filter Farm (EFF) where they are processed by the two-stage High Level Trigger (HLT) on commodity processors. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The first stage, HLT1, uses tracking and calorimetry information to perform a partial reconstruction of charged particles, and writes the raw information for each passing event to a 10 PB disk buffer at a rate of around 110 kHz. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Asynchronously to HLT1, the data in the buffer are used to compute alignment and calibration constants which, if significantly different from previous runs, are saved to a conditions database [17]. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 192,
+                    "end": 196,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "The second stage of the software trigger, HLT2, performs a full event reconstruction using the latest alignment and calibration constants and all available detector information. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 24,
+                    "end": 32,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Selections in HLT2 span a spectrum from inclusive selections, which require the presence of a heavy flavour decay signature such as a displaced multi-body vertex or a high transverse momentum lepton, and exclusive selections, which fully reconstruct signal decays. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Events are written to offline storage from HLT2 at a rate of around 12.5 kHz.",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "Within the HLT, an event comprises a set of so-called sub-detector raw banks, each containing the zero-suppressed readout of a given sub-detector. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Each trigger stage adds a set of trigger raw banks to the event which summarise how the event passed that stage. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Selected events are persisted to a set of streams in permanent storage. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "During this streaming, different raw banks may be kept or removed depending on the stream the event is sent to. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Each trigger selection in HLT2 is associated to a particular stream, and an event is sent to a stream if it passes at least one associated selection. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "An event may be sent to multiple streams, and different sets of raw banks for that event can be saved in each stream. ",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "The LHCb physics trigger rate is distributed over three streams:",
+            "section": "The LHCb detector and trigger strategy",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "JINST 14 P04006",
+            "section_rank": 5
+        },
+        {
+            "text": "Beam-beam crossing  1. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Around half of all triggered events enter the full stream, which contains the full set of subdetector and trigger raw banks, with the trigger reconstruction being discarded. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Events in the full stream are reconstructed by a separate application offline, followed by a set of physics selections that reconstruct thousands of decay chains for direct analysis. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "This scheme is used in many other experiments, where it is common for the trigger reconstruction to be of poorer quality to that of the offline reconstruction in order to fit within the timing constraints of their online systems.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "2. Around a third of triggered events are sent to the Turbo stream, where a reduced event format is persisted in a dedicated raw bank, described in detail in section 3.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "3. The remaining trigger rate is captured by the TurCal calibration stream, where both the reduced and full formats are kept.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "The motivation for creating the reduced format used in the Turbo and TurCal streams now follows.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 59,
+                    "end": 64,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "-4 -",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "JINST 14 P04006",
+            "section_rank": 6
+        },
+        {
+            "text": "Real-time analysis",
+            "section_rank": 7
+        },
+        {
+            "text": "Here, 'real time' is defined as the interval between a collision occurring and the point at which the corresponding event must be either discarded forever or sent offline for permanent storage. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "In most high-energy physics experiments, this interval cannot exceed the time between collisions as their trigger systems are synchronous. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "A multi-stage trigger increases the available event processing time from one stage to the next; however each stage requires more computing power than the previous one. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "The addition of a disk buffer between two stages increases the effective computation time allowed in the latter stage as that stage can then also operate during periods when data are not being taken. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "The buffer also permits the execution of tasks that provide additional input to the latter trigger stage, such as the running of alignment and calibration algorithms.",
+            "section": "Real-time analysis",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "During Run 1, LHCb installed a disk buffer such that 20 % of the L0 output was deferred to disk. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "This increased the effective processing power of the software trigger by allowing it to run both during beam operation and when the LHC was in downtime. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 53,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "Between Run 1 and Run 2, the buffer size was increased to 10 PB, with events being buffered between the two software trigger stages. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 116,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "As the buffer is so large, 'real time' can be up to two weeks during nominal datataking [9]. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "The possibility to buffer the data for such a long period has allowed for the execution of the aforementioned real-time detector alignment and calibration on the data in the buffer. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "The increase in computing power has permitted the implementation of the full offline reconstruction in HLT2. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "With these substantial additions, the HLT2 reconstruction is of equal quality to what is achieved in the offline processing, such that full physics selections are performed in real time in the trigger without a loss of precision. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "This permits trigger selections to be much closer or identical to those applied in the offline analysis, as there are no resolution effects between online and offline to be accounted for. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "Such a scheme reduces experimental systematic uncertainties and saves money by making tighter trigger selections acceptable, therefore reducing the rate and output bandwidth.",
+            "section": "Real-time analysis",
+            "paragraph_rank": 17,
+            "section_rank": 7
+        },
+        {
+            "text": "With an offline-quality reconstruction in the final trigger stage (HLT2), it is no longer necessary to run another reconstruction offline. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Instead, the objects created by trigger selections are written out to the permanent storage directly. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Physics measurements are performed on these objects. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "This technique almost eliminates processing requirements offline and reduces output bandwidth, if the relevant subset of the reconstruction is smaller than the raw event. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Offline analysis of triggerlevel information has been used at the CMS experiment [1], called 'scouting', and at the ATLAS experiment [3], called 'trigger-object level analysis'. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 133,
+                    "end": 136,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Although the method has extended their physics reach, in both cases only object summaries are available for analysis, rather than offline-equivalent constructs, and the quality of the reconstruction is worse than that achieved offline. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Since 2015, the LHCb experiment has employed a persistence model called 'Turbo'. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 73,
+                    "end": 78,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "It allows the offline-equivalent information computed in HLT2 to be saved, sacrificing neither physics performance nor analyst convenience, as existing tools are used to process the data.",
+            "section": "Real-time analysis",
+            "paragraph_rank": 18,
+            "section_rank": 7
+        },
+        {
+            "text": "Until recently, the reduced event formats employed by the LHC experiments have described only the objects that enter into some trigger selection, such as a jet or a charm hadron and its decay products. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "These formats are best used to reduce the output bandwidth of events captured by exclusive trigger selections. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "In contrast, an inclusive trigger selection, which does not necessarily consider all the information on the physics process of interest in its decision, cannot be accommodated. ",
+            "section": "Real-time analysis",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "In -5 -",
+            "section": "Real-time analysis",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "JINST 14 P04006",
+            "section_rank": 8
+        },
+        {
+            "text": "order to be able to cater for such use cases, an advanced reduced persistency model has recently been developed as an evolution of the Turbo model, and is described in the following section.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 20,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 135,
+                    "end": 140,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "The Turbo data processing model",
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "The Turbo data processing model has evolved considerably over the course of Run 2. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w11"
+                }
+            ]
+        },
+        {
+            "text": "The initial prototype, established in 2015 and described in detail in ref. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "[2], saved the set of objects associated to individual reconstructed decay cascades extracted from events fully reconstructed in the trigger. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "This exploits the event topology characteristic of hadron colliders wherein only a small subset of objects produced in the collision are relevant for analysis offline. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "In a hard proton-proton scatter at LHCb, on average 40 tracks are associated to the resulting primary vertex, whereas only 2-6 tracks are required to reconstruct a typical heavy flavour decay. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "Significant savings in persisted event size are then possible by discarding reconstructed objects not needed in the offline analysis. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "In this section, three new developments to the Turbo processing model are described, which together allow for all LHCb analyses to be accommodated.",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 21,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w12"
+                }
+            ]
+        },
+        {
+            "text": "In order to perform physics analyses with the output of the trigger reconstruction, decay candidates must appear in the same format used by existing analysis tools. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "Containers of physics object classes are serialised per event into raw banks, as illustrated in figure 2, in order to conform to the trigger output format. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "This format is optimised for simple event-by-event concatenation, rather than the heavily compressed format used offline. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "The initial prototype of the Turbo model [2] serialised only the candidates that enter the trigger decision. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 44,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 29,
+                    "end": 34,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w13"
+                }
+            ]
+        },
+        {
+            "text": "To allow for additional objects to be persisted, the serialisation framework used in the offline infrastructure was adapted to work within the online system. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "This increases the compatibility between analyses using the online and offline reconstructions, and requires that only one serialisation framework be maintained. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "Furthermore, trigger selection configurations which use the Turbo model were extended to allow for a set of 'additional selections' to be run after the trigger decision has been made. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 60,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w14"
+                }
+            ]
+        },
+        {
+            "text": "These allow for any reconstructed object to be captured. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "At the end of each event processing, the set of all C ++ physics -6 -objects selected by all trigger lines using the Turbo model is copied to a common location in memory. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 117,
+                    "end": 122,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w15"
+                }
+            ]
+        },
+        {
+            "text": "The instances in the copied location are then compressed and serialised into raw banks [18], suitable for transfer within and out of the online system. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "A dedicated application, called T [2], runs offline to transform the HLT2 output into a format that is ready for analysis. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 37,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "This involves a file conversion from serialised raw data to a more compressed format used by the offline storage, as well as the computation and storage of information necessary for luminosity determination. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "T also ensures that additional information calculated in the online reconstruction is accessible to standard analysis tools, for example eventlevel sub-detector occupancies and information calculated using the whole reconstructed event. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "When processing simulated events, the application also matches reconstructed objects to true simulated objects and stores the information as relations tables. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "In comparison with the traditional model of an additional offline reconstruction, the processing cost of running T is negligible. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "In principle, some or even all parts of the work done by T can be moved into the trigger itself in the LHCb upgrade, such as if compressed object containers were written directly out of HLT2 instead of encoding them into raw banks.",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "With the serialisation and file preparation frameworks in place, different levels of granularity on what physics objects to select are now available. ",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 23,
+            "section_rank": 9
+        },
+        {
+            "text": "In the following, the resulting flexibility is explained, such that all measurements can take advantage of the real-time model.",
+            "section": "The Turbo data processing model",
+            "paragraph_rank": 23,
+            "section_rank": 9
+        },
+        {
+            "text": "Standard Turbo model",
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 9,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "A majority of trigger lines based on the Turbo model define exclusive selections where the full decay is completely specified, and no additional objects from the event are required for subsequent analysis. ",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 24,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 46,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w17"
+                }
+            ]
+        },
+        {
+            "text": "In this model, the objects saved are:",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 24,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 The reconstructed decay chain that fired the line, which comprises:",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "text": "-The set of all tracks and neutral objects, calorimeter and PID information relating to those objects, and decay vertices that form the candidate.",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "-The tracking detector clusters associated to the candidate tracks, such that the tracks can be re-fitted offline.",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 27,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 All of the reconstructed primary vertices (PVs) in the event, which are necessary to perform PV mis-association studies offline.",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 28,
+            "section_rank": 10
+        },
+        {
+            "text": "Other reconstructed objects in the event as well as the raw data are not kept for offline processing. ",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 29,
+            "section_rank": 10
+        },
+        {
+            "text": "That allows for a significant reduction of the event size and hence also trigger output bandwidth. ",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 29,
+            "section_rank": 10
+        },
+        {
+            "text": "Offline disk space and CPU processing time are also saved as the offline reconstruction step is omitted. ",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 29,
+            "section_rank": 10
+        },
+        {
+            "text": "This model has been operational since the beginning of data-taking in 2015, and enabled the first LHCb Run 2 measurements to be presented 18 days after the data were collected [4,5].",
+            "section": "Standard Turbo model",
+            "paragraph_rank": 29,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 176,
+                    "end": 179,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 179,
+                    "end": 181,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "Complete reconstruction persistence",
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "Complete",
+                    "resp": "whitelist",
+                    "id": "software-simple-w18"
+                }
+            ]
+        },
+        {
+            "text": "In order to use the Turbo model for inclusive triggers, the ability to store all the reconstructed objects in the event was introduced in the beginning of 2016. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 20,
+                    "end": 25,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w19"
+                }
+            ]
+        },
+        {
+            "text": "It is made available on a per-selection basis by a user flag. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "When enabled, the full event reconstruction as performed in HLT2 is persisted in addition -7 - to the information described in section 3.1. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "In comparison to saving the raw event, this approach reduces disk space usage and requires no further processing offline. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "However, the information needed to re-run the reconstruction offline is discarded. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "This technique permits high-rate inclusive triggers that would otherwise not be feasible [19]. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "Persisting the whole reconstructed event is expensive in terms of event size in comparison with only saving the trigger candidate, as shown in table 1. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "In most cases, only a small fraction of the full reconstructed event is required in an offline analysis. ",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "Therefore, a middle-ground between persisting only the candidate or the whole reconstructed event is introduced.",
+            "section": "Complete reconstruction persistence",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "Selective reconstruction persistence",
+            "section_rank": 12
+        },
+        {
+            "text": "Selective persistence allows for explicit specification of which information is stored on top of the trigger candidate itself. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "This permits a significant event size reduction without the usual sacrifice of allowing for exploratory analysis offline. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "At the beginning of 2017, trigger lines were augmented with additional selections that are executed after the trigger decision has been computed. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "A typical additional selection captures objects in the event that are somehow related to the trigger candidate. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "However, any selections are possible.",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "As an example, consider a trigger using the Turbo model that reconstructs and selects the D 0 \u2192 K \u2212 \u03c0 + charm decay, as shown in figure 3, where the information specified in section 3.1 is saved. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 129,
+                    "end": 137,
+                    "type": "figure",
+                    "text": "figure 3"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 44,
+                    "end": 49,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w20"
+                }
+            ]
+        },
+        {
+            "text": "If complete reconstruction persistence is enabled for this line, the underlying reconstructed event will also be stored. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "With selective persistence, additional objects are instead specified explicitly, such as all charged pions that are associated to the same PV as the D 0 and that form a good-quality excited D * \u00b1 candidate. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "The selection framework allows for requirements to be made on both the pions themselves and on the D 0 \u03c0 \u00b1 combination, but then only the pions that pass these cuts are persisted. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "The D * \u00b1 candidates are discarded, since it can be built again exactly in an offline processing if required. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "Similar selections can be added for other extra particles, such as kaons, photons, and hyperons to support a wide spectrum of charm spectroscopy measurements with a single trigger selection.",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "In the LHCb upgrade for Run 3, selective persistence is a key ingredient in the migration of the physics programme to the real-time analysis model [10]. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 33,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 147,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "One use-case is flavour tagging, a determination of the initial flavour of a beauty or anti-beauty meson. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 33,
+            "section_rank": 12
+        },
+        {
+            "text": "The decision of one or more tagging algorithms together with the probability of the assigned flavour being wrong is computed using a set of reconstructed objects in the event, namely objects that are related to the same PV as the signal decay. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 33,
+            "section_rank": 12
+        },
+        {
+            "text": "This set can be loosely defined upfront and added as additional selections to trigger lines which reconstruct the signal beauty hadron decays of interest. ",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 33,
+            "section_rank": 12
+        },
+        {
+            "text": "As the tagging -8 -",
+            "section": "Selective reconstruction persistence",
+            "paragraph_rank": 33,
+            "section_rank": 12
+        },
+        {
+            "text": "JINST 14 P04006",
+            "section_rank": 13
+        },
+        {
+            "text": "HLT2 candidate",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 34,
+            "section_rank": 13
+        },
+        {
+            "text": ". . RICH VELO Raw banks: ECAL . . . Figure 3. A cartoon of the same reconstructed event with varying levels of object persistence: Turbo (top); selective persistence (middle); and complete reconstruction persistence (bottom). Solid objects are those persisted in each case. A trigger selection may also ask for one or more sub-detector raw banks to also be stored, shown as solid rectangles.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 35,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 36,
+                    "end": 44,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 131,
+                    "end": 136,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w21"
+                },
+                {
+                    "start": 226,
+                    "end": 231,
+                    "type": "software",
+                    "rawForm": "Solid",
+                    "resp": "whitelist",
+                    "id": "software-simple-w22"
+                }
+            ]
+        },
+        {
+            "text": "Increasing persisted event size Decreasing information",
+            "section_rank": 14
+        },
+        {
+            "text": "algorithms undergo improvements during data-taking, the flavour tagging can be re-run offline using the information captured by the additional selections. ",
+            "section": "Increasing persisted event size Decreasing information",
+            "paragraph_rank": 36,
+            "section_rank": 14
+        },
+        {
+            "text": "Initial studies show that the set of reconstructed objects required as input to the tagging algorithms constitute only around 10 % of the space that would be required for persisting the full reconstruction.",
+            "section": "Increasing persisted event size Decreasing information",
+            "paragraph_rank": 36,
+            "section_rank": 14
+        },
+        {
+            "text": "Selective raw persistence",
+            "section_rank": 15
+        },
+        {
+            "text": "There are some cases in which saving all possible information from an event is required. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "One important example is for efficiency measurements on calibration samples. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "Today, detector-level efficiencies are determined from control channels whose trigger lines save the full raw detector information. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "The high bandwidth associated with doing this means that the choice and selection of control channels is severely restricted. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "This impacts the calibration sample size and leads to larger uncertainties -  on the efficiencies. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "The ability to study the efficiency of a given aspect of the reconstruction requires saving detector hits that were not used in the reconstructed object. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "However, the efficiency of reconstructing tracks with the OT, for example, would require saving only the raw banks associated with that sub-detector, and would not need the banks associated with the calorimeter or the RICH subdetectors. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "If a more fine-grained, per-trigger specification of required raw banks was possible, the resulting bandwidth savings would allow the calibration samples to more than double in size, resulting in more precise efficiency determinations and therefore more accurate physics measurements. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "In order to accomplish this, a new algorithm has been developed and deployed. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "On initialisation, it determines the list of trigger selections and their requested raw banks from the trigger configuration, as shown in figure 4. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 138,
+                    "end": 146,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "figure 4"
+                }
+            ]
+        },
+        {
+            "text": "On a per-event basis, the decision of each trigger selection is examined and the superset of the required raw banks is persisted to the corresponding output stream. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "Raw banks not requested by any firing trigger line are discarded. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "This algorithm has been running in the LHCb trigger since 2018. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "With it, each trigger selection has complete control on additional information in the event is persisted, from any object created in the reconstruction, to the raw information created by any sub-detector. ",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15
+        },
+        {
+            "text": "Therefore, the Turbo model is now able to cater for any use case.",
+            "section": "Selective raw persistence",
+            "paragraph_rank": 37,
+            "section_rank": 15,
+            "entity_spans": [
+                {
+                    "start": 15,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w23"
+                }
+            ]
+        },
+        {
+            "text": "Achievements in Run 2",
+            "section_rank": 16
+        },
+        {
+            "text": "Since the beginning of Run 2, a considerable fraction of triggered events have used the Turbo model. ",
+            "section": "Achievements in Run 2",
+            "paragraph_rank": 38,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 88,
+                    "end": 93,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w24"
+                }
+            ]
+        },
+        {
+            "text": "In 2018, the number of trigger lines using the Turbo model was around 50 % of the number using the traditional model, however the Turbo stream bandwidth was 25 % that of the full stream due to the reduced average event size. ",
+            "section": "Achievements in Run 2",
+            "paragraph_rank": 38,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w25"
+                },
+                {
+                    "start": 130,
+                    "end": 135,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w26"
+                }
+            ]
+        },
+        {
+            "text": "Physics measurements using the Turbo model include charm and J/\u03c8 cross-sections [4,5], the discovery of new ground-state and excited charm baryons [20,21], searches for dark photons [22], and the characterisation of charmonium production within jets [19]. ",
+            "section": "Achievements in Run 2",
+            "paragraph_rank": 38,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 83,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5]"
+                },
+                {
+                    "start": 147,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20,"
+                },
+                {
+                    "start": 151,
+                    "end": 154,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "21]"
+                },
+                {
+                    "start": 182,
+                    "end": 186,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                },
+                {
+                    "start": 250,
+                    "end": 254,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w27"
+                }
+            ]
+        },
+        {
+            "text": "This section summarises how the new Turbo model has increased physics reach whilst reducing the event size since its introduction in 2016.",
+            "section": "Achievements in Run 2",
+            "paragraph_rank": 38,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 36,
+                    "end": 41,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w28"
+                }
+            ]
+        },
+        {
+            "text": "-10 -",
+            "section_rank": 17
+        },
+        {
+            "text": "As an example of the gains that can and have been made, we consider a subset of trigger lines using the Turbo model that exclusively reconstruct and select Cabibbo-favoured decays of groundstate charm hadrons, such as D 0 \u2192 K \u2212 \u03c0 + and \u039b + c \u2192 pK \u2212 \u03c0 + and their charge conjugates, originating directly from beam-beam interactions. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 104,
+                    "end": 109,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w29"
+                }
+            ]
+        },
+        {
+            "text": "These trigger selections are intended for calibration studies, as the properties of these objects and decays are well known, as well as for charm spectroscopy, searching for and characterising excited charm states that cascade down to the ground states. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "In 2016, these trigger lines were enhanced by the addition of the complete reconstruction persistence, to allow for excited states to be reconstructed offline, and so the average event size increased from 7 kB in 2015 to 48 kB.1 ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "In 2017, the spectroscopy lines moved to the selective reconstruction persistence, reducing the average event size to 16 kB. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "In turn, the bandwidth used by the Turbo stream decreased from 139 MB/s to 79 MB/s. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w30"
+                }
+            ]
+        },
+        {
+            "text": "The newly-available bandwidth was then utilised for new inclusive charm baryon trigger lines that would have otherwise not been possible within the given computational resources. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "The selections used to reduce the set of persisted objects from the spectroscopy lines were aligned with the ones used for spectroscopy offline. ",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "The additional selections are then 100 % efficient with respect to the offline selections by definition.",
+            "section": "-10 -",
+            "paragraph_rank": 39,
+            "section_rank": 17
+        },
+        {
+            "text": "Prospects for Run 3",
+            "section_rank": 18
+        },
+        {
+            "text": "The LHCb detector will be upgraded for Run 3, where the instantaneous luminosity will increase from that in Run 2 by a factor of five. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18
+        },
+        {
+            "text": "With the corresponding increase in heavy flavour production rate, in addition to expected trigger efficiency gains and an increase in the raw event size, the trigger output bandwidth will increase by an order of magnitude from Run 2. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18
+        },
+        {
+            "text": "Due to constraints on offline storage resources, the bandwidth is limited to a maximum of 10 GB/s [10]. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 102,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "The breadth of the current experimental physics programme can only survive within these resources if the fraction of trigger output rate sent to the Turbo stream increases by over a factor of two. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 149,
+                    "end": 154,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w31"
+                }
+            ]
+        },
+        {
+            "text": "The flexibility of the reduced event model described here has been designed to reach that goal without an inherent loss of physics performance or reach. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18
+        },
+        {
+            "text": "This section briefly discusses some relevant techniques.",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 40,
+            "section_rank": 18
+        },
+        {
+            "text": "In principle, reducing the amount of persisted information comes with risk, as the set of information needed for a given measurement is not always known upfront, and indeed the analysis itself has often not been conceived. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "Information discarded in the trigger can be later required by some unforeseen analysis offline. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "However, the factor-five increase in instantaneous luminosity means a corresponding increase in the average number of visible beam-beam interactions per bunch crossing. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "Therefore, a relatively safe selection is to discard objects which are identified as originating from primary vertices other than those associated to the signal trigger object. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "This information is not relevant to an analysis of the trigger object as it is unrelated to the signal process, having been produced from independent parton-parton scatters.2 ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "Given a fully reconstructed signal candidate, its associated primary vertex can be defined as the one with the smallest impact parameter with respect to the signal momentum vector. ",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18
+        },
+        {
+            "text": "Primary vertices from which associated information should not be 1The average size in 2016 across all events using the Turbo model was 42 kB, illustrating the dominating rate of these selected processes.",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 41,
+            "section_rank": 18,
+            "entity_spans": [
+                {
+                    "start": 119,
+                    "end": 124,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w32"
+                }
+            ]
+        },
+        {
+            "text": "2Such a technique is similar in concept to jet grooming, in that one wishes to keep only the objects associated to the hard scatter which produced the heavy flavour quark-antiquark pair present in the event.",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 42,
+            "section_rank": 18
+        },
+        {
+            "text": "-11 -",
+            "section": "Prospects for Run 3",
+            "paragraph_rank": 43,
+            "section_rank": 18
+        },
+        {
+            "text": "JINST 14 P04006",
+            "section_rank": 19
+        },
+        {
+            "text": "persisted can then be identified using a minimum impact parameter cut, the exact value of which can be tuned based on the expected resolution available to distinguish separate primary vertices.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 44,
+            "section_rank": 19
+        },
+        {
+            "text": "Inclusive trigger selections of heavy flavour decays present a particularly challenging event size reduction problem as they have very high rates. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 45,
+            "section_rank": 19
+        },
+        {
+            "text": "The potentially incomplete reconstruction of the signal momentum vector reduces the accuracy of non-signal primary vertex suppression. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 45,
+            "section_rank": 19
+        },
+        {
+            "text": "Complimentary selections that reduce the persisted information in inclusively triggered events include:",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 45,
+            "section_rank": 19
+        },
+        {
+            "text": "\u2022 The rejection of tracks that form a very poor quality vertex with the inclusive candidate, as such tracks would not be used in an offline analysis; and",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 46,
+            "section_rank": 19
+        },
+        {
+            "text": "\u2022 The rejection of objects identified by a multivariate algorithm trained to distinguish uninteresting objects from those associated to the portion of the signal process captured by the inclusive selection.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 47,
+            "section_rank": 19
+        },
+        {
+            "text": "Preliminary studies have shown such techniques can fully capture all signal objects in an inclusively triggered event with an efficiency of around 90 %, compared to saving the full reconstruction, whilst rejecting over 90 % of the unrelated objects. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 48,
+            "section_rank": 19
+        },
+        {
+            "text": "This reduces the bandwidth of the prototype inclusive beauty trigger under study from 7.5 GB/s to 1 GB/s. ",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 48,
+            "section_rank": 19
+        },
+        {
+            "text": "While promising, further work is needed to quantify any possible biases which may be associated to the signal decays which are not completely captured by the selective persistence.",
+            "section": "JINST 14 P04006",
+            "paragraph_rank": 48,
+            "section_rank": 19
+        },
+        {
+            "text": "Summary and conclusions",
+            "section_rank": 20
+        },
+        {
+            "text": "Traditional reduced event formats allow for a broader physics programme within available computational resources, but this is usually countered by a poorer quality reconstruction in the trigger and reduced data mining capabilities. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 20
+        },
+        {
+            "text": "Since 2015, a real-time alignment and calibration procedure between trigger stages has allowed the LHCb experiment to deploy and exploit its Turbo model. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 20,
+            "entity_spans": [
+                {
+                    "start": 141,
+                    "end": 146,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w33"
+                }
+            ]
+        },
+        {
+            "text": "With this, offline-quality signal candidates are persisted directly from the trigger for later analysis. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 20
+        },
+        {
+            "text": "This has been crucial for the charm programme, which otherwise would have had to significantly compromise its reach and diversity.",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 49,
+            "section_rank": 20
+        },
+        {
+            "text": "Since 2017, the implementation of the Turbo model has been overhauled and extended to allow an arbitrary subset of the trigger reconstruction and raw sub-detector information to be persisted along with the trigger candidate. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 50,
+            "section_rank": 20,
+            "entity_spans": [
+                {
+                    "start": 38,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w34"
+                }
+            ]
+        },
+        {
+            "text": "As such, the model is now capable of supporting the entirety of the experiment's broad research programme, and in particular the parts which rely on inclusive trigger selections. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 50,
+            "section_rank": 20
+        },
+        {
+            "text": "Given the large increase in instantaneous luminosity and trigger efficiency foreseen in Run 3, this evolution completes a crucial step in allowing the continuation of today's physics measurements into the future. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 50,
+            "section_rank": 20
+        },
+        {
+            "text": "The updated Turbo model has already provided a 50 % reduction in bandwidth in comparison with saving the full reconstruction, and this saving has been exploited with the addition of new high-rate trigger selections. ",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 50,
+            "section_rank": 20,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 17,
+                    "type": "software",
+                    "rawForm": "Turbo",
+                    "resp": "whitelist",
+                    "id": "software-simple-w35"
+                }
+            ]
+        },
+        {
+            "text": "Even larger gains should be possible when applying similar techniques to the remaining set of trigger selections, and studies are ongoing into these avenues.",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 50,
+            "section_rank": 20
+        },
+        {
+            "text": "-12 -",
+            "section": "Summary and conclusions",
+            "paragraph_rank": 51,
+            "section_rank": 20
+        },
+        {
+            "text": "Bandwidth [MB/s] \u221d Trigger output rate [kHz] \u00d7 Average event size [kB].",
+            "paragraph_rank": 52,
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 1. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 22
+        },
+        {
+            "text": "An overview of the LHCb trigger scheme in Run 2[9]. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "The green boxes represent trigger stages, the blue ellipses represent storage units, and arrows between elements represent data flow, labelled with approximate flow rates. ",
+            "section": "Figure 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 22
+        },
+        {
+            "text": "Events that reach a terminal storage unit are kept for offline analysis.",
+            "section": "Figure 1 .",
+            "paragraph_rank": 53,
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 2. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 54,
+            "section_rank": 23
+        },
+        {
+            "text": "Data flow in saving and restoring trigger objects from online (left) to offline (right)[2].",
+            "section": "Figure 2 .",
+            "paragraph_rank": 54,
+            "section_rank": 23,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 4. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 55,
+            "section_rank": 24
+        },
+        {
+            "text": "Algorithm flow to decide whether a given raw bank is persisted for the current event. ",
+            "section": "Figure 4 .",
+            "paragraph_rank": 55,
+            "section_rank": 24
+        },
+        {
+            "text": "The resulting list of banks persisted for a given event is the superset of those required by the individual lines.",
+            "section": "Figure 4 .",
+            "paragraph_rank": 55,
+            "section_rank": 24
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 25
+        },
+        {
+            "text": "Average event sizes for trigger lines requesting varying levels of information persistence, measured on data collected in 2018.",
+            "section": "Table 1 .",
+            "paragraph_rank": 56,
+            "section_rank": 25
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 27
+        },
+        {
+            "text": "We express our gratitude to our colleagues in the CERN accelerator departments for the excellent performance of the LHC. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 57,
+            "section_rank": 27
+        },
+        {
+            "text": "We thank the technical and administrative staff at the LHCb institutes. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 57,
+            "section_rank": 27
+        },
+        {
+            "text": "We acknowledge support from CERN and from the national agencies: CAPES, CNPq, ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 57,
+            "section_rank": 27
+        }
+    ]
+}

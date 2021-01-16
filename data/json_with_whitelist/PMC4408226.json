@@ -1,0 +1,2861 @@
+{
+    "level": "sentence",
+    "id": "e0ab19a106",
+    "abstract": [
+        {
+            "text": "Skin permeability is widely considered to be mechanistically implicated in chemically-induced skin sensitization. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Although many chemicals have been identified as skin sensitizers, there have been very few reports analyzing the relationships between molecular structure and skin permeability of sensitizers and non-sensitizers. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "The goals of this study were to: ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "(i) compile, curate, and integrate the largest publicly available dataset of chemicals studied for their skin permeability; ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "(ii) develop and rigorously validate QSAR models to predict skin permeability; and ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "(iii) explore the complex relationships between skin sensitization and skin permeability. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Based on the largest publicly available dataset compiled in this study, we found no overall correlation between skin permeability and skin sensitization. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "In addition, cross-species correlation coefficient between human and rodent permeability data was found to be as low as R 2 =0.44. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Human skin permeability models based on the random forest method have been developed and validated using OECDcompliant QSAR modeling workflow. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Their external accuracy was high (Q 2 ext = 0.73 for 63% of external compounds inside the applicability domain). ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "The extended analysis using both experimentally-measured and QSAR-imputed data still confirmed the absence of any overall",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        }
+    ],
+    "body_text": [
+        {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
+            "text": "Skin sensitization is a complex adverse toxicological endpoint that is influenced by several biological parameters, such as protein binding, dendritic cell activation, individual variation, and time-dose exposure (Jaworska et al., 2011;Johansen et al., 2011). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 213,
+                    "end": 236,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "(Jaworska et al., 2011;"
+                },
+                {
+                    "start": 236,
+                    "end": 258,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "Johansen et al., 2011)"
+                }
+            ]
+        },
+        {
+            "text": "Skin permeability is also often considered as a potential parameter affecting chemicals' sensitization potential (MacKay et al., 2013). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "(MacKay et al., 2013)"
+                }
+            ]
+        },
+        {
+            "text": "It relates to the ability of a molecule to pass through the skin, a characteristic which is primarily influenced by the physicochemical properties of the chemical as well as the physicochemical and biological properties of the membrane (Xia, 2011).",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 236,
+                    "end": 247,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "(Xia, 2011)"
+                }
+            ]
+        },
+        {
+            "text": "Despite the high importance of skin permeability for consumer product efficacy and its supposed influence on potential toxicities such as skin sensitization, the amount of experimental data available in the public domain is surprisingly limited. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "In the early 90's, a compilation of data points for skin permeability gathered from several sources was published (Flynn, 1990). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 114,
+                    "end": 127,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "(Flynn, 1990)"
+                }
+            ]
+        },
+        {
+            "text": "Subsequent studies added some complementary data allowing researchers to develop Quantitative Structure-Activity Relationship (QSAR) models for predicting skin permeability. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "However, as shown in Table S1, most of the published studies reporting on skin permeability modeling (Abraham et al., 1999;Barratt, 1995;Berge, 2009;Chen et al., 2010Chen et al., , 2007Cronin et al., 1999;Host\u00fdnek and Magee, 1997;Lien and Gao, 1995;Magnusson et al., 2004;Moss and Cronin, 2002;Moss et al., 2011;Patel et al., 2002;Guy, 1995, 1992) have not included certain critical elements of QSAR model development and validation protocol, such as the definition of the applicability domain (AD) or proof of passing the Y-randomization test, which constitute best practices of QSAR modeling (OECD, 2004;Tropsha, 2010). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 29,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Table S1"
+                },
+                {
+                    "start": 101,
+                    "end": 123,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(Abraham et al., 1999;"
+                },
+                {
+                    "start": 123,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "Barratt, 1995;"
+                },
+                {
+                    "start": 137,
+                    "end": 149,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "Berge, 2009;"
+                },
+                {
+                    "start": 149,
+                    "end": 166,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "Chen et al., 2010"
+                },
+                {
+                    "start": 166,
+                    "end": 185,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "Chen et al., , 2007"
+                },
+                {
+                    "start": 185,
+                    "end": 205,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "Cronin et al., 1999;"
+                },
+                {
+                    "start": 205,
+                    "end": 230,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "Host\u00fdnek and Magee, 1997;"
+                },
+                {
+                    "start": 230,
+                    "end": 249,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "Lien and Gao, 1995;"
+                },
+                {
+                    "start": 249,
+                    "end": 272,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "Magnusson et al., 2004;"
+                },
+                {
+                    "start": 272,
+                    "end": 294,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "Moss and Cronin, 2002;"
+                },
+                {
+                    "start": 294,
+                    "end": 312,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "Moss et al., 2011;"
+                },
+                {
+                    "start": 312,
+                    "end": 331,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "Patel et al., 2002;"
+                },
+                {
+                    "start": 331,
+                    "end": 347,
+                    "type": "bibr",
+                    "text": "Guy, 1995, 1992)"
+                },
+                {
+                    "start": 594,
+                    "end": 606,
+                    "type": "bibr",
+                    "text": "(OECD, 2004;"
+                },
+                {
+                    "start": 606,
+                    "end": 620,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "Tropsha, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Recently, several QSAR studies were benchmarked on a series of 11 compounds and all of them failed to predict skin permeation quantitatively; they were only able to rank permeants (Brown et al., 2012). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 180,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "(Brown et al., 2012)"
+                }
+            ]
+        },
+        {
+            "text": "Another recent study showed that most of the available QSAR models underestimate the skin permeability of hydrophilic solutes (Chen et al., 2013). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 126,
+                    "end": 145,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "(Chen et al., 2013)"
+                }
+            ]
+        },
+        {
+            "text": "Recent studies (Chauhan and Shakya, 2010) attempted to overcome the related problems with complex chemical mixtures and built a QSAR model based on several mixtures of 36 chemicals with porcine skin data. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 41,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Chauhan and Shakya, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "The latter model followed the best practices of QSAR modeling (Tropsha, 2010); however, we have identified 21 duplicative structures in that dataset (see Table S3) indicating a potential bias of the model and a likely over-estimation of its true performance.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 77,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "(Tropsha, 2010)"
+                },
+                {
+                    "start": 154,
+                    "end": 162,
+                    "type": "table",
+                    "text": "Table S3"
+                }
+            ]
+        },
+        {
+            "text": "Despite the underlying importance of skin permeability and its identification as a necessary step in the OECD Adverse Outcome Pathway (AOP) for skin sensitization (Karlberg et al., 2008; OECD, 2012), we could not find any study among those compiled in Tables S1 and  S2, where both endpoints were analyzed concurrently and in the context of their possible inter-dependency. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 163,
+                    "end": 185,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "(Karlberg et al., 2008"
+                },
+                {
+                    "start": 252,
+                    "end": 269,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Tables S1 and  S2"
+                }
+            ]
+        },
+        {
+            "text": "The prevalence of dermal exposure to diverse chemicals in consumer products and in the environment, the importance of permeability for skin sensitization, and the lack of reliable models to predict these endpoints for new chemicals have motivated us to initiate a tandem study on collecting and analyzing both skin permeability and skin sensitization data. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "In the companion paper (Alves et al., 2014), we have reported on new QSAR models of skin sensitization. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 43,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "In this study, we have compiled, curated, and integrated skin permeability coefficient (Kp) data extracted from various literature sources. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "Using this unique data collection, we have developed and rigorously validated QSAR models for skin permeability, and explored the relationships between the skin sensitization potential and the chemical permeability coefficient. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "The QSAR models developed in this and the accompanying study (Alves et al., 2014) are publicly available and can be used for evaluating chemically induced skin effects in silico as part of both research and development projects as well as in support of regulatory decisions on consumer products.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 81,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "MATERIALS AND METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Datasets",
+            "section_rank": 3
+        },
+        {
+            "text": "Skin sensitization datasets (datasets A and B)-In the Part I of this study (Alves et al., 2014) we described two skin sensitization datasets. ",
+            "section": "Datasets",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "Briefly, one of them (dataset A) was retrieved from the ICCVAM (Interagency Coordinating Committee on the Validation of Alternative Methods) report on the murine reduced local lymph node assay (ICCVAM 2009). ",
+            "section": "Datasets",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 193,
+                    "end": 206,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(ICCVAM 2009)"
+                }
+            ]
+        },
+        {
+            "text": "The modeling set (Dataset A) consisted of 254 compounds (127 sensitizers and 127 non-sensitizers) and the external validation set (dataset B) consisted of 133 sensitizers from the ICCVAM report (ICCVAM 2009) and 18 additional compounds taken from the study of Jaworska et al. (2011). ",
+            "section": "Datasets",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 194,
+                    "end": 207,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(ICCVAM 2009)"
+                },
+                {
+                    "start": 260,
+                    "end": 282,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "Jaworska et al. (2011)"
+                }
+            ]
+        },
+        {
+            "text": "This collection of data was used to explore the intrinsic relationship between skin sensitization and skin permeability (human data from dataset D; see below) for a subset of 20 compounds from the same dataset for which both skin sensitization and skin permeability data were known.",
+            "section": "Datasets",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Human skin permeability dataset (dataset D)-In vitro human skin permeability coefficients were retrieved from the literature (Chauhan and Shakya, 2010) including 211 records expressed in logKp (cm.h \u22121 ); this dataset contained the well-known and frequently studied Flynn dataset (Flynn, 1990). ",
+            "section": "Datasets",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 125,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Chauhan and Shakya, 2010)"
+                },
+                {
+                    "start": 280,
+                    "end": 293,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "(Flynn, 1990)"
+                }
+            ]
+        },
+        {
+            "text": "17 duplicates and two sets of triplicates were identified and curated leaving unique compounds only. ",
+            "section": "Datasets",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Three additional compounds and water were also removed for the following reasons: both styrene (logKp = \u22120.19) and ethyl benzene (logKp = 0.08) were identified as activity outliers (i.e., their logKp values were far outside the activity range of the other compounds in the dataset between \u22125.52 and \u22120.69) whereas digitoxin (natural product) was a structural outlier. ",
+            "section": "Datasets",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The remaining 186 compounds (dataset D) were retained for modeling.",
+            "section": "Datasets",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Rodent dataset (dataset E)-The set of in vitro rodent skin permeability data consisting of 103 chemical compounds was retrieved from the literature (Moss et al., 2011). ",
+            "section": "Datasets",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 148,
+                    "end": 167,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "(Moss et al., 2011)"
+                }
+            ]
+        },
+        {
+            "text": "After curation, 96 compounds (dataset E) were kept for modeling. ",
+            "section": "Datasets",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The following five activity outliers were removed from the dataset E: bisphenol A diglycidyl ether (\u22125.26), decabromodiphenyl oxide (\u22125.15), 4-N butylamine (\u22120.64), bufexamac (\u22120.57), and triclosan (0.13). ",
+            "section": "Datasets",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The overall range of logKp for the final dataset varied from \u22124.85 to \u22120.94.",
+            "section": "Datasets",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Data curation",
+            "section_rank": 4
+        },
+        {
+            "text": "Chemical structures were retrieved either from PubChem (https:// pubchem.ncbi.nlm.nih.gov/, accessed in March 2012) or ChemSpider (http:// www.chemspider.com/, accessed in March 2012) databases using chemical names. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Chemicals were removed if their structures could not be found. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Each dataset was carefully curated according to previously established guidelines (Fourches et al., 2010). ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 105,
+                    "type": "bibr",
+                    "text": "(Fourches et al., 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Briefly, counterions were removed, whereas specific chemotypes such as aromatic and nitro groups were normalized using the ChemAxon Standardizer (v.5.3, ChemAxon, Budapest, Hungary,http://www.chemaxon.com). ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 123,
+                    "end": 144,
+                    "type": "software",
+                    "rawForm": "ChemAxon Standardizer",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-0",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 148,
+                    "end": 151,
+                    "type": "version",
+                    "rawForm": "5.3",
+                    "resp": "#annotator26",
+                    "id": "#e0ab19a106-software-0"
+                },
+                {
+                    "start": 153,
+                    "end": 161,
+                    "type": "publisher",
+                    "rawForm": "ChemAxon",
+                    "resp": "#curator",
+                    "id": "#e0ab19a106-software-0"
+                },
+                {
+                    "start": 181,
+                    "end": 204,
+                    "type": "url",
+                    "rawForm": "http://www.chemaxon.com",
+                    "resp": "#annotator26",
+                    "id": "#e0ab19a106-software-0"
+                }
+            ]
+        },
+        {
+            "text": "The presence of duplicates, i.e., identical compounds reported more than once in the same dataset, is known to lead to over-optimistic estimations of the predictivity for developed QSAR models. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "However, the analysis of such records also gives an estimate of the dataset quality: if activity data for the same compound are consistent, the overall data quality is high; if there is a large deviation in experimental values between different records of the same compound, the quality is, obviously, low. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Thus, after the structural standardization, the duplicates were identified using ISIDA Duplicates (Varnek et al., 2008) and HiT QSAR (Kuz'min et al., 2008) software and carefully analyzed. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 119,
+                    "type": "bibr",
+                    "text": "(Varnek et al., 2008)"
+                },
+                {
+                    "start": 133,
+                    "end": 155,
+                    "type": "bibr",
+                    "text": "(Kuz'min et al., 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 81,
+                    "end": 97,
+                    "type": "software",
+                    "rawForm": "ISIDA Duplicates",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-4",
+                    "cert": "0.9"
+                },
+                {
+                    "start": 124,
+                    "end": 132,
+                    "type": "software",
+                    "rawForm": "HiT QSAR",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-5",
+                    "cert": "0.8"
+                },
+                {
+                    "type": "software",
+                    "start": 156,
+                    "end": 164,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "If the experimental properties associated with two duplicative structures were identical, or highly similar, then one compound was chosen at random and deleted. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "However, if their experimental properties were significantly different, we deleted both records from the dataset. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "During the curation of human skin permeability dataset, we found 17 pairs of duplicate structures and two sets of triplicates as shown in Table S3. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 138,
+                    "end": 145,
+                    "type": "table",
+                    "text": "Table S"
+                }
+            ]
+        },
+        {
+            "text": "The permeability values for duplicative records were almost identical (logKp variation ~ 0.01 LU) except those for butanoic acid that had a variation higher than ca. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "0.4 LU. ",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Thus, the LogKp value for all 17 compounds was averaged and the duplicative records were removed so that only one permeability coefficient was used for a chemical compound.",
+            "section": "Data curation",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Cheminformatics Approaches",
+            "section_rank": 5
+        },
+        {
+            "text": "Hierarchical Cluster Analysis-The clustering of a chemical dataset consists of merging compounds into distinct clusters of chemically similar molecules [see (Downs and Barnard, 2003; Mercier, 2003) for a review of the most popular clustering approaches used in computational chemistry]. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 157,
+                    "end": 197,
+                    "type": "bibr",
+                    "text": "(Downs and Barnard, 2003; Mercier, 2003)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 13,
+                    "end": 20,
+                    "rawForm": "Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "In this study, we have employed the Sequential Agglomerative Hierarchical Non-overlapping (SAHN) method implemented in the ISIDA/Cluster program (http://infochim.u-strasbg.fr) (Varnek et al., 2007). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 176,
+                    "end": 197,
+                    "type": "bibr",
+                    "text": "(Varnek et al., 2007)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 123,
+                    "end": 136,
+                    "type": "software",
+                    "rawForm": "ISIDA/Cluster",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-3",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 146,
+                    "end": 174,
+                    "type": "url",
+                    "rawForm": "http://infochim.u-strasbg.fr",
+                    "resp": "#annotator26",
+                    "id": "#e0ab19a106-software-3"
+                },
+                {
+                    "type": "software",
+                    "start": 123,
+                    "end": 136,
+                    "rawForm": "ISIDA/Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w2"
+                },
+                {
+                    "type": "software",
+                    "start": 137,
+                    "end": 144,
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Briefly, each compound represents one cluster at the start. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Then, the m compounds are merged iteratively into clusters using their pairwise Euclidean distances stored in a squared (m * m) symmetric distance matrix. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The two closest objects (molecules or clusters) are iteratively identified and merged to form a new cluster, the distance matrix being updated with the re-computed distances separating the newly formed cluster and the others, according to the user-specified type of linkage (complete linkage in this study). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The process is repeated until one cluster remains. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The parent-child relationships between clusters result in a hierarchical data representation, or dendrogram. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "In particular, we used ISIDA/Cluster to obtain the heat map (see Results section) of the proximity matrix.",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 23,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "ISIDA/Cluster",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-8",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 23,
+                    "end": 36,
+                    "rawForm": "ISIDA/Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "Dragon Descriptors-The following types of descriptors were generated using Dragon software (v.5.5, Talete SRL, Milan, Italy): 0D constitutional (atom and group counts), 1D functional groups, 1D atom-centered fragments, 2D topological descriptors, 2D walk and path counts, 2D autocorrelations, 2D connectivity indices, 2D information indices, 2D topological charge indices, 2D eigenvalue-based indices, 2D topological descriptors, 2D edge-adjacency indices, 2D Burden eigenvalues, 2D binary fingerprints, 2D frequency fingerprints, and molecular properties. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 75,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "Dragon",
+                    "resp": "#curator",
+                    "id": "e0ab19a106-software-5"
+                },
+                {
+                    "start": 94,
+                    "end": 97,
+                    "type": "version",
+                    "rawForm": "5.5",
+                    "resp": "#annotator26",
+                    "id": "#e0ab19a106-software-5"
+                },
+                {
+                    "start": 99,
+                    "end": 109,
+                    "type": "publisher",
+                    "rawForm": "Talete SRL",
+                    "resp": "#curator",
+                    "id": "#e0ab19a106-software-5"
+                },
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 6,
+                    "rawForm": "Dragon",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w5"
+                },
+                {
+                    "type": "software",
+                    "start": 75,
+                    "end": 81,
+                    "rawForm": "Dragon",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w6"
+                },
+                {
+                    "type": "software",
+                    "start": 82,
+                    "end": 90,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "The detailed discussion for these descriptors can be found elsewhere (Todeschini and Consonni, 2000).",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 69,
+                    "end": 100,
+                    "type": "bibr",
+                    "text": "(Todeschini and Consonni, 2000)"
+                }
+            ]
+        },
+        {
+            "text": "SiRMS Descriptors-2D Simplex Representation of Molecular Structure (SiRMS) descriptors (Muratov et al., 2010) (representing numbers of unique tetratomic fragments with fixed composition and topological structure) were generated by the HiT QSAR software (Kuz'min et al., 2008). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 109,
+                    "type": "bibr",
+                    "text": "(Muratov et al., 2010)"
+                },
+                {
+                    "start": 253,
+                    "end": 275,
+                    "type": "bibr",
+                    "text": "(Kuz'min et al., 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 235,
+                    "end": 243,
+                    "type": "software",
+                    "rawForm": "HiT QSAR",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-12",
+                    "cert": "0.8"
+                },
+                {
+                    "type": "software",
+                    "start": 244,
+                    "end": 252,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "At the 2D level, the connectivity of atoms in a simplex, atom type, and bond nature (single, double, triple, or aromatic) have been considered. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "SiRMS descriptors account not only for the atom type, but also for other atomic characteristics that may impact biological activity of molecules, e.g., partial charge, lipophilicity, refraction, and an atom ability for being a donor/acceptor in hydrogen-bond formation (H-bond). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "For atom characteristics with continuous values (charge, lipophilicity, and refraction) the division of the entire value range into definite discrete groups has been carried out. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The atoms have been divided into four groups corresponding to their ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "(i) partial charge A\u2264\u22120.05<B\u22640<C\u22640.05<D, ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "(ii) lipophilicity A\u2264\u22120.5<B\u22640<C\u22640.5<D, and ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "(iii) refraction A\u22641.5<B\u22643<C\u22648<D. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "For H-bond characteristic, the atoms have been divided into three groups: A (acceptor of hydrogen in H-bond), D (donor of hydrogen in H-bond), and I (indifferent atom). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The usage of sundry variants of differentiation of simplex vertexes (atoms) represents the principal feature of the SiRMS approach (Kuz'min et al., 2007). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 153,
+                    "type": "bibr",
+                    "text": "(Kuz'min et al., 2007)"
+                }
+            ]
+        },
+        {
+            "text": "Detailed description of HiT QSAR and SiRMS can be found elsewhere (Kuz'min et al., 2008; Muratov et al., 2010).",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 110,
+                    "type": "bibr",
+                    "text": "(Kuz'min et al., 2008; Muratov et al., 2010)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 24,
+                    "end": 32,
+                    "type": "software",
+                    "rawForm": "HiT QSAR",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-13",
+                    "cert": "0.8"
+                }
+            ]
+        },
+        {
+            "text": "QSAR modeling-The QSAR modeling workflow used in this study includes three major steps (Tropsha and Golbraikh, 2007;Tropsha, 2010): ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 116,
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "text": "(Tropsha and Golbraikh, 2007;"
+                },
+                {
+                    "start": 116,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "Tropsha, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "(i) data curation/preparation/analysis (selection of compounds and descriptors), ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "(ii) model building, and ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "(iii) model validation/ selection. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Here we followed a 5-fold external cross-validation procedure: the full set of compounds with known experimental activity is randomly divided into five subsets of equal size; then one of these subsets (20% of all compounds) is set aside as an external validation set and the remaining four sets together form the modeling set (80% of the full set). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "This procedure is repeated five times allowing each of the five subsets to be used as external validation set. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Models are built using the modeling set only, and it is important to emphasize that the compounds in corresponding external set (fold) are never employed either to build and/or select the models. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Each modeling set is divided into many internal training and test sets; then models are built using compounds of each training set and applied to test set compounds to assess their properties. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The statistical metrics used to assess different aspects of model performance are available in the Supplementary Materials.",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Best models were identified and selected according to acceptable threshold values (> 0.6) of for the internal test sets (called out-of-bag set in Random Forest, vide infra). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "Then, selected models were applied to the external set compounds to predict their skin sensitization potential. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "This procedure was repeated five times to ensure that every compound was present once and only once in the corresponding external test set. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "Since the accuracy of each model is estimated only based on external set compounds, which are never used to derive, bias, or select models, this protocol ensures an objective estimation of the true external predictivity of the models. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "In addition, 1,000 rounds of Y-randomization were performed for each dataset to assure that the high accuracy of the models built with real data was not due to chance correlations.",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 13,
+            "section_rank": 5
+        },
+        {
+            "text": "Random Forest-Random Forest models were constructed according to the original RF algorithm (Breiman, 2001) using the CF software version 2.12 (Polishchuk et al., 2009). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 91,
+                    "end": 106,
+                    "type": "bibr",
+                    "text": "(Breiman, 2001)"
+                },
+                {
+                    "start": 142,
+                    "end": 167,
+                    "type": "bibr",
+                    "text": "(Polishchuk et al., 2009)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 117,
+                    "end": 119,
+                    "type": "software",
+                    "rawForm": "CF",
+                    "resp": "#curator",
+                    "id": "e0ab19a106-software-8"
+                },
+                {
+                    "start": 137,
+                    "end": 141,
+                    "type": "version",
+                    "rawForm": "2.12",
+                    "resp": "#annotator26",
+                    "id": "#e0ab19a106-software-8"
+                },
+                {
+                    "type": "software",
+                    "start": 120,
+                    "end": 128,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "RF is an ensemble of single decision trees. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Outputs of all trees are aggregated to obtain one final prediction. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Each tree is grown as follows: ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "(i) a bootstrap sample is produced from the whole set of N compounds to form a training set for the current tree. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Compounds that are not in the training set of the current tree are placed in the out-of-bag (OOB) set (size of ~ N/3); ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "(ii) the best split by CART algorithm (Breiman et al., 1984) among the m randomly selected descriptors from the entire pool in each node is chosen; ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 60,
+                    "type": "bibr",
+                    "text": "(Breiman et al., 1984)"
+                }
+            ]
+        },
+        {
+            "text": "(iii) each tree is then grown to the largest possible extent; there is no pruning. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The predicted classification values are defined by majority voting for one of the classes. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Thus, each tree predicts values for only those compounds that are not included in the training set of that tree (for OOB set only). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "Since RF possesses its own reliable statistical characteristics (based on OOB set prediction) which could be used for validation and model selection, no cross-validation was performed (Breiman, 2001). ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 199,
+                    "type": "bibr",
+                    "text": "(Breiman, 2001)"
+                }
+            ]
+        },
+        {
+            "text": "Thus, the final model is chosen by the lowest error for prediction of the OOB set. ",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The local (tree) applicability domain approach (Artemenko et al., 2011) was used for all RF models developed in this study.",
+            "section": "Cheminformatics Approaches",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 71,
+                    "type": "bibr",
+                    "text": "(Artemenko et al., 2011)"
+                }
+            ]
+        },
+        {
+            "text": "DERMWIN-The",
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 7,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 7
+        },
+        {
+            "text": "Relationship between human and rodent skin permeability coefficients",
+            "section_rank": 8
+        },
+        {
+            "text": "First, we searched for the subset of chemicals that had both human and rodent skin permeability data available to verify whether we could increase the dataset size by merging these data. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "We found 34 compounds that have both human and rodent experimental data. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "As is obvious from Figure 1, the correlation between human and rodent data was not high enough to merge these datasets.",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 15,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 19,
+                    "end": 27,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "A linear regression of the logKp values yielded R 2 =0.44 only. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Therefore, we decided that the data for humans and rodents were definitely not compatible and built species-specific QSAR models. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Human-based and rodent-based QSAR models for skin permeability were developed using the same protocol used for skin sensitization as described in the companion paper (Alves et al., 2014). ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 166,
+                    "end": 186,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "The results (Table 1) suggest that continuous models for both datasets afforded high predictive accuracy as estimated by Q 2 ext values. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 20,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "(Table 1"
+                }
+            ]
+        },
+        {
+            "text": "However, the quality and coverage of human-based models 12 and 14 were higher than the same characteristics of the best rodent-based model 21. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Thus, models 12 and 14 were retained for in silico screening of chemical libraries of concern to identify potential human skin sensitizers. ",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Additional statistical characteristics of the models are present in Supplementary Materials (Table S2).",
+            "section": "Relationship between human and rodent skin permeability coefficients",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 101,
+                    "type": "table",
+                    "text": "(Table S2"
+                }
+            ]
+        },
+        {
+            "text": "Relationship between skin sensitization and permeability",
+            "section_rank": 9
+        },
+        {
+            "text": "We have explored whether there are intrinsic relationships between skin sensitization and skin permeability of chemicals. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "Since rodent data did not correlate well with human data, only human skin permeability data were employed for this analysis. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "We identified a subset of 20 compounds for which both skin sensitization and skin permeability data were known. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "These experimental data were compiled from several studies (Chauhan and Shakya, 2010;ICCVAM, 2009;Jaworska et al., 2011). ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Chauhan and Shakya, 2010;"
+                },
+                {
+                    "start": 85,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "ICCVAM, 2009;"
+                },
+                {
+                    "start": 98,
+                    "end": 120,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "Jaworska et al., 2011)"
+                }
+            ]
+        },
+        {
+            "text": "As shown in Table 2, there is no direct relationship between the two endpoints. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 19,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The ranges of logKp values for sensitizers (logKp = \u22123.62 -\u22121.28) vs. non-sensitizers (logKp = \u22123.05 -\u22121.6) confirm this finding. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "For instance, five non-sensitizers have low permeability coefficient while logKp values for two other nonsensitizers are high. ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "There is a common understanding that a chemical should penetrate the skin to cause sensitization (penetration is generally regarded as the first step in the skin sensitization AOP (Karlberg et al., 2008;OECD, 2012)). ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 180,
+                    "end": 203,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "(Karlberg et al., 2008;"
+                },
+                {
+                    "start": 203,
+                    "end": 214,
+                    "type": "bibr",
+                    "text": "OECD, 2012)"
+                }
+            ]
+        },
+        {
+            "text": "However, we found examples when a relatively weak penetrant can still be a strong sensitizer (e.g., p-Phenylenediamine, logKp = \u22123.62), whereas a strong penetrant, can be a non-sensitizer (e.g., octanoic acid, logKp = \u22121.60). ",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "This observation suggests that skin permeability and skin sensitization are generally decoupled processes and therefore it may be possible to modify chemicals such as to affect permeability without affecting sensitization, and vice versa.",
+            "section": "Relationship between skin sensitization and permeability",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "Cluster analysis of human skin permeability dataset",
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 7,
+                    "rawForm": "Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w11"
+                }
+            ]
+        },
+        {
+            "text": "We have performed a cluster analysis of the human skin permeability set (dataset D) following the same method used for the skin sensitization dataset A (part I in (Alves et al., 2014)). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 18,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 163,
+                    "end": 183,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "Due to the poor concordance between human and rodent data, and a heightened interest in human skin permeability data, this analysis was only conducted using dataset D.",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "As illustrated in Figure 2, the dendrogram for the dataset D is not as extensive as for skin sensitization dataset A (Alves et al., 2014), i.e., compounds in the skin penetration dataset D are more structurally similar than those in the skin sensitization dataset A. Short-chain alcohols have similar logKp values (ca. \u22123.0) except for ethylene glycol (logKp = \u22124.07). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 26,
+                    "type": "figure",
+                    "text": "Figure 2"
+                },
+                {
+                    "start": 117,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "For glycol ethers with short carbon chains (cluster b in Figure 2), the decrease of permeability is likely related to the chain length (2-(2-methoxyethoxy)ethanol (logKp= \u22123.69) < 2-(2-ethoxyethoxy)ethanol (logKp= \u22123.88) < 2-(2-butoxyethoxy)ethanol) (logKp= \u22124.45). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 65,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "To confirm this tendency, we have calculated permeability for two additional glycol ethers. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "We found that 2-(2-propoxyethoxy)ethanol (logKp pred = \u22124.05), which had an logKppred intermediary between 2-(2-ethoxyethoxy)ethanol and 2-(2-butoxyethoxy)ethanol, followed the trend but our predictions indicated a slight increase in permeability for 2-(2-(pentyloxy)ethoxy)ethanol (logKp pred = \u22123.95). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Then, with further increase of the chain length, this effect reached saturation resulting in a highly similar permeability for the next three compounds: 2-(2-(hexyloxy)ethoxy)ethanol (logKp pred = \u22123.88), 2-(2-(heptyloxy)ethoxy)ethanol (logKp pred = \u22123.87), and 2-(2-(octyloxy)ethoxy)ethanol (logKp pred \u22123.89). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Two compounds, 2-(2-(nonyloxy)ethoxy)ethanol and 2-(2-(decyloxy)ethoxy)ethanol were outside of the AD for the consensus model 5.",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "As a result of cluster analysis, we found three compounds that had different activity annotations from the rest of the cluster members and were therefore suspicious. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "These compounds included a barbiturate (amylobarbital) and two steroid derivatives of hydrocortisone (hydrocortisone methylsuccinate, and hydrocortisone succinamate). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "Our procedure for evaluating suspicious compounds was based on the permeability prediction for these compounds using developed models and a search for additional experimental data to verify their human skin permeability coefficients. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "Unfortunately, we were unable to find any confirmatory data in the literature to prove or refute the values of permeability coefficients for these substances. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "According to our consensus model 5, amylobarbital had a predicted logKp = \u22123.56 (experimental logKp= \u22122.64) similar to other barbitals: barbital (logKp = \u22123.95), phenobarbital (logKp = \u22123.34), and butobarbital (logKp = \u22123.71), which made us less confident in the accuracy of the reported permeability of this compound. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "Within steroids (cluster c in Figure 2), progesterone was the strongest penetrant (logKp = \u22121.89), whereas the addition of one hydroxyl group in position 17 of the steroid scaffold significantly decreased the permeability (hydroxyprogesterone logKp = \u22123.22). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 38,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "The hydroxyl group in position 17 appears to be bad for steroid permeability, since testosterone (logKp = \u22123.40) contains the hydroxyl group but lacks the ethoxy group. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "We removed both hydroxyl and ethoxy group from position 17, and the resulting compound, 3-oxo-delta4-steroid, had a predicted logKp pred = \u22122.28; adding a methyl group to the same position resulted in a logKp pred = \u22122.28, which was higher than the permeability of hydroxyprogesterone and testosterone, but lower than that of progesterone. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "The presence of other substituents and positions of double bonds seemed to be less important. ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "The effects of the substituent in position 21 on compound permeability seem to depend on its size: it decreases when a methyl substituent (methylsuccinate; logKp = \u22123.68) is replaced by a larger group (succinamate substituent; logKp = \u22124.59) but dramatically increases as shown in the four hydrocortisone derivatives (hydrocortisone hexanoate, hydrocortisone octanoate, hydrocortisone methylpimelate, and hydrocortisone hemipimelate) that have a long chain in this position (see Table S4). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 479,
+                    "end": 487,
+                    "type": "table",
+                    "text": "Table S4"
+                }
+            ]
+        },
+        {
+            "text": "In the beginning of the homological series of compounds, the permeability of carboxylic acids (cluster a in Figure  2) increased proportionally to the length of the hydrocarbon chain, i.e., acetic acid (logKp = \u22123.21) < propionic acid (logKp = \u22122.74) < butanoic acid (logKp = \u22122.90) < pentanoic acid (logKp = \u22122.70) < hexanoic acid (logKp = \u22121.85) < heptanoic acid (logKp = \u22121.70) < octanoic acid (logKp = \u22121.60). ",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 108,
+                    "end": 117,
+                    "type": "figure",
+                    "text": "Figure  2"
+                }
+            ]
+        },
+        {
+            "text": "Then, similarly to glycol ethers from cluster b, the effect reached saturation and predicted logKp values for five next carboxylic acids became very similar: nonanoic acid (logKp pred = \u22121.68), decanoic acid (logKp pred = \u22121.68), undecanoic acid (logKp pred = \u22121.71), dodecanoic acid (logKp pred = \u22121.82), and tridecanoic acid (logKp pred = \u22121.84).",
+            "section": "Cluster analysis of human skin permeability dataset",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "QSAR modeling of skin permeability",
+            "section_rank": 11
+        },
+        {
+            "text": "We have employed a dataset (Chauhan and Shakya, 2010) comprising 211 compounds (dataset D). ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 27,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Chauhan and Shakya, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Several structural duplicates were identified during the curation process. ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "The complete list of 17 duplicate pairs and two sets of triplicates is shown in Table S3. ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 88,
+                    "type": "table",
+                    "text": "Table S3"
+                }
+            ]
+        },
+        {
+            "text": "Skin permeability values for all pairs of duplicates were the same or almost the same. ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "This observation also means that the statistical performance of the models developed in an earlier study (Chauhan and Shakya, 2010) may have been over-optimistic because, as shown previously (Fourches et al., 2010), the presence of duplicates with identical activity annotations in both training and test sets generally leads to an overestimation of the model's predictivity. ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 105,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Chauhan and Shakya, 2010)"
+                },
+                {
+                    "start": 191,
+                    "end": 214,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "(Fourches et al., 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Here, we built species-specific QSAR models of skin permeability using the same protocol used for the skin sensitization study (Alves et al., 2014). ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 127,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "The results shown in Table 1 suggest that continuous models with high accuracy for both datasets have been generated; however, the quality and coverage of human-based models 12 and 14 were higher than the same characteristics of rodent-based model 21. ",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 28,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "The former models have been retained for in silico screening of chemical libraries.",
+            "section": "QSAR modeling of skin permeability",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 40,
+                    "end": 47,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w12"
+                }
+            ]
+        },
+        {
+            "text": "The DERMWIN module available as part of the EPI Suite software has been employed in several recent studies (Fong and Tong, 2012; Fong et al., 2014; Zhang et al., 2013) for evaluating skin permeability. ",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 167,
+                    "type": "bibr",
+                    "text": "(Fong and Tong, 2012; Fong et al., 2014; Zhang et al., 2013)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 11,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-12",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 44,
+                    "end": 53,
+                    "type": "publisher",
+                    "rawForm": "EPI Suite",
+                    "resp": "#curator",
+                    "id": "#e0ab19a106-software-12"
+                },
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 11,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w13"
+                },
+                {
+                    "type": "software",
+                    "start": 54,
+                    "end": 62,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w14"
+                }
+            ]
+        },
+        {
+            "text": "For this reason, we decided to compare our models with that implemented in this software. ",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 80,
+                    "end": 88,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w15"
+                }
+            ]
+        },
+        {
+            "text": "DERMWIN uses a linear equation that relates the permeability coefficient with the chemical's octanol/water partition coefficient and molecular weight. ",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#curator",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-19",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 7,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "However, statistical characteristics of this model suggested that this correlation was not adequate to predict human permeability. ",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "Although our consensus model 12 had a lower coverage of chemical space than DERMWIN (77% vs. 100%), it significantly outperformed DERMWIN in predictivity (Q 2 ext = 72% vs. 43%, respectively) (see Table 1). ",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 197,
+                    "end": 204,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 76,
+                    "end": 83,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-20",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 130,
+                    "end": 137,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#curator",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-21",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 76,
+                    "end": 83,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w17"
+                },
+                {
+                    "type": "software",
+                    "start": 130,
+                    "end": 137,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w18"
+                }
+            ]
+        },
+        {
+            "text": "When the AD restriction was removed and the predictive accuracy of the models was evaluated using the same set of compounds (143 compounds), the comparison was in favor of our model (Q 2 ext = 71% vs. 66%, respectively) (see Table 3).",
+            "section": "Comparison of developed QSAR models vs. DERMWIN permeability predictions",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 225,
+                    "end": 232,
+                    "type": "table",
+                    "text": "Table 3"
+                }
+            ]
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 13
+        },
+        {
+            "text": "Can rodent skin permeability data be used to predict human permeability?",
+            "section_rank": 14
+        },
+        {
+            "text": "As presented in the Results section, we found 34 compounds that had experimental permeability coefficient data for both human and rodents. ",
+            "section": "Can rodent skin permeability data be used to predict human permeability?",
+            "paragraph_rank": 23,
+            "section_rank": 14
+        },
+        {
+            "text": "Although the overall correlation between skin permeability measured in these two species was not high, we wished to determine whether the model obtained on rodent dataset E could be used to predict skin permeability in humans. ",
+            "section": "Can rodent skin permeability data be used to predict human permeability?",
+            "paragraph_rank": 23,
+            "section_rank": 14
+        },
+        {
+            "text": "Virtual screening of the human dataset D using the model developed with the rodent data resulted in a reasonably high predictivity (Q 2 ext = 0.77, RMSE = 1.27) but only for a very small fraction (19%) of compounds. ",
+            "section": "Can rodent skin permeability data be used to predict human permeability?",
+            "paragraph_rank": 23,
+            "section_rank": 14
+        },
+        {
+            "text": "Based on these results, one can assume that the rodent model could be used for predicting human skin permeability for at least some compounds within the conservative AD, but this observation should be considered with caution since it does not hold true for a larger data set. ",
+            "section": "Can rodent skin permeability data be used to predict human permeability?",
+            "paragraph_rank": 23,
+            "section_rank": 14
+        },
+        {
+            "text": "Additional experimental results for greater number of compounds are needed for more definitive conclusions.",
+            "section": "Can rodent skin permeability data be used to predict human permeability?",
+            "paragraph_rank": 23,
+            "section_rank": 14
+        },
+        {
+            "text": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "section_rank": 15
+        },
+        {
+            "text": "Given the small number of compounds with known experimental values of both skin sensitization and permeability, we decided to apply our selected QSAR models to crosspredict these properties. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "The use of QSAR-imputed permeability and sensitization data allowed us to examine the possible relationships between the two endpoints for a much larger set of compounds. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "Skin sensitization model 5 (see the companion paper (Alves et al., 2014)) was used for predicting skin sensitization for 186 compounds in the human skin permeability dataset (D), whereas skin permeability model 5 (Table 1) was used for calculating permeability coefficients for 387 compounds in the skin sensitization dataset retrieved from ICCVAM (254 compounds from dataset A + 133 sensitizers from dataset B) (see (Alves et al., 2014)). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 72,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                },
+                {
+                    "start": 213,
+                    "end": 222,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "(Table 1)"
+                },
+                {
+                    "start": 417,
+                    "end": 437,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Alves et al., 2014)"
+                }
+            ]
+        },
+        {
+            "text": "Then, we combined all predictions for compounds with unavailable experimental data (see Table S5). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 96,
+                    "type": "table",
+                    "text": "Table S5"
+                }
+            ]
+        },
+        {
+            "text": "Compounds outside of AD either for model 5 or 12 were removed from the analysis. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "In the end, 283 compounds that had information (experimental or predicted) for both endpoints were considered for the analysis. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "As one can see in Figure S1, all but one of the weakest penetrants (logKp < \u22125) were non-sensitizers. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 27,
+                    "type": "figure",
+                    "text": "Figure S1"
+                }
+            ]
+        },
+        {
+            "text": "The only exception was 1-dodecyl glycidyl ether, which could have been mispredicted by model 5. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "It was hypothesized recently that compound accumulation in the skin is contributing more significantly to skin sensitization than its actual permeability through the skin layer (Jaworska et al., 2013). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(Jaworska et al., 2013)"
+                }
+            ]
+        },
+        {
+            "text": "Our results (see Figure S1) show that easily-penetrating compounds may be both sensitizers and non-sensitizers. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 17,
+                    "end": 27,
+                    "type": "figure",
+                    "text": "Figure S1)"
+                }
+            ]
+        },
+        {
+            "text": "For compounds with low permeability we made the same observation. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "These findings re-confirm the absence of the global correlation between skin permeability and sensitization.",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 24,
+            "section_rank": 15
+        },
+        {
+            "text": "Aforementioned results contradict a common view of skin permeation as the first step in the adverse outcome pathway leading to skin sensitization (OECD, 2012). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 146,
+                    "end": 158,
+                    "type": "bibr",
+                    "text": "(OECD, 2012)"
+                }
+            ]
+        },
+        {
+            "text": "To investigate whether the concordance between skin sensitization and permeability could be confined to certain chemical classes, we have performed a cluster analysis for the entire dataset of 283 compounds with imputed data. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15
+        },
+        {
+            "text": "Careful analysis of the relationships between the two endpoints within clusters of structurally similar compounds showed that the observation linking the high permeability and skin sensitization potential could be made only for one cluster out of 34. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15
+        },
+        {
+            "text": "This specific Cluster 1 is formed by 11 compounds represented by four barbitals (barbital, amylobarbital, butobarbital, and phenobarbital) and seven other drugs (scopolamine, ibuprofen, atropine, griseofulvin, cyclamen aldehyde, p-tert-butyl-alphaethyl-hydrocinnamal, and sodium-3,3,5-trimethyl-benzenesulfonate). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 138,
+                    "type": "bibr",
+                    "text": "(barbital, amylobarbital, butobarbital, and phenobarbital)"
+                },
+                {
+                    "start": 161,
+                    "end": 312,
+                    "type": "bibr",
+                    "text": "(scopolamine, ibuprofen, atropine, griseofulvin, cyclamen aldehyde, p-tert-butyl-alphaethyl-hydrocinnamal, and sodium-3,3,5-trimethyl-benzenesulfonate)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 14,
+                    "end": 21,
+                    "rawForm": "Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w19"
+                }
+            ]
+        },
+        {
+            "text": "The comparison between permeability and sensitization for compounds in this cluster is shown in Figure S2 and Table S6. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 105,
+                    "type": "figure",
+                    "text": "Figure S2"
+                },
+                {
+                    "start": 110,
+                    "end": 118,
+                    "type": "table",
+                    "text": "Table S6"
+                }
+            ]
+        },
+        {
+            "text": "The analysis revealed that seven compounds are associated with logKp < \u22122.5 and are non-sensitizers, whereas the four other compounds with logKp > \u22122.5 are sensitizers.",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 25,
+            "section_rank": 15
+        },
+        {
+            "text": "No distinct trend could be observed for the remaining clusters. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "Although, as noticed above, skin permeability is widely considered to be mechanistically implicated in skin sensitization, we have found no evidence that high permeability implies high skin sensitization potency and vice versa. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "Some other authors reached the same conclusions. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "For instance, the analysis of mechanism-based QSARs demonstrates no role for skin permeability in determining potency (Roberts and Aptula, 2008). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 118,
+                    "end": 144,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "(Roberts and Aptula, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Similarly, in another recent study (Jaworska et al., 2013) the authors hypothesizes that the accumulation of a chemical in the epidermis layer of the skin is much more related to the skin sensitization than the actual penetration properties. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 58,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(Jaworska et al., 2013)"
+                }
+            ]
+        },
+        {
+            "text": "In another study (Roberts and Patlewicz, 2010), it was hypothesized that skin sensitizers reach the viable epidermis by-passing skin permeability route via shunt pathways, since bad penetrants have shown to be sensitizers when applied by intradermal injection.",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 26,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 17,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "text": "(Roberts and Patlewicz, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Another important benefit of this cheminformatics analysis is the use of structural rules established from the interpretation of developed QSAR models, SAR and cluster analysis, in order to design new compounds with improved permeability and sensitization characteristics. ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "We illustrated this approach using an example of putative stepwise structural optimization for permeability of pentanoic acid, considering experimental data and predictions using developed models (Figure 3). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 27,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 196,
+                    "end": 205,
+                    "type": "figure",
+                    "text": "(Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Starting from this compound with a relatively low permeability (logKp = \u22122.7), several transformation steps can increase its permeability more than 10-fold and convert it to n-heptanol (logKp = \u22121.50). ",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "n-heptanol is predicted as a sensitizer (which is confirmed by its Material Safety Data Sheet (OXEA, 2013) but it can be transformed to octanoic acid that has a similar permeability (logKp = \u22121.60) as n-heptanol but lacks its sensitization potential.",
+            "section": "Relationships between skin sensitization potential and skin permeability based on computed data",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        },
+        {
+            "text": "CONCLUSIONS",
+            "section_rank": 16
+        },
+        {
+            "text": "We have compiled, curated, and integrated the largest publicly available datasets of skin permeability for diverse chemicals. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 28,
+            "section_rank": 16
+        },
+        {
+            "text": "The analysis of the experimental data for compounds containing both skin sensitization and permeability data indicated that, with a few exceptions, there is no overall concordance between these two endpoints, i.e., weak penetrants could be strong sensitizers and vice versa. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 28,
+            "section_rank": 16
+        },
+        {
+            "text": "Although sensitizers have to penetrate the skin layer, the permeability coefficient is not a determinant of the skin sensitization potential. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 28,
+            "section_rank": 16
+        },
+        {
+            "text": "Cluster analysis also helped us to highlight the high consistency of experimental Kp data reported in the literature.",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 28,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 7,
+                    "rawForm": "Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w20"
+                }
+            ]
+        },
+        {
+            "text": "We have built statistically significant and externally predictive QSAR models of skin permeability that can be used to predict the permeability of untested compounds through the skin. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 29,
+            "section_rank": 16
+        },
+        {
+            "text": "Comparison of the developed consensus model with DERMWIN software showed that our model significantly outperformed DERMWIN in predictivity (Q 2 ext = 72% and 43%, respectively) but at the expense of some lost in coverage (77% vs. 100%); when applied to the same set of compounds as used for DERMWIN (ignoring the AD for our models) the performance of our model is still higher (Q 2 ext = 71% vs. 66%). ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 29,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 49,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#annotator26",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-22",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 115,
+                    "end": 122,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#curator",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-23",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 291,
+                    "end": 298,
+                    "type": "software",
+                    "rawForm": "DERMWIN",
+                    "resp": "#curator",
+                    "used": true,
+                    "id": "e0ab19a106-software-simple-24",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 49,
+                    "end": 56,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w21"
+                },
+                {
+                    "type": "software",
+                    "start": 57,
+                    "end": 65,
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w22"
+                },
+                {
+                    "type": "software",
+                    "start": 115,
+                    "end": 122,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w23"
+                },
+                {
+                    "type": "software",
+                    "start": 291,
+                    "end": 298,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w24"
+                }
+            ]
+        },
+        {
+            "text": "The compiled datasets and all the models developed in this study have been made publicly available at the Chembench Web Portal (http://chembench.mml.unc.edu).",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 29,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 120,
+                    "end": 126,
+                    "rawForm": "Portal",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w25"
+                }
+            ]
+        },
+        {
+            "text": "The use of skin permeability and sensitization values imputed by our QSAR models allowed us to examine the relationships between these two endpoints utilizing a significantly expanded set consisting of 283 compounds. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 30,
+            "section_rank": 16
+        },
+        {
+            "text": "The results indicated that there is still no overall concordance between these endpoints. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 30,
+            "section_rank": 16
+        },
+        {
+            "text": "This phenomenon could be explained by attributing higher impact to compound accumulation in the skin on sensitization potential, rather than permeability through the skin layer. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 30,
+            "section_rank": 16
+        },
+        {
+            "text": "Further investigation into this observation would be facilitated via building predictive models of compound accumulation in the skin, and incorporating considerations of protein binding and reactivity.",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 30,
+            "section_rank": 16
+        },
+        {
+            "text": "In conclusion, the skin permeability models developed in this study could be useful for risk assessment purposes in addition to the assessment of skin sensitization; for instance, the knowledge how much of an applied dose will penetrate the skin may be helpful to estimate systemic exposure to topically applied chemicals. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Moreover, the lack of correlation between skin permeability and skin sensitization established in this study suggests a possibility of rational design of compounds with the desired high permeability but low skin sensitization potential that may be of value to the cosmetics industry. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Human vs. rodent skin permeability correlation (R 2 = 0.44, logKp Human = 0.72*logKp Rodent \u2212 1.17). ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Cluster analysis of the human skin permeability dataset D: dendrogram and heat map of the distance matrix ordered based on structural similarity (blue/violet = similar; yellow/red = dissimilar). ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 7,
+                    "rawForm": "Cluster",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w26"
+                }
+            ]
+        },
+        {
+            "text": "The following clusters are noted: ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "(a) carboxylic acids, ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "(b) glycol ethers, and ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "(c) steroids. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Example of a structural transformation of sensitizer n-octanol with low permeability to nonsensitizer octanoic acid with improved permeability. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Desired change of property is highlighted by green, undesired -by red; \u0394 = logKp parent \u2212 logKp child . ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Statistical characteristics of QSAR models for skin permeability assessed by 5-fold external cross-validation. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Applicability Domain was not considered in these models.",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 31,
+            "section_rank": 16
+        },
+        {
+            "text": "Table 2",
+            "section_rank": 17
+        },
+        {
+            "text": "Comparison of experimental data on skin sensitization and human skin permeability Chemical compound LLNA Result logKp Table 3 Comparison of the performance of consensus QSAR model with that of DERMWIN on the set of 143 compounds. ",
+            "section": "Table 2",
+            "paragraph_rank": 32,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 118,
+                    "end": 125,
+                    "type": "table",
+                    "text": "Table 3"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 193,
+                    "end": 200,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w27"
+                }
+            ]
+        },
+        {
+            "text": "Figure 1.",
+            "paragraph_rank": 33,
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 2.",
+            "paragraph_rank": 34,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 3.",
+            "paragraph_rank": 35,
+            "section_rank": 20
+        },
+        {
+            "text": "1 to 7: Human-based skin permeability models. ",
+            "paragraph_rank": 36,
+            "section_rank": 21
+        },
+        {
+            "text": "Models 8 to 13: Rodent-based skin permeability models. ",
+            "paragraph_rank": 36,
+            "section_rank": 21
+        },
+        {
+            "text": "RSME: root mean square error; MAE: mean absolute error *",
+            "paragraph_rank": 36,
+            "section_rank": 21
+        },
+        {
+            "text": "Dermal Permeability Coefficient Program (DERMWIN) is a module available in the EPI Suite package developed by the EPA's Office of Pollution Prevention Toxics and Syracuse Research Corporation and available at http://www.epa.gov/oppt/ exposure/pubs/episuitedl.htm. ",
+            "paragraph_rank": 37,
+            "section_rank": 22,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 32,
+                    "end": 39,
+                    "rawForm": "Program",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w28"
+                },
+                {
+                    "type": "software",
+                    "start": 41,
+                    "end": 48,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w29"
+                },
+                {
+                    "type": "software",
+                    "start": 89,
+                    "end": 96,
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w30"
+                },
+                {
+                    "type": "software",
+                    "start": 120,
+                    "end": 126,
+                    "rawForm": "Office",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w31"
+                },
+                {
+                    "type": "software",
+                    "start": 258,
+                    "end": 262,
+                    "rawForm": ".htm",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w32"
+                }
+            ]
+        },
+        {
+            "text": "The DERMWIN v.2.02 estimates chemicals' dermal permeability coefficient using the following equation 1 (USEPA, 2004):",
+            "paragraph_rank": 37,
+            "section_rank": 22,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 11,
+                    "rawForm": "DERMWIN",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w33"
+                }
+            ]
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 23
+        },
+        {
+            "text": "Toxicol Appl Pharmacol. ",
+            "section": "Table 1",
+            "paragraph_rank": 41,
+            "section_rank": 23
+        },
+        {
+            "text": "Author manuscript; available in PMC 2016 April 15.",
+            "section": "Table 1",
+            "paragraph_rank": 41,
+            "section_rank": 23
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 25
+        },
+        {
+            "text": "This study was supported in part by NIH (grants GM66940 and GM096967), EPA (grant RD 83499901), and FAPEG (grant 201310267001095). ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25
+        },
+        {
+            "text": "A.T. acknowledges partial support from Russian Scientific Foundation (project 14-43-00024). ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 58,
+                    "end": 68,
+                    "rawForm": "Foundation",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w34"
+                }
+            ]
+        },
+        {
+            "text": "E.M. acknowledges partial support from STCU (Grant P407) E.M, V.A., and C.H.A acknowledge partial support from CNPq (PVE, Grant 400760/2014-2). ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 45,
+                    "end": 50,
+                    "rawForm": "Grant",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w35"
+                },
+                {
+                    "type": "software",
+                    "start": 122,
+                    "end": 127,
+                    "rawForm": "Grant",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w36"
+                }
+            ]
+        },
+        {
+            "text": "V.A. thanks CNPq and Science without Borders program for the financial support of his visit to the University of North Carolina at Chapel Hill. ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 45,
+                    "end": 52,
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w37"
+                }
+            ]
+        },
+        {
+            "text": "N.K. and J.S. are supported by the NIEHS contract N01-ES 35504 and the Intramural Research Program of the NIEHS. ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 91,
+                    "end": 98,
+                    "rawForm": "Program",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w38"
+                }
+            ]
+        },
+        {
+            "text": "This article may be the work product of an employee or group of employees of the NIEHS, NIH, or other organizations; however, the statements, opinions, or conclusions contained therein do not necessarily represent the statements, opinions, or conclusions of NIEHS, NIH, the United States government, or other organizations. ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25
+        },
+        {
+            "text": "The use of commercial product names is for comparative purposes only and does not constitute endorsement by any of the authors, organizations, or agencies.",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 42,
+            "section_rank": 25
+        },
+        {
+            "text": "Supplementary Material",
+            "section_rank": 27
+        },
+        {
+            "text": "Refer to Web version on PubMed Central for supplementary material.",
+            "section": "Supplementary Material",
+            "paragraph_rank": 43,
+            "section_rank": 27,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 0,
+                    "end": 5,
+                    "rawForm": "Refer",
+                    "resp": "whitelist",
+                    "id": "e0ab19a106-software-simple-w39"
+                }
+            ]
+        },
+        {
+            "text": "ICCVAM",
+            "section_rank": 28
+        },
+        {
+            "text": "Interagency Coordinating Committee on the Validation of Alternative Methods",
+            "section_rank": 29
+        },
+        {
+            "text": "Kp",
+            "section_rank": 30
+        },
+        {
+            "text": "Permeability coefficient We compiled the largest publicly-available skin permeability dataset.",
+            "section": "Kp",
+            "paragraph_rank": 44,
+            "section_rank": 30
+        },
+        {
+            "text": "LLNA",
+            "section_rank": 31
+        },
+        {
+            "text": "\u2022 Predictive QSAR models were developed for skin permeability.",
+            "section": "LLNA",
+            "paragraph_rank": 45,
+            "section_rank": 31
+        },
+        {
+            "text": "\u2022 No concordance between skin sensitization and skin permeability has been found.",
+            "section": "LLNA",
+            "paragraph_rank": 46,
+            "section_rank": 31
+        },
+        {
+            "text": "\u2022 Structural rules for optimizing sensitization and penetration were established.",
+            "section": "LLNA",
+            "paragraph_rank": 47,
+            "section_rank": 31
+        }
+    ]
+}

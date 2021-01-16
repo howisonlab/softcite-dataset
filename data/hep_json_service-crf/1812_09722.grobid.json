@@ -1,0 +1,3181 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "We present a two-stage neural network architecture that enables a fully autonomous and comprehensive characterization of collision events by exclusively exploiting the four momenta of final-state particles. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We refer to the first stage of the architecture as Lorentz Boost Network (LBN). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The LBN allows the creation of particle combinations representing rest frames. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The LBN also enables the formation of further composite particles, which are then transformed into said rest frames by Lorentz transformation. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The properties of the composite, transformed particles are compiled in the form of characteristic variables that serve as input for a subsequent network. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This second network has to be configured for a specific analysis task such as the separation of signal and background events. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Using the example of the classification of ttH and tt+bb events, we compare the separation power of the LBN approach with that of domain-unspecific deep neural networks (DNN). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We observe leading performance with the LBN, even though we provide the DNNs with extensive additional input information beyond the particle four momenta. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Furthermore, we demonstrate that the LBN forms physically meaningful particle combinations and autonomously generates suitable characteristic variables.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "K",
+            "section_rank": 2
+        },
+        {
+            "text": ": Analysis and statistical methods, Computing, Data processing methods, Deep Learning",
+            "section": "K",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 3
+        },
+        {
+            "text": "A key element in the development of machine learning methods is the exploitation of the underlying structure of the data through appropriate architectures. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "For example, convolutional neural networks make use of local, translation-invariant correlations in image-like data and compile them into characteristic features [1][2][3][4][5][6][7][8][9][10][11][12].",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 162,
+                    "end": 165,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 165,
+                    "end": 168,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 168,
+                    "end": 171,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 171,
+                    "end": 174,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 174,
+                    "end": 177,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 177,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 180,
+                    "end": 183,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 183,
+                    "end": 186,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                },
+                {
+                    "start": 186,
+                    "end": 189,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 189,
+                    "end": 193,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 193,
+                    "end": 197,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 197,
+                    "end": 201,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "In particle physics, characteristic features are used to identify particles, to separate signal from background processes, or to perform calibrations. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "These features are usually expressed in manually engineered variables based on physics reasoning. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "As input for machine learning methods in particle physics, these so-called high-level variables were in many cases superior to the direct use of particle four momenta, often referred to as low-level variables. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Recently, several working groups have shown that deep neural networks can perform better if they are trained with both specifically constructed variables and low-level variables [13][14][15][16][17][18][19][20][21][22][23][24][25]. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 178,
+                    "end": 182,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 182,
+                    "end": 186,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 186,
+                    "end": 190,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 190,
+                    "end": 194,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                },
+                {
+                    "start": 194,
+                    "end": 198,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                },
+                {
+                    "start": 198,
+                    "end": 202,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                },
+                {
+                    "start": 202,
+                    "end": 206,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                },
+                {
+                    "start": 206,
+                    "end": 210,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                },
+                {
+                    "start": 210,
+                    "end": 214,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                },
+                {
+                    "start": 214,
+                    "end": 218,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                },
+                {
+                    "start": 218,
+                    "end": 222,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                },
+                {
+                    "start": 222,
+                    "end": 226,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                },
+                {
+                    "start": 226,
+                    "end": 230,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "This observation suggests that the networks extract additional useful information from the training data.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "In this paper, we attempt to autonomize the process of finding suitable variables that describe the main characteristics of a particle physics task. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Through a training process, a neural network should learn to construct these variables from raw particle information. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "This requires an architecture tailored towards the structure of particle collision events. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "We will present such an architecture here and investigate its impact on the separation power for signal and background processes in comparison to domain-unspecific deep neural networks. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Furthermore, we will uncover characteristic features which are identified by the network as particularly suitable.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Particle collisions at high energies produce many particles which are often short-lived. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "These short-lived particles decay into particles of the final state, sometimes through a cascade of multiple decays. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Intermediate particles can be reconstructed by using energy-momentum conservation when a parent particle decays into its daughter particles. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "By assigning to each particle a four-vector defined by the particle energy and its momentum vector, the sum of the four-vectors of the daughter particles gives the four-vector of the parent particle. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "For low-energy particle collisions, bubble chamber images of parents and their daughter particles were recorded in textbook quality. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Evidently, here the decay angular distributions of the daughter particles are distorted by the movement of the parent particle, but can be recovered in the rest frame of the parent particle after Lorentz transformation.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The same principles of particle cascades apply to high-energy particle collisions at colliders. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Here, the particles of interest are, for example, top quarks or Higgs bosons, which remain invisible in the detector due to their short lifetimes, but can be reconstructed from their decay products. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Exploiting the properties of such parent particles and their daughter particles in appropriate rest frames is a key to the search for high-level variables characterizing a physics process.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "For the autonomous search for sensitive variables, we propose a two-stage network, composed of a so-called Lorentz Boost Network (LBN) followed by an application-specific deep neural network (NN). ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The LBN takes only the four-vectors of the final-state particles as input. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "In the LBN there are two ways of combining particles, one to create composite particles, the other to form appropriate rest frames. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Using Lorentz transformations, the composite particles are then boosted into the rest frames. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Thus, the decay characteristics of a parent particle can be exploited directly.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Finally, characteristic features are derived from the boosted composite particles: masses, angles, etc. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The second network stage (NN) then takes these variables as input to solve a specific problem, e.g. the separation of signal and background processes. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "While the first stage constitutes a novel network architecture, the latter network is interchangeable and can be adapted depending on the analysis task.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "This paper is structured as follows. ",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "First, we explain the network architecture in detail. ",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Second, we present the simulated dataset we use to investigate the performance of our architecture in comparison to typical deep neural networks. ",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Thereafter, we review the particles, rest frames, and characteristic variables created by the network to gain insight into what is learned in the training process, before finally presenting our conclusions.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Network architecture",
+            "section_rank": 4
+        },
+        {
+            "text": "In this section we explain the structural concept on which the Lorentz Boost Network (LBN) is based and introduce the network architecture.",
+            "section": "Network architecture",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "The measured final state of a collision event is typically rather complex owing to the high energies of the particles involved. ",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "In principle, all available information is encoded in the particles' four-vectors, but the comprehensive extraction of relevant properties poses a significant challenge. ",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "To this end, physicists engineer high-level variables to decipher and factorize the probability distributions inherent to the underlying physics processes. ",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "These high-level variables are often fed into machine learning algorithms to efficiently combine their descriptive power in the context of a specific research question. ",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "However, the consistent result of [13][14][15][16][17][18][19][20][21][22][23][24][25] is that the combination of both low-and high-level variables tends to provide superior performance. ",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 38,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 38,
+                    "end": 42,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 42,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 46,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                },
+                {
+                    "start": 50,
+                    "end": 54,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                },
+                {
+                    "start": 54,
+                    "end": 58,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                },
+                {
+                    "start": 58,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                },
+                {
+                    "start": 62,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                },
+                {
+                    "start": 66,
+                    "end": 70,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                },
+                {
+                    "start": 70,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                },
+                {
+                    "start": 74,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                },
+                {
+                    "start": 78,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                },
+                {
+                    "start": 82,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "This observation suggests that low-level variables potentially contain additional, useful information that is absent in hand-crafted high-level variables.",
+            "section": "Network architecture",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The aim of the LBN is, given only low-level variables as input, to autonomously determine a comprehensive set of physics-motivated variables that maximizes the relevant information for solving the physics task in the subsequent neural network application. ",
+            "section": "Network architecture",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 1 shows the proposed two-stage network architecture (LBN+NN) in detail. ",
+            "section": "Network architecture",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The first stage is the LBN and constitutes the novel contribution. ",
+            "section": "Network architecture",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "It consists of several parts, namely the combination of input four-vectors to particles and rest frames, subsequent Lorentz transformations, and the extraction of suitable high-level variables. ",
+            "section": "Network architecture",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The second stage can be some form of deep neural network (NN) with an objective function depending on the specific research question.  ",
+            "section": "Network architecture",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "are combined in two independent ways before each of the combined particles is boosted into its particular rest frame, which is formed from a different particle combination. ",
+            "section": "Network architecture",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The boosted particles are characterized by variables which can be, e.g., invariant masses, transverse momenta, pseudorapidities, and angular distances between them. ",
+            "section": "Network architecture",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "These features serve as input to the second network designed to accomplish a particular analysis task.",
+            "section": "Network architecture",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The LBN combines N input four-vectors, consisting of energies E and momentum components p x , p y , p z , to create M particles and M corresponding rest frames according to weighted sums using trainable weights. ",
+            "section": "Network architecture",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Through Lorentz transformation, each combined particle is boosted into its dedicated rest frame. ",
+            "section": "Network architecture",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "After that, a generic set of features is extracted from the properties of these M boosted particles.",
+            "section": "Network architecture",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Examples of variables that can be reconstructed with this structure include spin-dependent angular distributions, such as those observed during the decay of a top quark with subsequent leptonic decay of the W boson. ",
+            "section": "Network architecture",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "By boosting the charged lepton into the rest frame of the W boson, its decay angular distribution can be investigated. ",
+            "section": "Network architecture",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "In more sophisticated scenarios, the LBN is also capable of accessing further properties that rely on the characteristics of two different rest frames. ",
+            "section": "Network architecture",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "An example is a variable usually referred to as cos(\u03b8 * ), which is defined by the angular difference between the directions of the charged lepton in the W boson's rest frame, and the W boson in the rest frame of the top quark. ",
+            "section": "Network architecture",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The procedure of how this variable can be reconstructed in the LBN is depicted in Figure 2.",
+            "section": "Network architecture",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 82,
+                    "end": 90,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "The number N of incoming particles is to be chosen according to the research question. ",
+            "section": "Network architecture",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "The number of matching combinations M is a hyperparameter to be adjusted. ",
+            "section": "Network architecture",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "In this paper we introduce  Figure 2: Example of a possible feature engineering in top quark decays addressing the angular distance of the direction of the W boson in the top rest system and the direction of the lepton in the W boson rest system, commonly referred to as cos(\u03b8 * ).",
+            "section": "Network architecture",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 28,
+                    "end": 36,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "a specific version of the LBN which constructs M particle combinations, and each combination will have its own suitable rest system. ",
+            "section": "Network architecture",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Other variants are conceivable and will be mentioned below.",
+            "section": "Network architecture",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "In the following paragraphs we describe the network architecture in detail.",
+            "section": "Network architecture",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Combinations",
+            "section_rank": 5
+        },
+        {
+            "text": "The purpose of the first LBN layer is to construct arbitrary particles and suitable rest frames for subsequent boosting. ",
+            "section": "Combinations",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The construction is realized via linear combinations of N input four-vectors,",
+            "section": "Combinations",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "to a number of M particles and rest frames, which are represented by four-vectors accordingly. ",
+            "section": "Combinations",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "Here, M is a hyperparameter of the LBN and its choice is related to the respective physics application. ",
+            "section": "Combinations",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "The coefficients W of all linear combinations C,",
+            "section": "Combinations",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "with m \u2208 [1, M], are free parameters and subject to optimization within the scope of the training process. ",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 15,
+                    "type": "bibr",
+                    "text": "[1, M]"
+                }
+            ]
+        },
+        {
+            "text": "In the following, combined particles and rest frames are referred to as C P and C R , respectively. ",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "Taking both into consideration, this amounts to a total of 2 \u2022 N \u2022 M degrees of freedom in the LBN. ",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "In order to prevent the construction of objects which would lead to unphysical implications when applying Lorentz transformations, i.e., four-vectors not fulfilling E > m > 0, all parameters W mn are restricted to positive values. ",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "We initialize the weights randomly according to a half-normal distribution with mean 0 and standard deviation 1/M. ",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "It should be noted that, in order to maintain essential physical properties and relations between input four-vectors, feature normalization is not applied at this point.",
+            "section": "Combinations",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "Lorentz transformation",
+            "section_rank": 6
+        },
+        {
+            "text": "The boosting layer performs a Lorentz transformation of the combined particles into their associated rest frames. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "The generic transformation of a four-vector q is defined as q * = \u039b \u2022 q with the boost matrix",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 23,
+            "section_rank": 6
+        },
+        {
+            "text": "(2.",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "3)",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "The relativistic parameters \u03b3 = E/m, \u00ec \u03b2 = \u00ec p/E, and \u00ec n = \u00ec \u03b2/\u03b2 are to be derived per rest-frame four-vector C R m . ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "The technical implementation within deep learning algorithms requires a vectorized representation of the Lorentz transformation. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "To this end, we rewrite the boost matrix in Equation 2.3 as 5) and the 4 \u00d7 4 unit matrix I. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 60,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "5)"
+                }
+            ]
+        },
+        {
+            "text": "The operators \u2295 and denote elementwise addition and multiplication, respectively. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "This notation also allows for the extension by additional dimensions to account for the number of combinations M and an arbitrary batch size. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "As a result, all boosted four-vectors B are efficiently computed by a single, broadcasted matrix multiplication, B = \u039b R \u2022 C P . ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "While the description above focuses on a pairwise mapping approach, i.e., particle C P m is boosted into rest frame C R m , other configurations are conceivable: \u2022 The input four-vectors are combined to build M particles and K rest frames. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Each combined particle is transformed into all rest frames, resulting in K \u2022 M boosted four-vectors.",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "\u2022 The input four-vectors are combined only to build M particles, which simultaneously serve as rest frames. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Each combined particle is transformed into all rest frames derived from the other particles, resulting in M 2 \u2212 M boosted four-vectors.",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "The specific advantages of these configurations can, in general, depend on aspects of the respective physics application. ",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "Results of these variants will be the target of future investigations.",
+            "section": "Lorentz transformation",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "Feature extraction",
+            "section_rank": 7
+        },
+        {
+            "text": "Following the boosting layer, features are extracted from the Lorentz transformed four-vectors, which can then be utilized in a subsequent neural network. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 29,
+            "section_rank": 7
+        },
+        {
+            "text": "For the projection of M \u00d7 4 particle properties into F \u00d7 1 features, we employ a distinct yet customizable set of generic mappings. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 29,
+            "section_rank": 7
+        },
+        {
+            "text": "The autonomy of the network is not about finding entirely new features, but rather about factorizing probability densities in the most effective way possible to answer a scientific question. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 29,
+            "section_rank": 7
+        },
+        {
+            "text": "Therefore, we let the LBN network work autonomously to find suitable particle combinations and rest frames which enable this factorization, but then use established particle characterizations.",
+            "section": "Feature extraction",
+            "paragraph_rank": 29,
+            "section_rank": 7
+        },
+        {
+            "text": "We differentiate between two types of generic mappings:",
+            "section": "Feature extraction",
+            "paragraph_rank": 30,
+            "section_rank": 7
+        },
+        {
+            "text": "1. Single features are extracted per boosted four-vector. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "Besides the vector elements (E, p x , p y , p z ) themselves, derived features such as mass, transverse and longitudinal momentum, pseudorapidity, and azimuth can be derived.",
+            "section": "Feature extraction",
+            "paragraph_rank": 31,
+            "section_rank": 7
+        },
+        {
+            "text": "2. Pairwise features are extracted for all pairs of boosted four-vectors. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "Examples are the cosine of their spatial angular difference, their distance in the \u03b7\u2212\u03c6 plane, or their distance in Minkowski space. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "In contrast to single features, pairwise features introduce close connections among boosted four-vectors and, by means of backpropagation, between trainable combinations of particles and rest frames.",
+            "section": "Feature extraction",
+            "paragraph_rank": 32,
+            "section_rank": 7
+        },
+        {
+            "text": "The set of extracted features is concatenated to a single output vector. ",
+            "section": "Feature extraction",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "Provided that the employed batch size is sufficiently large, batch normalization with floating averages adjusted during training can be performed after this layer [26].",
+            "section": "Feature extraction",
+            "paragraph_rank": 33,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 163,
+                    "end": 167,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "Subsequent problem-specific application",
+            "section_rank": 8
+        },
+        {
+            "text": "In the previous sections, we described the LBN as shown in the left box in Figure 1, namely how input vectors are combined and boosted into dedicated rest frames, followed by how features of these transformed four-vectors are compiled. ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 34,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 83,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "These features are intended to maximize the information content to be exploited in a subsequent, problem-specific deep neural network NN as shown in the right box in Figure 1. ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 34,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 166,
+                    "end": 174,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The objective function of the NN defines the type of learning process. ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "Weight updates are performed as usual through backpropagation. ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "These updates apply to the weights of the subsequent network as well as to the trainable weights of the combination layer in the LBN.",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "In the following, we evaluate how well the autonomous feature engineering of the compound LBN+NN network operates. ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "We compare its performance with only low-level information to that of typical, fully-connected deep neural networks (DNNs). ",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "We alternatively supply the DNNs with low-level information, sophisticated high-level variables (see Appendix 6), and the combination of both.",
+            "section": "Subsequent problem-specific application",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "Simulated datasets",
+            "section_rank": 9
+        },
+        {
+            "text": "The Pythia 8.2.26 program package [27] was used to simulate ttH and tt + bb events. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 38,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 11,
+                    "end": 18,
+                    "type": "version",
+                    "rawForm": "8.2.26",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                }
+            ]
+        },
+        {
+            "text": "Examples of corresponding Feynman diagrams are shown in Figure 3 To analyze a typical final state as observed in an LHC detector, we use the DELPHES package [28]. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 56,
+                    "end": 64,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Figure 3"
+                },
+                {
+                    "start": 157,
+                    "end": 161,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                }
+            ]
+        },
+        {
+            "text": "DELPHES provides a modular framework designed to parameterize the simulation of a multipurpose detector. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "In our study, we chose to simulate the CMS detector response. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "All important effects such as pile-up, deflection of charged particles in magnetic fields, electromagnetic and hadronic calorimetry, and muon detection systems are covered. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "The simulated output consists of muons, electrons, tau leptons, photons, jets, and missing transverse momentum from a particle flow algorithm. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "As the neutrino leaves the detector without interacting, we identify its transverse quark pair production with an additional bottom quark pair induced by the splitting of a gluon. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "Despite differences caused by the spin and color-charge of the gluon, the process is very similar to the ttH (H ! bb) signal process in terms of final state content and kinematic topology.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "The theoretical description of the production mechanisms of these tt+hf contributions is ambiguous. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "For example, processes with additional bottom quarks can be modeled via gg ! ttg matrix element calculations in (N)LO with collinear g ! bb splittings in the parton shower, gb ! ttb production using 4FS and 5FS calculations, or solely via collinear gluon splittings in the parton shower [29][30][31]87]. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 37,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 287,
+                    "end": 291,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                },
+                {
+                    "start": 291,
+                    "end": 295,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                },
+                {
+                    "start": 295,
+                    "end": 299,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                },
+                {
+                    "start": 299,
+                    "end": 302,
+                    "type": "bibr",
+                    "text": "87]"
+                }
+            ]
+        },
+        {
+            "text": "Currently neither higher-order theoretical calculations nor experimental methods can constrain expected rates with an accuracy better than 35 % [28][29][30][31].",
+            "section": "Simulated datasets",
+            "paragraph_rank": 37,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 148,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                },
+                {
+                    "start": 148,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                },
+                {
+                    "start": 152,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                },
+                {
+                    "start": 156,
+                    "end": 160,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "However, a clear and robust process definition is required in the scope of this analysis for two particular reasons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "First, production processes might be subject to different theoretical uncertainties which must be properly assigned to establish a reasonable modeling of recorded collision data with simulated events. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "Second, common analysis strategies are based on the separation of signal and background contributions to define specific signal-and background-enriched phase space regions in which the measurement is performed. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "In the presented analysis, the most relevant background contributions are also separated from each other (cf. Sections 4 and 7). ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "In case of inadequate process definitions, the efficiency of this separation approach is impaired which in turn reduces the measurement sensitivity.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 38,
+            "section_rank": 9
+        },
+        {
+            "text": "The definition of the particular tt subprocesses is prescribed in the following. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "After the simulation of events using matrix element generators, parton showering, and phenomenological hadronization processes (cf. Section 2.2.1), final state particles are clustered into jets using the anti-k T algorithm with a distance parameter of DR = 0.4. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "If a jet can be associated to the hard scattering process, i.e., if it originates from the top quark or hadronic W boson decays, or if it exhibits a transverse momentum below 20 GeV, it is rejected in subsequent considerations. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "The clustering history of the remaining jets is traversed backwards up to the hadronization stage and comprises, in particular, the decays of unstable hadrons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Based on this, five tt subprocesses are defined by counting the numbers of additional jets and contained b and c hadrons.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 \"tt+bb\": The event has at least two additional jets which each contain at least one b hadron. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "quark pair production with an additional bottom quark pair induced by the splitting of a gluon. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "Despite differences caused by the spin and color-charge of the gluon, the process is very similar to the ttH (H ! bb) signal process in terms of final state content and kinematic topology.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The theoretical description of the production mechanisms of these tt+hf contributions is ambiguous. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "For example, processes with additional bottom quarks can be modeled via gg ! ttg matrix element calculations in (N)LO with collinear g ! bb splittings in the parton shower, gb ! ttb production using 4FS and 5FS calculations, or solely via collinear gluon splittings in the parton shower [29][30][31]87]. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 287,
+                    "end": 291,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                },
+                {
+                    "start": 291,
+                    "end": 295,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                },
+                {
+                    "start": 295,
+                    "end": 299,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                },
+                {
+                    "start": 299,
+                    "end": 302,
+                    "type": "bibr",
+                    "text": "87]"
+                }
+            ]
+        },
+        {
+            "text": "Currently neither higher-order theoretical calculations nor experimental methods can constrain expected rates with an accuracy better than 35 % [28][29][30][31].",
+            "section": "Simulated datasets",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 148,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                },
+                {
+                    "start": 148,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                },
+                {
+                    "start": 152,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                },
+                {
+                    "start": 156,
+                    "end": 160,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "However, a clear and robust process definition is required in the scope of this analysis for two particular reasons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "First, production processes might be subject to different theoretical uncertainties which must be properly assigned to establish a reasonable modeling of recorded collision data with simulated events. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Second, common analysis strategies are based on the separation of signal and background contributions to define specific signal-and background-enriched phase space regions in which the measurement is performed. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "In the presented analysis, the most relevant background contributions are also separated from each other (cf. Sections 4 and 7). ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "In case of inadequate process definitions, the efficiency of this separation approach is impaired which in turn reduces the measurement sensitivity.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The definition of the particular tt subprocesses is prescribed in the following. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "After the simulation of events using matrix element generators, parton showering, and phenomenological hadronization processes (cf. Section 2.2.1), final state particles are clustered into jets using the anti-k T algorithm with a distance parameter of DR = 0.4. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "If a jet can be associated to the hard scattering process, i.e., if it originates from the top quark or hadronic W boson decays, or if it exhibits a transverse momentum below 20 GeV, it is rejected in subsequent considerations. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "The clustering history of the remaining jets is traversed backwards up to the hadronization stage and comprises, in particular, the decays of unstable hadrons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "Based on this, five tt subprocesses are defined by counting the numbers of additional jets and contained b and c hadrons.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 \"tt+bb\": The event has at least two additional jets which each contain at least one b hadron.  ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "momentum components from the measurement of missing transverse energy, and we reconstruct its longitudinal momentum by constraining the mass of the leptonically decaying W boson to 80.4 GeV.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "Following the detector simulation, an event selection with the following criteria was carried out: Events must have at least six jets clustered with the anti-k T algorithm, implemented in the FastJet package [29], with a radius parameter of \u2206R = 0.4. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 208,
+                    "end": 212,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 192,
+                    "end": 200,
+                    "type": "software",
+                    "rawForm": "FastJet",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "A jet is accepted if its transverse momentum fulfills p t > 25 GeV and its absolute pseudorapidity is within |\u03b7| < 2.4. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9
+        },
+        {
+            "text": "Furthermore, exactly one electron or muon with p t > 20 GeV and |\u03b7| < 2.1 is required. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9
+        },
+        {
+            "text": "Events with further leptons are rejected to focus solely on semi-leptonic decays of the tt system. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9
+        },
+        {
+            "text": "Finally, a matching is performed between the final-state partons of the generator and the jets of the detector simulation with the maximum distance \u2206R = 0.3, whereby the matching must be unambiguously successful for all partons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9
+        },
+        {
+            "text": "For ttH events, the combined selection efficiency was measured as 2.3 %.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 45,
+            "section_rank": 9
+        },
+        {
+            "text": "For tt + bb processes, further measures are taken to identify the two additional bottom quark jets. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "The definition is an adaption of [25]. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 37,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "At generator level, the anti-k T algorithm with a radius parameter of \u2206R = 0.4 is used to cluster all stable final-state particles. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "If a generator jet is found to originate from one of the top quarks or W boson decays, or if its transverse momentum is below a threshold of 20 GeV, it is excluded from further considerations. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "For each remaining jet, we then count the number of contained bottom hadrons using the available hadronization and decay history. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "An event is a tt + bb candidate if at least two generator jets contain one or more distinct bottom hadrons. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "Finally, a matching is performed between the four quarks resulting from the tt decay and the two identified generator jets on the one hand, and the selected, reconstructed jets on the other hand. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "Similar to ttH, a tt+bb event is accepted if all six generator-level objects are unambiguously matched to a selected jet. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "This leaves a fraction of 0.02 % of the generated tt +bb events.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 46,
+            "section_rank": 9
+        },
+        {
+            "text": "A total of 10 6 events remain, consisting of an evenly distributed number of ttH and tt + bb events, which are then divided into training and validation datasets at a ratio of 80 : 20.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 47,
+            "section_rank": 9
+        },
+        {
+            "text": "For further analysis, a distinct naming scheme for reconstructed jets is introduced that is inspired by the semi-leptonic decay characteristics of the tt system. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "text": "The two light quark jets of the hadronically decaying W boson are named q 1 and q 2 , where the index 1 refers to the jet with the greater transverse momentum. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "text": "The bottom jet that is associated to this W boson within a top quark decay is referred to as b had . ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "text": "Accordingly, the bottom quark jet related to the leptonically decaying W boson is referred to as b lep . ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "text": "The remaining jets are named b 1 and b 2 , and transparently refer to the decay products of the Higgs boson for ttH, or to the additional b quark jets for tt +bb events.",
+            "section": "Simulated datasets",
+            "paragraph_rank": 48,
+            "section_rank": 9
+        },
+        {
+            "text": "In Figure 4 we show, by way of example, distributions of the generated ttH and tt+bb events. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 49,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "In Figure 4a we compare the transverse momentum of the jet b 1 , and in Figure 4b the largest difference in pseudorapidity between a jet and the charged lepton. ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 49,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 4a"
+                },
+                {
+                    "start": 72,
+                    "end": 81,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 4b"
+                }
+            ]
+        },
+        {
+            "text": "In Figure 4c we show the invariant mass of the closest jet pair, and in Figure 4d  ",
+            "section": "Simulated datasets",
+            "paragraph_rank": 49,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 12,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 4c"
+                },
+                {
+                    "start": 72,
+                    "end": 81,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 4d"
+                }
+            ]
+        },
+        {
+            "text": "Benchmarks of network performance",
+            "section_rank": 10
+        },
+        {
+            "text": "As a benchmark, the LBN is utilized in the classification task of distinguishing a signal process from a background process. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "In this example, we use the production of a top quark pair in association with a Higgs boson decaying into bottom quarks (ttH) as a signal process, and top quark pairs produced with 2 additional bottom jets (tt + bb) as a background process. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "In both processes, the final state consists of eight four-vectors, four of which represent bottom quark jets, two describe light quark jets, one denotes a charged lepton, and one a neutrino.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 50,
+            "section_rank": 10
+        },
+        {
+            "text": "Within the benchmark, the LBN competes against other frequently used deep neural network setups, which we refer to as DNN here. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "For a meaningful comparison, we perform extensive searches for the optimal hyperparameters in each setup. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "As explained above, the LBN consists of only very few parameters to be trained in addition to those of the following neural network (LBN+NN). ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "Still, by varying the number M of particle combinations to be constructed from the eight input four-vectors, and by varying the number F and types of generated features, we performed a total of 346 training runs of the LBN+NN setup, and a similar amount for the competing DNN. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "The best performing architectures are listed in Appendix 6.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 51,
+            "section_rank": 10
+        },
+        {
+            "text": "The LBN network exclusively receives the four-vectors of the eight particles introduced above, which shall be denoted by 'LBN low' in the following. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "For the networks marked with DNN we use three variants of inputs. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "In the first variant, the DNN receives only the four-vectors of the eight particles ('DNN-low'). ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "For the second variant, physics knowledge is applied in the form of 26 sophisticated high-level variables which are inspired by [25] and incorporate comprehensive event information ('DNN-high'). ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "A list of these variables, such as the event sphericity [30] and Fox-Wolfram moments [31], can be found in the Appendix 6. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 56,
+                    "end": 60,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                },
+                {
+                    "start": 85,
+                    "end": 89,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "In the third variant, we provide the DNNs with both low-level and high-level variables as input ('DNN-combined').",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 52,
+            "section_rank": 10
+        },
+        {
+            "text": "In the first set of our benchmark tests, the task of input particle identification is bypassed by using the generator information in order to exclusively measure the performance of the LBN. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Jets associated to certain quarks through matching are consistently placed at the same position of the N input four-vectors. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "We quantify how well the event classification of the networks performs with the integral of the receiver operating characteristic curve (ROC AUC). ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 5a shows the performance of all training runs involved in the hyperparameter search. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5a"
+                }
+            ]
+        },
+        {
+            "text": "The best training is marked with a horizontal line, while the distribution of results is denoted by the orange and blue shapes which manifestly depend on the structure of the scanned hyperparameter space. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "For the LBN, the training runs achieve stable results since there are only minor variations in the resulting ROC AUC.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 53,
+            "section_rank": 10
+        },
+        {
+            "text": "Also shown are the training runs of the three input variants for the DNNs. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "If the eight input fourvectors are ordered according to the generator information, the 'DNN low' setup already achieves results equivalent to the combination of low-level and high-level variables ('DNN combined'). ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "However, both setups are unable to match the 'LBN low' result. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "Note that high-level variables are mostly independent of the input ordering by construction, and hence contain reduced information compared to the ordered four-vectors. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "Consequently, the weaker performance of the 'DNN high' is well understood.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 54,
+            "section_rank": 10
+        },
+        {
+            "text": "In the second set of our benchmark test, we disregard generator information and instead sort the six jets according to their transverse momenta, followed by the charged lepton and the neutrino. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 55,
+            "section_rank": 10
+        },
+        {
+            "text": "This order can be easily established in measured data. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 55,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 5b shows that this alternative order consistently reduces the ROC AUC score of all networks.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 55,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 5b"
+                }
+            ]
+        },
+        {
+            "text": "The training runs of the LBN again show stable results with few exceptions and achieve the best performance in separating events from signal and background processes. ",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 56,
+            "section_rank": 10
+        },
+        {
+            "text": "For the DNNs, the above-mentioned hierarchy emerges, i.e., the best results are achieved using the combination of  high-and low-level variables, followed by only high-level variables with reasonably good results, whereas the DNN exhibits the weakest performance with only low-level information.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 56,
+            "section_rank": 10
+        },
+        {
+            "text": "Overall, the performance of the compound LBN+NN structure based on the four-vector inputs is quite convincing in this demanding benchmark test.",
+            "section": "Benchmarks of network performance",
+            "paragraph_rank": 57,
+            "section_rank": 10
+        },
+        {
+            "text": "Visualizations of network predictions",
+            "section_rank": 11
+        },
+        {
+            "text": "Several components of the LBN architecture have a direct physics interpretation. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 58,
+            "section_rank": 11
+        },
+        {
+            "text": "Their investigation can provide insights into what the network is learning. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 58,
+            "section_rank": 11
+        },
+        {
+            "text": "In the following, we investigate only the best network trained on the generator-ordered input in order to establish which of the quark and lepton four-vectors are combined.",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 58,
+            "section_rank": 11
+        },
+        {
+            "text": "The number of particle combinations to create is a hyperparameter of the architecture. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 59,
+            "section_rank": 11
+        },
+        {
+            "text": "For the generator ordering, we obtain the best results for 13 particles. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 59,
+            "section_rank": 11
+        },
+        {
+            "text": "This matches well with our intuition since the Feynman diagram also contains 13 particles in the cascade. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 59,
+            "section_rank": 11
+        },
+        {
+            "text": "In total we extract F = 143 features in the LBN that serve as input to the subsequent deep neural network NN (Figure 1). ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 59,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 118,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "(Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "For details refer to the Appendix 6.",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 59,
+            "section_rank": 11
+        },
+        {
+            "text": "In our particular setup, each combined particle has a separate corresponding rest frame. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 60,
+            "section_rank": 11
+        },
+        {
+            "text": "As a consequence of demanding the second network to solve a research question, the decisions about which four-vectors are combined for the composite particle and which for its rest frame are strongly correlated. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 60,
+            "section_rank": 11
+        },
+        {
+            "text": "A correlation also exists between all 13 systems of combined particles and their rest frames from the pairwise angular distances exploited by the LBN as additional properties.",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 60,
+            "section_rank": 11
+        },
+        {
+            "text": "We start by looking at the weights used to combine the input four-vectors to form the particle combinations and rest frames. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 6 shows the weight matrices of the LBN. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Each column of the two matrices for combined particles (red) and rest frames (green) is normalized so that the weight of each input four-vector (bottom quark jet b 1 of the Higgs, etc.) is shown as a percentage. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "The color code reflects the sum of the particle weights for the Higgs boson (or bb system for tt +bb) and the two top quarks, respectively.  ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 6: Particle combinations (red) and their rest frames (green). ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The numbers represent the relative weights of the input particles for each combination i. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "The color code reflects the sum of the particle weights for the Higgs boson (ttH), the bb system (tt +bb), or the two top quarks. ",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "For better clarity of the presentation, the zero weights are kept white.",
+            "section": "Visualizations of network predictions",
+            "paragraph_rank": 61,
+            "section_rank": 11
+        },
+        {
+            "text": "Weight matrices of particle and rest-frame combinations",
+            "section_rank": 12
+        },
+        {
+            "text": "Note that combined particles and rest frames are complementary. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 62,
+            "section_rank": 12
+        },
+        {
+            "text": "Extreme examples of this can be seen in columns 2 and 6, in which one of the two bottom quark jets from the Higgs boson decay was selected as the rest frame and a broad combination of all other four-vector vectors was formed whose properties are exploited for the event classification.",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 62,
+            "section_rank": 12
+        },
+        {
+            "text": "Conversely, in column 0 a Higgs-like combination is transformed into the rest frame of all particles, to which the hadronic top quark makes the main contribution. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 63,
+            "section_rank": 12
+        },
+        {
+            "text": "Similarly, in columns 1 and 7, top quark-like combinations are formed and also transformed into rest frames formed by many four-vectors. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 63,
+            "section_rank": 12
+        },
+        {
+            "text": "These types of combinations allow for the Lorentz boost of the center-of-mass system of the scattering process to be nearly compensated.",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 63,
+            "section_rank": 12
+        },
+        {
+            "text": "It is striking that four-vector combinations forming a top quark are often selected. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "In Figure 7, we quantitatively assess the 13 possible combinations of the combined particles (red) and the 13 rest frames (green) in order to determine which combinations are typically formed between the eight input four-vectors. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 11,
+                    "type": "figure",
+                    "ref_id": "fig_10",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "Combined to particles In order to build rest frames (green), the LBN network recognizes combinations leading to the top quarks and treats the bottom quark jets from the Higgs individually. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "This appears to be an appropriate choice as the top quark pair is the same in tt +bb and ttH events while the two bottom quarks typically originate from gluon splitting or the Higgs decay, respectively. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "For the hadronic top quark, the W boson (75 %) is often accounted for as well. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "With the leptonic top, the LBN network considers bottom quark jet and lepton (91 %). ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "The lepton and neutrino are related to form the W (68 %).",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 64,
+            "section_rank": 12
+        },
+        {
+            "text": "To form the particle combinations (red), the LBN network builds the light quark jets to the W boson (78 %) and the hadronic top quark. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "In the leptonic top quark, the LBN combines bottom quark jets and leptons (61 %). ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "Sometimes the lepton and the neutrino are also correlated to build the W boson (22 %). ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "The LBN rarely combines the Higgs boson (\u22124 %).",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 65,
+            "section_rank": 12
+        },
+        {
+            "text": "The positive and negative correlations show that the LBN forms physics-motivated particle combinations from the training data. ",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 66,
+            "section_rank": 12
+        },
+        {
+            "text": "In the next step, we investigate the usefulness of these combinations for the separation of ttH and tt +bb events.",
+            "section": "Weight matrices of particle and rest-frame combinations",
+            "paragraph_rank": 66,
+            "section_rank": 12
+        },
+        {
+            "text": "Distributions resulting from combined particle properties",
+            "section_rank": 13
+        },
+        {
+            "text": "The performance of particle combinations and their transformations into reference frames in the LBN is evaluated through the extracted features which support the classification of signal and background events. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13
+        },
+        {
+            "text": "Here, we present the distributions of different variables calculated from the combined particles. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 8a shows the invariant mass m distributions of all 13 combined particles for the ttH signal dataset. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 8a"
+                }
+            ]
+        },
+        {
+            "text": "Figure 8b shows the mass distributions for the tt + bb background dataset. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 8b"
+                }
+            ]
+        },
+        {
+            "text": "The difference between the two histograms is shown in Figure 8c, where combined particle 0 of the first column shows the largest difference between signal and background. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 54,
+                    "end": 63,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 8c"
+                }
+            ]
+        },
+        {
+            "text": "Figure 6 shows that this combination 0 approximates a Higgs-like configuration (red).   ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Analogously, we determine the transverse momentum p t and pseudorapidity \u03b7 distributions of the 13 particles for signal and background events, and then compute their difference to visualize distinctions between ttH and tt + bb. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13
+        },
+        {
+            "text": "While the invariant mass distribution can also be formed without Lorentz transformation, both the p t and \u03b7 distributions are determined in the respective rest frames. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13
+        },
+        {
+            "text": "Clear differences in the distributions are apparent in Figure 10a for the transverse momenta of the combined particles 11, 8, 5, 10 (in descending order of importance), while the combined particles 5, 9, 12, 10 are most prominent for the pseudorapidities (Figure 10b  As a selection of the many possible distributions, in Figure 9 we show the invariant mass m, the transverse momentum p t , and the pseudorapidity \u03b7 for two combined particles. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 55,
+                    "end": 65,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 10a"
+                },
+                {
+                    "start": 255,
+                    "end": 266,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "(Figure 10b"
+                },
+                {
+                    "start": 322,
+                    "end": 330,
+                    "type": "figure",
+                    "ref_id": "fig_13",
+                    "text": "Figure 9"
+                }
+            ]
+        },
+        {
+            "text": "Figures 9a, 9c, and 9e present the distributions of the combined Higgs-like particle 0. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 14,
+                    "type": "figure",
+                    "ref_id": "fig_13",
+                    "text": "Figures 9a, 9c"
+                }
+            ]
+        },
+        {
+            "text": "In addition to the prominent difference in the mass distributions, for ttH events its p t is smaller while its direction is more central in \u03b7 compared to tt +bb events.",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 67,
+            "section_rank": 13
+        },
+        {
+            "text": "Furthermore, in Figures 9b, 9d, and 9f we show combined particle 5 because of its separation power in pseudorapidity and in transverse momentum ( Figure 10). ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 68,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 16,
+                    "end": 30,
+                    "type": "figure",
+                    "ref_id": "fig_13",
+                    "text": "Figures 9b, 9d"
+                },
+                {
+                    "start": 146,
+                    "end": 155,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 10"
+                }
+            ]
+        },
+        {
+            "text": "Combination 5 is essentially determined by the bottom quark jet b 1 boosted into a rest frame of all other four-vectors ( Figure 6). ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 68,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 122,
+                    "end": 130,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Here, the distribution of mass m for ttH events is smaller, p t is larger and more defined, and \u03b7 is more central than for tt +bb events.",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 68,
+            "section_rank": 13
+        },
+        {
+            "text": "In the example of the characteristic angular distribution of the charged lepton in top quark decays (Figure 2, cos \u03b8 * ), two different reference systems are combined to determine the opening angle \u03b8 * between the W boson in the top quark rest frame and the lepton in the W boson rest frame. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 69,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 100,
+                    "end": 109,
+                    "type": "figure",
+                    "text": "(Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "As mentioned above, the LBN is capable of calculating these complex angular correlations involving four-vectors evaluated in different rest frames.",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 69,
+            "section_rank": 13
+        },
+        {
+            "text": "As an example, we select distributions for angular distances of combined particles 2 and 5 ( Figure 6). ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 93,
+                    "end": 101,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Particle 2 is a combination of all four-vectors boosted into the rest frame of the bottom quark jet b 2 , whereas particle 5 corresponds to the bottom quark jet b 1 boosted into a combination of all four-vectors. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 11a shows that, for tt +bb background events, combined particles 2 and 5 predominantly propagate back-to-back, while the ttH signal distribution scatters broadly around 90 deg. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 10,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 11a"
+                }
+            ]
+        },
+        {
+            "text": "The opposite holds true for the angles between combined particles 2 and 6 ( Figure 6). ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 76,
+                    "end": 84,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "Here, the bottom quark jet b 1 , or alternatively b 2 , serves as a rest frame for characterizing combinations of both top quarks together with the other bottom quark jet. ",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 11b shows that, for tt + bb, combined particles 2 and 6 preferably propagate in the same direction, whereas for ttH signal events this is less pronounced.",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 70,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 10,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 11b"
+                }
+            ]
+        },
+        {
+            "text": "Overall, it can be concluded that the LBN network, when given only low-level variables as input, seems to autonomously build and transform particle combinations leading to extracted features that are suitable for the task of separating signal and background events.",
+            "section": "Distributions resulting from combined particle properties",
+            "paragraph_rank": 71,
+            "section_rank": 13
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 14
+        },
+        {
+            "text": "The various physics processes from which the events of high-energy particle collisions originate lead to complex particle final states. ",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "One reason for the complexity is the high energy that leads to Lorentz boosts of the particles and their decay products. ",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "For an analysis task such as the identification of processes, we reconstruct aspects of the probability distributions from which the particles were generated. ",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "How well probability distributions of individual physical processes are reflected is compiled in a series of characteristic variables. ",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "To accomplish this, both the Minkowski metric for the correct calculation of energy-momentum conservation or invariant masses and the Lorentz transformation into the rest frames of parent particles are necessary. ",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "So far, such characteristic variables have been engineered by physicists.",
+            "section": "Conclusions",
+            "paragraph_rank": 72,
+            "section_rank": 14
+        },
+        {
+            "text": "In this paper, we presented a general two-stage neural network architecture. ",
+            "section": "Conclusions",
+            "paragraph_rank": 73,
+            "section_rank": 14
+        },
+        {
+            "text": "The first stage, the novel Lorentz Boost Network, contains at its core an efficient and fully vectorized implementation for performing Lorentz transformations. ",
+            "section": "Conclusions",
+            "paragraph_rank": 73,
+            "section_rank": 14
+        },
+        {
+            "text": "The aim of this stage is to autonomously generate variables suitable for the characterization of collision events when using only particle four-vectors. ",
+            "section": "Conclusions",
+            "paragraph_rank": 73,
+            "section_rank": 14
+        },
+        {
+            "text": "For this purpose, the input four-vectors are combined separately into composite particles and rest frames.",
+            "section": "Conclusions",
+            "paragraph_rank": 73,
+            "section_rank": 14
+        },
+        {
+            "text": "The composite particles are boosted into corresponding rest frames and a generic set of variables is extracted from the boosted particles. ",
+            "section": "Conclusions",
+            "paragraph_rank": 74,
+            "section_rank": 14
+        },
+        {
+            "text": "The second stage of the network then uses these autonomously generated variables to solve a particular physics question. ",
+            "section": "Conclusions",
+            "paragraph_rank": 74,
+            "section_rank": 14
+        },
+        {
+            "text": "Both the weights used to create the combinations of input four-vectors and the parameters of the second stage are learned together in a supervised training process.",
+            "section": "Conclusions",
+            "paragraph_rank": 74,
+            "section_rank": 14
+        },
+        {
+            "text": "To assess the performance of the LBN, we investigated a benchmark task of distinguishing ttH and tt + bb processes. ",
+            "section": "Conclusions",
+            "paragraph_rank": 75,
+            "section_rank": 14
+        },
+        {
+            "text": "We demonstrated the improved separation power of our model compared to domain-unspecific deep neural networks where the latter even used sophisticated high-level variables as input in addition to the four-vectors. ",
+            "section": "Conclusions",
+            "paragraph_rank": 75,
+            "section_rank": 14
+        },
+        {
+            "text": "Furthermore, we developed visualizations to gain insight into the training process and discovered that the LBN learns to identify physics-motivated particle combinations from the data used for training. ",
+            "section": "Conclusions",
+            "paragraph_rank": 75,
+            "section_rank": 14
+        },
+        {
+            "text": "Examples are top-quark-like combinations or the approximate compensation of the Lorentz boost of the center-of-mass system of the scattering process.",
+            "section": "Conclusions",
+            "paragraph_rank": 75,
+            "section_rank": 14
+        },
+        {
+            "text": "The LBN is a multipurpose method that uses Lorentz transformations to exploit and uncover structures in particle collision events. ",
+            "section": "Conclusions",
+            "paragraph_rank": 76,
+            "section_rank": 14
+        },
+        {
+            "text": "It is part of an ongoing comparison of methods to identify boosted top quark jets and has already been successfully applied at the IML workshop challenge at CERN [32]. ",
+            "section": "Conclusions",
+            "paragraph_rank": 76,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 162,
+                    "end": 166,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "[32]"
+                }
+            ]
+        },
+        {
+            "text": "The source code of our implementation in TensorFlow [33] is publically available under BSD license [34].",
+            "section": "Conclusions",
+            "paragraph_rank": 76,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 56,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "[33]"
+                },
+                {
+                    "start": 99,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "[34]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "TensorFlow",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 The first five Fox-Wolfram moments [31].",
+            "section": "Conclusions",
+            "paragraph_rank": 77,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 37,
+                    "end": 41,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 The cosine of spatial angular difference \u03b8 * between the charged lepton in the W boson rest frame and the W boson direction when boosted into the rest frame of its corresponding top quark. ",
+            "section": "Conclusions",
+            "paragraph_rank": 78,
+            "section_rank": 14
+        },
+        {
+            "text": "In the hadronic branch, the down-type quark is used owing to its increased spin analyzing power [36].",
+            "section": "Conclusions",
+            "paragraph_rank": 78,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 100,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "[36]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 The minimum, maximum and average of the distance in pseudorapidity \u03b7 and \u03c6 phase space \u2206R of jet pairs.",
+            "section": "Conclusions",
+            "paragraph_rank": 79,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The minimum, maximum and average |\u2206\u03b7| of jet pairs.",
+            "section": "Conclusions",
+            "paragraph_rank": 80,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The minimum and maximum of the distance in \u2206R of jet-lepton pairs.",
+            "section": "Conclusions",
+            "paragraph_rank": 81,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The minimum, maximum and average |\u2206\u03b7| of jet-lepton pairs.",
+            "section": "Conclusions",
+            "paragraph_rank": 82,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The sum of the transverse momenta of all jets.",
+            "section": "Conclusions",
+            "paragraph_rank": 83,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The transverse momentum and the mass of the jet pair with the smallest \u2206R.",
+            "section": "Conclusions",
+            "paragraph_rank": 84,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The transverse momentum and the mass of the jet pair whose combined mass is closest to the Higgs boson mass m H = 125 GeV [37].",
+            "section": "Conclusions",
+            "paragraph_rank": 85,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 124,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "[37]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 15
+        },
+        {
+            "text": "Figure 1: The two-stage deep neural network architecture consists of the Lorentz Boost Network (LBN) and a subsequent deep neural network (NN). ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 86,
+            "section_rank": 15
+        },
+        {
+            "text": "In the LBN, the input four-vectors (E, p x , p y , p z ) are combined in two independent ways before each of the combined particles is boosted into its particular rest frame, which is formed from a different particle combination. ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 86,
+            "section_rank": 15
+        },
+        {
+            "text": "The boosted particles are characterized by variables which can be, e.g., invariant masses, transverse momenta, pseudorapidities, and angular distances between them. ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 86,
+            "section_rank": 15
+        },
+        {
+            "text": "These features serve as input to the second network designed to accomplish a particular analysis task.",
+            "section": "Figure 1 :",
+            "paragraph_rank": 86,
+            "section_rank": 15
+        },
+        {
+            "text": ". The matrix elements contain angular correlations of the decay products from heavy resonances. Beam conditions correspond to LHC proton-proton collisions at \u221a s = 13 TeV. Only the dominant gluon-gluon process is enabled and Higgs boson decays into bottom quark pairs are favored. Hadronization is performed with the Lund string fragmentation model.",
+            "paragraph_rank": 87,
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 2 . ",
+            "section_rank": 17
+        },
+        {
+            "text": "9 :",
+            "section_rank": 17
+        },
+        {
+            "text": "Figure 2.9: Feynman diagrams showing ",
+            "section": "Figure 2 . 9 :",
+            "paragraph_rank": 88,
+            "section_rank": 17
+        },
+        {
+            "text": "a) ttH (H ! bb) and ",
+            "section": "Figure 2 . 9 :",
+            "paragraph_rank": 88,
+            "section_rank": 17
+        },
+        {
+            "text": "b) tt+bb production in the singlelepton and dilepton tt decay channels. ",
+            "section": "Figure 2 . 9 :",
+            "paragraph_rank": 88,
+            "section_rank": 17
+        },
+        {
+            "text": "Their final state is identical and despite different spin and color charge relations, the event topology is quite similar. ",
+            "section": "Figure 2 . 9 :",
+            "paragraph_rank": 88,
+            "section_rank": 17
+        },
+        {
+            "text": "It should be noted that more possible diagrams exist for both processes.",
+            "section": "Figure 2 . 9 :",
+            "paragraph_rank": 88,
+            "section_rank": 17
+        },
+        {
+            "text": "2Figure 2 . ",
+            "section_rank": 18
+        },
+        {
+            "text": "9 :",
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 2.9: Feynman diagrams showing ",
+            "section": "2Figure 2 . 9 :",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "text": "a) ttH (H ! bb) and ",
+            "section": "2Figure 2 . 9 :",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "text": "b) tt+bb production in the singlelepton and dilepton tt decay channels. ",
+            "section": "2Figure 2 . 9 :",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "text": "Their final state is identical and despite different spin and color charge relations, the event topology is quite similar. ",
+            "section": "2Figure 2 . 9 :",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "text": "It should be noted that more possible diagrams exist for both processes.",
+            "section": "2Figure 2 . 9 :",
+            "paragraph_rank": 89,
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 3 :",
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 3: Example Feynman diagrams of ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 90,
+            "section_rank": 19
+        },
+        {
+            "text": "a) ttH and ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 90,
+            "section_rank": 19
+        },
+        {
+            "text": "b) tt +bb processes.",
+            "section": "Figure 3 :",
+            "paragraph_rank": 90,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 4: Exemplary comparisons of kinematic distributions of ttH and tt+bb events; ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 91,
+            "section_rank": 20
+        },
+        {
+            "text": "a) transverse momentum of the jet b 1 , ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 91,
+            "section_rank": 20
+        },
+        {
+            "text": "b) largest difference in pseudorapidity of a jet to the charged lepton, ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 91,
+            "section_rank": 20
+        },
+        {
+            "text": "c) invariant mass of the closest jet pair, ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 91,
+            "section_rank": 20
+        },
+        {
+            "text": "d) event sphericity.",
+            "section": "Figure 4 :",
+            "paragraph_rank": 91,
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 5 :",
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 5: Benchmarks of the LBN performance in comparison to typical deep neural network architectures (DNNs) with three variants of input variables; low=four-vectors, high=physics-motivated variables, combined=low+high. ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 92,
+            "section_rank": 21
+        },
+        {
+            "text": "Ordering of the input four-vectors is done by ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 92,
+            "section_rank": 21
+        },
+        {
+            "text": "a) generator information and ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 92,
+            "section_rank": 21
+        },
+        {
+            "text": "b) jet transverse momenta.",
+            "section": "Figure 5 :",
+            "paragraph_rank": 92,
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 7: Correlations of quarks and leptons for particle combinations (red) and for rest frames (green). ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 93,
+            "section_rank": 22
+        },
+        {
+            "text": "Both the numbers and the color code represent the correlation strength.",
+            "section": "Figure 7 :",
+            "paragraph_rank": 93,
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 8: Masses of combined particles for ",
+            "section": "Figure 8 :",
+            "paragraph_rank": 94,
+            "section_rank": 23
+        },
+        {
+            "text": "a) ttH, ",
+            "section": "Figure 8 :",
+            "paragraph_rank": 94,
+            "section_rank": 23
+        },
+        {
+            "text": "b) tt + bb, and ",
+            "section": "Figure 8 :",
+            "paragraph_rank": 94,
+            "section_rank": 23
+        },
+        {
+            "text": "c) the differences between ttH and tt +bb.",
+            "section": "Figure 8 :",
+            "paragraph_rank": 94,
+            "section_rank": 23
+        },
+        {
+            "text": "For",
+            "section_rank": 24
+        },
+        {
+            "text": "this Higgs-like configuration (combined particle 0), we show mass distributions inFigure9a. ",
+            "section": "For",
+            "paragraph_rank": 95,
+            "section_rank": 24
+        },
+        {
+            "text": "For ttH, the invariant mass exhibits a narrow distribution around m = 22 a.u. reflecting the Higgs-like combined particle, while the tt+bb background is widely distributed. ",
+            "section": "For",
+            "paragraph_rank": 95,
+            "section_rank": 24
+        },
+        {
+            "text": "Note that because of the weighted four-vector combinations, arbitrary units are used, so that the Higgs boson mass is not stated in GeV.",
+            "section": "For",
+            "paragraph_rank": 95,
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 9 :",
+            "section_rank": 25
+        },
+        {
+            "text": "Figure 9: Example comparisons of kinematic distributions for ttH and tt+bb processes. ",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "Figures ",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "a) and ",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "b) show the masses of the combined particles 0 and 5. ",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "Figures ",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "c)-f) also present their transverse momenta and pseudorapidities in the rest frames.",
+            "section": "Figure 9 :",
+            "paragraph_rank": 96,
+            "section_rank": 25
+        },
+        {
+            "text": "Figure 10 :",
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 10: Differences between tttH and tt+bb processes for combined particles in the rest frames of particle combinations, ",
+            "section": "Figure 10 :",
+            "paragraph_rank": 97,
+            "section_rank": 26
+        },
+        {
+            "text": "a) transverse momenta and ",
+            "section": "Figure 10 :",
+            "paragraph_rank": 97,
+            "section_rank": 26
+        },
+        {
+            "text": "b) pseudorapidities.",
+            "section": "Figure 10 :",
+            "paragraph_rank": 97,
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 11 :",
+            "section_rank": 27
+        },
+        {
+            "text": "Figure 11: Cosine of the opening angles between combined particle 2 (tt + b 1 ) in its rest frame b 2 and ",
+            "section": "Figure 11 :",
+            "paragraph_rank": 98,
+            "section_rank": 27
+        },
+        {
+            "text": "a) combined particle 5 (b ) in its rest frame (tt + b 1 + b 2 ), and ",
+            "section": "Figure 11 :",
+            "paragraph_rank": 98,
+            "section_rank": 27
+        },
+        {
+            "text": "b) combined particle 6 (tt + b 2 ) in its rest frame (b 1 ).",
+            "section": "Figure 11 :",
+            "paragraph_rank": 98,
+            "section_rank": 27
+        },
+        {
+            "text": "\u2807 \u2807 Lorentz Boost Network",
+            "section_rank": 28
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 30
+        },
+        {
+            "text": "We wish to thank Jonas Glombitza for his valuable comments on the manuscript. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 100,
+            "section_rank": 30
+        },
+        {
+            "text": "We would also like to thank Jean-Roch Vlimant, Benjamin Fischer, Dennis Noll, and David Schmidt for a variety of fruitful discussions. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 100,
+            "section_rank": 30
+        },
+        {
+            "text": "This work is supported by the Ministry of Innovation, Science and Research of the State of North Rhine-Westphalia, and by the Federal Ministry of Education and Research (BMBF).",
+            "section": "Acknowledgments",
+            "paragraph_rank": 100,
+            "section_rank": 30
+        },
+        {
+            "text": "Appendix",
+            "section_rank": 32
+        },
+        {
+            "text": "Network parameters",
+            "section_rank": 33
+        },
+        {
+            "text": "The network parameters of the best performing networks are illustrated in Table 1. ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 74,
+                    "end": 81,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Table 1: All deep neural networks use a fully connected architecture with n layers and n nodes . ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "ELU is used as the activation function. ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33
+        },
+        {
+            "text": "The Adam optimizer [35] is employed with decay parameters \u03b2 1 = 0.9, \u03b2 2 = 0.999, and a learning rate of 10 \u22124 . ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 19,
+                    "end": 23,
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "text": "[35]"
+                }
+            ]
+        },
+        {
+            "text": "L 2 normalization is applied with a factor of 10 \u22124 . ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33
+        },
+        {
+            "text": "Batch normalization between layers was utilized in every configuration. ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33
+        },
+        {
+            "text": "The generic mappings in LBN feature extraction layer create E, p T , \u03b7, \u03c6, m, and pairwise cos(\u03d5). ",
+            "section": "Network parameters",
+            "paragraph_rank": 101,
+            "section_rank": 33
+        },
+        {
+            "text": "High-level variables",
+            "section_rank": 34
+        },
+        {
+            "text": "The high-level variables employed in the training of the DNN benchmark comparison are inspired by [25]:",
+            "section": "High-level variables",
+            "paragraph_rank": 102,
+            "section_rank": 34,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 102,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 The event shape variables sphericity, transverse sphericity, aplanarity, centrality [30].",
+            "section": "High-level variables",
+            "paragraph_rank": 103,
+            "section_rank": 34,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[30]"
+                }
+            ]
+        }
+    ]
+}

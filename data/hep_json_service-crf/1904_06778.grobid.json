@@ -1,0 +1,3732 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "This paper reports the results of an experiment in high energy physics: using the power of the \"crowd\" to solve difficult experimental problems linked to tracking accurately the trajectory of particles in the Large Hadron Collider (LHC). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This experiment took the form of a machine learning challenge organized in 2018: the Tracking Machine Learning Challenge (TrackML). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Its results were discussed at the competition session at the Neural Information Processing Systems conference (NeurIPS 2018). ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Given 100.000 points, the participants had to connect them into about 10.000 arcs of circles, following the trajectory of particles issued from very high energy proton collisions. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The competition was difficult with a dozen front-runners well ahead of a pack. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The single competition score is shown to be accurate and effective in selecting the best algorithms from the domain point of view. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The competition has exposed a diversity of approaches, with various roles for Machine Learning, a number of which are discussed in the document.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "TrackML [12] is the third ML challenge for particle physics. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 8,
+                    "end": 12,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "After the success of the Higgs Boson challenge [3] and the Flavour of Physics challenge [8], the goal was to address a completely different issue, which is critical to ensure the quality of novel particle detection at the Large Hadron Collider (LHC) [9] at CERN: Tracking accurately the trajectory of particles in the LHC detectors. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 88,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                },
+                {
+                    "start": 250,
+                    "end": 253,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "The challenge was organized by an interdisciplinary team of physicists from three LHC experiments (ATLAS, CMS, and LHCb), computer scientists, and ChaLearn, a non-profit group dedicated to the organization of challenges in Machine Learning, and supported by a number of sponsors listed in the Acknowledgments section. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "No knowledge of particle physics was necessary to participate.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The LHC is a unique particle accelerator complex colliding protons at unprecedented energies. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "It allowed the Higgs boson discovery in 2012 (acknowledged by the 2013 Nobel prize in physics). ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "It will collect data of increasing complexity and at increasing rate with a large upgrade so called High Luminosity LHC planned for 2025. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "All the analysis pipelines of the proton collisions (or events) rely on a first step, the reconstruction of the 3D trajectories of the particles within the detector (see Figure 1) and Figure 2. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 170,
+                    "end": 178,
+                    "type": "figure",
+                    "text": "Figure 1"
+                },
+                {
+                    "start": 184,
+                    "end": 192,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "This problem is currently conveniently solved by combinatorial optimization methods (based on Kalman filters). ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "But the CPU time to reconstruct the trajectories (helices) from the measurements (3D points) is expected to increase faster than the projected computing resources. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "New approaches to pattern recognition are needed to exploit fully the discovery potential of the HL-LHC. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Figure 1: TrackML detector (one sector of the detector has been etched out). ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "White dots are the measured points, while the red lines are the trajectories of the particles.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The overall goal of the challenge was to explore new methods to address the trade-off between algorithmic quality (good track reconstruction) and speed. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "From the Machine Learning point of view, the problem can be treated as a latent variable problem similar to clustering, in which particle trajectory \"memberships\" must be inferred, although the ratio between the number of clusters (10K) and their size (10 points), is highly unusual. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "It can also be treated as a tracking problem considering trajectories as time series, or a pattern de-noising problem considering that the dotted trajectories are noisy versions of continuous traces. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "One important point is that the points on one trajectory are not geometrically close to each other (a human cannot associate the points by eye), but they follow a specific pattern : a distorted arc of helix pointing approximately to the origin.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The HEP (High Energy Physics) experiments have embraced Machine Learning, originally for supervised classification as a tool in the final analysis stage, and for exploring more diverse applications. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Recent attempts of applying Machine Learning to particle physics pattern recognition-tracking indicate a strong potential [20]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 122,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "A one day hackathon [5] limited to a twodimensional problem has shown the richness of approaches and the setup to be tested.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 23,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "A dataset consisting of an accurate simulation [24] of a LHC experiment has been created, listing for each event the measured 3D points, and the list of 3D points associated to a true track. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                }
+            ]
+        },
+        {
+            "text": "The data set is large to allow the training of data hungry Machine Learning methods; the orders of magnitude Figure 2: A very simplified view in 2-Dimension : the name of the game is to associate the points into tracks.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 117,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "are: ten thousand events, one billion points, on e hundred million tracks. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The participants to the challenge should find the tracks in an additional test dataset, meaning building the list of 3D points belonging to each track (deriving the track parameters is not the topic of the challenge). ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The emphasis is to expose innovative approaches, rather than hyper-optimizing known approaches. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The challenge has been run in two phases:",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "1. During the first \"Accuracy\" phase, which has run on Kaggle [14] from 1 st May 2018 to 10 th August 2018, a metric reflecting the accuracy of the model at finding the proper point association that matters to most physics analysis to identify the best algorithms. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The metric is based on the overall fraction of points associated to a true track.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "2. The second \"Throughput\" phase has been running from October 2019 to 12th March 2019 on Codalab [13]. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 102,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "It focuses on optimizing the inference speed, starting from the collection of algorithms exposed in the first phase. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "The training speed remains unconstrained.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "As the second phase is still running at the time of writing, this document focuses on the first phase.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "text": "The success of the Challenge can be attributed in part to the visibility of CERN, and the appeal of the problem. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "We also stimulated participation by providing a starting kit, responding promptly to questions in the online forum, where participants were also helping each other, and through wide advertising. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "An additional incentive was provided in the form of prizes for the winners and an invitation to visit CERN to discuss their results with highenergy physicists. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Design choices also played an important role. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Simplifying the problem setting in order to reach computer scientists, while keeping it realistic enough for the challenge to be useful, was much more difficult than for the HiggsML. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "We were largely successful, as the many solutions, including the winning ones, come from computer scientists. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "However, for most solutions, the focus has been mostly on optimization, rather than the variety of ML methods we envisioned.",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Given the interest raised by the Challenge and the willingness to pursue the study beyond the formal end of the competition, a very similar dataset will be made permanently available on the CERN open data portal [10] and on the UCI repository [11], together with accompanying software and documentation.",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 212,
+                    "end": 216,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 243,
+                    "end": 247,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "The document is structured as follows: section 2 details the setup of the competition, with in particular the dataset (2.3 and the scoring algorithm 2.4). ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 3 summarizes the competition proceedings and studies devoted to the accuracy of the ranking. ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 4 presents the performances of selected algorithms while the long section 5 gives a brief summary of the different techniques that have been used, before the conclusion and outlook in section 6.",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Setup",
+            "section_rank": 3
+        },
+        {
+            "text": "An event is a set of particle measurements in the detector. ",
+            "section": "Setup",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "From an abstract point of view, the detector is simply an apparatus that records the impacts, called the hits, of the particles traversing the detector in an event, i.e. each time a pair of protons collides. ",
+            "section": "Setup",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The detector is formed of discrete layers. ",
+            "section": "Setup",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "One event has O 10 5 hits, corresponding to O 10 4 particles.",
+            "section": "Setup",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The basic configuration is as follows.",
+            "section": "Setup",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 Each particle is created close to, but not exactly, at the center of the detector (see section 2.3 for details).",
+            "section": "Setup",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 Each hit is a 3D measurement in Cartesian coordinates (x, y, z). ",
+            "section": "Setup",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "For each particle, the number of hits is on average 12, but as low as 4 and as large as 20.",
+            "section": "Setup",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 The participants should associate the hits created by each particle together, to form tracks. ",
+            "section": "Setup",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "Typically, at least 90% of the true tracks should be recovered,",
+            "section": "Setup",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 The tracks are slightly distorted arc of helices with axes parallel to the z-axis, and pointing approximately to the interaction center.",
+            "section": "Setup",
+            "paragraph_rank": 19,
+            "section_rank": 3
+        },
+        {
+            "text": "In an ideal world:",
+            "section": "Setup",
+            "paragraph_rank": 20,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 each particle would leave one and only one hit on each layer of the detector",
+            "section": "Setup",
+            "paragraph_rank": 21,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 the trajectories would be exact arcs of helices;",
+            "section": "Setup",
+            "paragraph_rank": 22,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 the (x, y, z) coordinates would be exact.",
+            "section": "Setup",
+            "paragraph_rank": 23,
+            "section_rank": 3
+        },
+        {
+            "text": "In this ideal world, fitting the parameters of the helices suffices to solve the problem. ",
+            "section": "Setup",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "However, there are a number of subtleties:",
+            "section": "Setup",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 Depending of the local geometry, each particle may leave multiple hits in a layer, and the layer may not record anything at all.",
+            "section": "Setup",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 The arcs are often slightly distorted.",
+            "section": "Setup",
+            "paragraph_rank": 26,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 The measurements have some non isotropic uncertainty.",
+            "section": "Setup",
+            "paragraph_rank": 27,
+            "section_rank": 3
+        },
+        {
+            "text": "The challenge is to show robustness of the algorithm with respect to all these perturbations. ",
+            "section": "Setup",
+            "paragraph_rank": 28,
+            "section_rank": 3
+        },
+        {
+            "text": "It is enforced by the metric defined by the score.",
+            "section": "Setup",
+            "paragraph_rank": 28,
+            "section_rank": 3
+        },
+        {
+            "text": "The TrackML detector",
+            "section_rank": 4
+        },
+        {
+            "text": "The challenge relies on a realistic detector model to simulate measured particle hits similar to what is expected for an HL-LHC experiment. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 29,
+            "section_rank": 4
+        },
+        {
+            "text": "The detector model is inspired by the ATLAS and CMS upgrade tracker designs [17,16]. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 29,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 76,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17,"
+                },
+                {
+                    "start": 80,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "16]"
+                }
+            ]
+        },
+        {
+            "text": "They are based on large surface all-silicon detectors with a cylinder-like geometry in the central regions and a disk-like geometry in the forward regions.",
+            "section": "The TrackML detector",
+            "paragraph_rank": 29,
+            "section_rank": 4
+        },
+        {
+            "text": "The coordinate system is a right-handed Cartesian coordinate system (x, y, ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "z) with the global z axis defined along the beam direction, which is the axis of symmetry of the cylinders and disks composing the detector. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "The (x \u2212 ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "y) plane is referred to as the transverse plane, and the azimuthal angle \u03c6 \u2208 [\u2212\u03c0, \u03c0[ is defined in the transverse plane with \u03c6 = 0 denoting the x-axis. The polar angle \u03b8 is measured from the z-axis and is defined to be within [0, \u03c0].",
+            "section": "The TrackML detector",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "In order to measure the particle momentum, tracking detectors are embedded in a strong magnetic field. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "A charged particle, when moving through a constant magnetic field follows a helical trajectory (figures 3). ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "The magnetic field is usually aligned with the beam direction, such that the particle is bent in the transverse plane.",
+            "section": "The TrackML detector",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "The full detector geometry is shown in figure 4. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "The detector is split into three separate sub-detectors that differ in spatial resolution and passive material. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "The inner-most sub-detector is a pixel detector with a spatial resolution of 50 \u00b5m \u00d7 50 \u00b5m and further out two different strip detectors with short 80 \u00b5m \u00d7 1200 \u00b5m and long strips 0.12 mm \u00d7 10.8 mm are placed. ",
+            "section": "The TrackML detector",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "Each detector includes realistic module geometries with placement and overlap chosen to yield a hermetic coverage up to \u03b7 = 3.",
+            "section": "The TrackML detector",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "Simulation",
+            "section_rank": 5
+        },
+        {
+            "text": "This section gives more details for reference on the physics involved in the simulation, non physicists can skip it.",
+            "section": "Simulation",
+            "paragraph_rank": 33,
+            "section_rank": 5
+        },
+        {
+            "text": "The particle content of the collisions is generated using the Pythia 8 event generator [32]. ",
+            "section": "Simulation",
+            "paragraph_rank": 34,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 87,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "[32]"
+                }
+            ]
+        },
+        {
+            "text": "A hard Quantum Chromodynamics (QCD) interaction that generates a tt-pair is used as the signal. ",
+            "section": "Simulation",
+            "paragraph_rank": 34,
+            "section_rank": 5
+        },
+        {
+            "text": "An additional 200 soft QCD interactions are overlaid to simulate the expected pile-up conditions at the Figure 3: Illustration of a particle moving through a constant magnetic field. ",
+            "section": "Simulation",
+            "paragraph_rank": 34,
+            "section_rank": 5
+        },
+        {
+            "text": "In the transverse projection, this corresponds to the particle moving along a circle.",
+            "section": "Simulation",
+            "paragraph_rank": 34,
+            "section_rank": 5
+        },
+        {
+            "text": "HL-LHC. ",
+            "section": "Simulation",
+            "paragraph_rank": 35,
+            "section_rank": 5
+        },
+        {
+            "text": "The interaction vertices are spread out over a luminous region with a width of 5.5 mm along the beam axis.",
+            "section": "Simulation",
+            "paragraph_rank": 35,
+            "section_rank": 5
+        },
+        {
+            "text": "Charged particles are propagated through the detector using a fast detector simulation based on the ACTS software [24]. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 114,
+                    "end": 118,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 100,
+                    "end": 105,
+                    "type": "software",
+                    "rawForm": "ACTS",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "An inhomogeneous magnetic field similar to the one in the ATLAS experiment is used and material interactions, i.e. multiple scattering, energy loss, or hadronic interactions, are simulated using parametric models. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Only tracks with a transverse momentum above 150 MeV are propagated. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Inefficient sensors and additional hits from noise or particles below the threshold are also included. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Most particles are primary particles produced near the origin. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Primary particles can produce (through decay or interaction with the detector material itself) secondary particles which are hence created at a distance from the origin. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 5 shows various kinematic distributions of the particles. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "There is no dependence on the \u03c6 angle, and the distribution of the primary particles as a function of \u03b7 is flat (it's a known properties of primary particles for this variable), unlike the secondary particles which peak around 0. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "The secondary particles have a lower momentum than the primaries and, being produced in the interaction of the primary particles with the matter of the detector, the  On the left the three major sub-detectors, pixel, short strips, and long strips, are shown separately. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "On the right, a schematic of the full layout and its coverage along the radial and longitudinal dimensions as well as in the \u03b7 direction is shown. ",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "The different colors represent the different sub-detectors while the marked numbers are the internal volume and layer identifiers.",
+            "section": "Simulation",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "transverse radius of the production vertex r 0 = x 2 0 + y 2 0 corresponds to the location of the modules.",
+            "section": "Simulation",
+            "paragraph_rank": 37,
+            "section_rank": 5
+        },
+        {
+            "text": "Dataset",
+            "section_rank": 6
+        },
+        {
+            "text": "Particle physics events contain a multitude of different types of information that are usually represented in a nested structures of variable length. ",
+            "section": "Dataset",
+            "paragraph_rank": 38,
+            "section_rank": 6
+        },
+        {
+            "text": "Here, we aim to provide the data in a flattened structure to avoid the necessity for specialized tools or formats. ",
+            "section": "Dataset",
+            "paragraph_rank": 38,
+            "section_rank": 6
+        },
+        {
+            "text": "Since events are statistically independent, data is stored separately for each event, organized by a numerical event identifier. ",
+            "section": "Dataset",
+            "paragraph_rank": 38,
+            "section_rank": 6
+        },
+        {
+            "text": "For each event in the training dataset the following four files are provided in CSV format (only a brief description is given here, more details are available in the participant document [14] and in the open data set description [10].",
+            "section": "Dataset",
+            "paragraph_rank": 38,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 187,
+                    "end": 191,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 229,
+                    "end": 233,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 Hits : Each entry has a unique identifier and provides the simulated hit information that are the core input for the challenge, essentially the coordinates (x, y, z) \u2022 Cells : Each entry enables participants to extract additional information, e.g. directional information \u2022 Hit truth : Each entry has the same unique identifier as the hits file,",
+            "section": "Dataset",
+            "paragraph_rank": 39,
+            "section_rank": 6
+        },
+        {
+            "text": "gives the true hit position and which particle created the hit \u2022 Particles truth : Each entry has a unique id and represents one generated, charged, final state particle.",
+            "section": "Dataset",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "Training and test data-sets only differ by the type of files made available. ",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "In the test data set only the hits and cells files are available, as would be the  Figure 5: Probability density function of primary (blue) and secondary (orange) particles, normalized to the sum of the distributions, as a function of six kinematic variables, in the coordinate system described in section 2.1. ",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 91,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "log 10 (p T ) (top left)is the transverse momentum which is proportional to the radius of curvature, so that particles on the right side are almost straight. ",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "\u03c6 (top middle) is the azimuth angle.",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "\u03b7 = log(tan(\u03b8/2)) (top right) is the pseudo-rapidity, related to the dip angle \u03b8: \u03b7=0 for particle perpendicular to the z axis, +3 for particle very close to the z axis on the positive z side, -3 on the negative side. ",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "r 0 (bottom left with a zoom bottom middle) is the transverse radius of the point of origin of the particle , and z 0 (bottom right) is the z coordinate of the origin of the particle.",
+            "section": "Dataset",
+            "paragraph_rank": 41,
+            "section_rank": 6
+        },
+        {
+            "text": "case in the real data from the detector. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Internally, all events were generated in exactly the same way. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Participants had to provide their solutions also in CSV format. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Due to technical requirements by the Kaggle platform a single file had to be provided for all events in the test dataset. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Each entry therefore had to comprise three values: the event identifier as provided, the event-unique hit identifier as provided, and an arbitrary track identifier generated by the participant. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Hits reconstructed to belong to the same track must have the same track identifier. ",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "All the hits of all events should be listed once and only once.",
+            "section": "Dataset",
+            "paragraph_rank": 42,
+            "section_rank": 6
+        },
+        {
+            "text": "Scoring",
+            "section_rank": 7
+        },
+        {
+            "text": "When developing a tracking algorithm for particle physics, experts usually assemble a large number of histograms to assess its quality. ",
+            "section": "Scoring",
+            "paragraph_rank": 43,
+            "section_rank": 7
+        },
+        {
+            "text": "However, as usual for a Kaggle competition, algorithms had to be ranked based on a single score to evaluate their quality. ",
+            "section": "Scoring",
+            "paragraph_rank": 43,
+            "section_rank": 7
+        },
+        {
+            "text": "Participants submit a submission file, which proposes a partition of the hits into a list of suggested tracks. ",
+            "section": "Scoring",
+            "paragraph_rank": 43,
+            "section_rank": 7
+        },
+        {
+            "text": "The score evaluates the quality of this partition by comparing to the ground truth partition.",
+            "section": "Scoring",
+            "paragraph_rank": 43,
+            "section_rank": 7
+        },
+        {
+            "text": "In one sentence: the score is based on the intersection between the reconstructed tracks and the ground truth particles, normalized to one for each event, and averaged on the events of the test set. ",
+            "section": "Scoring",
+            "paragraph_rank": 44,
+            "section_rank": 7
+        },
+        {
+            "text": "It is implemented in the helper library [33]. ",
+            "section": "Scoring",
+            "paragraph_rank": 44,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 44,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "[33]"
+                }
+            ]
+        },
+        {
+            "text": "More details follow.",
+            "section": "Scoring",
+            "paragraph_rank": 44,
+            "section_rank": 7
+        },
+        {
+            "text": "Only particles with four hits or more are considered, and only proposed tracks with four hits or more are considered. ",
+            "section": "Scoring",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Each track is matched with the ground truth majority particle sharing with it the greatest hit number. ",
+            "section": "Scoring",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "The ratio of this intersection to the number of hits of the reconstructed track defines the track purity, while the ratio of this intersection to the number of hits of the underlying particle defines particle purity. ",
+            "section": "Scoring",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Both ratios have to be above 50% to define a good track so that a one-to-one relationship between particle and track can be defined.",
+            "section": "Scoring",
+            "paragraph_rank": 45,
+            "section_rank": 7
+        },
+        {
+            "text": "Each hit has a weight w i , as explained below, and the total score S for a given solution is given by the following multiple sum:",
+            "section": "Scoring",
+            "paragraph_rank": 46,
+            "section_rank": 7
+        },
+        {
+            "text": "This score is largely consistent with the various and more complicated metrics used in physics reconstruction. ",
+            "section": "Scoring",
+            "paragraph_rank": 47,
+            "section_rank": 7
+        },
+        {
+            "text": "It is a combination of the Jaccard version of counting pairs [6] and set matching [26]. ",
+            "section": "Scoring",
+            "paragraph_rank": 47,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 82,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "With set matching, it shares the one-to-one assignment of reconstructed clusters to true clusters. ",
+            "section": "Scoring",
+            "paragraph_rank": 47,
+            "section_rank": 7
+        },
+        {
+            "text": "However, thanks to the majority rule, it does not suffer from the \"problem of matching\" [26]. ",
+            "section": "Scoring",
+            "paragraph_rank": 47,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 92,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "With respect to counting pairs, the Jaccard index is more appropriate than the Rand index [29], as the result of the later would be dominated by the true negatives (pair of points that agree to be in different clusters), which are not taken into account in the Jaccard counting points index.",
+            "section": "Scoring",
+            "paragraph_rank": 47,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 90,
+                    "end": 94,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "[29]"
+                }
+            ]
+        },
+        {
+            "text": "With this definition no penalty for incorrect hits is necessary (as usually done by physicists), since a wrongly associated hit will automatically reduce the score for the other track it should have been associated to.",
+            "section": "Scoring",
+            "paragraph_rank": 48,
+            "section_rank": 7
+        },
+        {
+            "text": "As commonly done in Kaggle competitions, the participants' submissions are based on a test dataset of (here) 125 events. ",
+            "section": "Scoring",
+            "paragraph_rank": 49,
+            "section_rank": 7
+        },
+        {
+            "text": "There is a secret split of these events into 36 events to be used to compute the score for the public leader board (updated online) and 89 to be used for the final private leader board which determined the final ranking at the end of the competition.",
+            "section": "Scoring",
+            "paragraph_rank": 49,
+            "section_rank": 7
+        },
+        {
+            "text": "The contributions to the per-hit weight are illustrated in figure 6. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 67,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The order-dependent weight penalizes missed hits at the inner and outer-most part of the detector more strongly. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "Missing a hit on the innermost layer will strongly influence the quality of the extrapolation of the track to the origin, while a missed hit on the outer layers reduces the lever arm for the momentum measurement. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "The p \u22a5 -dependent part favors reconstructing high-momentum tracks over low-momentum tracks without excluding either region completely: high-momentum (straight) tracks are more likely to come from an interesting physics process but are more rare. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "Hence The overall score is normalized such that a perfect algorithm has a score of one. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "A random algorithm has a null score. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "A given algorithm may leave undecided a number of hits ; as a valid solution requires all hits to be assigned, these hits are usually assigned to a single \"garbage\" track with possibly thousands of hits ; this garbage track has a null contribution to the score. ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 7 shows the weighted distribution of the particles, similar to Figure 5 (which is not weighted). ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "One sees that the weight has reduced the low momentum part and reduced the contribution of secondary particles.  ",
+            "section": "Scoring",
+            "paragraph_rank": 50,
+            "section_rank": 7
+        },
+        {
+            "text": "The Kaggle platform",
+            "section_rank": 8
+        },
+        {
+            "text": "The accuracy phase uses the Kaggle platform [14]. ",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 51,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 44,
+                    "end": 48,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "This platform hosts the dataset and provides the scoring and the leader-board for the participants. ",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 51,
+            "section_rank": 8
+        },
+        {
+            "text": "Participants can download the training and test dataset, train on the former and prepare a solution for the latter, and upload the solution.",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 51,
+            "section_rank": 8
+        },
+        {
+            "text": "While a variety of solution metrics already existed, the scoring metric discussed in section 2.4 was not one of them. ",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 52,
+            "section_rank": 8
+        },
+        {
+            "text": "It was implemented by Kaggle on their platform specifically for this challenge. ",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 52,
+            "section_rank": 8
+        },
+        {
+            "text": "For the test dataset, 125 simulated events were selected. ",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 52,
+            "section_rank": 8
+        },
+        {
+            "text": "Participants had to reconstruct all events on their own machines and upload their solution to Kaggle where the score was then computed.",
+            "section": "The Kaggle platform",
+            "paragraph_rank": 52,
+            "section_rank": 8
+        },
+        {
+            "text": "Summary of challenge choices",
+            "section_rank": 9
+        },
+        {
+            "text": "When designing a challenge, the domain problem has to be simplified so that it can be tackled by participants of diverse backgrounds, often without any domain knowledge. ",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 53,
+            "section_rank": 9
+        },
+        {
+            "text": "The various simplification choices are listing below:",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 53,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 the data comes from a simplified simulation with Acts, instead of real data from the detector or data from a detailed simulation [1] : the simplified simulation still has a number of relevant features which make track finding as difficult as in the detailed simulation or real data",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 54,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 simple geometry with modules arranged in cylinders and disks, instead of a more complex geometry with cones, and accurate simulation of electronics, cooling tubes and cables : there is no reason to believe the more complex geometry would lead to radically different algorithms",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 55,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 no merging of reconstructed hits : merging of hits would occur in less than 0.5% of the cases. ",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 56,
+            "section_rank": 9
+        },
+        {
+            "text": "Dealing with such cases is eventually necessary but it would not radically change the core algorithm use, so the added complexity was deemed unnecessary",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 56,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 only one type of event (top quark simulation) instead of a variety of events : top quark simulation is often used for algorithm validation because of many possible final state including electron muon and \u03c4 lepton, b c and light quark",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 57,
+            "section_rank": 9
+        },
+        {
+            "text": "\u2022 one single metric based on the hit clustering, while algorithms are evaluated with many metrics, in particular some based on the quality of the evaluation of the particle parameter from the associated hits : deriving the particle parameters from the associated hits is a well defined process done with proven techniques like Kalman filtering, so this aspect has been removed from the scope of the challenge. ",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 58,
+            "section_rank": 9
+        },
+        {
+            "text": "In addition, experience of the expert of the domain is that the quality of the particle parameter evaluation is directly impacted by the quality of the hit clustering.",
+            "section": "Summary of challenge choices",
+            "paragraph_rank": 58,
+            "section_rank": 9
+        },
+        {
+            "text": "Starting kit",
+            "section_rank": 10
+        },
+        {
+            "text": "The baseline solutions for the challenge were presented in the form of executable Jupyter notebooks [27]. ",
+            "section": "Starting kit",
+            "paragraph_rank": 59,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 100,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                }
+            ]
+        },
+        {
+            "text": "Participants were introduced into three basic approaches that helped to develop geometrical intuition behind the task. ",
+            "section": "Starting kit",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "The first approach was straightforward k-Nearest Neighbor classifier that was trained on a bunch of tracks and was able to discriminate hits that fall into the proximity of certain tracks venues. ",
+            "section": "Starting kit",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "However, the performance of such an approach was quite limited.",
+            "section": "Starting kit",
+            "paragraph_rank": 59,
+            "section_rank": 10
+        },
+        {
+            "text": "The second approach introduces data preprocessing based on the observation that most of the track hits follow an arc of a helix pattern:",
+            "section": "Starting kit",
+            "paragraph_rank": 60,
+            "section_rank": 10
+        },
+        {
+            "text": "Hence we can transform hit coordinates in the following way (see Figure 8) so the hits from the same helix would be close to each other after the mapping. ",
+            "section": "Starting kit",
+            "paragraph_rank": 61,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 73,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "After that, we apply DBSCAN [19] to identify dense regions of the transformed space as track candidates. ",
+            "section": "Starting kit",
+            "paragraph_rank": 61,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 28,
+                    "end": 32,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "This method achieves the score of \u2248 0.21.",
+            "section": "Starting kit",
+            "paragraph_rank": 61,
+            "section_rank": 10
+        },
+        {
+            "text": "The third notebook explores another kind of transformation that maps from Cartesian space into possible track parameters space. ",
+            "section": "Starting kit",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "Let's consider a simple 2D example with circular tracks. ",
+            "section": "Starting kit",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "Such tracks can be parametrized in polar coordinate system as follow:",
+            "section": "Starting kit",
+            "paragraph_rank": 62,
+            "section_rank": 10
+        },
+        {
+            "text": "where:",
+            "section": "Starting kit",
+            "paragraph_rank": 63,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 r and \u03c6 : are coordinates of a hit in the polar system;",
+            "section": "Starting kit",
+            "paragraph_rank": 64,
+            "section_rank": 10
+        },
+        {
+            "text": "\u2022 r 0 and \u03b8 : are coordinates of a centre of a circular track in the polar system.",
+            "section": "Starting kit",
+            "paragraph_rank": 65,
+            "section_rank": 10
+        },
+        {
+            "text": "So the transformation of Cartesian coordinates of a hit to polar coordinates is defined as:",
+            "section": "Starting kit",
+            "paragraph_rank": 66,
+            "section_rank": 10
+        },
+        {
+            "text": "In that system a linear track corresponds to the r 0 = \u221e. ",
+            "section": "Starting kit",
+            "paragraph_rank": 67,
+            "section_rank": 10
+        },
+        {
+            "text": "The Hough Transform [18] maps a hit in (r, \u03c6) space to a curve in ( 1 r 0 , \u03b8) space (see light-blue curves on the right side of figure 9):",
+            "section": "Starting kit",
+            "paragraph_rank": 67,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 24,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "A linear track in this space corresponds to the (0, \u03b8) point. ",
+            "section": "Starting kit",
+            "paragraph_rank": 68,
+            "section_rank": 10
+        },
+        {
+            "text": "For 3D case, we can parametrize a helix by cylindrical coordinates: \u03c6, r, z. ",
+            "section": "Starting kit",
+            "paragraph_rank": 68,
+            "section_rank": 10
+        },
+        {
+            "text": "For the simplicity, we can assume",
+            "section": "Starting kit",
+            "paragraph_rank": 68,
+            "section_rank": 10
+        },
+        {
+            "text": "which is true for high-PT tracks. ",
+            "section": "Starting kit",
+            "paragraph_rank": 69,
+            "section_rank": 10
+        },
+        {
+            "text": "So we can map every hit into possible helix coordinate space as depicted by the figure 9.",
+            "section": "Starting kit",
+            "paragraph_rank": 69,
+            "section_rank": 10
+        },
+        {
+            "text": "Afterwards, we split the track-parameter space into bins, and those with the higher density correspond to the higher possibility of tracks with the corresponding parameters and eventually represent recognized tracks. ",
+            "section": "Starting kit",
+            "paragraph_rank": 70,
+            "section_rank": 10
+        },
+        {
+            "text": "With the help of Hough transform one can achieve similar score as with DBSCAN (\u2248 0.20).",
+            "section": "Starting kit",
+            "paragraph_rank": 70,
+            "section_rank": 10
+        },
+        {
+            "text": "Those approaches are intended to give an easy-to-grasp way of dealing with the data and help to develop geometrical intuition for the challenge.",
+            "section": "Starting kit",
+            "paragraph_rank": 71,
+            "section_rank": 10
+        },
+        {
+            "text": "Competition Facts and Figure",
+            "section_rank": 11
+        },
+        {
+            "text": "The first phase of the TrackML challenge was well attended, with a total of 656 participants. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 10 shows the evolution of the leader scores over the duration of the competition. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "text": "Fig. 10"
+                }
+            ]
+        },
+        {
+            "text": "Several features are visible. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "First, a score of more than 90% was only reached in the last days of the competition. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "Also, there is a large cluster of candidates achieving a score of 20% to 25%, which corresponds to the 22% performance of the DBSCAN starting kit described in section 2.7. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "After around 30 days, public kernels achieving a performance greater than 50% were posted on the public forum, which lead to a second group of candidates reaching a performance of 50% to 60% after 40 days of competition. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "Finally, except for those groups, it is interesting that the candidates achieving the best performance are well separated from those groups and from each other. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 11 shows the final leaderboard (LB) with the top 20 participants. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "figure",
+                    "text": "Fig. 11"
+                }
+            ]
+        },
+        {
+            "text": "The dashes on the left column indicate that the final leaderboard ranks (determined on the 89 events of the private leaderboard dataset) are identical to those from the public leaderboard (determined on the 36 events of the public leaderboard dataset) for the ranks 1 to 19.",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 72,
+            "section_rank": 11
+        },
+        {
+            "text": "A deeper analysis of the score statistical accuracy has been done using the participants submission for the 125 test events. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 12 shows the score distribution for the best participants; While there is some overlap between the distributions, the means are well separated, except maybe for rank 7, 8 and 9. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 73,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "figure",
+                    "text": "Fig. 12"
+                }
+            ]
+        },
+        {
+            "text": "A quantitative analysis has been done using the Wilcoxon signed-rank test [34], a standard non-parametric statistical hypothesis test used to compare repeated measurements on a same sample to assess whether their population mean ranks differ. ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 73,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 74,
+                    "end": 78,
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "text": "[34]"
+                }
+            ]
+        },
+        {
+            "text": "The test is done on the 36 events of the smaller public dataset (which gave the rankings on the Kaggle web page), and gives a twosided p-value; the only candidate pairs having more than 1 \u22126 are 10 and 11 (3 \u22126 ), 7 and 9 (3 ",
+            "section": "Competition Facts and Figure",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "Study of algorithms performance",
+            "section_rank": 12
+        },
+        {
+            "text": "In this section, we analyze the quality of the top algorithms in more details beyond just the score, in particular with an eye on the criteria from a physicist point of view. ",
+            "section": "Study of algorithms performance",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "As a post-analysis of the competition, we have downloaded from the Kaggle website the submissions of the top candidates, and compared them to the ground truth. ",
+            "section": "Study of algorithms performance",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "This allows us to know where each hit of each of the 125 test events, was correctly associated, and whether each track was correctly reconstructed (we consider a track to be correctly reconstructed if it contributes to the score as described in section 2.4). ",
+            "section": "Study of algorithms performance",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "In addition to check the correct hit to track assignment, what is usually done in particle physics is to derive from the hits the particle parameters at the origin, and compare them to the ground truth; this is an on-going study not reported here.",
+            "section": "Study of algorithms performance",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "Tracking efficiency",
+            "section_rank": 13
+        },
+        {
+            "text": "Tracking efficiency is commonly defined in particle physics as the probability to reconstruct a track. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 75,
+            "section_rank": 13
+        },
+        {
+            "text": "A good tracking algorithm must provide consistently high efficiency over a wide range of track parameters.",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 75,
+            "section_rank": 13
+        },
+        {
+            "text": "The efficiency of a good algorithm is expected to be independent of the Figure 11: Final leaderboard from the competition website. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 72,
+                    "end": 81,
+                    "type": "figure",
+                    "text": "Figure 11"
+                }
+            ]
+        },
+        {
+            "text": "[14] The various columns correspond to the final rank, ranking difference with respect to the private leaderboard (in this case identical except for the last candidate), candidate name, logo, final score on the 125 test events, number of submissions, and time elapsed since the last submission. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "azimuth angle \u03c6 and the pseudo-rapidity \u03b7, and perform best for tracks originating from a low radius (r 0 , that is, near the beam axis, where the primary particles are created. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13
+        },
+        {
+            "text": "Such distributions are shown for representative solutions to the TrackML challenge in Fig. 13. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 93,
+                    "type": "figure",
+                    "text": "Fig. 13"
+                }
+            ]
+        },
+        {
+            "text": "The efficiency was computed using only the primary particles having created more than 4 hits (both expected result in well reconstructed tracks, and more relevant for physicists), hence the numbers can be slightly higher than those displayed on Fig. 11 and 12. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 245,
+                    "end": 252,
+                    "type": "figure",
+                    "text": "Fig. 11"
+                }
+            ]
+        },
+        {
+            "text": "To put some perspective, to the 13 leaders have been added the contribution of number 20, 50, 100 and of the DBSCAN starting kit introduced in Section 2.7 (500 is representative of the ranking it would have achieved in the competition). ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13
+        },
+        {
+            "text": "The better the ranking, the higher and flatter is the efficiency distribution according to all variables, validating the choice of the scoring variable (see Section 2.4). ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13
+        },
+        {
+            "text": "One interesting exception is the candidate ranked 100, diogo, who achieves a very high efficiency (the best one) at large radius (see Section 5.1.7). ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13
+        },
+        {
+            "text": "Those distributions have to be compared to the underlying probability density functions of the particles, which are indicated on Fig. 5. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 129,
+                    "end": 135,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "It is necessary for an algorithm to be performing well where the bulk of the particles are.",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 76,
+            "section_rank": 13
+        },
+        {
+            "text": "An important algorithmic quality criterion is the ability to distinguish particles close to each other. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 77,
+            "section_rank": 13
+        },
+        {
+            "text": "If a particle is created close to the axes origin, the \u03c6 and \u03b7 coordinates described in section 2.1 can be used to describe its direction of propagation. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 77,
+            "section_rank": 13
+        },
+        {
+            "text": "The angular distance \u2206R between two such particles   Figure 13: Primary particle reconstruction efficiency for various candidates as a function of six physics variables. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 77,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 53,
+                    "end": 62,
+                    "type": "figure",
+                    "text": "Figure 13"
+                }
+            ]
+        },
+        {
+            "text": "See Fig.5 for the variables definition, and the underlying probability distribution function (lower statistics means greater uncertainty).",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 77,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Fig.5"
+                }
+            ]
+        },
+        {
+            "text": "separated by angles \u2206\u03c6 and \u2206\u03b7 can then be defined by:",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 78,
+            "section_rank": 13
+        },
+        {
+            "text": "For each particle, this distance is computed with respect to its nearest neighbour in the \u03c6 \u2212 \u03b7 plane; Particles of opposite charge sign (which bend in different directions) can be separated more efficiently, so the distance is also computed for the nearest neighbour of the same charge and of the opposite sign charge. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "It is also relevant to ensure that the two particles were created close to each other, and a selection can be made on \u2206z, defined as the distance on the z axis between the vertices that created both particles considered. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 14 shows the efficiency as a function of \u2206R, for the nearest neighbour having the same charge sign (full lines in bright tones) and the opposite (dotted lines in dark tones). ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 14"
+                }
+            ]
+        },
+        {
+            "text": "As expected, the efficiency drops when the angular separation is small, because of a more likely confusion between the points of the two particles. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "The behaviour differs according to the relative sign of the nearest neighbour. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "Minimizing the drop of efficiency at small \u2206R is important because it would impact the detection of interesting phenomena yielding a bunch of almost collinear particles. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "This was not included specifically in the score, and we see that even the best algorithm, top-quark, suffers from this drop, albeit in a limited manner, as do the algorithms currently used in HEP. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "Different algorithmic choices reflect in different sensitivity to the closest particle.  ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 14: Primary particle reconstruction efficiency for various submissions as a function of \u2206R, the nearest neighbour angular distance, with a selection \u2206z < 10mm on the nearest neighbour vertex z distance. ",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figure 14"
+                }
+            ]
+        },
+        {
+            "text": "Each color corresponds to a different candidate; full lines in bright tones correspond to nearest particle of same charge sign and dotted lines in dark tones to opposite charge sign.",
+            "section": "Tracking efficiency",
+            "paragraph_rank": 79,
+            "section_rank": 13
+        },
+        {
+            "text": "Track purity",
+            "section_rank": 14
+        },
+        {
+            "text": "In this section we explore the reasons why some tracks had a null score. ",
+            "section": "Track purity",
+            "paragraph_rank": 80,
+            "section_rank": 14
+        },
+        {
+            "text": "For example, did they fail to get a sufficient fraction of the underlying particle? ",
+            "section": "Track purity",
+            "paragraph_rank": 80,
+            "section_rank": 14
+        },
+        {
+            "text": "Did they aggregate several of them? ",
+            "section": "Track purity",
+            "paragraph_rank": 80,
+            "section_rank": 14
+        },
+        {
+            "text": "Following the definition of particle purity and track purity in section 2.4, tracks can be categorized as follows:",
+            "section": "Track purity",
+            "paragraph_rank": 80,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Good : Both purities above 50% (the only case taken into account in the score)",
+            "section": "Track purity",
+            "paragraph_rank": 81,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Split : Particle purity below 50%, track purity above 50% (only a small part of the underlying particle was \"caught\")",
+            "section": "Track purity",
+            "paragraph_rank": 82,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Multiple : Particle purity above 50%, but track purity below 50% (typically, the track aggregated the result of two different underlying particles; this is rare since most particles originate near the origin)",
+            "section": "Track purity",
+            "paragraph_rank": 83,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Bad : Both below 50% Fig. 15 shows the classification of tracks for the primary particles of the aforementioned algorithms. ",
+            "section": "Track purity",
+            "paragraph_rank": 84,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 30,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Fig. 15"
+                }
+            ]
+        },
+        {
+            "text": "Whereas the fraction of good tracks closely follows the global efficiency, it is interesting to note that for instance algorithm number 20 has an excellent fraction of good tracks among the ones selected, indicating that the \"bad tracks\" category must contain few tracks with a high number of garbage hits.",
+            "section": "Track purity",
+            "paragraph_rank": 84,
+            "section_rank": 14
+        },
+        {
+            "text": "The distributions of track types according to the six usual physical variables are shown in Fig. 16 which displays the track type distribution for the leader. ",
+            "section": "Track purity",
+            "paragraph_rank": 85,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 99,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 16"
+                }
+            ]
+        },
+        {
+            "text": "The \"good\" tracks represent the majority of the event, and the score reflects quantitatively the efficiency of Fig. 13 (which only took into account primary particles). ",
+            "section": "Track purity",
+            "paragraph_rank": 85,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 111,
+                    "end": 118,
+                    "type": "figure",
+                    "text": "Fig. 13"
+                }
+            ]
+        },
+        {
+            "text": "The amount of good tracks found is lower when going further from the origin, but is flat up to 300 mm in r 0 and along the z axis coordinate; this was the secret behind the best rank.  ",
+            "section": "Track purity",
+            "paragraph_rank": 85,
+            "section_rank": 14
+        },
+        {
+            "text": "Figure 15: Distribution of the kind of tracks for each of the algorithms under consideration.",
+            "section": "Track purity",
+            "paragraph_rank": 85,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "text": "Figure 15"
+                }
+            ]
+        },
+        {
+            "text": "Finally, we use the hits to estimate where in the detector the algorithms perform the best. ",
+            "section": "Track purity",
+            "paragraph_rank": 86,
+            "section_rank": 14
+        },
+        {
+            "text": "We categorize the hits into three types:",
+            "section": "Track purity",
+            "paragraph_rank": 86,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 If a hit was not associated to a good track, it is called garbage.",
+            "section": "Track purity",
+            "paragraph_rank": 87,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Otherwise, if it did not belong to the particle with the majority of the hits, it is called mis-associated.",
+            "section": "Track purity",
+            "paragraph_rank": 88,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 Otherwise (good track and part of majority particle), it is called good. ",
+            "section": "Track purity",
+            "paragraph_rank": 89,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig.17 summarizes the position of those types for the leading candidate. ",
+            "section": "Track purity",
+            "paragraph_rank": 89,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Fig.17"
+                }
+            ]
+        },
+        {
+            "text": "We see that the algorithm performs best near the center, except for a bin of misassociated hits close from the beam axis but far (around 50 cm) from the origin; the garbage hits are mostly found on the detector outer layer (up to 80% there). ",
+            "section": "Track purity",
+            "paragraph_rank": 89,
+            "section_rank": 14
+        },
+        {
+            "text": "vertex z0 (mm) Figure 16: Reconstructed track type distribution of the six physical variables of Fig. 13 for the TopQuarks contribution. ",
+            "section": "Track purity",
+            "paragraph_rank": 89,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 24,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 16"
+                },
+                {
+                    "start": 97,
+                    "end": 104,
+                    "type": "figure",
+                    "text": "Fig. 13"
+                }
+            ]
+        },
+        {
+            "text": "Note that the \"good\" category matches closely the efficiency of the candidate (although on Fig. 13 we only considered primary particles, slightly increasing the score.)",
+            "section": "Track purity",
+            "paragraph_rank": 89,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 91,
+                    "end": 98,
+                    "type": "figure",
+                    "text": "Fig. 13"
+                }
+            ]
+        },
+        {
+            "text": "Selected algorithms",
+            "section_rank": 15
+        },
+        {
+            "text": "At the end the first phase of the challenge the participants were encouraged to provide a description of their algorithms to be able to claim their prize and enter the jury selection. ",
+            "section": "Selected algorithms",
+            "paragraph_rank": 90,
+            "section_rank": 15
+        },
+        {
+            "text": "As underlined in section 4, one of the solutions has a rather atypical behavior and has an advantage for track with large impact parameter. ",
+            "section": "Selected algorithms",
+            "paragraph_rank": 90,
+            "section_rank": 15
+        },
+        {
+            "text": "We first describe the algorithms underlining the overall strategies and innovations. ",
+            "section": "Selected algorithms",
+            "paragraph_rank": 90,
+            "section_rank": 15
+        },
+        {
+            "text": "We then highlight interesting aspects that would deserve special attention in further work on tracking using machine learning.",
+            "section": "Selected algorithms",
+            "paragraph_rank": 90,
+            "section_rank": 15
+        },
+        {
+            "text": "Algorithm Description",
+            "section_rank": 16
+        },
+        {
+            "text": "All algorithms share common approaches and methods, but for the sake of clarity of the description, each algorithm is described separately below leading to some unavoidable repetitions.",
+            "section": "Algorithm Description",
+            "paragraph_rank": 91,
+            "section_rank": 16
+        },
+        {
+            "text": "Challenge Winner : top-quarks",
+            "section_rank": 17
+        },
+        {
+            "text": "The team topquarks is composed of Johan Sokrates Wind \u00ac icecuber \u00ac\u00aa and Erling Solberg \"erlinsol\". ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 92,
+            "section_rank": 17
+        },
+        {
+            "text": "The technique was essentially developed by Johan Wind who is an Industrial Mathematics master student in Norway.",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 92,
+            "section_rank": 17
+        },
+        {
+            "text": "The winning algorithm [35] is modular so as to allow for efficient testing new ideas at all levels of the algorithm. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 22,
+                    "end": 26,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "[35]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm's track following strategy is similar to that of several tracking algorithms currently used in production by high energy physics experiments. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The subsequent steps are instrumented with intermediate measurement of the quality of the solution. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "This allows to keep track of loss in score and was probably a key factor in winning the challenge. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "While most of the code is written in C++/C++11, some training was performed using python for practicality. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "A dedicated data structure was implemented especially for the challenge to favor many look-ups which could have been otherwise prohibitively expensive. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The compromise between hit combinatorics and search space usually present in standard track following algorithms as the algorithm proceeds with finding hits that belongs to track, is avoided in this method by fixing the branching in the combinatorial tree using an estimation of the density of polluting hits as a function of the hit location in the detector. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "Binary classification is used at two stages of the algorithm and was trained on a very small number of events, as each event anyways contains a large number of hits and tracks. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The whole algorithm contains several parameters which turn out to be hard to optimize by trial and error. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The solution proceeds as follows, and as represented in fig 18   1. Seed generation: 50 pairs of layers are selected in the innermost part of the detector and all pairs of hits are created. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "start": 56,
+                    "end": 66,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "fig 18   1"
+                }
+            ]
+        },
+        {
+            "text": "A logistic regression classifier is trained on hit pair features, and allows to reduce the number of wrong seed, keeping a almost all good seeds. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "2. Extension to triplets: using a straight line extrapolation from the pair of hits to the next layer allows to find compatible hits. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The 10 closest hits are used to form triplets. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "A logistic regression classifier is trained on triplet features, and retains most good triplets, rejecting bad triplets. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "3. Track Following: further hits are attached to track candidates, starting from the triplets, by running an helix extrapolation to the next layers using the last three hits of the track candidate. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "The closest hit to the crossing point if added to the candidate. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "This helix extrapolation is performed using a data driven estimation of the magnetic field so as to be more accurate.",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 93,
+            "section_rank": 17
+        },
+        {
+            "text": "4. Track Consolidation: the track candidate building so far has not taken into account overlapping modules which may lead to multiple hits per layer. ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 94,
+            "section_rank": 17
+        },
+        {
+            "text": "Extra hits on each layer already crossed are added to the candidate if they are closer than a threshold.  ",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 94,
+            "section_rank": 17
+        },
+        {
+            "text": "From top to bottom : pair finding, extension to triplet, extension to tracks, addition of hits from overlapping modules, and final track disambiguation.",
+            "section": "Challenge Winner : top-quarks",
+            "paragraph_rank": 94,
+            "section_rank": 17
+        },
+        {
+            "text": "Challenge Runner-up : outrunner",
+            "section_rank": 18
+        },
+        {
+            "text": "Pei-Lien Chou \"outrunner\" is a software engineer in image-based deep learning in Ta\u00efwan.",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 95,
+            "section_rank": 18
+        },
+        {
+            "text": "The solution that ranked second in the challenge is using an artificial neural network model predicting the adjacency matrix of hits in a all to all connection scheme. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 96,
+            "section_rank": 18
+        },
+        {
+            "text": "A three hits helix compatibility check is used the post-processing The solution implement in python is organized as follows 1. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 96,
+            "section_rank": 18
+        },
+        {
+            "text": "Adjacency Matrix prediction: all pairs of hits are considered and 27",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 96,
+            "section_rank": 18
+        },
+        {
+            "text": "features are constructed from its quantities. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 97,
+            "section_rank": 18
+        },
+        {
+            "text": "A neural network model composed of multiple wide dense layers is trained to predict the probability of the pair to be on the same track. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 97,
+            "section_rank": 18
+        },
+        {
+            "text": "There is a large class imbalance in the problem due of the predominance of pair of hits that are not belonging to the same track. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 97,
+            "section_rank": 18
+        },
+        {
+            "text": "This is overcome by sampling pairs from the negative class closer to the positive pairs to better define the boundary between the two classes. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 97,
+            "section_rank": 18
+        },
+        {
+            "text": "The accuracy weighted by the class cardinal is a better estimator of the performance of the model in this heavy imbalanced setup.",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 97,
+            "section_rank": 18
+        },
+        {
+            "text": "2. Adjacency Navigation: For a given initial hit, the pair with the highest predicted score defines a seed. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 98,
+            "section_rank": 18
+        },
+        {
+            "text": "The third hit that maximize the sum of probabilities of the pairs formed with the other two hits is considered for addition to the track. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 98,
+            "section_rank": 18
+        },
+        {
+            "text": "The compatibility of this third hits with an circle passing from the origin and the other two hits is used to definitely add or reject the hit to the track candidate. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 98,
+            "section_rank": 18
+        },
+        {
+            "text": "Once no hit remains as possible candidate for addition, and new initial hit is taken to create a new candidate.",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 98,
+            "section_rank": 18
+        },
+        {
+            "text": "3. Track Merging and extension: the quality of tracks is quantified by the amount of hits uniquely assigned to it. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 99,
+            "section_rank": 18
+        },
+        {
+            "text": "This quality is used to order overlapping tracks and assign hits to final tracks. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 99,
+            "section_rank": 18
+        },
+        {
+            "text": "Track candidates with high quality are extended by navigating the adjacency matrix with looser constraints.",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 99,
+            "section_rank": 18
+        },
+        {
+            "text": "The proposed approach is an unstructured track following algorithm where the next hit is not provided by track extrapolation but directly a hit index based on the hit pair classifier score. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 100,
+            "section_rank": 18
+        },
+        {
+            "text": "The reported prohibitive computation cost seems to indicates that much too many branches of the combinatorial tree are followed during the track following step. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 100,
+            "section_rank": 18
+        },
+        {
+            "text": "Some level of tuning could result in similar performance without much loss of accuracy, and may constitute an alternative the the combinatorial track finder approach. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 100,
+            "section_rank": 18
+        },
+        {
+            "text": "Although the proposed solution is prohibitively expensive to be used for making track candidate prediction, it is rather accurate, and further development might make it much more tractable. ",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 100,
+            "section_rank": 18
+        },
+        {
+            "text": "It should be noted that graph based neural network approaches, such as the one presented in [20] can combine the hit pair classification and the navigation of the adjacent hits.",
+            "section": "Challenge Runner-up : outrunner",
+            "paragraph_rank": 100,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 96,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "Challenge Second Runner-up : Sergey Gorbunov",
+            "section_rank": 19
+        },
+        {
+            "text": "Sergey Gorbunov is a physicist in Germany, expert in tracking software.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 101,
+            "section_rank": 19
+        },
+        {
+            "text": "The solution which ranked third [23] during the challenge is following closely the strategy of most tracking algorithm in high energy physics. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 102,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 36,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "A couple of novelties are introduced, the magnetic field is estimated from the data, instead of provided by a numerical model, the hit search on each layer is performed with a fixed grid lookout data structure, and tagging of candidate hits is done using incremental counts allowing for fast hit categorization.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 102,
+            "section_rank": 19
+        },
+        {
+            "text": "The algorithm written in C++, proceeds as follow and as depicted in fig  19   1. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 79,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "fig  19   1"
+                }
+            ]
+        },
+        {
+            "text": "Seeding: triplet of layers of the detectors are determined to build up seeds from. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "text": "All hits from the first layer are considered and a search for compatible hit is performed on the second layer, using a straight line extrapolation, from the origin and the first hit. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "text": "Hits within a search window are taken as second hits. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "text": "A second straight line extrapolation from the two hits onto the third layer is done to find hits within the search region. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "text": "Triplets of hits are rejected based on their lack of alignment in the r-z plane.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 103,
+            "section_rank": 19
+        },
+        {
+            "text": "2. Track Candidate Building: triplets found so far are taken individually and extrapolated through the successive layers of the detector. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 104,
+            "section_rank": 19
+        },
+        {
+            "text": "The last three hits of the candidate track is used for a local helix fit. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 104,
+            "section_rank": 19
+        },
+        {
+            "text": "This helix is used to find nearby hits on the layer of the last hit, to account for module overlap within layers. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 104,
+            "section_rank": 19
+        },
+        {
+            "text": "The helix is further used to propagate to the next layer, and the closest hit is added to the track candidate.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 104,
+            "section_rank": 19
+        },
+        {
+            "text": "3. Track Selection: all the candidate tracks found from the original hit on the first layer are arbitrated to find a single best candidate. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 105,
+            "section_rank": 19
+        },
+        {
+            "text": "The candidate with the most hit of the least deviation from the local helix fits is retained and its hits are removed from the collection of hits. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 105,
+            "section_rank": 19
+        },
+        {
+            "text": "The algorithm restart with a hit on the first layer, and so on.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 105,
+            "section_rank": 19
+        },
+        {
+            "text": "The helix fit and extrapolations are performed using a data-driven estimation of an effective magnetic field, which takes into account variation in the magnetic field and the amount of material in the detector. ",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 106,
+            "section_rank": 19
+        },
+        {
+            "text": "The good performance obtained with the absence of branching in the building of the candidate (one candidate per seed) is somehow surprising and an indication that the detector is granular enough compared to the amount of material such that there are little local ambiguities on hit association.",
+            "section": "Challenge Second Runner-up : Sergey Gorbunov",
+            "paragraph_rank": 106,
+            "section_rank": 19
+        },
+        {
+            "text": "Jury Innovative Prize : Yuval and Trian",
+            "section_rank": 20
+        },
+        {
+            "text": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "section_rank": 21
+        },
+        {
+            "text": "The jury has selected the solution [30] for the innovation in implementing a method that is not unlike the Hough transform [18]. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 39,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[30]"
+                },
+                {
+                    "start": 123,
+                    "end": 127,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm and the training of machine learning models are done in python. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21
+        },
+        {
+            "text": "The Hough transform in all 5 helix parameters at the origin is expensive computationally and prohibitive in dense collision environment like the one simulated for the challenge. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21
+        },
+        {
+            "text": "The smart indexing of the unique quintuplet of track parameters and the marginalization over transverse momentum and longitudinal impact parameter made the application of the Hough transform tractable in this case. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21
+        },
+        {
+            "text": "The algorithm contains the following steps Figure 19: Schematic representation of the steps of the challenge second runner up algorithm. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "start": 43,
+                    "end": 52,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 19"
+                }
+            ]
+        },
+        {
+            "text": "Left : seeding from triplet of inner layers of the detector. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21
+        },
+        {
+            "text": "Right : track candidate building using an helix extrapolation made from the last three hits of the candidate.",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 107,
+            "section_rank": 21
+        },
+        {
+            "text": "1. Clustering: assuming a doublet composed of the signed curvature and the longitudinal impact parameter of an helix, each hit correspond to a unique helix. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "This helix is parametrized by the polar angle, the sine and cosine of the azimuthal angle of the tangent on the longitudinal axis. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "The phase space of the triplet is discretized in order to form bins, bins in which hits of the same helix will accumulate. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "The helix triplet are smeared to prevent the fixed binning to limit the clustering, by allowing hit to migrate from nearby bins. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "Each bin is a track candidate if it contains at least one hit. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "The phase space of the initial doublets is discretized and scanned at random. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "Each set of track candidates are merged by assigning each hit, uniquely to the bin that has the largest cardinal. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "The indexing of each bin is made unique throughout the discretization of the five helix parameter, so as to effectively uniquely index a track parameter by the bin index.",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 108,
+            "section_rank": 21
+        },
+        {
+            "text": "This solution ranked seventh in the challenge, even though it does not include much domain knowledge about charged particle trajectories. ",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 109,
+            "section_rank": 21
+        },
+        {
+            "text": "Machine learning is limited to a classifier used for selecting good track candidate from other clustering of unrelated hits.",
+            "section": "Yuval Reina is an electronic engineer in Israel and Trian Xylouris is an entrepreneur in Germany",
+            "paragraph_rank": 109,
+            "section_rank": 21
+        },
+        {
+            "text": "Jury Clustering Prize : CPMP",
+            "section_rank": 22
+        },
+        {
+            "text": "Jean-Fran\u00e7ois Puget CPMP is a software engineer at IBM in France. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 110,
+            "section_rank": 22
+        },
+        {
+            "text": "He is a Kaggle competition grandmaster and a Kaggle discussion grandmaster.",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 110,
+            "section_rank": 22
+        },
+        {
+            "text": "The jury has selected the following solution [28] for bringing multiple improvements to the starting kit based on DBSCAN [19]. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 111,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 49,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[28]"
+                },
+                {
+                    "start": 121,
+                    "end": 125,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "It uses a concept developed in a solution detailed in section 5.1.7 for a definition of track quality. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 111,
+            "section_rank": 22
+        },
+        {
+            "text": "Concepts of the Hough transform already discussed in 5.1.4 are used to form track candidates in an iterative manner.",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 111,
+            "section_rank": 22
+        },
+        {
+            "text": "1. Track parameter data bank: the doublet : curvature and longitudinal impact parameters of all tracks observed in a training set are registered to be later used as possible track parameters to be scanned over. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 112,
+            "section_rank": 22
+        },
+        {
+            "text": "As such this can be seen as a track pattern data bank.",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 112,
+            "section_rank": 22
+        },
+        {
+            "text": "2. Track quality calibration: the frequency of observation of quadruplets of crossed modules is measured from a training dataset, and is later used to estimated the likelihood of a track candidate.",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 113,
+            "section_rank": 22
+        },
+        {
+            "text": "3. Track candidate building: the space of track parameters doublet is scanned at random from the data bank of track pattern. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 114,
+            "section_rank": 22
+        },
+        {
+            "text": "For each track sub-parameter considered, all the hits are represented with three remaining parameters of the helix passing through the hit. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 114,
+            "section_rank": 22
+        },
+        {
+            "text": "A cluster of hits in this transformed space represent hits that closely share all five track parameters, and hence are considered a track candidate. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 114,
+            "section_rank": 22
+        },
+        {
+            "text": "This clustering is obtained using the DBSCAN algorithm in the hit transformed coordinate space. ",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 114,
+            "section_rank": 22
+        },
+        {
+            "text": "Ambiguities for hits already assigned to a track candidate are lifted by chosing to assigne to the track with the most hits and the best quality (based on frequency of module quadruplets).",
+            "section": "Jury Clustering Prize : CPMP",
+            "paragraph_rank": 114,
+            "section_rank": 22
+        },
+        {
+            "text": "4.",
+            "section_rank": 23
+        },
+        {
+            "text": "Ensembling: the track candidate building above is ran once in the whole detector and once only in the most inner part of the detector. ",
+            "section": "4.",
+            "paragraph_rank": 115,
+            "section_rank": 23
+        },
+        {
+            "text": "The two solutions are merged by virtue of track overlap.",
+            "section": "4.",
+            "paragraph_rank": 115,
+            "section_rank": 23
+        },
+        {
+            "text": "The use of DBSCAN, compared to the method detailed in section 5.1.4 allows for a unbinned clustering in track parameters space. ",
+            "section": "4.",
+            "paragraph_rank": 116,
+            "section_rank": 23
+        },
+        {
+            "text": "By construction, this algorithm cannot find loopers (particles not escaping the tracker volume and returning to the beam line) and tracks from secondary vertex (tracks originating from a displaced pointt, hence missing the z axis by a large distance). ",
+            "section": "4.",
+            "paragraph_rank": 116,
+            "section_rank": 23
+        },
+        {
+            "text": "The track quality estimator based on module quadruplet frequency is effective, but could be improved with a more granular and selective input. ",
+            "section": "4.",
+            "paragraph_rank": 116,
+            "section_rank": 23
+        },
+        {
+            "text": "In the transformation of the hit spacial coordinate into a triplet of track parameters, the observed non-uniformity of the magnetic field is taken into account by calibrating the transformation as a function of the longitudinal coordinate.",
+            "section": "4.",
+            "paragraph_rank": 116,
+            "section_rank": 23
+        },
+        {
+            "text": "Jury Deep Learning Prize : finnies",
+            "section_rank": 24
+        },
+        {
+            "text": "Nicole and Liam Finnie are software engineers in Germany.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 117,
+            "section_rank": 24
+        },
+        {
+            "text": "The jury has selected this solution [22] for the use of recurrent artificial neural network (RNN), using long short term memory cells [25] (LSTM) also used in [20]. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 118,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 36,
+                    "end": 40,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                },
+                {
+                    "start": 134,
+                    "end": 138,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                },
+                {
+                    "start": 159,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "The DBSCAN algorithm reference in 5.1.5 is used to cluster hits in inner-most layers of the detector in order to produce tracklets seeds. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 118,
+            "section_rank": 24
+        },
+        {
+            "text": "The recurrent network is used in place of a propagator to find the potential position of hits on subsequent layers of the detector.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 118,
+            "section_rank": 24
+        },
+        {
+            "text": "The team that ranked twelth in the challlenge also came up with the following algorithm implemented in python using keras [15] and Tensorflow [2]. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 119,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 122,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 142,
+                    "end": 145,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "It proceeds as follows and as depicted in fig 20   1. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 119,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 52,
+                    "type": "figure",
+                    "text": "fig 20   1"
+                }
+            ]
+        },
+        {
+            "text": "Seeding: hits from all layers are considered in polar coordinates and clustered using the DBSCAN algorithm [19]. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 119,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 111,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "Each track candidate is truncated to the first 5 hits to produce a tracklet seed. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 119,
+            "section_rank": 24
+        },
+        {
+            "text": "The purity of the collection of seeds is improved using outliers rejection.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 119,
+            "section_rank": 24
+        },
+        {
+            "text": "2. Path Prediction: from the observation that tracks are mostly straight lines in the coordinate systems (\u03c6, r) and (r, z), the (\u03c6, r, z, z/r) is chosen for track following. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 120,
+            "section_rank": 24
+        },
+        {
+            "text": "A recurrent unit is constructed (see figure 21) with one hit position in input, and one hit position in output. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 120,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 37,
+                    "end": 46,
+                    "type": "figure",
+                    "text": "figure 21"
+                }
+            ]
+        },
+        {
+            "text": "It is ran along the 5 hits of the seed, and unrolled for 5 more iterations using zero-ed input to predict the position of the next 5 hits. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 120,
+            "section_rank": 24
+        },
+        {
+            "text": "Multiple architectures for the recurrent model are implemented and trained separately. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 120,
+            "section_rank": 24
+        },
+        {
+            "text": "They are ensembled with averaging to provide the final prediction of the path of the charged particle in the detector.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 120,
+            "section_rank": 24
+        },
+        {
+            "text": "3. Hit association: the k-D tree [7] is built using all hits of the events in the quadruplet space to efficiently find hits that are the closest to the path prediction, based on the Manhattan distance.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 121,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 36,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "Multiple architecture of the recurrent model are investigated, the training of the models is quite prohibitive to allow for a full optimization. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Computationally more economical recurrent cells such as gated recurrent units (GRU) could be used to make this training faster without a-priory loss of predictability. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "This approach uses RNNs for track following and used the starting kit (see section 2.7) to quickly get a set of good seeds. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "The algorithmic performance depends strongly on the seeding mechanism and could therefore be largely improved. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "By design, this algorithm can only provide track candidates with ten hits. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Variations of the model architecture and training could allow for shorter and longer tracks to be found. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 20: Schematic representation of the steps of algorithm selected by the jury for its use of deep learning and recurrent network. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "text": "Figure 20"
+                }
+            ]
+        },
+        {
+            "text": "Left : seeding is performed using DBSCAN. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Middle : a recurrent model is trained and used to predict the positions of the next hits. ",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Right : kNN-tree algorithm is used to find the closest matching hits.",
+            "section": "Jury Deep Learning Prize : finnies",
+            "paragraph_rank": 122,
+            "section_rank": 24
+        },
+        {
+            "text": "Organizer's Pick : diogo",
+            "section_rank": 25
+        },
+        {
+            "text": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "section_rank": 26
+        },
+        {
+            "text": "As discussed in section 4, one of the solutions drew the attention of the organizer as it performed quite uniquely well for track with large impact parameters (see bottom left plot of figure 13), regardless of the poor score overall (rank hundredth). ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 123,
+            "section_rank": 26
+        },
+        {
+            "text": "The solution [21] uses a pattern matching algorithm also found in actual LHC trigger implementations that can be found in [31] and is based on the assumption that the training dataset contains all possible track pattern that can be observed in the detector during collisions. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 123,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "start": 13,
+                    "end": 17,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                },
+                {
+                    "start": 122,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm written in Python has the following two main steps.",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 123,
+            "section_rank": 26,
+            "entity_spans": [
+                {
+                    "start": 25,
+                    "end": 32,
+                    "type": "software",
+                    "rawForm": "Python",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "1. Route data-banks building: from the observation that tracks are seldom sharing the ordered sequence of modules that are crossed, a set of routes are constructed from unique sequence of modules of the detector. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 124,
+            "section_rank": 26
+        },
+        {
+            "text": "A route consists of a sequence of module id and the expected position of the hit on the model. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 124,
+            "section_rank": 26
+        },
+        {
+            "text": "In the case of multiple tracks having the same sequence of module in the training data set, the prediction is made from the averaged positions. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 124,
+            "section_rank": 26
+        },
+        {
+            "text": "The weights of hits provided in the training data set are used in the averaging of hit position with a route, so as to favor the higher score.",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 124,
+            "section_rank": 26
+        },
+        {
+            "text": "2. Hit matching: routes that have at least one hit on each of its modules are used to build track candidates. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 125,
+            "section_rank": 26
+        },
+        {
+            "text": "In case of a candidate hit shared by multiple routes, the hit is assigned to the track candidate with the smallest average distance to the route predicted positions. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 125,
+            "section_rank": 26
+        },
+        {
+            "text": "Figure 21: Diagram of the recurrent neural network architecture used by the jury deep learning prize algorithm. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 125,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "text": "Figure 21"
+                }
+            ]
+        },
+        {
+            "text": "A set of 5 hit quadruplets followed by 5 blank coordinates are presented in input to the model which produces in total 10 hit position quadruplets, that last five of which are used to look for matching hits in the detector. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 125,
+            "section_rank": 26
+        },
+        {
+            "text": "The model is a dual stacked LSTM with a dense model transforming the hidden representation into the space of hit position quadruplets.",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 125,
+            "section_rank": 26
+        },
+        {
+            "text": "This pattern matching algorithm performs poorly for tracks originating close to the beam line probably because of the initial assumption is incorrect for these type of tracks. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 126,
+            "section_rank": 26
+        },
+        {
+            "text": "This can be explained by the fact that a route is covering a non negligible finite volume in the space of possible tracks, and the density of track parameters along a route is too high and leads to ambiguities. ",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 126,
+            "section_rank": 26
+        },
+        {
+            "text": "It however functions rather well for tracks created at secondary vertex (see section 4 for more details), likely because the density in the track parameter space is much lower, leading to unambiguous hit association within a nevertheless ambiguous route.",
+            "section": "Diogo R. Ferreira is a professor/researcher at the University of Lisbon, focusing on data science and nuclear fusion.",
+            "paragraph_rank": 126,
+            "section_rank": 26
+        },
+        {
+            "text": "Lessons Learned",
+            "section_rank": 27
+        },
+        {
+            "text": "It is not too surprising to find among the top ranking and winning solutions, algorithm highly inspired from the seeding, track following, track selection three-stages approach implemented in the current charged particle tracking algorithms. ",
+            "section": "Lessons Learned",
+            "paragraph_rank": 127,
+            "section_rank": 27
+        },
+        {
+            "text": "The variations on this baseline approach are however interesting for future development of tracking algorithms.  ",
+            "section": "Lessons Learned",
+            "paragraph_rank": 127,
+            "section_rank": 27
+        },
+        {
+            "text": "Figure 22: Schematic representation of the route used in the algorithm of the \"Organizer's pick\". ",
+            "section": "Lessons Learned",
+            "paragraph_rank": 127,
+            "section_rank": 27,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "text": "Figure 22"
+                }
+            ]
+        },
+        {
+            "text": "The route is precomputed from the positions of hits from tracks sharing the same sequence of traversed modules of the detector. ",
+            "section": "Lessons Learned",
+            "paragraph_rank": 127,
+            "section_rank": 27
+        },
+        {
+            "text": "Track candidates are produced by selecting the list of hits that are the closest to the predefined route.",
+            "section": "Lessons Learned",
+            "paragraph_rank": 127,
+            "section_rank": 27
+        },
+        {
+            "text": "Accuracy Driven Steps",
+            "section_rank": 28
+        },
+        {
+            "text": "The monitoring of the loss of accuracy at each step of the winning solution is probably a vector of its success in the competition as development an improvement are mainly guided by retaining almost all of the good track and hits. ",
+            "section": "Accuracy Driven Steps",
+            "paragraph_rank": 128,
+            "section_rank": 28
+        },
+        {
+            "text": "Even though the metric of the challenge cannot be applied as such at each step and iteration, the participants were able to find useful and realistic proxies that help them develop their algorithms without losing the maximum score in objective.",
+            "section": "Accuracy Driven Steps",
+            "paragraph_rank": 128,
+            "section_rank": 28
+        },
+        {
+            "text": "Data Driven Estimation of the Magnetic Field",
+            "section_rank": 29
+        },
+        {
+            "text": "The model of magnetic field used in the simulation of the data for the challenge was not been provided in the data set description, as it was not deemed necessary and in order to simplify the data set publication. ",
+            "section": "Data Driven Estimation of the Magnetic Field",
+            "paragraph_rank": 129,
+            "section_rank": 29
+        },
+        {
+            "text": "Participants however observed loss of accuracy in their prediction, due to non-uniformity of the magnetic field. ",
+            "section": "Data Driven Estimation of the Magnetic Field",
+            "paragraph_rank": 129,
+            "section_rank": 29
+        },
+        {
+            "text": "Corrections which were applied have been derived in a data-driven manner, and would not only contain actual modification of the magnetic field, but also the amount of material that composes the detector. ",
+            "section": "Data Driven Estimation of the Magnetic Field",
+            "paragraph_rank": 129,
+            "section_rank": 29
+        },
+        {
+            "text": "Due to the imperfect modeling of the geometry of the real detector, the models for the magnetic field and material used in reconstruction software are only approximate and may lead to inaccuracies. ",
+            "section": "Data Driven Estimation of the Magnetic Field",
+            "paragraph_rank": 129,
+            "section_rank": 29
+        },
+        {
+            "text": "Such data-driven measurement of the magnetic field and geometry models may lead to better algorithms in the future.",
+            "section": "Data Driven Estimation of the Magnetic Field",
+            "paragraph_rank": 129,
+            "section_rank": 29
+        },
+        {
+            "text": "Computational Cost of Deep Learning",
+            "section_rank": 30
+        },
+        {
+            "text": "The teams which applied deep learning to the vast amount of training data provided in the challenge had to face computation resource limitations. ",
+            "section": "Computational Cost of Deep Learning",
+            "paragraph_rank": 130,
+            "section_rank": 30
+        },
+        {
+            "text": "Even with the use of general purpose Graphical Processing Units (GPUs) it took multiple days to train models. ",
+            "section": "Computational Cost of Deep Learning",
+            "paragraph_rank": 130,
+            "section_rank": 30
+        },
+        {
+            "text": "As in many occasions, the phase space of hyper-parameters of such models were not fully scanned for the optimal set. ",
+            "section": "Computational Cost of Deep Learning",
+            "paragraph_rank": 130,
+            "section_rank": 30
+        },
+        {
+            "text": "The participants did not report whether their proposed solution would perform better if given more resource and time.",
+            "section": "Computational Cost of Deep Learning",
+            "paragraph_rank": 130,
+            "section_rank": 30
+        },
+        {
+            "text": "On the other hand, however long it may take to train models and optimize the set of hyper-parameters, the use of the trained model can be extremely fast and potentially faster than conventional approaches.",
+            "section": "Computational Cost of Deep Learning",
+            "paragraph_rank": 131,
+            "section_rank": 30
+        },
+        {
+            "text": "Hyper-parameter Tuning",
+            "section_rank": 31
+        },
+        {
+            "text": "Deep learning methods are not the only algorithms, which have hyperparameters that require tuning. ",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 132,
+            "section_rank": 31
+        },
+        {
+            "text": "Many solutions proposed in the challenge were tuned by hand by the participants using their algorithm knowledge and intuition. ",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 132,
+            "section_rank": 31
+        },
+        {
+            "text": "A more systematic approach would probably require more computational resources, so as to fully the performance of the algorithm. ",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 132,
+            "section_rank": 31
+        },
+        {
+            "text": "Further methods of tuning could involve Bayesian optimization using Gaussian processes regression of the performance function, or evolutionary algorithms which can be used to find an optimum functioning point of the proposed methods.",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 132,
+            "section_rank": 31
+        },
+        {
+            "text": "In the case of the challenge with a single score as a measure of goodness, such hyper-optimizations are rather easy to implement (at the cost of more resource). ",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 133,
+            "section_rank": 31
+        },
+        {
+            "text": "On the other hand, in the context of charged particle reconstruction in an experiment software, there might not be a unique figure of merit of tracking. ",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 133,
+            "section_rank": 31
+        },
+        {
+            "text": "Multiple quantities which have counter-balancing importance for the scientific throughput play a role, and the scientific throughput is not directly quantifiable.",
+            "section": "Hyper-parameter Tuning",
+            "paragraph_rank": 133,
+            "section_rank": 31
+        },
+        {
+            "text": "Noise-Driven Control of the Combinatorial Explosion",
+            "section_rank": 32
+        },
+        {
+            "text": "The solution detailed in section 5.1.1 is inspired from the the canonical charged particle tracking algorithms. ",
+            "section": "Noise-Driven Control of the Combinatorial Explosion",
+            "paragraph_rank": 134,
+            "section_rank": 32
+        },
+        {
+            "text": "In particular, during the track following steps, the number of candidate hits to be considered at each step is not controlled using the estimated error on the predicted position (which can be numerically expensive to compute), but by using the density of track outliers.",
+            "section": "Noise-Driven Control of the Combinatorial Explosion",
+            "paragraph_rank": 134,
+            "section_rank": 32
+        },
+        {
+            "text": "This approach may allow for faster software with an exact control on the complexity of the algorithm. ",
+            "section": "Noise-Driven Control of the Combinatorial Explosion",
+            "paragraph_rank": 135,
+            "section_rank": 32
+        },
+        {
+            "text": "It might help to recover efficiency in pattern recognition of tracks which experienced large statistical fluctuations at some point of their trajectories through the detector. ",
+            "section": "Noise-Driven Control of the Combinatorial Explosion",
+            "paragraph_rank": 135,
+            "section_rank": 32
+        },
+        {
+            "text": "The increased, controlled size of the tree would have to be balanced with a significant gain in computation to be beneficial of course.",
+            "section": "Noise-Driven Control of the Combinatorial Explosion",
+            "paragraph_rank": 135,
+            "section_rank": 32
+        },
+        {
+            "text": "Conclusion and Outlook",
+            "section_rank": 33
+        },
+        {
+            "text": "The Accuracy phase of the Tracking ML challenge has introduced a variety of approaches, some of them being completely original for the field, as listed in section 5.2. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33
+        },
+        {
+            "text": "The quality of the algorithms is excellent, as it has been studied in depth in section 4. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33
+        },
+        {
+            "text": "In particular, the fact that 99% efficiency is reached over a wide range of parameters (see Fig.13) indicates that the quality is similar to the state of the art, although a direct comparison is not available at this stage. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 98,
+                    "type": "figure",
+                    "text": "Fig.13"
+                }
+            ]
+        },
+        {
+            "text": "This was not given for granted as using a single score as a factor-of-merit is very unusual in the domain. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33
+        },
+        {
+            "text": "The challenge being a competition, and despite a very active discussion forum on [14], there was not a lot of collaboration between top participants. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "Thanks to the software released by the participants, more in-depth studies developing algorithms combining the different ideas have been launched.",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 136,
+            "section_rank": 33
+        },
+        {
+            "text": "From the domain point of view, the goal was to obtain new algorithms which are both of good quality and fast. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33
+        },
+        {
+            "text": "For the first Accuracy phase, there was deliberately no incentive on the execution time, beyond what was practical for the participants. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33
+        },
+        {
+            "text": "In the post competition survey, time between 10 minutes per event and one day per event have been reported. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33
+        },
+        {
+            "text": "The Throughput phase has been launched on Codalab [13] in October 2018 till March 2019 and was still running at the time of writing. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 54,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "However, it appears already that some participants are managing to obtain very high score in just a few seconds, as a first hint of the success of the two stage approach. ",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33
+        },
+        {
+            "text": "In depth analysis of the Throughput phase will be published in a future paper [4].",
+            "section": "Conclusion and Outlook",
+            "paragraph_rank": 137,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 81,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 34
+        },
+        {
+            "text": "Figure 4: Detector layout for the virtual TrackML detector. ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 138,
+            "section_rank": 34
+        },
+        {
+            "text": "On the left the three major sub-detectors, pixel, short strips, and long strips, are shown separately. ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 138,
+            "section_rank": 34
+        },
+        {
+            "text": "On the right, a schematic of the full layout and its coverage along the radial and longitudinal dimensions as well as in the \u03b7 direction is shown. ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 138,
+            "section_rank": 34
+        },
+        {
+            "text": "The different colors represent the different sub-detectors while the marked numbers are the internal volume and layer identifiers.",
+            "section": "Figure 4 :",
+            "paragraph_rank": 138,
+            "section_rank": 34
+        },
+        {
+            "text": "pFigure 6 :",
+            "section_rank": 35
+        },
+        {
+            "text": "Figure 6: On the left: illustration of the order-dependent hit weight. ",
+            "section": "pFigure 6 :",
+            "paragraph_rank": 139,
+            "section_rank": 35
+        },
+        {
+            "text": "On the right: the simulated p \u22a5 distribution and the p \u22a5 -dependent hit weight.",
+            "section": "pFigure 6 :",
+            "paragraph_rank": 139,
+            "section_rank": 35
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 36
+        },
+        {
+            "text": "Figure 7: Probability density functions taking into account the score weight. ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 140,
+            "section_rank": 36
+        },
+        {
+            "text": "The variables are described inFig. ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 140,
+            "section_rank": 36
+        },
+        {
+            "text": "5.",
+            "section": "Figure 7 :",
+            "paragraph_rank": 140,
+            "section_rank": 36
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 37
+        },
+        {
+            "text": "Figure 8: Hit coordinates transformation before DBSCAN: original (left) and transformed (right).",
+            "section": "Figure 8 :",
+            "paragraph_rank": 141,
+            "section_rank": 37
+        },
+        {
+            "text": "Figure 9 :",
+            "section_rank": 38
+        },
+        {
+            "text": "Figure 9: Hough hit coordinates transformation: original (left) and transformed (right).",
+            "section": "Figure 9 :",
+            "paragraph_rank": 142,
+            "section_rank": 38
+        },
+        {
+            "text": "Figure 10 :",
+            "section_rank": 39
+        },
+        {
+            "text": "Figure 10: Evolution of the best score of each team as a function of time.",
+            "section": "Figure 10 :",
+            "paragraph_rank": 143,
+            "section_rank": 39
+        },
+        {
+            "text": "Figure 17 :",
+            "section_rank": 40
+        },
+        {
+            "text": "Figure 17: Fraction of the good (left), mis-associated (center), and garbage (right) hits as a function or their position in the detector for the winning algorithm (TopQuarks).",
+            "section": "Figure 17 :",
+            "paragraph_rank": 144,
+            "section_rank": 40
+        },
+        {
+            "text": "5 .",
+            "section_rank": 41
+        },
+        {
+            "text": "Track Ambiguity Resolution: the procedure so far as created candidates with potential overlap. ",
+            "section": "5 .",
+            "paragraph_rank": 145,
+            "section_rank": 41
+        },
+        {
+            "text": "Ambiguities are lifted by selecting the candidate with the least amount of estimated polluting hits (calibrated using training data), promoting it as final track and recursively removing its hits on all candidates.",
+            "section": "5 .",
+            "paragraph_rank": 145,
+            "section_rank": 41
+        },
+        {
+            "text": "Figure 18 :",
+            "section_rank": 42
+        },
+        {
+            "text": "Figure 18: Schematic representation of the steps of the challenge winner algorithm. ",
+            "section": "Figure 18 :",
+            "paragraph_rank": 146,
+            "section_rank": 42
+        },
+        {
+            "text": "From top to bottom : pair finding, extension to triplet, extension to tracks, addition of hits from overlapping modules, and final track disambiguation.",
+            "section": "Figure 18 :",
+            "paragraph_rank": 146,
+            "section_rank": 42
+        },
+        {
+            "text": "Reina, J.S. Wind and T. Xylouris are participants, all others are organizers",
+            "section": "Figure 18 :",
+            "paragraph_rank": 147,
+            "section_rank": 42
+        },
+        {
+            "text": ". Ensembling: Because the solution of the clustering of the previous step depends on the random walk in the doublet space, and the smearing on bin assignment, multiple passes of clustering are run and ensembled to produce a better solution. Each track index (or index of a bin in the five dimensions) determines a set of hits from which a set of track candidate features are extracted and then use to train a boosted decision tree for binary classification of the candidate. The multiple solutions of clustering are merged recursively in pairs, by selecting for each hit, the track with the best classification score.3. Post-Processing:Further merging of candidates that are close in the helix parameter space is done by first estimating the curvature and longitudinal impact parameter that minimize the standard deviation of the remaining three helix parameters. The triplet of parameters are then recomputed and used to find hits with close-by helix parameters.",
+            "section": "Figure 18 :",
+            "paragraph_rank": 148,
+            "section_rank": 42
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 44
+        },
+        {
+            "text": "The team would like to thank CERN for allowing the use of the dataset, and Kaggle for hosting it. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "We are very grateful to our generous sponsors without which the challenges would not have been possible. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "Platinum sponsors: Kaggle, Nvidia and Universit\u00e9 de Gen\u00e8ve. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "Gold sponsors: Chalearn, ERC mPP and DataIA. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "Silver sponsors : CERN Openlab, Paris-Saclay CDS, INRIA, ERC RECEPT, Common Ground, Universit\u00e9 Paris Sud, INQNET, Fermilab and pyTorch. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "TG acknowledges the support of the Swiss National Science Foundation under the grant 200020_181984. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "SG acknowledges the support of the German BMBF ministry. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "This project has received funding from the European Union Horizon 2020 research and innovation programme under grant agreement No 724777 \"RECEPT\", No 772369 \"mPP\" and No 654168 \"AIDA-2020\". ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        },
+        {
+            "text": "In addition, the organizers would like to thank participant Pei-Lien Chou \"outrunner\" for major contributions, Maggie Demkin and Walter Reade at Kaggle and the members of the International Advisory Committee : Markus Elsing (CERN), Frank Gaede (DESY), Alison Lowndes (Nvidia), Maurizio Pierini (CERN), Danilo Rezende (Google DeepMind), Marc Schoenauer (INRIA-Saclay) and Svyatoslav Voloshynovskyy (U Gen\u00e8ve).",
+            "section": "Acknowledgements",
+            "paragraph_rank": 149,
+            "section_rank": 44
+        }
+    ]
+}

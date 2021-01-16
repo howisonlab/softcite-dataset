@@ -1,0 +1,2026 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Classification of jets as originating from light-flavor or heavy-flavor quarks is an important task for inferring the nature of particles produced in high-energy collisions. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The large and variable dimensionality of the data provided by the tracking detectors makes this task difficult. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The current state-of-the-art tools require expert data-reduction to convert the data into a fixed low-dimensional form that can be effectively managed by shallow classifiers. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We study the application of deep networks to this task, attempting classification at several levels of data, starting from a raw list of tracks. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We find that the highest-level lowest-dimensionality expert information sacrifices information needed for classification, that the performance of current state-of-the-art taggers can be matched or slightly exceeded by deep-network-based taggers using only track and vertex information, that classification using only lowest-level highest-dimensionality tracking information remains a difficult task for deep networks, and that adding lower-level track and vertex information to the classifiers provides a significant boost in performance compared to the state-of-the-art.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "INTRODUCTION",
+            "section_rank": 2
+        },
+        {
+            "text": "The search for new particles and interactions at the energy frontier is a rich program with enormous discovery potential. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 60,
+                    "end": 68,
+                    "type": "software",
+                    "rawForm": "frontier",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                },
+                {
+                    "start": 79,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "The power to discover this hypothetical new physics relies crucially on the ability to infer the nature of the interaction and the particles produced from the data provided by the detectors which surround the point of collision. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "One critical element is jet flavor classification, the distinction between hadronic jets produced from light-flavor (u, d, and s) and heavy-flavor (c and b) quarks. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Such classification plays a central role in identifying heavy-flavor signals and reducing the enormous backgrounds from light-flavor processes [1,2].",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 143,
+                    "end": 146,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1,"
+                },
+                {
+                    "start": 146,
+                    "end": 148,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2]"
+                }
+            ]
+        },
+        {
+            "text": "Jets originating from heavy-flavor quarks tend to produce longer-lived particles than those found in jets from light-flavor quarks; these long-lived particles have decays which are displaced from the primary vertex. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "To identify such vertices, the central tracking chamber measures the trajectories of charged particles which allows for the reconstruction of vertex locations. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The large and varying number of particles in a jet leads to a difficult classification problem with large and variable dimensionality without a natural ordering. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The first step in typical approaches involves vertex-finding algorithms [3], which transform the task into one of reduced, but still variable, dimensionality. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 72,
+                    "end": 75,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Finally, most state-of-the-art jet flavor classification tools used by experiments [4,5] rely heavily on expert-designed features which fix and fur- * The first two authors contributed equally ther reduce the dimensionality before applying shallow machine-learning techniques. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[4,"
+                },
+                {
+                    "start": 86,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "5]"
+                }
+            ]
+        },
+        {
+            "text": "Such techniques have excellent performance, but are primarily motivated by historical limitations in the ability of shallow learning methods to handle high-and variable-dimensionality datasets.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Recent applications of deep learning to similar problems in high-energy physics [6][7][8][9], combined with the lack of a clear analytical theory to provide dimensional reduction without loss of information, suggests that deep learning techniques applied to the lower-level higherdimensional data could yield improvements in the performance of jet-flavor classification algorithms. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[6]"
+                },
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[7]"
+                },
+                {
+                    "start": 86,
+                    "end": 89,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[8]"
+                },
+                {
+                    "start": 89,
+                    "end": 92,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "General methods for designing and applying recurrent and recursive neural networks to problems with data of variable size or structure have been developed in Refs. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "[10][11][12][13][14], and applied systematically to a variety of problems ranging from natural language processing [15], to protein structure prediction [16][17][18][19] to prediction of molecular properties [20,21] and to the game of go [22]; previous studies have discussed the extension of such strategies to tasks involving tracks in high energy physics [23,24].",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[10]"
+                },
+                {
+                    "start": 4,
+                    "end": 8,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[11]"
+                },
+                {
+                    "start": 8,
+                    "end": 12,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[12]"
+                },
+                {
+                    "start": 12,
+                    "end": 16,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[13]"
+                },
+                {
+                    "start": 16,
+                    "end": 20,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[14]"
+                },
+                {
+                    "start": 115,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[15]"
+                },
+                {
+                    "start": 153,
+                    "end": 157,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[16]"
+                },
+                {
+                    "start": 157,
+                    "end": 161,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[17]"
+                },
+                {
+                    "start": 161,
+                    "end": 165,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[18]"
+                },
+                {
+                    "start": 165,
+                    "end": 169,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[19]"
+                },
+                {
+                    "start": 208,
+                    "end": 212,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[20,"
+                },
+                {
+                    "start": 212,
+                    "end": 215,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "21]"
+                },
+                {
+                    "start": 238,
+                    "end": 242,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[22]"
+                },
+                {
+                    "start": 358,
+                    "end": 362,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[23,"
+                },
+                {
+                    "start": 362,
+                    "end": 365,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "24]"
+                }
+            ]
+        },
+        {
+            "text": "In this paper, we apply several deep learning techniques to this problem using a structured dataset with features at three levels of processing (tracks, vertices, expert), each of which is a strict function of the previous level(s). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The data at the highest level of processing, with smallest dimensionality, is intended to mirror the typical approach used currently by experimental collaborations. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The multi-layered structure of the dataset allows us to draw conclusions about the information loss at each stage of processing, and to gauge the ability of machine learning tools to find solutions in the lower-and higherdimensional levels. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "These lessons can guide the design of flavor-tagging algorithms used by experiments.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "CLASSIFICATION AND DIMENSIONALITY",
+            "section_rank": 3
+        },
+        {
+            "text": "The task of the machine learning (ML) algorithm is to identify a function f (x) : IR N \u2192 IR 1 whose domain is the observed data at some level of processing (with potentially very large dimensionality N ) and which evaluates to a single real value that contains the information necessary to perform the classification. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Perfect classification is not expected; instead, the upper bound is performance which matches classification provided by the true likelihood ratio between bottom (b) and light-flavor quarks (q): P (x|b)/P (x|q) evaluated in the high-dimensional domain.",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Though we lack knowledge of an analytical expression for the likelihood, in principle one could recover such a function from labeled datasets with trivial algorithms, by estimating the likelihood directly in the original highdimensional space. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "In practice, this requires an enormous amount of data, making it impractical for problems with anything but the smallest dimensionality in their feature space.",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Machine learning plays a critical role in approximating the function f (x) which reduces the dimensionality of the space to unity by finding the critical information needed to perform the classification task. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Such a function may disregard some of the information from the higherdimensional space if it is not pertinent to the task at hand. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "However, for very high dimensional spaces (greater than \u2248 50), the task remains very difficult, and until the recent advent of deep learning it appeared to be overwhelming, though it can still require the generation of large samples of training data.",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "It would be very powerful to compare the performance of a given solution to the theoretical upper limit on performance, provided by the true likelihood. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Unfortunately, without knowledge of the true likelihood, it is difficult to assess how well the ML algorithm has captured the necessary information. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "For this reason, in the studies presented here and in earlier work [6,7,9], we built structured datasets with at least two levels of dimensionality: an initial sample with lower-level data at high dimensionality and a reduced sample with expert features at lower dimensionality. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 67,
+                    "end": 70,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[6,"
+                },
+                {
+                    "start": 70,
+                    "end": 72,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "7,"
+                },
+                {
+                    "start": 72,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "9]"
+                }
+            ]
+        },
+        {
+            "text": "Importantly, the expert features are a strict function of the lower-level features, so that they contain a subset of the information. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The expertise lies solely in the design of the dimensionality-reducing function, without providing any new information.",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "This structure allows us to draw revealing conclusions about the information content of the intermediate and expert-level information and the power of classifiers to extract it. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Since the higher-level data contains a subset of the information and benefits from expert knowledge, it can provide the basis for a performance benchmark for the tools using lower-level data in place of the unknown true likelihood. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, if the performance of tools using lower-level data fails to match that of tools using the higher-level data (or a combination of both kinds of data), then we may conclude that the tools using the lower-level data have failed to extract the complete information. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "On the other hand, if the performance of tools using lower-level data exceeds that of tools using the higher-level data, then we may conclude that the higherlevel data does not contain all of the information relevant to the classification task, or that it has transformed the problem into a more difficult learning task for the algorithms considered. ",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Regardless of the reason, in this case the transformation to the higher-level lower-dimensional data has failed in its goal.",
+            "section": "CLASSIFICATION AND DIMENSIONALITY",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "DATA",
+            "section_rank": 4
+        },
+        {
+            "text": "Training samples were produced with realistic simulation tools widely used in particle physics. ",
+            "section": "DATA",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Samples were generated for three classes of jet:",
+            "section": "DATA",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 light-flavor: jets from u, d, s quarks or gluons;",
+            "section": "DATA",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 charm: jets from c quarks;",
+            "section": "DATA",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 bottom: jets from b quarks.",
+            "section": "DATA",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Collisions and immediate decays were generated with madgraph5 amc@nlo [25]  These simulated samples are meant to model real particle collisions, but the simulation is not perfectly faithful. ",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 74,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[25]"
+                }
+            ]
+        },
+        {
+            "text": "To account for mismodeling, experimental applications generate simulated samples using several closely related models and measure the differences between simulation and data with designated calibration samples in which the b, c, or light-jet content is enriched [28,29]. ",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 262,
+                    "end": 266,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[28,"
+                },
+                {
+                    "start": 266,
+                    "end": 269,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "29]"
+                }
+            ]
+        },
+        {
+            "text": "This allows for the tuning and selection of the models to match the data. ",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "In the studies presented here no such comparison is possible, as no experimental data is available. ",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Further, the focus of the studies here is on the amount of information lost in the several layers of processing, rather than the absolute level of performance, so the fidelity of the sample is less important. ",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "This approach is in line with the machine-learning-based flavor tagging used by both both CMS [30] and ATLAS [31].",
+            "section": "DATA",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[30]"
+                },
+                {
+                    "start": 109,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "[31]"
+                }
+            ]
+        },
+        {
+            "text": "The delphes detector simulation was augmented with a simple tracking model that smears truth particles to yield tracks similar to those expected at ATLAS [32]. ",
+            "section": "DATA",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 154,
+                    "end": 158,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "[32]"
+                }
+            ]
+        },
+        {
+            "text": "Tracks follow helical paths in a perfectly homogeneous 2 T magnetic field. ",
+            "section": "DATA",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "No attempt was made to account for material interactions or remove strange hadrons. ",
+            "section": "DATA",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "As a result the tracking model lacks the sophistication of models developed by LHC collaborations while retaining enough realism to run vertex reconstruction and compare the relative performance of various machine learning approaches.",
+            "section": "DATA",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "Jets are reconstructed from calorimeter energy deposits with the anti-k T clustering algorithm [33] as implemented in FastJet [34], with a distance parameter of R = 0.4. ",
+            "section": "DATA",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 99,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "[33]"
+                },
+                {
+                    "start": 126,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "text": "[34]"
+                }
+            ]
+        },
+        {
+            "text": "Tracks are assigned to jets by requiring that they be within a cone of \u2206R \u2261 (\u2206\u03b7 2 + \u2206\u03c6 2 ) 1/2 < 0.4 of the jet axis. ",
+            "section": "DATA",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Jets are labeled by matching to partons within a cone of \u2206R < 0.5. ",
+            "section": "DATA",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "If a b or c quark is found within this cone the jet is labeled bottom or charm flavor respectively, with b taking precedence if both are found. ",
+            "section": "DATA",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Otherwise the jet is labeled light-flavor.",
+            "section": "DATA",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "To reconstruct secondary vertices, we use the adaptive vertex reconstruction algorithm implemented in RAVE v6.24 [3,35]. ",
+            "section": "DATA",
+            "paragraph_rank": 18,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 116,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[3,"
+                },
+                {
+                    "start": 116,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "35]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm begins by fitting a primary vertex to the event and removing all compatible tracks. ",
+            "section": "DATA",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "For each jet, secondary vertices are then reconstructed iteratively: a vertex is fit to a point that minimizes \u03c7 2 with respect to all tracks in the jet, less compatible tracks are down-weighted, and the vertex fit is repeated until the fit stabilizes.",
+            "section": "DATA",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Since a b-hadron decay typically cascades through a c-hadron, jets may include multiple secondary vertices. ",
+            "section": "DATA",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "To account for this, tracks with large weights in the secondary vertex fit are removed and the fit is repeated with the remaining tracks. ",
+            "section": "DATA",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The process repeats until all tracks are assigned to a secondary vertex.",
+            "section": "DATA",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "As described earlier, we organize the information in three levels of decreasing dimensionality and increasing pre-processing using expert knowledge where each level is a strict function of the lower-level information. ",
+            "section": "DATA",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "The classification is done per-jet rather than per-event, and at every level the transverse momentum and pseudorapidity of the jet is included.",
+            "section": "DATA",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "The lowest-level information considered is the list of reconstructed tracks. ",
+            "section": "DATA",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "Each helical track has five parameters in addition to a 5 \u00d7 5 symmetric covariance matrix with 15 independent entries. ",
+            "section": "DATA",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "In the case of flavor tagging, two of the five track parameters are of particular importance: the track d 0 , defined as distance between the primary vertex and the track at perigee, projected into the plane transverse to the beam; and the track z 0 , the analogous quantity projected parallel to the beam. ",
+            "section": "DATA",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "The number of tracks varies from 1 to 33 in these samples, with a mean of 4.",
+            "section": "DATA",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "The intermediate-level information comes from the output of the vertexing algorithm. ",
+            "section": "DATA",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "The features are the vertex mass, number of tracks associated to the vertex, the fraction of the total energy in jet tracks which is associated to those tracks, vertex displacement, vertex displacement significance, and angular separation in \u2206\u03b7 and \u2206\u03c6 with respect to the jet axis for each vertex. ",
+            "section": "DATA",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "In cases where both low and intermediate level features are used the track to vertex association weight is also included. ",
+            "section": "DATA",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "The number of vertices varies from 1 to 13 in these samples, with a mean of 1.5.",
+            "section": "DATA",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "The highest-level information is designed to model the typical features used as shallow network or BDT inputs in current experimental applications; see Fig. 1 for distributions of these features for each jet class. ",
+            "section": "DATA",
+            "paragraph_rank": 23,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 152,
+                    "end": 158,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "There are fourteen such features:",
+            "section": "DATA",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The d 0 and z 0 significance of the 2nd and 3rd tracks attached to a vertex, ordered by d 0 significance.",
+            "section": "DATA",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The number of tracks with d 0 significance greater than 1.8\u03c3.",
+            "section": "DATA",
+            "paragraph_rank": 25,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The JetProb [36] light jet probability, calculated as the product over all tracks in the jet of the probability for a given track to have come from a lightquark jet.",
+            "section": "DATA",
+            "paragraph_rank": 26,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 14,
+                    "end": 18,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "[36]"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 The width of the jet in \u03b7 and \u03c6, calculated for \u03b7 as",
+            "section": "DATA",
+            "paragraph_rank": 27,
+            "section_rank": 4
+        },
+        {
+            "text": "and analogously for \u03c6.",
+            "section": "DATA",
+            "paragraph_rank": 28,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The combined vertex significance,",
+            "section": "DATA",
+            "paragraph_rank": 29,
+            "section_rank": 4
+        },
+        {
+            "text": "where d is the vertex displacement and \u03c3 is the uncertainty in vertex position along the displacement axis.",
+            "section": "DATA",
+            "paragraph_rank": 30,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The number of secondary vertices.",
+            "section": "DATA",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The number of secondary-vertex tracks.",
+            "section": "DATA",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The angular distance \u2206R between the jet and vertex.",
+            "section": "DATA",
+            "paragraph_rank": 33,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The decay chain mass, calculated as the sum of the invariant masses of all reconstructed vertices, where particles are assigned the pion mass.",
+            "section": "DATA",
+            "paragraph_rank": 34,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 The fraction of the total track energy in the jet associated to secondary vertices 1 The dataset consists of 10 million labeled simulated jets. ",
+            "section": "DATA",
+            "paragraph_rank": 35,
+            "section_rank": 4
+        },
+        {
+            "text": "The corresponding target labels are light-flavor, charm, and bottom. ",
+            "section": "DATA",
+            "paragraph_rank": 35,
+            "section_rank": 4
+        },
+        {
+            "text": "The data contains 44, 11, 45 percent of each class respectively. ",
+            "section": "DATA",
+            "paragraph_rank": 35,
+            "section_rank": 4
+        },
+        {
+            "text": "This data is available from the UCI Machine Learning in Physics Web portal at http://mlphysics.ics.uci.edu/.",
+            "section": "DATA",
+            "paragraph_rank": 35,
+            "section_rank": 4
+        },
+        {
+            "text": "METHODS",
+            "section_rank": 5
+        },
+        {
+            "text": "When training neural nets, we typically use 8 million jets for training, one million for validation, and one million for testing. ",
+            "section": "METHODS",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Since there are three labels but we are interested in the study of signal vs background and classification, the labels are converted to binary by mapping bottom quark to one, and both charm and light quark to zero. ",
+            "section": "METHODS",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "We study the light-quark and charm-quark rejection separately.",
+            "section": "METHODS",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "Machine Learning Approaches",
+            "section_rank": 6
+        },
+        {
+            "text": "To each simulated collision is attached a set of tracks and a set of vertices. ",
+            "section": "Machine Learning Approaches",
+            "paragraph_rank": 37,
+            "section_rank": 6
+        },
+        {
+            "text": "This poses challenges for a machine learning approach in that the size of these sets is variable as seen in Fig. 2 and the sets are unordered, although as usual an arbitrary order is often used to list their elements. ",
+            "section": "Machine Learning Approaches",
+            "paragraph_rank": 37,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 108,
+                    "end": 114,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "To address and explore these challenges we use three different deep learning approaches: feedforward neural networks, recurrent neural networks with LSTM (Long Short Term Memory) units, and outer recursive neural networks.",
+            "section": "Machine Learning Approaches",
+            "paragraph_rank": 37,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 166,
+                    "end": 170,
+                    "type": "software",
+                    "rawForm": "Term",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "Feedforward Neural Networks",
+            "section_rank": 7
+        },
+        {
+            "text": "The track feature set and the vertex feature set have variable size for a given collision. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "However, the struc- ture of feedforward networks requires a fixed-size input to make predictions. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "Thus the use of feedforward neural networks requires first an arbitrary ordering and then a capping of the size of the input set, with zero padding for sets that are smaller than the capped size. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "To resolve the arbitrary ordering the tracks were sorted by decreasing absolute d 0 significance. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "This ordering also ensures that tracks from a secondary vertex, which typically have large d 0 , are unlikely to be removed by the capping. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "Random ordering before adding the padding was also tested but the performance was lower than using the absolute d 0 significance ordering.",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "To create a fixed size input, the number of tracks was limited to 15, from a maximum of 33. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 39,
+            "section_rank": 7
+        },
+        {
+            "text": "Using 15 as the cutoff value ensures that 99.97% of the samples preserve all their original tracks; see Fig. 2. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 39,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 104,
+                    "end": 110,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "Tracks are associated to vertices by concatenating the track parameters with those from the associated vertex. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 39,
+            "section_rank": 7
+        },
+        {
+            "text": "Before training, the samples are preprocessed by shifting and scaling such that each feature has a mean of zero and a standard deviation of one. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 39,
+            "section_rank": 7
+        },
+        {
+            "text": "Jets with fewer than 15  average of 1.5; see Fig. 2.",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 39,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 23,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "15"
+                },
+                {
+                    "start": 45,
+                    "end": 51,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "The feedforward neural networks were trained on 8 million training jets with one million more for validation using stochastic gradient descent with mini-batches of 100 samples. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7
+        },
+        {
+            "text": "They were trained for 100 epochs and the best model was chosen based on the validation error. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7
+        },
+        {
+            "text": "Momentum for the weights updated was used and linearly increased from zero to a final value over a specified number of epochs. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "Momentum",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Learning rate decayed linearly from 0.01 to a final value starting and finishing at a specified number of epochs. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7
+        },
+        {
+            "text": "Dropout (in which nodes are removed during training) with values of p from 0.0 to 0.5 were used at several combinations of layers to add regularization [37,38]. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 152,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "[37,"
+                },
+                {
+                    "start": 156,
+                    "end": 159,
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "text": "38]"
+                }
+            ]
+        },
+        {
+            "text": "These networks had 9 fully connected hidden layers with rectified linear units [39,40].",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 40,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "text": "[39,"
+                },
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "40]"
+                }
+            ]
+        },
+        {
+            "text": "Shared weights for each track object were used at the first layer to preserve information about the structure of the data; see Fig 3. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 41,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 127,
+                    "end": 133,
+                    "type": "figure",
+                    "text": "Fig 3."
+                }
+            ]
+        },
+        {
+            "text": "When adding the vertex and high level variables to the tracks, these were also included within the set of variables with shared weights. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "The weights for all but the last layer were initialized from a uniform distribution between [\u2212 6/C, 6/C] where C is the total number of incoming and outgoing connections [41]. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 41,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 170,
+                    "end": 174,
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "text": "[41]"
+                }
+            ]
+        },
+        {
+            "text": "The weights for the last layer were initialized from a uniform distribution between -0.05 and 0.05. ",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "A manual optimization was performed over all the hyperparameters to find the best model.",
+            "section": "Feedforward Neural Networks",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "LSTM Networks",
+            "section_rank": 8
+        },
+        {
+            "text": "A natural approach to handling variable-sized input is to use recursive neural networks. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Broadly speaking, there are two classes of approaches for designing such architectures, the inner approach and the outer approach [42]. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 130,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "text": "[42]"
+                }
+            ]
+        },
+        {
+            "text": "In the inner approach, neural networks are used inside the data graphs to crawl the corresponding edges and compute the final output. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "This process requires the data graphs to be directed and acyclic. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Since here the data consists of a set of vertices and tracks, we first convert the data into a sequence by ordering the vertices and tracks as described previously and then use recursive neural networks for sequences, in combination with Long Short Term Memory units [43,44] to better capture long range dependencies. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 267,
+                    "end": 271,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "[43,"
+                },
+                {
+                    "start": 271,
+                    "end": 274,
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "text": "44]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 249,
+                    "end": 253,
+                    "type": "software",
+                    "rawForm": "Term",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "In the underlying acyclic graph, the variables associated with each node are a function of the variables associated with the parent nodes. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Each such function can be parameterized by a neural network. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Because the directed acyclic graph has a regular structure, the same network can be applied at different locations of the graph, ultimately producing the LSTM grid network in Figure 4.",
+            "section": "LSTM Networks",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 175,
+                    "end": 183,
+                    "type": "figure",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "We follow the standard implementation of LSTMs with three gates (input, forget, output) and initialize the connections to random orthonormal matrices. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "The input data consists of a sequence of concatenated track, vertex, and expert features (or different sub-combinations thereof) which are sorted by their absolute d 0 significance, as was the case with the fully connected models. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "The main difference is that we do not need zeropadding as the LSTM networks can handle sequences of arbitrary length, though we retain the same maximum of 15 tracks for comparability 2 . ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "The final model consists of one LSTM layer comprising between 50 and 500 neurons, and a feedforward neural network with one to four hidden layers that receives its input from the LSTM network and produces the final predictions (where each layer has between 50 and 500 units). ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "We add dropout layers in between the LSTM and each hidden fully connected layer. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "For hyperparameter-optimization we performed a random search over these parameters as well as the individual dropout rates that are part of the model. ",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8
+        },
+        {
+            "text": "We trained the LSTM networks for 100 epochs using SGD 2 Since only 1 in roughly 3000 jets will be truncated by the 15 track maximum this should have a negligible effect on the AUC with a momentum of 0.9 and decay the step-size parameter from initially 2 \u2022 10 \u22123 down to 10 \u22124 over the course of training.",
+            "section": "LSTM Networks",
+            "paragraph_rank": 43,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 54,
+                    "end": 55,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "Outer Recursive Networks",
+            "section_rank": 9
+        },
+        {
+            "text": "Alternatively, to handle inputs of variable size, we can use an outer recursive approach, where neural networks are built in a direction perpendicular to the original data graph, with horizontal weight sharing. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "The outer approach can be used to build more symmetric deep architectures; see Fig. 5. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 85,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "For instance, in our case the input consists of up to 15 tracks, from which we can sample all possible pairs of tracks and use a shared neural network that processes these in the first layer of the outer approach. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "In this case, there are at most 15 2 = 105 unordered pairs, or 210 ordered pairs, which is manageable especially considering that there is a single network shared by all pairs. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 36,
+                    "type": "bibr",
+                    "text": "15 2"
+                }
+            ]
+        },
+        {
+            "text": "Using ordered pairs would yield the most symmetric overall network. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "At the next level of the architecture, one can for instance use a network for each track t i that combines the outputs of all the networks from the first layer associated with pairs containing t i , and so forth. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "In the second level of the outer architecture, for simplicity here we use a fully connected feedforward network that computes the final output using the outputs of all the pair networks. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "More specifically, for each data sample we compute the list of stacked track features for all 210 pairs and process each pair with a shared nonlinear hidden layer (with 5 to 20 neurons). ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "The resulting outputs for all pairs are then concatenated and fed into a multilayer perceptron as was the case for the LSTM models, with one to four hidden layers containing between 100 and 600 hidden units. ",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "We again use dropout layers in between the hidden layers and opti-mize the dropout rates and network depth and size using random search.",
+            "section": "Outer Recursive Networks",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "Hardware and Software Implementations",
+            "section_rank": 10
+        },
+        {
+            "text": "All computations were performed using machines with Intel Xeon cores, NVIDIA Titan graphics processors, and 64 GB memory. ",
+            "section": "Hardware and Software Implementations",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 77,
+                    "end": 82,
+                    "type": "software",
+                    "rawForm": "Titan",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "All neural networks were trained using the GPU-accelerated Theano software library [45] and, for the feed forward neural networks, also the Keras software library [46].",
+            "section": "Hardware and Software Implementations",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "text": "[45]"
+                },
+                {
+                    "start": 163,
+                    "end": 167,
+                    "type": "bibr",
+                    "text": "[46]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 59,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "Theano",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                },
+                {
+                    "start": 66,
+                    "end": 74,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                },
+                {
+                    "start": 146,
+                    "end": 154,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 11
+        },
+        {
+            "text": "The best feedforward neural networks have 9 fully connected hidden layers with 400 rectified linear units and a single sigmoid unit at the end. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "On the first layer the networks have shared weights. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "The first five tracks have one set of shared weights per track, tracks 6 to 10 have a second set of shared weights per track and the last five tracks have a third set of shared weights per track. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "They have a momentum term of 0 which starts to linearly increase at the first epoch and reaches its final value of 0.5 at epoch 100. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "Initially, the learning rate is set at 0.01 and, starting at epoch 80, it is linearly decreased to a final value of 0.001 at epoch 100. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "Dropout was used in the first two layers with a value of p=0.3. ",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "The same architecture was used across all the combinations of features except in the case of using only high level features, in which case the first layer is fully connected without any shared weights.",
+            "section": "RESULTS",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "We found that the main characteristic of the best LSTM models is a relatively small size of the hidden state representation of the LSTM module (about 70 units), while the size of the MLP, which is sitting on top of it, is of secondary importance for overall performance of the model. ",
+            "section": "RESULTS",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "The best models using the outer recursive approach contain between two and three hidden layers on top of the shared-weight layer (which operates on all paired tracks) and those contain 17 or more neurons.",
+            "section": "RESULTS",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "Final results are shown in Table I. ",
+            "section": "RESULTS",
+            "paragraph_rank": 48,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 27,
+                    "end": 34,
+                    "type": "table",
+                    "text": "Table I"
+                }
+            ]
+        },
+        {
+            "text": "The metric used is the Area Under the Curve (AUC), calculated in signal efficiency versus background efficiency, where a larger AUC indicates better performance. ",
+            "section": "RESULTS",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "In Fig. 6, the signal efficiency is shown versus background rejection, the inverse of background efficiency. ",
+            "section": "RESULTS",
+            "paragraph_rank": 48,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "Figures 7 and 8 show the efficiency versus jet p T and pseudorapidity for fixed values of background rejection. ",
+            "section": "RESULTS",
+            "paragraph_rank": 48,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 15,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figures 7 and 8"
+                }
+            ]
+        },
+        {
+            "text": "Figures 9 and 10 show the rejection versus jet p T and pseudorapidity for fixed values of signal efficiency.",
+            "section": "RESULTS",
+            "paragraph_rank": 48,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 16,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figures 9 and 10"
+                }
+            ]
+        },
+        {
+            "text": "The results can be analyzed to draw conclusions regarding the power of the learning algorithms to extract information at different levels of preprocessing, and to compare the three learning approaches. ",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "I: Performance results for networks using track-level, vertex-level or expert-level information. ",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "In each case the jet pT and pseudorapidity are also used. ",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "Shown for each method is the Area Under the Curve (AUC), the integral of the background efficiency versus signal efficiency, which have a statistical uncertainty of 0.001 or less. ",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "Signal efficiency and background rejections are shown in Figs. ",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "6-10.",
+            "section": "RESULTS",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "Inputs",
+            "section_rank": 12
+        },
+        {
+            "text": "Technique The state-of-the-art performance is represented by the networks which use only the expert-level features. ",
+            "section": "Inputs",
+            "paragraph_rank": 50,
+            "section_rank": 12
+        },
+        {
+            "text": "Networks using only tracking or vertexing features do not match this performance, though networks using both tracking and vertexing do slightly exceed it. ",
+            "section": "Inputs",
+            "paragraph_rank": 50,
+            "section_rank": 12
+        },
+        {
+            "text": "In addition, networks which combine expert-level information with track and/or vertex information outperform the expertonly benchmark, in some cases by a significant margin.",
+            "section": "Inputs",
+            "paragraph_rank": 50,
+            "section_rank": 12
+        },
+        {
+            "text": "For any given set of features, the feedforward deep networks most often give the best performance, though in some cases by a small margin over the LSTM approach. ",
+            "section": "Inputs",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "This may be somewhat unexpected since LSTMs were created to handle variable sized input data as is the case here. ",
+            "section": "Inputs",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "We must note, however, that unlike truly sequential data like speech or text there is no natural order in the data that we are working on. ",
+            "section": "Inputs",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "The tracks have been ordered by absolute d 0 significance, which tends to cluster tracks belonging to the same vertex, but a sequential model with this ordering may not be superior to processing tracks in parallel, as in the connected DNN with tied weights.",
+            "section": "Inputs",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "While one cannot probe the strategy of the ML algorithm, it is possible to compare distributions of events categorized as signal-like by the different algorithms in order to understand how the classification is being accomplished. ",
+            "section": "Inputs",
+            "paragraph_rank": 52,
+            "section_rank": 12
+        },
+        {
+            "text": "To compare distributions between different algorithms, we study simulated events with equivalent background rejection, see Fig. 11 for a comparison of the selected regions in the expert features for classifiers with and without the lower-level information.",
+            "section": "Inputs",
+            "paragraph_rank": 52,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 123,
+                    "end": 130,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 11"
+                }
+            ]
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 13
+        },
+        {
+            "text": "Our results support four conclusions.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 53,
+            "section_rank": 13
+        },
+        {
+            "text": "The existing expert strategies for dimensional reduction sacrifice or distort useful information. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks which include lower-level information outperform networks using exclusively higher-level information. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "For example, if the vertex-level information contained all of the classification power of the track-level information but with lower dimensionality, one would expect the vertex-only network to match the performance of the tracks-and-vertex network, as the lower-dimensional problem should be simpler to learn. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "Instead, networks using tracks and vertices outperform those which use only vertices. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "Similarly, networks using tracks and expert fea- tures outperform those with only expert features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "We note that these conclusions apply to the expert strategies considered here, and in the case of the simulated environment we have studied; however, we feel that both are representative of the current state-of-the-art.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 54,
+            "section_rank": 13
+        },
+        {
+            "text": "The task remains a challenge for deep networks. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 55,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks which use only the lower-level information do not match the performance of networks which use the higher-level information. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 55,
+            "section_rank": 13
+        },
+        {
+            "text": "Since the higher-level features are strict functions of the lower-level features, the lowerlevel features are a superset of the information contained in the high-level features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 55,
+            "section_rank": 13
+        },
+        {
+            "text": "The performance of the networks which use the high-level features then provides a baseline against which to measure the ability of the network to extract the relevant information in the more difficult higher-dimensional space of lower-level features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 55,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks using only track information do not match the performance of those which use only the high-level features (but note that track-only networks outperform vertex-only networks, giving a clue as to the area of difficulty).",
+            "section": "DISCUSSION",
+            "paragraph_rank": 55,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks using track and vertex information outperform those with expert features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks trained with track and vertex information but without  the benefit of expert-level guidance and dimensional reduction manage to achieve better performance than those which use only expert-level features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "This is remarkable, as the dimensionality of the tracks+vertices features is very large and expert-only networks represent the current state-of-the-art. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "Note, however, that for high signal efficiency (> 75%) the expert-only networks outperform the networks using tracks+vertices. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "Networks which combine expert features with low-level information have the best performance. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "Combining the lowest-level information for completeness with the low-dimensional hints from expert features significantly outperforms the state-of-the-art networks which use only expert features. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "While in principle all of the information exists in the lowest-level features and it should be possible to train a network which matches or exceeds this performance without expert knowledge, this is neither necessary nor desirable. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "Expert knowledge exists and is well-established, and there is no reason to discard it.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 56,
+            "section_rank": 13
+        },
+        {
+            "text": "In addition, this expert guidance encourages the network to identify discrimination strategies based on wellunderstood properties of the jet flavor problem and decreases the likelihood of relying on learning strategies based on spurious or poorly-modeled corners of the space. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "We note that the use of high-dimensional lower-level data will require careful validation of the simulation models; reasonable strategies exist, such as a combination of the validation of individual features in one-dimensional projections with validation of the network output in control samples, which probes the use of information in multifeature correlations. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "These improvements in the performance of the tagger can give important boosts to physics studies which rely on the identification of jet flavor.  ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "FIG. 1 :",
+            "section_rank": 14
+        },
+        {
+            "text": "FIG. 1: Distributions in simulated samples of high-level jet flavor variables widely used to discriminate between jets from light-flavor and heavy-flavor quarks.",
+            "section": "FIG. 1 :",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "FIG. 2 :",
+            "section_rank": 15
+        },
+        {
+            "text": "FIG. 2: Top: Distribution of the number of tracks associated to a jet in simulated samples. ",
+            "section": "FIG. 2 :",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "Bottom: Distribution of the number of vertices associated to a jet in simulated samples, before and after removing tracks which exceed the maximum allowed value of 15.",
+            "section": "FIG. 2 :",
+            "paragraph_rank": 59,
+            "section_rank": 15
+        },
+        {
+            "text": "FIG. 5 :",
+            "section_rank": 16
+        },
+        {
+            "text": "FIG. 5: Architecture of the outer recursive networks as described in the text.",
+            "section": "FIG. 5 :",
+            "paragraph_rank": 60,
+            "section_rank": 16
+        },
+        {
+            "text": "FIG. 6 :",
+            "section_rank": 17
+        },
+        {
+            "text": "FIG. 6: Signal efficiency versus background rejection (inverse of efficiency) for deep networks trained on track-level, vertex-level or expert-level features. ",
+            "section": "FIG. 6 :",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "The top pane shows the performance for b-quarks versus light-flavor quarks, the bottom pane for b-quarks versus c-quarks.",
+            "section": "FIG. 6 :",
+            "paragraph_rank": 61,
+            "section_rank": 17
+        },
+        {
+            "text": "FIG. 7 :",
+            "section_rank": 18
+        },
+        {
+            "text": "FIG. 7:Signal efficiency versus minimum jet pT relative to light quarks (top) or charm quarks (bottom). ",
+            "section": "FIG. 7 :",
+            "paragraph_rank": 62,
+            "section_rank": 18
+        },
+        {
+            "text": "In each case, efficiency is shown for fixed values of background rejection for networks trained with only expert features or networks trained with all features (tracks, vertices and expert features).",
+            "section": "FIG. 7 :",
+            "paragraph_rank": 62,
+            "section_rank": 18
+        },
+        {
+            "text": "FIG. 8 :",
+            "section_rank": 19
+        },
+        {
+            "text": "FIG. 8:Signal efficiency versus minimum jet pseudo-rapidity relative to light quarks (top) or charm quarks (bottom). ",
+            "section": "FIG. 8 :",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "In each case, efficiency is shown for fixed values of background rejection for networks trained with only expert features or networks trained with all features (tracks, vertices and expert features).",
+            "section": "FIG. 8 :",
+            "paragraph_rank": 63,
+            "section_rank": 19
+        },
+        {
+            "text": "FIG. 9 :",
+            "section_rank": 20
+        },
+        {
+            "text": "FIG. 9:Rejection of light quarks (top) or charm quarks (bottom) versus minimum jet pT. ",
+            "section": "FIG. 9 :",
+            "paragraph_rank": 64,
+            "section_rank": 20
+        },
+        {
+            "text": "In each case, rejection is shown for fixed values of signal efficiency for networks trained with only expert features or networks trained with all features (tracks, vertices and expert features).",
+            "section": "FIG. 9 :",
+            "paragraph_rank": 64,
+            "section_rank": 20
+        },
+        {
+            "text": "FIG. 11 :",
+            "section_rank": 21
+        },
+        {
+            "text": "FIG. 11:Distributions of expert-level features for heavy-flavor and light-flavor classes. ",
+            "section": "FIG. 11 :",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "Also shown are distributions of lightflavor and charm jets surviving network threshold selections chosen to given rejection of 10 and 50, for networks using only expert information and networks using expert information in addition to lower-level information.",
+            "section": "FIG. 11 :",
+            "paragraph_rank": 65,
+            "section_rank": 21
+        },
+        {
+            "text": "future work; here we assume that pileup effects will not alter the relative performance of the dif- ferent methods, and is not likely to have a large impact at luminosities recorded to date, given effective techniques to isolate pileup tracks and vertices from the vertices of interest to this study.",
+            "section_rank": 22
+        },
+        {
+            "text": "tracks are zeropadded after preprocessing. ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "After the cut on the number of tracks, the maximum number of vertices is 12 with an . . . . ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": ". . . . ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": ". . . . ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "Feedforward neural network architecture. ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "In the first layer, connections of the same color represent the same value of the shared weight. ",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "The others layers are fully connected without shared weights.",
+            "paragraph_rank": 67,
+            "section_rank": 23
+        },
+        {
+            "text": "TABLE",
+            "section_rank": 24
+        },
+        {
+            "text": "Rejection of light quarks (top) or charm quarks (bottom) versus minimum jet pseudo-rapidity. ",
+            "paragraph_rank": 69,
+            "section_rank": 25
+        },
+        {
+            "text": "In each case, rejection is shown for fixed values of signal efficiency for networks trained with only expert features or networks trained with all features (tracks, vertices and expert features).",
+            "paragraph_rank": 69,
+            "section_rank": 25
+        },
+        {
+            "text": "The vertex energy fraction is not a strict fraction; it can be greater than unity if tracks are assigned to multiple vertices.",
+            "paragraph_rank": 70,
+            "section_rank": 25
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 27
+        },
+        {
+            "text": "We thank David Kirkby, Gordon Watts, Shimon Whiteson, David Casper, and Kyle Cranmer for useful comments and helpful discussion. ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 71,
+            "section_rank": 27
+        },
+        {
+            "text": "We thank Yuzo Kanomata for computing support. ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 71,
+            "section_rank": 27
+        },
+        {
+            "text": "We also wish to acknowledge a hardware grant from NVIDIA and NSF grant IIS-1321053 to PB.",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 71,
+            "section_rank": 27
+        }
+    ]
+}

@@ -1,0 +1,3401 @@
+{
+    "level": "sentence",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "Abstract The Neutrino Mass Ordering (NMO) remains one of the outstanding questions in the field of neutrino physics. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "One strategy to measure the NMO is to observe matter effects in the oscillation pattern of atmospheric neutrinos above \u223c 1 GeV, as proposed for several next-generation neutrino experiments. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Moreover, the existing IceCube DeepCore detector can already explore this type of measurement. ",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 39,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "We present the development and application of two independent analyses to search for the signature of the NMO with three years of DeepCore data. ",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 130,
+                    "end": 139,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "These analyses include a full treatment of systematic uncertainties and a statistically-rigorous method to determine the significance for the NMO from a fit to the data. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Both analyses show that the dataset is fully compatible with both mass orderings. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "For the more sensitive analysis, we observe a preference for normal ordering with a p-value of p IO = 15.3% and CL s = 53.3% for the inverted ordering hypothesis, while the experimental results from both analyses are consistent within their uncertainties. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Since the result is independent of the value of \u03b4 CP and obtained from energies E \u03bd 5 GeV, it is complementary to recent results from long-baseline experiments. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "These analyses set the groundwork for the future of this measurement with more capable detectors, such as the IceCube Upgrade and the proposed PINGU detector.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The question of the Neutrino Mass Ordering (NMO) is one of the main drivers of the field of neutrino oscillation physics. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The NMO describes the ordering of the three neutrino mass eigenstates m 1 , m 2 , and m 3 . ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The two possible scenarios depend on the sign of m 2 31 = m 2 3 \u2212 m 2 1 , often referred to as the atmospheric mass splitting, where negative values are known as Inverted Ordering (IO) and positive values as Normal Ordering (NO).",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 51,
+                    "end": 52,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                },
+                {
+                    "start": 68,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "The three neutrino mass states do not correspond directly to the three neutrino flavor states \u03bd e , \u03bd \u03bc , and \u03bd \u03c4 . ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Instead, each mass state is a superposition of the flavour states, with the mixing described by the Pontecorvo-Maki-Nakagawa-Sakata (PMNS) matrix U [1][2][3], such that",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 148,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 151,
+                    "end": 154,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 154,
+                    "end": 157,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "where \u03b1 \u2208 {e, \u03bc, \u03c4 } labels the flavor states and i \u2208 {1, 2, 3} labels the mass states. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "By convention, \u03bd 1 is the state contain-ing the most electron flavor, and \u03bd 3 is the state containing the least.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The mixing matrix U can be parameterized by a CPviolating phase \u03b4 CP and three mixing angles \u03b8 12 , \u03b8 13 , and \u03b8 23 . ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "In the case of Majorana neutrinos, two additional phases are included, which are of no relevance for this work. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Since U is non-diagonal, flavor changes are observed depending on the energy and propagation distance of a neutrino, which are commonly known as neutrino oscillations. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "The oscillations are described by the mass splittings, mixing angles, and the CP-violating phase [4].",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 100,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "For propagation through dense matter, the neutrino oscillations are modulated by interactions with electrons, which give rise to matter effects [5] such as the so-called MSW effect and parametric enhancement [6][7][8][9][10]. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 208,
+                    "end": 211,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 211,
+                    "end": 214,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 214,
+                    "end": 217,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                },
+                {
+                    "start": 217,
+                    "end": 220,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 220,
+                    "end": 224,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "Depending on the NMO, these modulations arise mainly in the neutrino (NO) or anti-neutrino channel (IO) [11]. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 104,
+                    "end": 108,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "In measurements of solar neutrino oscillations, they were used to determine the ordering of the neutrino states \u03bd 1 and \u03bd 2 by finding m 2 > m 1 . ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "Moreover, these modulations can be observed for atmospheric neutrinos that undergo matter effects during their propagation through the Earth. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "In contrast to longbaseline accelerator experiments, the signature observed in IceCube is largely independent of the value of \u03b4 CP , which allows for a complementary measurement of the NMO at higher energies, using atmospheric neutrinos [12].",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 237,
+                    "end": 241,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "Atmospheric neutrinos are produced in the Earth's atmosphere by interactions of cosmic rays with the nucleons of the air, generating mesons. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "These mesons decay generating electron and muon (anti-)neutrinos, which propagate through the Earth and can eventually be detected by an underground neutrino detector, such as IceCube [13]. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "The baseline of propagation through Earth can be inferred by measuring the incoming zenith angle of the neutrino. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "The highest-energy oscillation maximum arises at E \u03bd \u223c 25 GeV for vertically up-going neutrinos, moving to lower energy at shorter baselines towards the horizon. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "For energies above a few GeV, the oscillations are mostly driven by the parameters \u03b8 23 and m 2 31 , which are therefore referred to as atmospheric oscillation parameters [4], while for vacuum only oscillations the value of \u03b8 13 is too small for any detectable effect. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 98,
+                    "type": "bibr",
+                    "text": "2 31"
+                },
+                {
+                    "start": 171,
+                    "end": 174,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Considering matter effects, however, the effective value of \u03b8 13 under the right conditions can become sizeable, resulting in oscillation with electron flavors as shown in Fig. 2.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 172,
+                    "end": 178,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "In atmospheric oscillations, the impact of the presence of matter arises mainly below E \u03bd \u223c 15 GeV. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "The strength of these matter effects depends on the Earth's matter profile, which we take as given by the Preliminary Reference Earth Model (PREM), shown in Fig. 1  [14].",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 157,
+                    "end": 163,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                },
+                {
+                    "start": 165,
+                    "end": 169,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The oscillation probabilities for muon-flavored atmospheric neutrinos and anti-neutrinos to be found in the flavor state \u03b1 \u2208 {e, \u03bc, \u03c4 } for a given zenith angle \u03b8 \u03bd , and neutrino energy E \u03bd , are shown in Fig. 2. ",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 206,
+                    "end": 212,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "They are calculated Fig. 1 Earth density profile, according to the Preliminary Reference Earth Model (PREM) and its approximation by 4-and 12-layers of constant density (commonly called PREM4 and PREM12, respectively) [14] with the PROB3++ [15] package and the PREM12 approximation (cf. Fig. 1), which are consistently used throughout this work. ",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 26,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                },
+                {
+                    "start": 218,
+                    "end": 222,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 240,
+                    "end": 244,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                },
+                {
+                    "start": 287,
+                    "end": 293,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 232,
+                    "end": 240,
+                    "type": "software",
+                    "rawForm": "PROB3++",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "Due to the Earth's geometry and its core-mantle structure, the visible modulations of atmospheric neutrino oscillations feature a clear zenith-dependence.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "text": "Note that the oscillation patterns for neutrinos and antineutrinos flip between the two orderings. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Thus, the NMO can be determined by finding the enhancement in transition probabilities from matter effects either in the neutrino channel (NO) or anti-neutrino channel (IO). ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "For detectors insensitive to distinguishing neutrinos from anti-neutrinos on an eventby-event level, the NMO still leads to a visible net-effect in the amplitude of the observed matter effects, because the atmospheric fluxes and the cross sections for neutrinos and anti-neutrinos differ [16,17]. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 288,
+                    "end": 292,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16,"
+                },
+                {
+                    "start": 292,
+                    "end": 295,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "17]"
+                }
+            ]
+        },
+        {
+            "text": "These differences mean that atmospheric neutrinos are measured at higher rates than the corresponding anti-neutrinos. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Due to this rate difference, the strength of observed matter effects in a combined sample of neutrinos and anti-neutrinos is increased in case of NO and decreased in case of IO, which is the main signature targeted in this work.",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "The determination of the NMO has important implications for searches for neutrinoless double-\u03b2 decay, where the entire mass region allowed in the case of IO is in reach of the next generation of experiments [18,19]. ",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 207,
+                    "end": 211,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18,"
+                },
+                {
+                    "start": 211,
+                    "end": 214,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "19]"
+                }
+            ]
+        },
+        {
+            "text": "The NMO must also be determined as part of the search for CP-violation in the lepton sector, where the sensitivity to \u03b4 CP depends strongly on the ordering [20,21]. ",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 156,
+                    "end": 160,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20,"
+                },
+                {
+                    "start": 160,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "21]"
+                }
+            ]
+        },
+        {
+            "text": "Therefore, a measurement of the NMO is targeted by several future long-baseline, reactor, and atmospheric neutrino experiments, such as DUNE [22], JUNO [23], PINGU [16,24], ORCA [25], and Hyper-Kamiokande [26]. ",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 141,
+                    "end": 145,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                },
+                {
+                    "start": 152,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[23]"
+                },
+                {
+                    "start": 164,
+                    "end": 168,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16,"
+                },
+                {
+                    "start": 168,
+                    "end": 171,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "24]"
+                },
+                {
+                    "start": 178,
+                    "end": 182,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "[25]"
+                },
+                {
+                    "start": 205,
+                    "end": 209,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "[26]"
+                }
+            ]
+        },
+        {
+            "text": "Moreover, current neutrino experiments such as T2K [27], NOvA [28], and Super-Kamiokande [29] provide first indications of the NMO. ",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 51,
+                    "end": 55,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                },
+                {
+                    "start": 62,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                },
+                {
+                    "start": 89,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                }
+            ]
+        },
+        {
+            "text": "Combining the results from several ",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2
+        },
+        {
+            "text": "The IceCube neutrino observatory",
+            "section_rank": 3
+        },
+        {
+            "text": "The IceCube Neutrino Observatory [13] is a \u223c1 km 3 neutrino detector at the Geographic South Pole, optimized for detecting atmospheric and astrophysical neutrinos above E \u03bd \u223c 100 GeV. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 37,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "It consists of 86 strings running through the ice vertically from the surface almost to the bedrock, carrying a total of 5160 Digital Optical Modules (DOMs) at depths between 1450 and 2450 m [34]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 191,
+                    "end": 195,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "[34]"
+                }
+            ]
+        },
+        {
+            "text": "Each DOM houses a 10\" photomultiplier tube and digitizing electronics, surrounded by a glass sphere [13,35,36].",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 13,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 100,
+                    "end": 104,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13,"
+                },
+                {
+                    "start": 104,
+                    "end": 107,
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "text": "35,"
+                },
+                {
+                    "start": 107,
+                    "end": 110,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "36]"
+                }
+            ]
+        },
+        {
+            "text": "In the center of the detector, some of these strings form a more densely instrumented volume called DeepCore [37]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "[37]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 100,
+                    "end": 109,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "It consists of 8 strings with an increased vertical density of DOMs with higher quantum-efficiency, surrounding one Ice- Table 1 Overview of the main differences between the two NMO analyses in terms of the total number of observed events, the selection strategy, the reconstruction likelihood, the reconstructed energy range, the number of analysis bins (given as number of E reco \u03bd , \u03d1 reco \u03bd , PID bins), the background (atmospheric muon) description, the template generation, and the estimated fractions of the data sample from each contribution Cube string. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 121,
+                    "end": 128,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Due to the denser instrumentation and the higher quantum-efficiency DOMs, the DeepCore infill has a lower energy threshold than the surrounding IceCube array. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 78,
+                    "end": 87,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "The corresponding detection efficiency of DeepCore increases steeply between \u223c 3 GeV and \u223c 10 GeV and flattens for higher energies [13,37]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 135,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13,"
+                },
+                {
+                    "start": 135,
+                    "end": 138,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "37]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 51,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "Neutrinos are detected by the Cherenkov emissions of their charged secondary particles, which are generated by Charged Current (CC) and Neutral Current (NC) interactions with the nucleons of the ice. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "In the case of CC muonneutrino interactions, a hadronic cascade is initiated at the primary vertex, combined with an outgoing muon. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The muon can propagate large distances through the detector, leading to an elongated shape of the energy deposition and thus of the Cherenkov light emission. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Such events are called track-like signatures. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "In contrast, CC electron-neutrino, NC, and the majority of CC tau-neutrino interactions, do not produce a muon that can travel large distances. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Instead, they initiate an electromagnetic and/or hadronic cascade that develops over a distance of a few meters. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "The light emission of this cascade is considerably smeared around the Cherenkov angle of the shower direction. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Such events are called cascade-like. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "At low energies below a few tens of GeV, the separation of trackand cascade-like events becomes increasingly difficult, due to the short muon track and the coarse detector granularity. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "For oscillation measurements with DeepCore, this separation of track-like and cascade-like events is used to partially distinguish neutrino flavors [37].",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 148,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "[37]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "For the analyses presented here, we use the Honda 3D atmospheric neutrino simulation [38], and the GENIE neutrino interaction generator [39] with KNO [40] and PYTHIA [41]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 89,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "[38]"
+                },
+                {
+                    "start": 136,
+                    "end": 140,
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "text": "[39]"
+                },
+                {
+                    "start": 150,
+                    "end": 154,
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "text": "[40]"
+                },
+                {
+                    "start": 166,
+                    "end": 170,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "[41]"
+                }
+            ]
+        },
+        {
+            "text": "For quasielastic and resonance events, the axial masses are set to M qe A = 0.99 GeV and M res A = 1.12 GeV, respectively. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Simulation of the atmospheric muon background uses CORSIKA [42], with the Polygonato-H\u00f6randel model of the muon energy spectrum [43]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 63,
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "text": "[42]"
+                },
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "text": "[43]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "CORSIKA",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "Muons are propagated through the ice using PROPOSAL [44]; the propagation of all other particles is based on GEANT4 [45,46]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 56,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "[44]"
+                },
+                {
+                    "start": 116,
+                    "end": 120,
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "text": "[45,"
+                },
+                {
+                    "start": 120,
+                    "end": 123,
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "text": "46]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 52,
+                    "type": "software",
+                    "rawForm": "PROPOSAL",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                },
+                {
+                    "start": 114,
+                    "end": 116,
+                    "type": "version",
+                    "rawForm": "4",
+                    "resp": "service",
+                    "id": "#software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "Cherenkov photons are propagated throught the ice using a GPU-based code [47]. ",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 73,
+                    "end": 77,
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "text": "[47]"
+                }
+            ]
+        },
+        {
+            "text": "More details of the simulation can be found in [48].",
+            "section": "The IceCube neutrino observatory",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "Data samples and reconstruction",
+            "section_rank": 4
+        },
+        {
+            "text": "In this work, two independent likelihood analyses are used to extract information about the NMO from DeepCore data. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 101,
+                    "end": 110,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "They are henceforth labelled Analysis A and B, and the main differences between the two analyses are summarized in Table 1. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 122,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Analysis A is designed to optimize the sensitivity to the NMO with DeepCore and considered the main result of this work, while Analysis B is designed to resemble the proposed PINGU analysis from [24], using only events that are fully-contained in the DeepCore detector, and is used as a confirmatory result here. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 195,
+                    "end": 199,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "[24]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 67,
+                    "end": 76,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                },
+                {
+                    "start": 251,
+                    "end": 260,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "Further details about Analyses A and B can be found in [49] and [50], respectively. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 55,
+                    "end": 59,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "[49]"
+                },
+                {
+                    "start": 64,
+                    "end": 68,
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "text": "[50]"
+                }
+            ]
+        },
+        {
+            "text": "The use of two independent analyses with partially complementary data sets gives great confidence in the quantitative conclusions of the analysis presented here and the treatment and impact of the systematic uncertainties.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The analyses are based on DeepCore data taken between May 2012 and April 2014, comprising a total livetime of 1006 (1022) days for Analysis A (B). ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 35,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "The difference in livetime arises from slightly different criteria on the stability of data acquisition. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "The data is run through two largely independent processing chains, where both samples are acquired by filtering the data in several successive steps of selection. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "These steps include the application of selection criteria on well-understood variables, as well as machine-learning methods, namely Boosted Decision Trees [51]. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 155,
+                    "end": 159,
+                    "type": "bibr",
+                    "ref_id": "b50",
+                    "text": "[51]"
+                }
+            ]
+        },
+        {
+            "text": "The selections are aiming for a reduction of the background of atmospheric muons and triggered noise, while maintaining a large fraction of well-reconstructed, low-energy neutrino events below E \u03bd \u223c 100 GeV. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Both samples are described in more detail in [48]. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 45,
+                    "end": 49,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "Compared to [48], the samples used in this work differ by the following modifications:",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 16,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "First, events with a reconstructed vertex outside the detector that enter from below are not vetoed in Analysis A using the lower part of the DeepCore detector, as it is done for downgoing and horizontal events using the surrounding Ice-Cube detector. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 18,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 142,
+                    "end": 151,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "This increases the statistics at the expense of a reduced energy resolution for these uncontained events, especially at high energies. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "The loss in energy resolution is due to the unobserved fraction of deposited energy outside the Fig. 3 The distribution of the particle identification variable for Analysis A. The blue band on the data/MC ratio is the statistical uncertainty detector volume. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 18,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 102,
+                    "type": "figure",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "Second, the range of reconstructed energies considered is extended for both analyses compared to [48], from 56 to 90 GeV (80 GeV) for Analysis A (B), allowing us to constrain nuisance parameters outside the strongest oscillation region. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 18,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "Third, both analyses use exclusively upgoing events (i.e. cos(\u03b8 reco \u03bd ) < 0) to reduce the background from atmospheric muons.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "The final samples are reconstructed with the same algorithm for Analyses A and B [48,49]. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48,"
+                },
+                {
+                    "start": 85,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "49]"
+                }
+            ]
+        },
+        {
+            "text": "It is based on a likelihood function that links the number and the arrival times of the observed Cherenkov photons in all DOMs to a physics hypothesis. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The physics hypothesis is given by the position and time of the interaction vertex, the neutrino direction, and the neutrino energy, which are the parameters of the likelihood optimization. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The reconstruction is run separately for a starting track and a cascade-only hypothesis, where the starting track hypothesis features a cascade at the primary vertex with an additional parameter L for the length of an outgoing muon track. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Since the track hypothesis allows for fitting the track length to L = 0, the 7dimensional cascade-only-hypothesis is nested within the 8-dimensional track-hypothesis. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The log-likelihood difference between track and cascade-only hypothesis is used as the flavor-separating variable, called Particle Identification (PID). ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "Besides the reconstructed neutrino zenith angle \u03b8 reco \u03bd and neutrino energy E reco \u03bd , the PID is used as a third observable entering the likelihood analyses described in Sect. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "4. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "The distribution of the PID variable for Analysis A is shown in Fig. 3.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 19,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 64,
+                    "end": 70,
+                    "type": "figure",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "In the reconstruction, the optimized likelihood function differs between the two analyses: For Analysis B, the reconstruction likelihood is defined using the observed charge binned in time for each DOM as a proxy for the observed number of Cherenkov photons. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "Since some deviations were found between data and Monte Carlo in charge-related quantities, the likelihood was reformulated in a chargeindependent way for Analysis A, such that the charge amplitude information was removed and the only information used is whether a DOM is hit or not hit in multiple bins of time. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "In terms of the resolutions in reconstructed zenith angle \u03b8 reco \u03bd and neutrino energy E \u03bd , the impact of the likelihood reformulation was found to be small. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "Moreover for Analysis B, the impact of the charge mismatch is estimated to be small in comparison to the statistical uncertainty on the observed NMO.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "After the data selection, the number of events in Sample A exceed the number of events in Sample B by a factor of 1.87, while providing similar resolutions in energy and zenith angle.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 21,
+            "section_rank": 4
+        },
+        {
+            "text": "Note that for Analysis B, the atmospheric muon background is estimated from data in an off-signal region, while for Analysis A, it is obtained from Monte Carlo simulations (cf. Table 1). ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 22,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 184,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "As a result, there is no a priori Monte Carlo prediction for the atmospheric muon contamination in Sample B. However, the fraction of atmospheric muons is fitted in the analysis as discussed in Sect. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "6. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "The contamination of triggered noise was found to be only 0.1% for both samples. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "It is included into the likelihood fit for Analysis A, while it is neglected for Analysis B.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 22,
+            "section_rank": 4
+        },
+        {
+            "text": "The final samples consist of CC muon neutrino, CC electron neutrino, CC tau neutrino, NC, and atmospheric muon events. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "These different components are called contributions in the following and are simulated separately in Monte Carlo except for the atmospheric muon contribution used in Analysis B that is parametrized from an off-signal data region.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 23,
+            "section_rank": 4
+        },
+        {
+            "text": "The estimated fraction of the data samples from each contribution is shown in Table 1. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 24,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 85,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "These fractions are calculated using the best-fit values for all systematic parameters, discussed in Sect. ",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "text": "4.",
+            "section": "Data samples and reconstruction",
+            "paragraph_rank": 24,
+            "section_rank": 4
+        },
+        {
+            "text": "Analyses",
+            "section_rank": 5
+        },
+        {
+            "text": "Both Analyses A and B use a binned likelihood method to determine the NMO by observing the signature from Fig. 2 in reconstructed variables. ",
+            "section": "Analyses",
+            "paragraph_rank": 25,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 112,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "Since a separation of all flavors cannot be done with DeepCore, the PID is used to distinguish track-and cascade-like events, while neutrino energy and zenith angle are obtained from the reconstruction described in Sect. ",
+            "section": "Analyses",
+            "paragraph_rank": 25,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 62,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "3.",
+            "section": "Analyses",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "For both analyses, the binning is summarized in Table 1. ",
+            "section": "Analyses",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 48,
+                    "end": 55,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "For Analysis B only two PID bins are used to separate trackand cascade-like events, analogously to [16], while Analysis A uses three PID bins. ",
+            "section": "Analyses",
+            "paragraph_rank": 26,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 99,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "This is motivated by the weak separation power at low energies, where the confidence in the separation can be taken into account by including an additional, intermediate PID bin. ",
+            "section": "Analyses",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "The binning in neutrino energy and zenith angle is chosen to be uniform in log 10 (E reco \u03bd ) and cos(\u03b8 reco \u03bd ) for Analysis B. For Analysis A, it is also uniform in cos(\u03b8 reco \u03bd ), while it is optimized in log 10 (E reco \u03bd ) to roughly follow the available statistics and maintain a large number of bins in the most interesting region at E \u03bd \u223c 10 GeV.",
+            "section": "Analyses",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "In Analysis B, the binning is used to generate Monte Carlo distributions, called templates, in E reco \u03bd , \u03b8 reco \u03bd , and PID for each contribution to the data sample, using histograms. ",
+            "section": "Analyses",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "In contrast, Analysis A applies an adaptive Kernel Density Estimation (KDE) method to produce these templates, which smooths the fluctuations from limited Monte Carlo statistics. ",
+            "section": "Analyses",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "These uncertainties arise mainly from the atmospheric muon template, where the available Monte Carlo statistics are similar to those from experimental data, due to the time-intensive simulation of atmospheric muons.",
+            "section": "Analyses",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "The KDE method is analogous to the one used in [52] and based on [53]. ",
+            "section": "Analyses",
+            "paragraph_rank": 28,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b51",
+                    "text": "[52]"
+                },
+                {
+                    "start": 65,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b52",
+                    "text": "[53]"
+                }
+            ]
+        },
+        {
+            "text": "However, the method from [53] is extended by reflecting the KDE at the boundaries of the binned parameter space and integrating the resulting distribution to obtain a prediction for the bin content [54]. ",
+            "section": "Analyses",
+            "paragraph_rank": 28,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 25,
+                    "end": 29,
+                    "type": "bibr",
+                    "ref_id": "b52",
+                    "text": "[53]"
+                },
+                {
+                    "start": 198,
+                    "end": 202,
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "text": "[54]"
+                }
+            ]
+        },
+        {
+            "text": "For the atmospheric muons, this is illustrated in Fig. 4, where the Monte Carlo template for atmospheric muons is generated with histograms (top) and the above mentioned KDE method (bottom). ",
+            "section": "Analyses",
+            "paragraph_rank": 28,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 56,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "In the case of histograms, the fluctuations in the bin content, arising from limited Monte Carlo statistics, are clearly visible.",
+            "section": "Analyses",
+            "paragraph_rank": 28,
+            "section_rank": 5
+        },
+        {
+            "text": "The uncertainties on the KDE prediction are estimated using bootstrapping for every contribution from Sect. ",
+            "section": "Analyses",
+            "paragraph_rank": 29,
+            "section_rank": 5
+        },
+        {
+            "text": "3 separately [55]. ",
+            "section": "Analyses",
+            "paragraph_rank": 29,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 13,
+                    "end": 17,
+                    "type": "bibr",
+                    "ref_id": "b55",
+                    "text": "[55]"
+                }
+            ]
+        },
+        {
+            "text": "For each contribution, which consists of N MC Fig. 5 Top: the distribution in PID, zenith angle, and neutrino energy for Analysis A that enters the likelihood calculation; bottom: corresponding signature of the NMO, given as expected pull on the bin content in case IO is observed but NO is tested, using Poissonian statistics events, events are drawn randomly from this sample, replacing the event each time so that it can be drawn again, until N events have been drawn. ",
+            "section": "Analyses",
+            "paragraph_rank": 29,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 46,
+                    "end": 52,
+                    "type": "figure",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "This new sample of N events is called a bootstrapped sub-sample, and from this a new KDE template is generated. ",
+            "section": "Analyses",
+            "paragraph_rank": 29,
+            "section_rank": 5
+        },
+        {
+            "text": "This process is repeated several times and the uncertainty on each bin content in the original KDE template is estimated from the resulting distribution of bin contents in the bootstrapped samples.",
+            "section": "Analyses",
+            "paragraph_rank": 29,
+            "section_rank": 5
+        },
+        {
+            "text": "For Analysis A, the three-dimensional template obtained from the combination of all Monte Carlo contributions is shown in Fig. 5. ",
+            "section": "Analyses",
+            "paragraph_rank": 30,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 122,
+                    "end": 128,
+                    "type": "figure",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "Additionally, the expected pulls on each bin are shown in the case that the true ordering is inverted but the NO hypothesis is tested. ",
+            "section": "Analyses",
+            "paragraph_rank": 30,
+            "section_rank": 5
+        },
+        {
+            "text": "This is used as a metric to visualize the signature of the NMO [16]. ",
+            "section": "Analyses",
+            "paragraph_rank": 30,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 63,
+                    "end": 67,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "As can be seen in Fig. 5, the expected pulls between NO and IO are small, which already indicates the low sensitivity due to the limited resolution and statistics of DeepCore at energies E \u03bd 15 GeV.",
+            "section": "Analyses",
+            "paragraph_rank": 30,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 24,
+                    "type": "figure",
+                    "text": "Fig. 5"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 166,
+                    "end": 175,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "Using these distributions, likelihoods are defined for both analyses. ",
+            "section": "Analyses",
+            "paragraph_rank": 31,
+            "section_rank": 5
+        },
+        {
+            "text": "For Analysis A, the negative log-likelihood LLH is given by",
+            "section": "Analyses",
+            "paragraph_rank": 31,
+            "section_rank": 5
+        },
+        {
+            "text": "where the term S is common to the likelihood of both analyses and will be defined after discussing the other terms. ",
+            "section": "Analyses",
+            "paragraph_rank": 32,
+            "section_rank": 5
+        },
+        {
+            "text": "The term",
+            "section": "Analyses",
+            "paragraph_rank": 32,
+            "section_rank": 5
+        },
+        {
+            "text": "gives the probability of observing N A i events in bin i, if \u03bc A i events are expected. ",
+            "section": "Analyses",
+            "paragraph_rank": 33,
+            "section_rank": 5
+        },
+        {
+            "text": "It is obtained by a convolution of a Poissonian distribution and a narrow lognormal probability density function that describes the uncertainty \u03c3 A \u03bc i on the Monte Carlo prediction \u03bc i . ",
+            "section": "Analyses",
+            "paragraph_rank": 33,
+            "section_rank": 5
+        },
+        {
+            "text": "The uncertainty \u03c3 A \u03bc i is obtained from a quadratic combination of the individual template uncertainties for every contribution, obtained from bootstraping.",
+            "section": "Analyses",
+            "paragraph_rank": 33,
+            "section_rank": 5
+        },
+        {
+            "text": "Due to the KDE method used in Analysis A, the dominant template uncertainties in the description of atmospheric muons are strongly reduced, such that the uncertainties on the total template are typically \u223c 10% of the Poissonian error expected from data fluctuations. ",
+            "section": "Analyses",
+            "paragraph_rank": 34,
+            "section_rank": 5
+        },
+        {
+            "text": "Thus, for Analysis A these template uncertainties contribute only marginally to the following results.",
+            "section": "Analyses",
+            "paragraph_rank": 34,
+            "section_rank": 5
+        },
+        {
+            "text": "For Analysis B, the likelihood is adapted from [56], where a \u03c7 2 -value is calculated by quadratically combining the Poissonian error on the predicted bin content \u03bc B",
+            "section": "Analyses",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "bibr",
+                    "ref_id": "b56",
+                    "text": "[56]"
+                }
+            ]
+        },
+        {
+            "text": "i with the uncertainty \u03c3 B \u03bc i on the combined template of all contributions. ",
+            "section": "Analyses",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "It is given by",
+            "section": "Analyses",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "where the labels are analogous to Eq. ",
+            "section": "Analyses",
+            "paragraph_rank": 37,
+            "section_rank": 5
+        },
+        {
+            "text": "(2). ",
+            "section": "Analyses",
+            "paragraph_rank": 37,
+            "section_rank": 5
+        },
+        {
+            "text": "Here, the uncertainties \u03c3 B \u03bc i on the templates are estimated from the statistical error due to limited Monte Carlo and an uncertainty on the atmospheric muon template, estimated from off-signal data.",
+            "section": "Analyses",
+            "paragraph_rank": 37,
+            "section_rank": 5
+        },
+        {
+            "text": "The dominant systematic uncertainties are included in both likelihood fits using nuisance parameters. ",
+            "section": "Analyses",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "These nuisance parameters comprise uncertainties in the atmospheric neutrino flux, the atmospheric oscillation parameters, the neutrino-nucleon cross sections, and the detector response. ",
+            "section": "Analyses",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "All systematic parameters are allowed to vary simultaneously and independently in the fit; we assume there are no correlations between the pulls on the various parameters. ",
+            "section": "Analyses",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "The parameters are listed in Table 2. ",
+            "section": "Analyses",
+            "paragraph_rank": 38,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 29,
+                    "end": 36,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "To account for external constraints on these systematic parameters, Gaussian priors are included into the likelihood by the term S,",
+            "section": "Analyses",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "where the sum runs over all systematic parameters. ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5
+        },
+        {
+            "text": "For each parameter, the tested value s is compared to the expected baseline value s 0 with respect to its estimated uncertainty \u03c3 s . ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5
+        },
+        {
+            "text": "The baseline value s 0 and width \u03c3 s of each prior are identical for both analyses, and are stated in Table 2; the central value and the width are motivated by the provided references where possible. ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 109,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "As indicated in Table 2, the prior for some parameters was removed in Analysis B. Due to the small sensitivity to the NMO, the prior assumption was found to imply a preference on the NMO in case the true parameter value differs from the baseline value, which is avoided by removing the corresponding priors from the likelihood. ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 16,
+                    "end": 23,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "Thus, no exter-nal knowledge is included on these parameters, allowing for larger deviations from the baseline value. ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5
+        },
+        {
+            "text": "The parameters N \u03bd , N \u03bd e , N NC , and N \u03bc are used to vary the normalizations of the different contributions from Table 1. ",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 123,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Thus, they account for uncertainties in interaction cross sections, the total neutrino and muon fluxes, the \u03bd e /\u03bd \u03bc production ratio, and detection efficiencies.",
+            "section": "Analyses",
+            "paragraph_rank": 39,
+            "section_rank": 5
+        },
+        {
+            "text": "Additional uncertainties on the neutrino fluxes predicted in [38] are modelled by the parameters \u03b3 \u03bd , \u03c3 zenith \u03bd , and (\u03bd/\u03bd). ",
+            "section": "Analyses",
+            "paragraph_rank": 40,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "[38]"
+                }
+            ]
+        },
+        {
+            "text": "Here, \u03b3 \u03bd incorporates uncertainties in the neutrino energy spectrum, arising from flux, and cross section uncertainties, according to a reweighting of Monte Carlo events \u221d (E \u03bd /GeV) \u03b3 \u03bd , while \u03c3 zenith \u03bd and (\u03bd/\u03bd) incorporate the dominant uncertainties from [58] in an ad hoc parametrization. ",
+            "section": "Analyses",
+            "paragraph_rank": 40,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 261,
+                    "end": 265,
+                    "type": "bibr",
+                    "ref_id": "b58",
+                    "text": "[58]"
+                }
+            ]
+        },
+        {
+            "text": "The uncertainties on the production of atmospheric muons arising from the spectrum and compositions of the cosmic ray primary flux are represented by the parameter \u03b3 \u03bc . ",
+            "section": "Analyses",
+            "paragraph_rank": 40,
+            "section_rank": 5
+        },
+        {
+            "text": "Note that \u03b3 \u03bc is only included as an uncertainty for Analysis A, since the atmospheric muon template in Analysis B is estimated from data.",
+            "section": "Analyses",
+            "paragraph_rank": 40,
+            "section_rank": 5
+        },
+        {
+            "text": "Uncertainties in neutrino-nucleon interactions are represented by the parameters M res A and M qe A , which model the axial mass of resonant and quasi-elastic interactions. ",
+            "section": "Analyses",
+            "paragraph_rank": 41,
+            "section_rank": 5
+        },
+        {
+            "text": "Note that uncertainties on the cross section for deep inelastic scattering were also parametrized, but found to be negligible and therefore not included into the likelihood fit.",
+            "section": "Analyses",
+            "paragraph_rank": 41,
+            "section_rank": 5
+        },
+        {
+            "text": "Detector uncertainties are modelled by the parameters opt , lateral , and head\u2212on , which describe the optical detection efficiency of the DOMs. ",
+            "section": "Analyses",
+            "paragraph_rank": 42,
+            "section_rank": 5
+        },
+        {
+            "text": "The value of opt gives the total detection efficiency per photon, relative to the baseline scenario. ",
+            "section": "Analyses",
+            "paragraph_rank": 42,
+            "section_rank": 5
+        },
+        {
+            "text": "In contrast, the parameters lateral and head\u2212on describe the dependence of the photon detection efficiency on the inclination angle of the incoming photon. ",
+            "section": "Analyses",
+            "paragraph_rank": 42,
+            "section_rank": 5
+        },
+        {
+            "text": "Here, lateral changes the slope of the acceptance curve, while head\u2212on controls the acceptance of very vertically upgoing photons independently. ",
+            "section": "Analyses",
+            "paragraph_rank": 42,
+            "section_rank": 5
+        },
+        {
+            "text": "Besides actual uncertainties in the DOMs' detection efficiency, these parameters incorporate uncertainties with respect to the optical properties of the ice in the refrozen drill holes that surround the DOMs.",
+            "section": "Analyses",
+            "paragraph_rank": 42,
+            "section_rank": 5
+        },
+        {
+            "text": "All of the systematic parameters mentioned above are described in more detail in [48]. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "Besides the parameters included in the fit, additional uncertainties have been investigated and tested for their possible effect on the analysis [49,50]. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 145,
+                    "end": 149,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "[49,"
+                },
+                {
+                    "start": 149,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "text": "50]"
+                }
+            ]
+        },
+        {
+            "text": "These parameters are the normalizations of sub-dominant experimental backgrounds (detector noise and event pile-up from coincident atmospheric muons), additional uncertainties on the optical properties of the ice, the oscillation parameters (\u03b8 12 , \u03b8 13 , m 2 21 , and \u03b4 CP ), and Bjorken-x dependent uncertainties in the cross section for deep-inelastic neutrino-nucleon scattering. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 258,
+                    "end": 259,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "Two types of tests were performed to determine the impact of these parameters. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "In the first test, a parameter is injected into a MC fake dataset, shifted from its nominal value by \u00b1 1\u03c3 in the case of Table 2 Systematics treated as nuisance parameters in the likelihood analysis, including normalization (N), detector response (D), oscillation (O), flux (F), and neutrino-nucleon interaction (I) uncertainties. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 121,
+                    "end": 128,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "These parameters are discussed in more detail in [48]. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 49,
+                    "end": 53,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "[48]"
+                }
+            ]
+        },
+        {
+            "text": "The table gives the baseline value and, if the parameter is used with a prior in the likelihood, the standard deviation of the Gaussian prior, as well as the experimental best-fit values for both analyses and ordering hypotheses Label Parameter allowed to vary freely (no prior) in both analyses a detector systematic and by \u00b1 3\u03c3 in the case of an oscillation parameter. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "This MC fake data is fit using the same MC set, but with the parameter in question fixed to its unshifted nominal value to assess whether the uncertainty in the systematic parameter can bias the measured ordering hypothesis. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "This test is repeated for MC fake datasets generated with both mass orderings. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "For none of these systematic or oscillation parameters is a bias observed in the measured preference for the mass ordering of more than 0.05\u03c3 . ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "For the case of \u03b4 CP , the value of \u03b4 CP = 180 \u2022 is being used as the 'nominal' value for the MC fake dataset, with the value of \u03b4 CP = 270 \u2022 injected into the MC used in the fit; a negligible (less than 0.01\u03c3 ) bias in the ordering preference is observed. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "In the second test, the same shifted values as above are injected into the MC fake dataset, but now the parameter under test is allowed to vary in the fit. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "This allows us to determine if the inclusion of these parameters into the fit causes any loss of sensitivity to the mass ordering. ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "None of the parameters in question cause a loss of sensitivity of more than 0.05\u03c3 ; the inclusion of \u03b4 CP reduces the sensitivity by less than 0.03\u03c3 . ",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5
+        },
+        {
+            "text": "Since all the parameters described in this paragraph are shown to have no impact on the mass ordering sensitivity, or the potential to cause a bias, they have been set to their nominal values (in the case of oscillation parameters, to the NuFit [32] best-fit values), and are not included in the final fit in order to minimise the computing time required for the multi-parameter minimisation.",
+            "section": "Analyses",
+            "paragraph_rank": 43,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 245,
+                    "end": 249,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "[32]"
+                }
+            ]
+        },
+        {
+            "text": "For Analysis A (B), the negative log-likelihood from Eqs. ",
+            "section": "Analyses",
+            "paragraph_rank": 44,
+            "section_rank": 5
+        },
+        {
+            "text": "(2) (3) is optimized. ",
+            "section": "Analyses",
+            "paragraph_rank": 44,
+            "section_rank": 5
+        },
+        {
+            "text": "To do this, LLH \u2261 \u22120.5\u03c7 2 is used as the negative log-likelihood for Analysis B. During this optimization, the first and the second octant in \u03b8 23 are fitted separately for both orderings, allowing all the parameters listed in Table 2 to vary, and the fit optimizing the LLH is taken as the best-fit for this ordering. ",
+            "section": "Analyses",
+            "paragraph_rank": 44,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 227,
+                    "end": 234,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The resulting difference, 2 LLH NO\u2212IO \u2261 \u03c7 2 NO\u2212IO , between the NO and IO hypotheses is then calculated for both analyses.",
+            "section": "Analyses",
+            "paragraph_rank": 44,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 43,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "Finally, 2 LLH NO\u2212IO (\u03c7 2 NO\u2212IO ) is used as a test-statistic (TS) in Sect. ",
+            "section": "Analyses",
+            "paragraph_rank": 45,
+            "section_rank": 5
+        },
+        {
+            "text": "6 for Analyses A (B) to derive the experimental result from the fit to the data.",
+            "section": "Analyses",
+            "paragraph_rank": 45,
+            "section_rank": 5
+        },
+        {
+            "text": "Sensitivity to the neutrino mass ordering",
+            "section_rank": 6
+        },
+        {
+            "text": "The determination of the Neutrino Mass Ordering is a binary hypothesis test, which requires the test of two non-nested hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 46,
+            "section_rank": 6
+        },
+        {
+            "text": "This is different from most other applications in particle physics, where a general hypothesis H G is tested against a specific one, H S , in the sense that the specific hypothesis is obtained for a certain realization of the parameters of H G . ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 46,
+            "section_rank": 6
+        },
+        {
+            "text": "For such nested hypotheses, Wilks' Theorem is commonly used to derive sensitivities and to estimate limits on fitted parameters [59]. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 46,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b59",
+                    "text": "[59]"
+                }
+            ]
+        },
+        {
+            "text": "In contrast, Wilks' Theorem does not apply to the determination of the Neutrino Mass Order-ing, since the discrete choice of Normal or Inverted Ordering is not related to the fixing of degrees of freedom [60].",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 46,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 204,
+                    "end": 208,
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "text": "[60]"
+                }
+            ]
+        },
+        {
+            "text": "Due to the subtleties involved in the statistical treatment and since a determination of the NMO is expected within the next decade, the correct method to quantify the preference is object of many discussions [60][61][62]. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 47,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 209,
+                    "end": 213,
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "text": "[60]"
+                },
+                {
+                    "start": 213,
+                    "end": 217,
+                    "type": "bibr",
+                    "ref_id": "b61",
+                    "text": "[61]"
+                },
+                {
+                    "start": 217,
+                    "end": 221,
+                    "type": "bibr",
+                    "ref_id": "b62",
+                    "text": "[62]"
+                }
+            ]
+        },
+        {
+            "text": "Here, two methods are used to estimate the sensitivity, which are described in the following.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 47,
+            "section_rank": 6
+        },
+        {
+            "text": "The first method is a statistically rigorous analysis of the resulting likelihood values, using the obtained value of 2 LLH NO\u2212IO as a TS. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 48,
+            "section_rank": 6
+        },
+        {
+            "text": "It derives the resulting sensitivity, given by the expected confidence in the determination of the NMO, from a frequentist coverage test. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 48,
+            "section_rank": 6
+        },
+        {
+            "text": "To do this, the data is fit with both ordering hypotheses giving a value for the TS and two sets of best-fit systematic parameters, \u03b7 NO and \u03b7 IO . ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 48,
+            "section_rank": 6
+        },
+        {
+            "text": "These fits are called fiducial fits (FD) in the following.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 48,
+            "section_rank": 6
+        },
+        {
+            "text": "From these parameters, the resulting best-fit templates are generated for NO and IO. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 49,
+            "section_rank": 6
+        },
+        {
+            "text": "Then, these templates are used to generate Pseudo-Experiments or Pseudo-Trials (PT)s by adding Poissonian fluctuations on the bin-contents, as expected in a real-world experiment; in this analysis, which has a sensitivity dominated by the statistical uncertainty, it is unnecessary to fluctuate each PT according to the systematic uncertainties. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 49,
+            "section_rank": 6
+        },
+        {
+            "text": "Afterwards, each PT is fitted with both ordering hypotheses, resulting in a new value for the TS = \u03c7 2 NO\u2212IO = 2 LLH NO\u2212IO . ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 49,
+            "section_rank": 6
+        },
+        {
+            "text": "From these PTs, two distributions of the TS are obtained for the two sets of injected parameters \u03b7 NO and \u03b7 IO .",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 49,
+            "section_rank": 6
+        },
+        {
+            "text": "This process of creating PTs for \u03b7 NO and \u03b7 IO and fitting them with both hypotheses is repeated several times to estimate a TS distribution for each of the ordering hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 50,
+            "section_rank": 6
+        },
+        {
+            "text": "The TS distributions for NO and IO are then used to estimate the analysis sensitivity, i.e. the expected p-values for the exclusion of each hypothesis. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 50,
+            "section_rank": 6
+        },
+        {
+            "text": "To do this, the fraction of PTs for NO (IO) that is to the right (left) of the median of the IO (NO) distribution is taken as the expected p-value for the exclusion of the NO (IO) hypothesis, if IO (NO) is the true ordering. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 50,
+            "section_rank": 6
+        },
+        {
+            "text": "This is sketched in Fig. 6 for two generic distributions.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 50,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 26,
+                    "type": "figure",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "The frequentist method is summarized as a flow-chart in Fig. 7. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 51,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 56,
+                    "end": 62,
+                    "type": "figure",
+                    "text": "Fig. 7"
+                }
+            ]
+        },
+        {
+            "text": "Note that this procedure is similar to the treatment of data, described in Sect. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 51,
+            "section_rank": 6
+        },
+        {
+            "text": "6, where the experimental fit is used as fiducial fit to produce PTs. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 51,
+            "section_rank": 6
+        },
+        {
+            "text": "Unfortunately, the frequentist method is computationally very expensive. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 51,
+            "section_rank": 6
+        },
+        {
+            "text": "Thus, for performing more detailed parameter studies, a second, faster method is used.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 51,
+            "section_rank": 6
+        },
+        {
+            "text": "The second method for deriving sensitivities is an Asimov approach adapted from [60]. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 52,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "text": "[60]"
+                }
+            ]
+        },
+        {
+            "text": "Instead of generating PTs, the total MC template, with no Poissonian fluctuations, is fitted directly for both hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 52,
+            "section_rank": 6
+        },
+        {
+            "text": "In the following, we refer to this MC template as the generated-ordering (GO) hypothesis, H GO , where the GO can be either NO or IO. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 52,
+            "section_rank": 6
+        },
+        {
+            "text": "This is then fitted under assumptions of both hypotheses, NO and IO, where the The resulting value of 2 LLH NO\u2212IO is assumed to be representative for the behavior obtained using PTs. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 52,
+            "section_rank": 6
+        },
+        {
+            "text": "The sensitivity to the generated ordering, n GO \u03c3 , in terms of one-sided Gaussian standard deviations is",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 52,
+            "section_rank": 6
+        },
+        {
+            "text": "where G O \u2208 {IO, NO} is the opposite hypothesis to GO, generated with the best-fit set of systematic parameters \u03b7 GO \u2208 {\u03b7 IO , \u03b7 NO } corresponding to the set \u03b7 GO \u2208 {\u03b7 NO , \u03b7 IO } used for H GO . ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 53,
+            "section_rank": 6
+        },
+        {
+            "text": "Note that the sensitivity n GO \u03c3 describes the expected p-value for the exclusion of the GO hypothesis in the case that the true ordering is the GO [60].",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 53,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 148,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "text": "[60]"
+                }
+            ]
+        },
+        {
+            "text": "The choice of one-instead of two-sided Gaussian standard deviations is motivated by the fact that an experiment with no sensitivity to the NMO, i.e. if the two distributions for NO and IO in Fig. 6 were identical, would lead to a 50% chance of obtaining the correct ordering by random chance. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 54,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 191,
+                    "end": 197,
+                    "type": "figure",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "This should not be misinterpreted as sensitivity and thus should give n NO, IO \u03c3 = 0, which is the case for one-sided but not two-sided Gaussians.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 54,
+            "section_rank": 6
+        },
+        {
+            "text": "The resulting sensitivities for both methods are shown in Fig. 8, as a function of the true value of sin 2 (\u03b8 23 ). ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 55,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 64,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 8"
+                }
+            ]
+        },
+        {
+            "text": "The blue and red lines indicate the result from the Asimov method for Analysis A (solid lines) and Analysis B (dashed lines). ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 55,
+            "section_rank": 6
+        },
+        {
+            "text": "The sensitivities are validated at certain values of sin 2 (\u03b8 23 ) using the frequentist method, as indicated by the circle (A) and star (B) markers, where the uncertainties arise from the finite number of PTs.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 55,
+            "section_rank": 6
+        },
+        {
+            "text": "As visible in Fig. 8, the resulting sensitivity is < 1\u03c3 for both orderings and analyses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 56,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 14,
+                    "end": 20,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 8"
+                }
+            ]
+        },
+        {
+            "text": "Moreover, Analysis A is more sensitive to the NMO than Analysis B, which is due to the increased statistics, the additional bins in PID, energy and zenith, and the reduced impact from limited Monte Carlo statistics, due to the usage of KDEs in the generation of Monte Carlo templates.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 56,
+            "section_rank": 6
+        },
+        {
+            "text": "Note that a characteristic shape is found for the sin 2 (\u03b8 23 )dependence of n NO, IO \u03c3 , which is different for the NO and IO hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6
+        },
+        {
+            "text": "The observed features are similar to those found for the PINGU sensitivity in [16]. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "They arise from the interplay of the two independent octant fits for LLH GO and LLH GO , used to calculate the values of LLH NO\u2212IO (H GO ) and LLH NO\u2212IO (H GO ) in Eq. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6
+        },
+        {
+            "text": "5, where the preferred octant is not necessarily the true one in the case that GO is fitted. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "ref_id": "formula_5",
+                    "text": "5"
+                }
+            ]
+        },
+        {
+            "text": "As a result, the behavior of n NO, IO \u03c3 changes each time the octant is flipped for one of the two negative log-likelihood differences ( LLH) in Eq. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6
+        },
+        {
+            "text": "(5).",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 57,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "(5)"
+                }
+            ]
+        },
+        {
+            "text": "The observed sensitivities for the Asimov method agree roughly with the PTs, while perfect agreement is not expected due to several approximations used in the Asimov-method [60]. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 58,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 173,
+                    "end": 177,
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "text": "[60]"
+                }
+            ]
+        },
+        {
+            "text": "However, the Asimov method is used as an estimator for the true sensitivity.",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 58,
+            "section_rank": 6
+        },
+        {
+            "text": "Note that for some observed values in Fig. 6 the pvalues for both hypotheses can be small, in case the observed data agrees with neither the NO nor IO hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 59,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 44,
+                    "type": "figure",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "For example, this could be the case for LLH NO\u2212IO > 2 or LLH NO\u2212IO < \u22122, which is in the tail of both distributions in Fig. 6. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 59,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 119,
+                    "end": 125,
+                    "type": "figure",
+                    "text": "Fig. 6"
+                }
+            ]
+        },
+        {
+            "text": "In this case, the small p-value might lead to the wrong impression that the data clearly favors the alternative over the null hypothesis. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 59,
+            "section_rank": 6
+        },
+        {
+            "text": "To properly account for this, the p-values are combined into a CL S -value,",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 59,
+            "section_rank": 6
+        },
+        {
+            "text": "where TO is the tested ordering and TO is the opposite ordering hypotheses. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6
+        },
+        {
+            "text": "This equation is taken from [63] where a more detailed discussion of its derivation can be found. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 28,
+                    "end": 32,
+                    "type": "bibr",
+                    "ref_id": "b63",
+                    "text": "[63]"
+                }
+            ]
+        },
+        {
+            "text": "Its value is limited to CL S \u2208 [0, 1], where CL S \u2248 1 indicates no preference for one hypothesis over the other and CL S \u2248 0 indicates a strong disfavoring of the given hypothesis. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6
+        },
+        {
+            "text": "The CL S value can be interpreted as confidence in the result with a confidence level of 1 \u2212 CL S . ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6
+        },
+        {
+            "text": "More illustratively, the CL S value describes how much less likely the observed value would occur under the disfavored hypothesis, compared to the favored one. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6
+        },
+        {
+            "text": "Finally, potential improvements of the sensitivity are tested for Analysis A. By fixing individual and combinations of systematic parameters in the Asimov fit, the absolute gain in sensitivity from an improved understanding of systematic uncertainties is found to be small, except for the oscillation parameters. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 148,
+                    "end": 155,
+                    "type": "software",
+                    "rawForm": "Asimov",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "This is due to the weak NMO signature, which barely pulls the systematic parameters and thus is only weakly affected by fixing them. ",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6
+        },
+        {
+            "text": "Instead, it is found that the sensitivity could be improved in the future by additional data statistics and improvements on the event reconstruction, which reduce the smearing-out of the NMO signature due to the low resolution in energy, zenith, and PID at the lowest energies [49].",
+            "section": "Sensitivity to the neutrino mass ordering",
+            "paragraph_rank": 60,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 277,
+                    "end": 281,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "[49]"
+                }
+            ]
+        },
+        {
+            "text": "Results",
+            "section_rank": 7
+        },
+        {
+            "text": "For both analyses, the experimental data is fitted with the likelihood method, described in Sect. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7
+        },
+        {
+            "text": "4. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7
+        },
+        {
+            "text": "The data, along with the best-fit predictions, are shown for Analysis B in Fig. 9. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 81,
+                    "type": "figure",
+                    "text": "Fig. 9"
+                }
+            ]
+        },
+        {
+            "text": "The resulting best-fit values for all systematic parameters are shown in Table 2. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 73,
+                    "end": 80,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The observed pulls are within the expected ranges for all parameters, taking statistical fluctuations and the uncertainties of the true value of each parameter into account. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7
+        },
+        {
+            "text": "The corresponding values of the metric for the NO (IO) hypothesis are 2LLH = 293. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7
+        },
+        {
+            "text": "38 (294.12) for Analysis A and \u03c7 2 = 107.82 (107.50) for Analysis B. The metric is used as a goodness-of-fit estimator for the agreement of data and Monte Carlo by comparing these values to the expectation from PTs. ",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 11,
+                    "type": "bibr",
+                    "text": "38 (294.12)"
+                }
+            ]
+        },
+        {
+            "text": "The resulting p-values for Analyses A and B are p A gof = 43.5% and p B gof = 11.0%, indicating the data to be well-described by the MC templates.",
+            "section": "Results",
+            "paragraph_rank": 61,
+            "section_rank": 7
+        },
+        {
+            "text": "For Analyses A and B, the observed values of the teststatistic are 2 LLH NO\u2212IO = \u22120.738 and \u03c7 2 NO\u2212IO = 0.3196. ",
+            "section": "Results",
+            "paragraph_rank": 62,
+            "section_rank": 7
+        },
+        {
+            "text": "Thus, the fits for the main result (A) and the confirmatory result (B) prefer NO and IO, respectively, while both results are compatible within their statistical uncertainties, i.e. both results have a test statistic within one unit of zero.",
+            "section": "Results",
+            "paragraph_rank": 62,
+            "section_rank": 7
+        },
+        {
+            "text": "To estimate the corresponding p-values, PTs are generated with the best-fit parameters \u03b7 NO and \u03b7 IO from Table 2;  ",
+            "section": "Results",
+            "paragraph_rank": 63,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 114,
+                    "type": "table",
+                    "text": "Table 2;"
+                }
+            ]
+        },
+        {
+            "text": "while for the confirmatory result we find",
+            "section": "Results",
+            "paragraph_rank": 64,
+            "section_rank": 7
+        },
+        {
+            "text": "In addition to testing the NMO with PTs, the likelihood is scanned across sin 2 (\u03b8 23 ) for the more sensitive Analysis A and both ordering hypotheses. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "The resulting scan is shown in Fig. 11, where the LLH is shown with respect to its global minimum. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 31,
+                    "end": 38,
+                    "type": "figure",
+                    "text": "Fig. 11"
+                }
+            ]
+        },
+        {
+            "text": "The vertical offset between the NO and IO curves indicates the preference for NO over IO, which is visible at all values of sin 2 (\u03b8 23 ). ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "The observed minimum is in the lower octant, near sin 2 (\u03b8 23 ) = 0.455, for both orderings, while maximal mixing is separated from the best-fit point by only 2 LLH NO\u2212IO = 0.128 (0.681) for NO (IO). ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "As a result, the preference for the lower octant is small, such that a substantial range of sin 2 (\u03b8 23 ) > 0.5 is still compatible with the observed data for NO and IO. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "Fig. 9 The energy and zenith-angle distributions of the data from Analysis B. Also shown are the best-fit simulations for both orderings, where the red and blue lines fall almost on top of each other Note that the preference for NO over IO in Analysis A already indicates an observed preference for matter effects in data (cf. Sect. 1), i.e. a preference for matter effects over vacuum oscillations. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "text": "Fig. 9"
+                }
+            ]
+        },
+        {
+            "text": "To quantify this preference, the fit is repeated assuming vacuum oscillations. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "The resulting loglikelihood difference between matter effects (MA) and vacuum oscillations (VA) is LLH MA\u2212VA = \u22120.869 (\u22120.500) in case NO (IO) is assumed. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "Thus, matter effects are preferred over vacuum oscillations, independent of the assumption on the NMO. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "The p-values and CL S -values that quantify the Fig. 10 Distribution of the TS from PTs, generated with the best-fit systematic parameters \u03b7 NO and \u03b7 IO from Table 2 for Analysis A (top) and Analysis B (bottom). ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 48,
+                    "end": 55,
+                    "type": "figure",
+                    "text": "Fig. 10"
+                },
+                {
+                    "start": 158,
+                    "end": 165,
+                    "type": "table",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The red and blue distributions are obtained for the NO and IO hypotheses, respectively, while the black, solid vertical line shows the observed value in data, giving the p-values for the NO and IO hypotheses stated in the legends Fig. 11 The negative log-likelihood (LLH) as a function of sin 2 (\u03b8 23 ) for Analysis A, relative to the global minimum LLH min . ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 230,
+                    "end": 237,
+                    "type": "figure",
+                    "text": "Fig. 11"
+                }
+            ]
+        },
+        {
+            "text": "The preference for NO over IO is visible over all the range of sin 2 (\u03b8 23 ) with the best-fit for both orderings being in the lower octant (sin 2 (\u03b8 23 ) < 0. ",
+            "section": "Results",
+            "paragraph_rank": 65,
+            "section_rank": 7
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 8
+        },
+        {
+            "text": "We have developed two independent likelihood analyses to demonstrate the extraction of the neutrino mass ordering from atmospheric neutrino data. ",
+            "section": "Conclusion",
+            "paragraph_rank": 66,
+            "section_rank": 8
+        },
+        {
+            "text": "We have applied these analyses to three years of IceCube DeepCore data. ",
+            "section": "Conclusion",
+            "paragraph_rank": 66,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 57,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                }
+            ]
+        },
+        {
+            "text": "The first analysis aims for an optimized sensitivity with DeepCore, the second for an analysis chain as similar as possible to the proposed NMO analysis with PINGU [16]. ",
+            "section": "Conclusion",
+            "paragraph_rank": 66,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 164,
+                    "end": 168,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 58,
+                    "end": 66,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                },
+                {
+                    "start": 158,
+                    "end": 164,
+                    "type": "software",
+                    "rawForm": "PINGU",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                }
+            ]
+        },
+        {
+            "text": "The sensitivities were estimated with two independent methods. ",
+            "section": "Conclusion",
+            "paragraph_rank": 66,
+            "section_rank": 8
+        },
+        {
+            "text": "For the more sensitive, main analysis, the sensitivity was found to be \u223c 0.45 \u2212 0.65 \u03c3 (one-sided Gaussian), within the most interesting region close to maximum mixing (sin 2 (\u03b8 23 ) \u2208 [0.45, 0.55]) for both orderings, while for the confirmatory analysis, the sensitivity was found to be \u223c 50% smaller.",
+            "section": "Conclusion",
+            "paragraph_rank": 66,
+            "section_rank": 8
+        },
+        {
+            "text": "Due to the weak signature of the NMO in DeepCore, the sensitivity is found to be mostly unaffected by improvements in the understanding of systematic uncertainties. ",
+            "section": "Conclusion",
+            "paragraph_rank": 67,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 40,
+                    "end": 48,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "Instead, a future gain in sensitivity might come from additional statistics or potential improvements in the resolution of the event reconstruction.",
+            "section": "Conclusion",
+            "paragraph_rank": 67,
+            "section_rank": 8
+        },
+        {
+            "text": "The analyses presented here find the data to be fully compatible with both mass orderings. ",
+            "section": "Conclusion",
+            "paragraph_rank": 68,
+            "section_rank": 8
+        },
+        {
+            "text": "The main analysis observes a preference for NO over IO at 2 LLH NO\u2212IO = \u22120.738, which corresponds to a p-value of 15.3% (CL s = 53.3%) for the IO hypothesis, based on the presented frequentist method. ",
+            "section": "Conclusion",
+            "paragraph_rank": 68,
+            "section_rank": 8
+        },
+        {
+            "text": "This result is in line with recently reported preferences for the NO by Super-Kamiokande [29], T2K [27], NO\u03bdA [28], MINOS [64], and recent global best fits [31,32]. ",
+            "section": "Conclusion",
+            "paragraph_rank": 68,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 93,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "[29]"
+                },
+                {
+                    "start": 99,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "[27]"
+                },
+                {
+                    "start": 110,
+                    "end": 114,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "[28]"
+                },
+                {
+                    "start": 122,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b64",
+                    "text": "[64]"
+                },
+                {
+                    "start": 156,
+                    "end": 160,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "[31,"
+                },
+                {
+                    "start": 160,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "32]"
+                }
+            ]
+        },
+        {
+            "text": "However, it complements these results due to the higher energy range used for determining the NMO (E \u03bd 5 GeV) and the fact that it is independent of the value of \u03b4 CP . ",
+            "section": "Conclusion",
+            "paragraph_rank": 68,
+            "section_rank": 8
+        },
+        {
+            "text": "Finally, the data indicates a preference for matter effects over vacuum oscillations, independent of the assumption on the NMO.",
+            "section": "Conclusion",
+            "paragraph_rank": 68,
+            "section_rank": 8
+        },
+        {
+            "text": "The study presented here allows us to consider what future steps will allow a determination of the NMO with atmospheric neutrino data. ",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8
+        },
+        {
+            "text": "Given the statistically-limited nature of this result, it is clear that a reduction of systematic uncertain-ties is not a priority, and we have performed studies to show that even the most optimistic reduction of systematic uncertainties can achieve at most a 10% improvement in the NMO sensitivity of this dataset [49]. ",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 315,
+                    "end": 319,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "[49]"
+                }
+            ]
+        },
+        {
+            "text": "The same study also showed that a removal of backgrounds (atmospheric muons and triggered noise) delivers at most a 5% improvement in sensitivity. ",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8
+        },
+        {
+            "text": "In the coming years, a factor of four more statistics is expected from DeepCore (including both additional data and expected data-selection improvements), and this can result in a factor of two improvement in sensitivity. ",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 71,
+                    "end": 80,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "A more significant improvement that can be made is in the measurement resolutions: our studies [49] show that a 50% improvement in resolution on both neutrino direction and log 10 (E \u03bd ) would produce a factor of two improvement in the sensitivity of this dataset. ",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 99,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "[49]"
+                }
+            ]
+        },
+        {
+            "text": "To achieve an NMO determination in a reasonable timescale, a final necessary improvement is a lowering of the neutrino energy threshold; this, along with the improved resolutions, can be achieved by the PINGU concept [16,24] that reduces the energy threshold to below 10 GeV to enable a 3\u03c3 determination of the NMO for even the least optimistic values of the oscillation parameters.",
+            "section": "Conclusion",
+            "paragraph_rank": 69,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 217,
+                    "end": 221,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16,"
+                },
+                {
+                    "start": 221,
+                    "end": 224,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "24]"
+                }
+            ]
+        },
+        {
+            "text": "Besides the experimental result, the presented analyses provide a proof-of-concept for determining the NMO from matter effects in atmospheric neutrino oscillations with the IceCube Upgrade [65] or PINGU [16]. ",
+            "section": "Conclusion",
+            "paragraph_rank": 70,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 189,
+                    "end": 193,
+                    "type": "bibr",
+                    "ref_id": "b65",
+                    "text": "[65]"
+                },
+                {
+                    "start": 203,
+                    "end": 207,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "They test the full analysis chain by means of real DeepCore data and validate the understanding and treatment of systematic uncertainties, which are largely consistent with those that will be encountered by future IceCube extensions.",
+            "section": "Conclusion",
+            "paragraph_rank": 70,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 60,
+                    "type": "software",
+                    "rawForm": "DeepCore",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 2 Oscillation probabilities for an atmospheric \u03bd \u03bc or \u03bd \u03bc upon reaching the IceCube detector, as a function of the cosine of the zenith angle, \u03b8 \u03bd , and the energy, E \u03bd , of the neutrino, for the NO ",
+            "section": "Fig. 2",
+            "paragraph_rank": 71,
+            "section_rank": 9
+        },
+        {
+            "text": "(a) and the IO ",
+            "section": "Fig. 2",
+            "paragraph_rank": 71,
+            "section_rank": 9
+        },
+        {
+            "text": "(b) hypotheses. ",
+            "section": "Fig. 2",
+            "paragraph_rank": 71,
+            "section_rank": 9
+        },
+        {
+            "text": "The probabilities are shown for the neutrino appearing as each of the three possible flavors, with the neutrino and anti-neutrino cases shown as the top and bottom rows in each panel. ",
+            "section": "Fig. 2",
+            "paragraph_rank": 71,
+            "section_rank": 9
+        },
+        {
+            "text": "The dominant mixing of \u03bd \u03bc and \u03bd \u03c4 is clearly visible, while the \u03bd e flavor is mostly decoupled, except for a small contribution from matter effects below E \u03bd \u223c 15 GeV",
+            "section": "Fig. 2",
+            "paragraph_rank": 71,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 4 Comparison of Monte Carlo template for atmospheric muons inAnalysis A, generated as histogram (top) and KDE (bottom): the latter one is used in the analysis, due to the reduced impact of limited Monte Carlo statistics",
+            "section": "Fig. 4",
+            "paragraph_rank": 72,
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 6 Fig. 7",
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 6 Sketch of the frequentist method, using idealized distributions to illustrate the concepts. ",
+            "section": "Fig. 6 Fig. 7",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "The red (blue) distribution will be derived from from PTs assuming the H NO (H IO ) hypothesis. ",
+            "section": "Fig. 6 Fig. 7",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "The black vertical line represents a hypothetically observed value of LLH NO\u2212IO . ",
+            "section": "Fig. 6 Fig. 7",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "The resulting p-values (right, vertical axis) for the hypotheses are derived from the cumulative density distributions, marked as red (blue) solid lines for NO (IO)",
+            "section": "Fig. 6 Fig. 7",
+            "paragraph_rank": 73,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 8",
+            "section_rank": 12
+        },
+        {
+            "text": "Fig. 8Sensitivities of Analyses A and B to the NMO in terms of onesided Gaussian sigmas (left vertical axis) and p-values (right vertical axis) derived by the Asimov-method (lines), and validated at certain values of sin 2 (\u03b8 23 ) using the frequentist method (markers). ",
+            "section": "Fig. 8",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "The statistical errors on the frequentist points arise from the finite number of PTs used due to the computationally intensive nature of the frequentist method",
+            "section": "Fig. 8",
+            "paragraph_rank": 74,
+            "section_rank": 12
+        },
+        {
+            "text": "for each PT, both ordering hypotheses are fitted. ",
+            "paragraph_rank": 75,
+            "section_rank": 13
+        },
+        {
+            "text": "The resulting distributions of TS = 2 LLH NO\u2212IO and TS = \u03c7 2 NO\u2212IO are shown in Fig. 10. ",
+            "paragraph_rank": 75,
+            "section_rank": 13
+        },
+        {
+            "text": "The experimentally observed value is indicated by the solid, vertical black line, indicating the preference for Normal over Inverted Ordering in Analysis A and Inverted over Normal Ordering in Analysis B. The resulting p-and CL S -values for the main result are p A (H NO ) = 71.1% (CL A S (H NO ) = 83.0%), (7) p A (H IO ) = 15.7% (CL A S (H IO ) = 53.3%),",
+            "paragraph_rank": 75,
+            "section_rank": 13
+        },
+        {
+            "text": "Mat |H NO ) = 62.3%, CL S (H Mat |H NO ) = 71.0%, (11) p(H Vac |H NO ) = 12.3%, CL S (H Vac |H NO ) = 32.6%, Mat |H IO ) = 53.2%, CL S (H Mat |H IO ) = 68.4%, Vac |H IO ) = 22.2%, CL S (H Vac |H IO ) = 47.4%.",
+            "paragraph_rank": 76,
+            "section_rank": 14
+        },
+        {
+            "text": "Page 10 of 16Eur. ",
+            "paragraph_rank": 77,
+            "section_rank": 14
+        },
+        {
+            "text": "Phys. ",
+            "paragraph_rank": 77,
+            "section_rank": 14
+        },
+        {
+            "text": "J. C (2020) 80 :9",
+            "paragraph_rank": 77,
+            "section_rank": 14
+        },
+        {
+            "text": "Foundation (SNSF); UK -Science and Technology Facilities Council (STFC), part of UK Research and Innovation. ",
+            "paragraph_rank": 78,
+            "section_rank": 18
+        },
+        {
+            "text": "The IceCube collaboration acknowledges the significant contributions to this manuscript from Martin Leuermann and Steven Wren.",
+            "paragraph_rank": 78,
+            "section_rank": 18
+        },
+        {
+            "text": "Data Availability Statement",
+            "section_rank": 19
+        },
+        {
+            "text": "This manuscript has associated data in a data repository. ",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 79,
+            "section_rank": 19
+        },
+        {
+            "text": "[Authors' comment: Data are publicly released on a regular basis by IceCube at https://icecube.wisc.edu/science/data/access/. The data used in this publication will be made available at this URL.]",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 79,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 79,
+                    "end": 123,
+                    "type": "url",
+                    "rawForm": "https://icecube.wisc.edu/science/data/access",
+                    "resp": "service",
+                    "id": "#software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence, and indicate if changes were made. ",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 80,
+            "section_rank": 19
+        },
+        {
+            "text": "The images or other third party material in this article are included in the article's Creative Commons licence, unless indicated otherwise in a credit line to the material. ",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 80,
+            "section_rank": 19
+        },
+        {
+            "text": "If material is not included in the article's Creative Commons licence and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. ",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 80,
+            "section_rank": 19
+        },
+        {
+            "text": "To view a copy of this licence, visit http://creativecomm ons.org/licenses/by/4.0/. ",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 80,
+            "section_rank": 19
+        },
+        {
+            "text": "Funded by SCOAP 3 .",
+            "section": "Data Availability Statement",
+            "paragraph_rank": 80,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 18,
+                    "type": "version",
+                    "rawForm": "3",
+                    "resp": "service",
+                    "id": "#software-simple-s27"
+                }
+            ]
+        }
+    ]
+}

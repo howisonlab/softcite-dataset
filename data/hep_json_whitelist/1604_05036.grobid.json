@@ -1,0 +1,1261 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "We describe a new hit-based b-tagging technique for high energy jets and study its performance with a Geant4-based simulation. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The technique uses the fact that at sufficiently high energy a B meson or baryon can live long enough to traverse the inner layers of pixel detectors such as those in the ATLAS, ALICE, or CMS experiments prior to decay. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "By first defining a \"jet\" via the calorimeter, and then counting hits within that jet between pixel layers at increasing radii, we show it is possible to identify jets that contain b-quarks by detecting a jump in the number of hits without tracking requirements. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We show that the technique maintains fiducial efficiency at TeV scale B hadron energies, far beyond the range of existing algorithms, and improves upon conventional b-taggers.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Many of the most exciting searches for new physics beyond the Standard Model, as well as further studies of the Standard Model itself, benefit from being able to identify high-energy jets containing b quarks (\"b-jets\"). ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Examples include Higgs pair production and decay via HH \u2192 bbbb, sensitive to Higgs trilinear couplings [1]; graviton and radion decays to heavy fermions and bosons in warped extra dimension models [2]; third-generation superpartners in supersymmetry [3]; and indeed any new physics with preferential couplings to heavy Standard Model particles or third-generation fermions in particular.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 103,
+                    "end": 106,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 197,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 250,
+                    "end": 253,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "One of the most distinctive features of a b-jet is the relatively long life (on the order of 1.5 ps) of the B hadron, resulting in charged particle tracks displaced from the primary interaction vertex. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "For this reason, almost all modern collider-based particle physics experiments deploy several layers of high-granularity silicon detectors near the interaction point. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Algorithms for distinguishing b-jets from jets originating from lighter quarks rely on reconstructed high-resolution tracks in these finely grained subsystems.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "However, with increasingly stringent limits placed on the energy scale for new physics, distinguishing displaced tracks within increasingly energetic jets becomes arXiv:1604.05036v3 [hep-ex] 1 Jul 2016 simultaneously more important and more challenging. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Two effects in particular make b-tagging in TeV-scale jets difficult: First, more tracks are collimated into a small angle, resulting in a higher hit density and a more ambiguous association of hits with tracks. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "A single mis-assignment can steer a track off-course and produce an erroneous impact parameter. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Second, at extreme energies, an increasing fraction of B hadrons will decay after crossing the innermost layers of the silicon detector: in the best case scenario, this situation merely reduces the number of hits available for reconstruction and thus degrades the impact parameter resolution of the track. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "A worse scenario is that the track picks up a spurious hit in the densely populated inner layer.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Results on conventional b-tagger efficiencies from the LHC experiments are limited to momenta transverse to the beam (p T ) below 600 GeV [4], and show falling tagging efficiency beyond approximately 150 GeV. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 138,
+                    "end": 141,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Nevertheless, the ATLAS experiment has measured the invariant mass spectrum of b hadron enriched jets at \u221a s = 13 TeV out to 5 TeV [5], illustrating both the importance and challenges of the highly boosted regime. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "It is also worth noting the development of other b-tagging algorithms dedicated to this regime, including initial studies of muon-based tagging [6] using the Delphes parametric detector simulation [7].",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 197,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "This article investigates a new method which, by relying only on the hits rather than the reconstructed tracks, better maintains its efficiency at extreme energies, by which we mean energies of at least 600 GeV, above which conventional hadronic b-tagging performance degrades. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 2 describes this new method, which we call \"multiplicity jump\" b-tagging. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 3 outlines the simulation used to test the method, with the results given in Section 4. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 5 then concludes and describes prospects for further study.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "The \"multiplicity jump\" b-tagger",
+            "section_rank": 3
+        },
+        {
+            "text": "As mentioned above, almost all modern collider-based experiments deploy highgranularity detectors near the interaction point, in particular so-called \"pixel\" detectors. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "For the present discussion, we work in a cylindrical coordinate system in which the origin is located at the nominal interaction point, z is measured along the beamline, and r and \u03c6 are the radius and azimuthal angle in the plane transverse to the beam. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The angle \u03b8 is measured relative to the beam, and pseudorapidity is defined as \u03b7 \u2261 \u2212 ln tan(\u03b8/2). ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "A pixel detector, such as that used in the ATLAS experiment, is envisaged as several cylindrical layers of silicon sensors placed at increasing radii from the interaction point [8]. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Silicon pixel sensors are similar to the pixels within a digital camera and consist of many hundreds of thousands of individual sensors (the pixel channels) which can each register a signal when a charged particle passes through them. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "This is recorded as a \"hit channel\" or just a \"hit\".",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The multiplicity jump algorithm seeks to tag B hadron decays between the pixel layers as shown schematically in figure 1. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Such decays usually increase the number of charged particles traversing subsequent detector layers, and thus should be observable Figure 1. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 130,
+                    "end": 138,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The \"multiplicity jump\" tagger works when a particle with a large lorentz boost decays between two layers of pixel detectors. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Shown here schematically is a particle traversing a pixel layer from the lower left and decaying before the next layer, causing multiple hits to appear. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "For this tag to be most effective the particle should decay into many daughter particles. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "B hadrons have this desirable property.",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "as an increase in the number of hits in a small angular region, defined as the area within \u2206R \u2261 \u221a \u2206\u03b7 2 + \u2206\u03c6 2 < 0.04 relative to some pre-defined jet axis. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The small radius is close to the expected angular spread 2m/p T of the decay products of a B hadron with momentum transverse to the beam, p T , in excess of approximately 300 GeV. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2021 Such a cone is too narrow for most calorimeters, but easily spans numerous pixels. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The number of hits N j in pixel layer j, counting up from the innermost layer, is calculated by counting the hits within the angular region. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The (relative) multiplicity jump f j at layer j is then defined to be",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "For example, f j = 1 indicates that there are twice as many hits in layer j + 1 than in layer j. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "A jet is tagged as a b-jet if f j exceeds a value F for any pair of layers j and j +1. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "It is worth noting that sequential charm decay can also generate a positive multiplicity jump. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "An absolute multiplicity jump was also considered,",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "(2) \u2021 \u2206R < 0.4 and \u2206R < 0.1 were also explored but did not achieve better separation.",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "but discarded due to the effect of showering, which is expected to increase the number of hits in proportion to the number of particles (and therefore hits). ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "As a result, \u2206N j is expected to increase with j. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "On the other hand, showering should add a mostly layerindependent offset to f j . ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Setting the tag threshold F appropriately should then reduce the algorithm's sensitivity to showering. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "The idea of using a multiplicity jump as a method for tagging b-jets is not new. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Early bottom and charm fixed target experiments attempted a similar method using multiple planes of scintillators or Cherenkov radiation detectors [9]. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 147,
+                    "end": 150,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "The integrated signal from an upstream scintillator was compared to that from a matched downstream scintillator, and a \"jump\" in signal provided the heavy flavour tag. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Such methods faced challenges due to large fluctuations in the energy deposited by relativistic particles. ",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "The present method, on the other hand, relies on the vastly increased granularity of pixel detectors and the relative, rather than absolute, multiplicity jump.",
+            "section": "The \"multiplicity jump\" b-tagger",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Simulation",
+            "section_rank": 4
+        },
+        {
+            "text": "The new method was tested in a simulation based on Geant4 (version 10.0) in order to model particle interactions and showering in a detector [10]  [11]. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 141,
+                    "end": 145,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 147,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 57,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "Pythia version 8.209 [12], with the default Monash 2013 tune [13], was used to simulate pp collisions with center-of-mass energy \u221a s = 13 TeV. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 25,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 61,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "High-energy b-jets and those with lighter quarks were generated by creating Z bosons with masses of 2.5 and 5 TeV. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The Z bosons were forced to decay to qq pairs, where q is any quark but t, and hadronization and fragmentation handled by Pythia. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Initial and final state radiation resulted in jets with a range of momenta mostly below M Z /2. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The B hadron takes most of the jet energy, with the most likely energy fraction around 85%, independent of the initial parton energy. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The b-jet energy distribution is shown in Figure 2(left). ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 50,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "The B hadron was observed to take most of the jet energy in a manner quantitatively similar to [14]. ",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 95,
+                    "end": 99,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "Decays of B hadrons were then simulated using EvtGen version 1.4.0, with bremsstrahlung handled by Photos version 3.52 and any \u03c4 decays by Tauola version 1.0.7 [15].",
+            "section": "Simulation",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 160,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "A simplified detector geometry, loosely based on the four-layer ATLAS pixel barrel system, was used to model the detector response. ",
+            "section": "Simulation",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "The active pixel layers, with radii 25.7, 50.5, 88.5, and 122.5 mm, were encased within a volume of air and inside a uniform 2 T magnetic field pointing in the positive z direction. ",
+            "section": "Simulation",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Each barrel was 1.3 m long (the innermost layer, the \"Insertable B Layer\" or IBL, of the ATLAS pixel system is actually slightly shorter [16]). ",
+            "section": "Simulation",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 137,
+                    "end": 141,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "The pixel sensors were 300 \u00b5m thick, with a 50 \u00b5m pitch in the \u03c6 direction, and a 400 \u00b5m length in the z direction (800 \u00b5m in our innermost layer in order to test the effect of varying granularity). ",
+            "section": "Simulation",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "These idealized pixels were simulated as pure silicon slabs without gaps.",
+            "section": "Simulation",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "It is worth noting that the geometry largely determines the energy range in which the multiplicity jump algorithm works best: approximately 300 GeV is required for the average B hadron flight distance to reach the innermost layer. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Beyond approximately 1.4 TeV, the average flight distance reaches beyond the outermost layer. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "In order to model inactive material such as the support structure, mountings, cooling pipes, and electronics, we added further cylinders of silicon to the Geant4 model, located just outside each cylinder of sensitive pixels, so as to bring the total simulated material up to an equivalent of 2.5% of radiation length per layer. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 155,
+                    "end": 161,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "In addition a silicon cylinder half as thick was added just inside the outermost active layer of pixels. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 2(right) shows the non-zero energy deposition in all pixels for 5000 events modelled in Geant4. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 95,
+                    "end": 101,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "The broad peak around 0.1 MeV corresponds to a minimum ionizing particle at roughly normal incidence, the broadness is partly a result of the long tail in the charged particle energy loss distribution. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 29,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "The sharp peak just above 0.02 MeV originates from low energy particles curling within the magnetic field, traversing the 50 \u00b5m width of the pixel. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 34,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "The peak near zero energy corresponds to low energy products of interactions within pixels propagating partially into neighboring pixels. ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Since we are concerned with particles which are energetic enough to be mostly normally incident, we impose a threshold of 0.05 MeV (well above the ATLAS threshold of 0.011 MeV [16]) before we register the pixel as having been \"hit\". ",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 176,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 127,
+                    "end": 130,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                },
+                {
+                    "start": 172,
+                    "end": 175,
+                    "type": "software",
+                    "rawForm": "MeV",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "No attempt has been made to form either clusters nor tracks from individual pixel hits.",
+            "section": "Simulation",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Since the simulation does not extend to calorimeters, we cluster stable generated particles (excluding neutrinos) using the FastJet (version 3.1.3) [17] implementation of the \"anti-k T \" sequential recombination algorithm [18] with R = 0.2 (the ATLAS hadronic calorimeter granularity is approximately 0.1 \u00d7 0.1 in \u03c6 \u00d7 \u03b7). ",
+            "section": "Simulation",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 148,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[17]"
+                },
+                {
+                    "start": 222,
+                    "end": 226,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "The jet's axis is used to define the angular region in the multiplicity jump algorithm.",
+            "section": "Simulation",
+            "paragraph_rank": 16,
+            "section_rank": 4
+        },
+        {
+            "text": "The sample of b jets is defined by finding the highest energy ground state B hadron within \u2206R < 0.2 of the jet axis. ",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "After b jets are so identified, a similar search is performed to identify charm jets. ",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "All other jets are considered \"light quark\" jets (or \"uds\" jets). ",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "The two highest energy b-jets are then used to test the efficiency of the multiplicity jump algorithm. ",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "It should be noted that using these criteria, 13% of b jets have the B hadron within \u2206R < 0.2 but outside of \u2206R < 0.04. ",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Such B hadrons contribute to an inefficiency in the algorithm.",
+            "section": "Simulation",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Performance",
+            "section_rank": 5
+        },
+        {
+            "text": "In order to measure the algorithm's performance in our simulation, we define an efficiency b for b jets in a fiducial region as the number of tagged b jets divided by the number of jets in which the matched B hadron decays in the fiducial region. ",
+            "section": "Performance",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "The fiducial region is defined in terms of the inner and outer pixel layers being investigated; in other words, the b reflects the probability that, if a B hadron decays between two pixel layers, it will be tagged by the algorithm.",
+            "section": "Performance",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "We note that the fiducial volume as defined does not capture all those b jets which could be tagged in principle. ",
+            "section": "Performance",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "For instance, a B hadron which decays just before the inner layer could leave one hit in that layer, and a multiplicity jump in the next. ",
+            "section": "Performance",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "Likewise, a B hadron which decays just before the outer layer could be impossible to recognize because its hits are merged into one or a few pixels. ",
+            "section": "Performance",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "The simple fiducial volume, however, is sufficient for the present purpose of examining the algorithm's basic behavior.",
+            "section": "Performance",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "The light-quark \"efficiency\" q is the number of light-quark jets tagged by the algorithm divided by the number of light-quark jets. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 3 shows the fiducial b-jet and light-quark efficiencies on the basis of the inner two layers (f 1 ), the middle layers (f 2 ), and the outer two layers (f 3 ) by themselves. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "b and q differ significantly for thresholds F above zero in all three variables. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "It is clear that the difference between the efficiencies is larger in f 2 and f 3 than in f 1 , a consequence of the double-length pixels in the innermost layer merging hits. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 3 also shows a significance-like figure of merit S \u2261 b /2 \u221a q which we use to find an optimal threshold for B hadron decays in the fiducial region. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The absolute value of S is unimportant; the factor of 2 in the denominator is for presentation purposes, so as to fit S on the same plot with the efficiencies. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "In each case, S rises as F increases above zero, but then falls as the threshold begins to eliminate too much signal. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The peak in S is prominent in f 2 and f 3 , but less so in f 1 , reflecting the smaller efficiency difference in the inner two layers. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "In all cases, however, a threshold of F = 1.0 is close to maximal S while keeping high efficiency. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 4(top) shows the efficiencies and S using the whole pixel volume, i.e. with the fiducial region extending from the innermost to outermost layers. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 13,
+                    "type": "figure",
+                    "text": "Figure 4(top)"
+                }
+            ]
+        },
+        {
+            "text": "A threshold of F = 1 achieves maximal S. We note that because of the different fiducial region, S in figure 4 cannot be compared with those in figure 3. ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "On the other hand, it is interesting to examine the effect of the larger pixels in layer 1: Figure 4(bottom) shows the efficiencies and S using the whole pixel volume, but tagging only with the multiplicity jumps of f 2 and f 3 . ",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 92,
+                    "end": 108,
+                    "type": "figure",
+                    "text": "Figure 4(bottom)"
+                }
+            ]
+        },
+        {
+            "text": "The figure of merit S decreases only slightly, suggesting that layer 1 adds little information overall, though maximal S is achieved at lower F and thus higher efficiency.",
+            "section": "Performance",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Based upon the results presented in figures 3 and 4 we label an event as \"tagged\" when any of f i is greater than or equal to F = 1 and plot the efficiency as a function of the jet energy. ",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "This is shown in figure 5. ",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 17,
+                    "end": 25,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "figure 5"
+                }
+            ]
+        },
+        {
+            "text": "We see that the efficiency indeed exhibits some of the expected properties. ",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "b remains fairly stable even above 1 TeV. ",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "The figure also shows the percentage of uds jets which still pass the F = 1 cut. ",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "This fraction stays relatively constant with jet energy.",
+            "section": "Performance",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "Since B hadrons which decay outside the outermost layer are not included in the fiducial volume, it is expected that the decrease in efficiency in figure 5 is due to the increasing likelihood of sequential charm decays occurring outside the detector volume.",
+            "section": "Performance",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "It is also interesting to examine the performance of this method in distinguishing charm jets from light-quark jets. ",
+            "section": "Performance",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "Figure 6 shows the efficiency of charm versus light- quark jets. ",
+            "section": "Performance",
+            "paragraph_rank": 23,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The difference in the cut efficiency is not nearly as pronounced as in the b-jet case. ",
+            "section": "Performance",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "However, charm would still be a source of contamination for the multiplcity jump tagging method.",
+            "section": "Performance",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "Conclusions and further study",
+            "section_rank": 6
+        },
+        {
+            "text": "By examining the relative multiplicity jump f j , as defined in Equation 1, we have proposed an additional handle to separate b jets from those originating from light quarks. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "This method does not require charged particle tracking to function with high efficiency and accuracy within the dense interior of extremely high energy, highly collimated jets. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "Instead, simply by counting hits within a small angular region in successive pixel layers, it maintains its efficiency to higher energies than conventional track-based b taggers.",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "The algorithm described in this article has intentionally been kept simple, in part to demonstrate the feasibility of the idea by itself, but also because it is expected that it is most likely to be used (and optimized) in combination with other b tagging techniques. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "Simulation tests have already revealed that a non-uniform pixel size when compared to the other pixel layers may require further refinements, such as differing weights for  hits in different layers, or dynamically altering the cone used to collect hits based on jet energy. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "A neural net might be able to improve the discrimination power of this technique and potentially increase the difference between the B hadron efficiency and the percentage of uds jets kept. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "As a further interesting note, when the jet energies are as high as 4 or 5 TeV, there is a significant probability that the B hadron will survive even beyond the final silicon layer used in this study, so the possibility of including silicon strip tracker layers, which are at even larger radii, within this technique is worth exploring. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "The prospect of tracking charged B mesons and B baryons in the detectors prior to their decay has also not escaped our notice.",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 25,
+            "section_rank": 6
+        },
+        {
+            "text": "Other complications arising from detector geometry include overlaps between detector sensors comprising the same layer, and the transition between cylindrical and endcap disk layers. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Effects not included in the simulation include pileup, i.e., multiple interactions in the same beam crossing, and potential hadronic interactions between B hadrons and the material it traverses. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "In spite of these simplifications, however, this study suggests that a relative multiplicity jump is a promising observable to improve b tagging at the extreme energies increasingly required to probe for new physics at the energy frontier.",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 26,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 230,
+                    "end": 238,
+                    "type": "software",
+                    "rawForm": "frontier",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "If shown to work in the LHC detectors this technique could have implications for the detector design at future colliders such as the Future Circular Collider (FCC) [19]. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 27,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 164,
+                    "end": 168,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "Such a machine would produce jets with a 5 TeV B hadron. ",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Extending finely segmented pixel coverage to larger radii in order to tag these jets may be desirable for such future detectors.",
+            "section": "Conclusions and further study",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 2. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 28,
+            "section_rank": 7
+        },
+        {
+            "text": "Left: energy distributions of b jets in simulated samples with Z masses of 2.5 and 5 TeV where the jet has been clustered using the anti-kt algorithm from FastJet with R = 0.2. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 28,
+            "section_rank": 7
+        },
+        {
+            "text": "Right: energy deposition in individual pixel volumes, for the sample with 2.5 TeV Z mass. ",
+            "section": "Figure 2 .",
+            "paragraph_rank": 28,
+            "section_rank": 7
+        },
+        {
+            "text": "Zero energy deposition has been suppressed.",
+            "section": "Figure 2 .",
+            "paragraph_rank": 28,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "software",
+                    "rawForm": "Zero",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 3. ",
+            "section": "Figure 3 .Figure 4 .",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "b (solid line) and q (short-dashed line) for fiducial b-jets and light-quark jets, and figure of merit S(long-dashed line), for jets from decays of Z bosons with masses 2.5 TeV from figure 2. ",
+            "section": "Figure 3 .Figure 4 .",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "Each multiplicity jump is considered alone: f 1 (upper), f 2 (middle), and f 3 (lower).",
+            "section": "Figure 3 .Figure 4 .",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 5 .",
+            "section_rank": 9
+        },
+        {
+            "text": "Figure 5. ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 9
+        },
+        {
+            "text": "Efficiency of multiplicity jump tagging of fiducial b jets as a function of jet energy, using all layers, full fiducial region, and threshold F = 1. ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 9
+        },
+        {
+            "text": "The dashed line indicates 600 GeV, our definition of \"extreme energy\". ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 9
+        },
+        {
+            "text": "Both 2.5 and 5 TeV Z samples are used in order to improve statistics at high energy. ",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 9
+        },
+        {
+            "text": "The percentage of light-quark jets which pass this same cut is also shown (open triangles).",
+            "section": "Figure 5 .",
+            "paragraph_rank": 30,
+            "section_rank": 9
+        },
+        {
+            "text": "Figure 6 .",
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 6. ",
+            "section": "Figure 6 .",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "text": "The results of our simulation as a function of increasing the cut on the hit fraction difference (f 1 , f 2 or f 3 > F ) when applied to jets containing a leading charm quark. ",
+            "section": "Figure 6 .",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "text": "The dotted curve shows jets that survive the cut which only contain light flavors of quarks. ",
+            "section": "Figure 6 .",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "text": "The solid curve is the efficiency for charm of the cut vs. the cut value.",
+            "section": "Figure 6 .",
+            "paragraph_rank": 31,
+            "section_rank": 10
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 12
+        },
+        {
+            "text": "We thank Juan Rojo, Cigdem Issever, and Anthony Weidberg for their critical thoughts and advice prior to publication. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "We additionally thank Juan Rojo for his advice on theoretical models. ",
+            "section": "Acknowledgments",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        },
+        {
+            "text": "This work was supported by the Science and Technology Facilities Council of the United Kingdom grant number ST/N000447/1 and the Higher Education Funding Council of England.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 32,
+            "section_rank": 12
+        }
+    ]
+}

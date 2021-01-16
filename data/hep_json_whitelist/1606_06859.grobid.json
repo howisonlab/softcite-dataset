@@ -1,0 +1,989 @@
+{
+    "level": "sentence",
+    "abstract": [],
+    "body_text": [
+        {
+            "text": "At the Large Hadron Collider, numerous physics processes expected within the standard model and theories beyond it give rise to very high momentum particles decaying to multihadronic final states. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Development of algorithms for efficient identification of such \"boosted\" particles while rejecting the background from multihadron jets from light quarks and gluons can greatly aid in the sensitivity of measurements and new particle searches. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This paper presents a new method for identifying boosted high-mass particles using event shapes in Lorentz-boosted reference frames. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Variables calculated in these frames for multihadronic jets can then be used as input to a large artificial neural network to discriminate their origin.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "I. MOTIVATION",
+            "section_rank": 2
+        },
+        {
+            "text": "The center-of-mass energy of pp collisions at the Large Hadron Collider (LHC) has now reached 13 TeV in 2015 and 2016 running, up from 7 TeV and 8 TeV in the 2011 and 2012 running periods, respectively. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The large LHC general-purpose experimental collaborations ATLAS and CMS, working with theoretical colleagues, have developed powerful new analysis techniques to efficiently identify highmomentum (\"highly boosted\") hadronically decaying top quarks, Higgs bosons, and W and Z bosons, while rejecting the background from multijet final states produced in QCD processes. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "As energies increase, the rate of production of highly boosted heavy particles increases dramatically due to the increased parton-parton luminosity at large invariant masses. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Numerous production mechanisms for highly boosted particles exist within the standard model (SM) and are predicted in theories beyond the standard model (BSM).",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Up to now, the primary method for identifying, for example, decays of boosted top quarks decaying to a b quark and W boson, where the W boson decays to a quark pair, has been to use the pattern of energy (or momentum) flow in the two-dimensional space of pseudorapidity (\u03b7) and azimuthal angle (\u03c6) within a \"fat\" jet reconstructed from observed final state particles [1][2][3][4][5]. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 367,
+                    "end": 370,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 370,
+                    "end": 373,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                },
+                {
+                    "start": 373,
+                    "end": 376,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 376,
+                    "end": 379,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 379,
+                    "end": 382,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "By \"fat\" we mean here a jet reconstructed using a large value of the cone size parameter governing the jet finding algorithm, for example the anti-k T algorithm [6] with a cone size paramter of 0.8. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 161,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithms look for substructure within such jets, where there are distinct and separable deposits of energy from the individual jets formed from the initial-state b quark and light quark jets from the top decay. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Similar algorithms can be used to identify boosted W and Z bosons decaying to quark pairs, and Higgs bosons decaying to bb.",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "We present here a new approach in the identifi-cation of boosted massive particles. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The goal is a generic algorithm which can be used to determine the origin of individual \"fat\" jets with large transverse energy (E T ) produced in pp collisions at the LHC. ",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "In the ideal case such an algorithm will yield estimators allowing analysts to set operating points in a multidimensional output space and optimize the efficiency for identifying hadronically decaying t quarks, H bosons, and W and Z bosons, discriminating against jets from light quarks and gluons.",
+            "section": "I. MOTIVATION",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "II. ",
+            "section_rank": 3
+        },
+        {
+            "text": "BOOSTED EVENT SHAPES",
+            "section_rank": 3
+        },
+        {
+            "text": "In this new algorithm, one begins with a list of the fat jet constituents, which are reconstructed from charged particle tracks, calorimeter energy deposits, and information from the outer muon system. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "For example the CMS experiment utilizes a sophisticated algorithm known as \"particle flow\" (PF) [7] to arrive at a list of particle candidates from which jets are found using jet clustering algorithms. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 99,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "Typically the PF algorithm can identify 80-90% of the particles in a jet, leaving relatively small corrections to determine the overall jet energy and momentum.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Given the list of fat jet constituents, then, we successively Lorentz-boost all of them into hypothetical reference frames corresponding to our heavy particle (t/H/W/Z) masses, along the jet momentum direction, and assuming the momentum of the heavy particle is equal to the observed jet momentum. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "In the correct reference frame one would expect to see back-to-back jets for a W , Z, or H event, and three jets in a plane for a t quark decay. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Figure 1 shows the momentum vectors of the final state particles from a top quark decay in the laboratory frame and in a boosted frame corresponding to that of a top quark with the momentum of the jet. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "As the figure shows, one clearly sees a three-jet structure in the boosted frame, which in the laboratory appears to have a two-jet substructure. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "This illustrates that this method has the potential to resolve jets which strongly overlap in the laboratory frame momentum space, and thus the detector itself.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Within each reference frame we then calculate event shape parameters and mometum balance estimators. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "These include Fox-Wolfram moments [8], the eigenvalues of the sphericity tensor [9], and thrust [10]. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 37,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                },
+                {
+                    "start": 80,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 96,
+                    "end": 100,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 18,
+                    "end": 25,
+                    "type": "software",
+                    "rawForm": "Wolfram",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "We also run the anti-k T jet finding algorithm in the boosted frame, relative to the boost axis and using a cone size parameter of 0.5. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "We then calculate the E T of the four leading jets, the masses of pairs of the three leading jets, and the invariant mass of the four leading jets. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "If we have boosted into the correct frame, corresponding to the true origin of the fat jet, then we would expect that the overall momentum of the boosted constituents should be near zero, either in terms of the total momentum or the momentum along the boost direction. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Hence we also calculate the magnitude of the total momentum of the four leading jets and the ratio of their longitudinal momentum sum to the total. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Generically we call these quantities \"boosted event shapes\" (BES). ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "This approach is inspired by earlier work at LEP aimed at discriminating bb decays of the Z boson using the \"boosted sphericity product\" [11]. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 137,
+                    "end": 141,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[11]"
+                }
+            ]
+        },
+        {
+            "text": "It differs from the approach described in [12], and employed by the ATLAS experiment in their measurement of highp T vector boson pair prodiction cross section [13], in that we do not assume a rest frame based on the invariant mass of the sum of the observed jet constituents.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[12]"
+                },
+                {
+                    "start": 160,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[13]"
+                }
+            ]
+        },
+        {
+            "text": "To demonstrate the separation that these BES variables can provide, we generate simulated events with the PYTHIA Monte Carlo generator [14] in which we produce a new hypothetical Z particle which decays to tt, W + W \u2212 , or bb. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 135,
+                    "end": 139,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[14]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 106,
+                    "end": 112,
+                    "type": "software",
+                    "rawForm": "PYTHIA",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                }
+            ]
+        },
+        {
+            "text": "The mass of the Z is taken to be 3.0 TeV. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "This results in a distribution of the transverse energy of the Z decay prodicts which is relatively uniform up to about 1.5 TeV.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "We then simulate the detector response with the PGS program [15], and find jets reconstructed from calorimeter energy deposits using the anti-k T algorithm with a cone size of 0.8. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 60,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[15]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "program",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "A crude simulation of PF constituents is then achieved by selecting all generator-level final state particles with p T > 3 GeV matching a jet, and imposing a uniform 90% efficiency. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Note that this results in a list of jet constituents which does not reflect detector resolution effects or the effect of additional pp (\"pileup\") interactions.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "We take the list of jet constituent four-momenta and boost each one into a reference frame with velocity \u03b2 = p/E, where to calculate E we use the masses of the top quark, Higgs boson, Z, and W bosons. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "In each frame we then calculate the abovementioned event shape quantities. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Since we use the four Fox-Wolfram moments, the three sphericity tensor eigenvalues, the thrust, and ten quantities characterizing the jets found in the boosted frame, for a given jet this results in 4\u00d718=72 different quantities. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 33,
+                    "type": "software",
+                    "rawForm": "Wolfram",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                }
+            ]
+        },
+        {
+            "text": "Space does not permit displaying the distributions of all these quantites, but we show two of them in Figure 2. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 110,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "These distributions are based on fat jets found in events in which a 3.0 TeV Z is produced and decays to tt, W W , or bb, as implemnented in the PYTHIA Monte Carlo generator. ",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 145,
+                    "end": 151,
+                    "type": "software",
+                    "rawForm": "PYTHIA",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "In these figures the histograms show how the distributions evolve as one successively increases the mass used to calculate the boosted frame.",
+            "section": "II. BOOSTED EVENT SHAPES",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "III. ",
+            "section_rank": 4
+        },
+        {
+            "text": "NEURAL NETWORK BES DISCRIMINATOR",
+            "section_rank": 4
+        },
+        {
+            "text": "With the large number of BES quantities characterizing a given jet, it is natural to deploy a multivariate technique such as artificial neural networks (ANN) or boosted decision trees (BDT) to arrive at a classification of jets as to their source (t/H/Z/W or light quark or gluon jet). ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "As an initial test we created training and test samples using the 3.0 TeV Z events. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "From jets matched to generator level t, W , and b, required to decay all-hadron final states, training and test sets are made. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "For each event we have 50 input variables. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "From the 72 variables enumerated above we eliminate the boosted jet E T and invariant masses for all but the W frame, since the quantities in the different frames are so highly correlated from one frame to the next as to be redundant, which is understandable given their kinematic nature. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "This leaves 48 quantities, to which we add two more: the jet E T and |\u03b7|. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "We arrive at training samples with 20k events each of t, W , and b jets, and 15k events in each of the three test sets. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "To avoid the multivariate method using the E T as a discriminating variable, we draw training and test events from the b and W samples according to the distribution of E T for jets from top decays.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "As a demonstration that this technique can potentially achieve a high degree of accurate classification, we train a set of feedforward multilayer perceptrons with various numbers of hidden layers and nodes in each layer, and two output nodes. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The output nodes are trained to be (0,0) for b jets, (0,1) for W jets, and (1,0) for t jets. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The ANN is trained using backpropagation with a learning strength parameter of 0.001, a momentum parameter of 0.5, and updating the weights and thresholds after every 50 training events. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The learning strength parameter decays exponentially during training with a time constant of 500 epochs (complete presentations of the training sets). ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Performance of the networks is monitored during training, and we observe stable performance asymptotically, well before the maximum number of 1000 training epochs is reached. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "We see little variation in performance as a function of the number of hidden layers and number of nodes in each layerin fact we see more variation from one network to another having the same number of nodes and layers, but starting at a different random weights and thresholds. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "The results presented here are attained with nets with three hidden layers of 40 nodes each.  ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "classification using a matrix showing how many true t, W , and b jets are classified as such. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "Using a simple classification in which the category is taken to be the one nearest the neural network outputs, we see from Table I that approximately 85% of jets are classified correctly. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 123,
+                    "end": 130,
+                    "type": "table",
+                    "text": "Table I"
+                }
+            ]
+        },
+        {
+            "text": "One can also see the performance in Figure 4, which show the efficiency of t and W classification, respectively, versus the efficiency for the other two categories. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 36,
+                    "end": 44,
+                    "type": "figure",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "From these curves one can see, for example, that at an efficiency of 60% for t identification, one has a background efficiency for b jets of just over 2%.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "While the above results are encouraging, it is clear that in an actual LHC analysis the performance will likely not attain these levels. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Perhaps the main reason is that in real analyses the identification of individual jet constituents will not be as efficient or accurate as assumed in this prototype study. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "At very high momentum, in particular, when there is more confusion between neutral particles, it may be necessary to rely solely on charged particles. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "For this reason we tested the performance of the BES algorithm using charged tracks only, selecting only those generator-level final state particles which were charged, having p T > 2 GeV. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Figures 3 and 4 compare the results using charged constituents only to the results from using both charged and neutral constituents. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 15,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figures 3 and 4"
+                }
+            ]
+        },
+        {
+            "text": "Remarkably, the performance for the separation of top quarks from W bosons remains nearly the same, but the performance for separation of top from b jets is degraded, with background efficiency a factor of two larger at a top quark efficiency of 60%.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "It is also of interest to examine whether this new algorithm is capable of distinguishing all-hadronic top quark decays, Higgs boson decays to bb, Z \u2192 qq, and W \u2192 qq when the decaying particles are higly boosted. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "To test this we also used samples of a 3 TeV mass Z decaying to tt, ZH, W + W \u2212 , and bb. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "As before the events are simulated with PYTHIA and passed through the PGS simulation. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 40,
+                    "end": 46,
+                    "type": "software",
+                    "rawForm": "PYTHIA",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "Fat jets (anti-k T , R = 0.8) are then matched to the decaying boosted objects and 90% of the jet constituents with p T > 2 GeV and lying within \u2206R < 0.8 of the jet direction are recorded for the BES analysis. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "We consider here the performance using both charged and neutral objects.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "We train a 6-layer neural network with the same 50 inputs, 4 layers of 40 hidden nodes each, and an output layer with four outputs. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "The network is trained to give values of (1,0,0,0) for t jets, (0,1,0,0) for H \u2192 bb jets, (0,,0,1,0) for Z \u2192 qq, (0,0,0,1) for W \u2192 qq jets, and (0,0,0,0) for b quark jets. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "The resulting output, which are points in a 4-dimensional space, can nevertheless be usefully displayed on the two-dimensional plane of the difference between the first and third outputs (y axis) and the difference between the second and fourth outputs (x axis). ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "Figure 5 shows these distributions for the five jet categories, and illustrates the great potential to discriminate them well, even W from Z decays. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "As an example, Figure 6 shows the efficiency for identifying top quark decays as a function of the efficiency for identifying the other particle types.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 23,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The performance of the algorithm may benefit from the various jet \"pruning\" techniques such as the soft-drop method [19] and PUPPI [16], but this is best studied in the context of a full simulation including all detector effects and the effets of multiple interactions.",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 120,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[19]"
+                },
+                {
+                    "start": 131,
+                    "end": 135,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "The theoretical uncertainties on the modeling of rest-frame quantities were studied in detail elsewhere [17]. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 104,
+                    "end": 108,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[17]"
+                }
+            ]
+        },
+        {
+            "text": "We note that these can be at least partly overcome by training the neural network using background (light quark and gluon) samples derived from observed dijet events, where the other jet is antitagged as coming from t/H/Z/W . ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "Finally, we emphasize that the variables arising from the boosted event shapes can be readily combined with variables used in other approaches, including the presently used N subjettiness [18] and softdrop mass, and other novel approaches such as those based on two-dimensional imaging of jets [20], to arrive at an even more selective algorithm. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 17,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 188,
+                    "end": 192,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[18]"
+                },
+                {
+                    "start": 294,
+                    "end": 298,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "One can expect, hoever, that the the BES variables will retain their discriminating power up to ultrahigh boosts at which 2D variables become less discriminating. ",
+            "section": "III. NEURAL NETWORK BES DISCRIMINATOR",
+            "paragraph_rank": 17,
+            "section_rank": 4
+        },
+        {
+            "text": "IV. ",
+            "section_rank": 5
+        },
+        {
+            "text": "SUMMARY",
+            "section_rank": 5
+        },
+        {
+            "text": "We have described here a new approach to identifying very high momentum hadronically decaying top quarks, Higgs bosons, and vector bosons, based on boosting the individual constituents of jets se-quentially into rest frames corresponding to the hypothetical particle masses and calcualting in each of those frames a set of event shape quantities. ",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "These quantities include the Fox-Wolfram moments, sphericity tensor and its eigenvalues, thrust, and quantities derived from anti-k T jets calculated using the boost axis as the \"beam\". ",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "Wolfram",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm is capable of separating jets which strongly overlap in laboratory momentum space. ",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "In an initial, ideal-ized scenario using generator-level particles the algorithm shows excellent separation of hadronic jets arising from the decay of top quarks, Higgs bosons, Z and W bosons and from b quarks. ",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "This level of separation is largely maintained when using charged jet constituents only, as might be necessary for ultrahigh-energy jets. ",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "The variables arising in this algorithm can be readily combined with those from other boosted particle tagging techniques.",
+            "section": "IV. SUMMARY",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "FIG. 1 .",
+            "section_rank": 6
+        },
+        {
+            "text": "FIG. 1. ",
+            "section": "FIG. 1 .",
+            "paragraph_rank": 19,
+            "section_rank": 6
+        },
+        {
+            "text": "Momentum vectors of the final state particles from top quark decay to three jets in the laboratory frame and in a boosted frame corresponding to a top quark with the original jet laboratory momentum.",
+            "section": "FIG. 1 .",
+            "paragraph_rank": 19,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "Momentum",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "FIG. 2 .",
+            "section_rank": 7
+        },
+        {
+            "text": "FIG. 2. ",
+            "section": "FIG. 2 .",
+            "paragraph_rank": 20,
+            "section_rank": 7
+        },
+        {
+            "text": "Distributions of the first Fox-Wolfram moment H1 (left) and the ratio of the longitudinal to toal momentum of anti-kT jets (right) in various boosted reference frames, for top quarks, W bosons, and b quark jets from 3.0 TeV Z decays.",
+            "section": "FIG. 2 .",
+            "paragraph_rank": 20,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 38,
+                    "type": "software",
+                    "rawForm": "Wolfram",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "Figure 3",
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 3illustrates the neural network output distributions for the three jet types. ",
+            "section": "Figure 3",
+            "paragraph_rank": 21,
+            "section_rank": 8
+        },
+        {
+            "text": "The figure shows that there is a high degree of separation of the three sources. ",
+            "section": "Figure 3",
+            "paragraph_rank": 21,
+            "section_rank": 8
+        },
+        {
+            "text": "One can also characterize the accuracy of",
+            "section": "Figure 3",
+            "paragraph_rank": 21,
+            "section_rank": 8
+        },
+        {
+            "text": "Classified as t 84.2% 3.9% 10.2% Classified as W 5.6% 86.8% 5.9% Classified as b 10.4% 9.3% 83.9% TABLE I. Probabilities for classification of t, W , and b jets as such using the neural network outputs, training on charged and neutral jet constituents.",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 81,
+                    "end": 85,
+                    "type": "software",
+                    "rawForm": "10.4",
+                    "resp": "whitelist",
+                    "id": "software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "FIG. 3 .",
+            "section_rank": 10
+        },
+        {
+            "text": "FIG. 3. ",
+            "section": "FIG. 3 .",
+            "paragraph_rank": 23,
+            "section_rank": 10
+        },
+        {
+            "text": "Distributions of the neural network outputs for test samples of jets originating from all hadronic top quark decay, W decay, and b quarks for networks trained with charged and neutral constituents (top) and charged conatituents only (bottom).",
+            "section": "FIG. 3 .",
+            "paragraph_rank": 23,
+            "section_rank": 10
+        },
+        {
+            "text": "FIG. 4.Efficiency for identification of jets from top decay (horozintal axis) versus efficiency for W jets (green) and b jets (blue), showing the results using charged and neutral jet constituents (solid curves) and using charged constituents only (dashed curves).",
+            "paragraph_rank": 24,
+            "section_rank": 11
+        },
+        {
+            "text": "FIG. 5 .",
+            "section_rank": 12
+        },
+        {
+            "text": "FIG. ",
+            "section_rank": 12
+        },
+        {
+            "text": "6 .",
+            "section_rank": 12
+        },
+        {
+            "text": "FIG. 5.Distributions of the neural network output differences for a 4-output neural network trained to discriminate jets originating from all-hadronic top quark decay, H \u2192 bb decay, Z \u2192 qq decay, W \u2192 qq decay, and b quarks for networks trained with charged and neutral constituents.",
+            "section": "FIG. 5 .FIG. 6 .",
+            "paragraph_rank": 25,
+            "section_rank": 12
+        }
+    ]
+}

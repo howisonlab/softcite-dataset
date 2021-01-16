@@ -1,0 +1,128 @@
+---
+title: "Softcite Dataset Summary"
+author: "Fan Du"
+date: "6/1/2020"
+output: html_document
+---
+
+**Summary statistics are generated from CSV datasets.**
+
+Note that the CSV data records the raw input from all the annotators. All the annotated software mentions in this dataset have not been disambiguated. So the CSV data can offer useful article-level (or annotator-level) insights, but mention-level statistics drawn from the CSV dataset are less accurate.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(janitor)
+library(kableExtra)
+library(wesanderson)
+
+# load csv data
+csv_articles <- read_csv(here("data/csv_dataset/softcite_articles.csv"))
+csv_mentions <- read_csv(here("data/csv_dataset/softcite_in_text_mentions.csv"))
+csv_codes <- read_csv(here("data/csv_dataset/softcite_codes_applied.csv"))
+```
+
+**1. Number of PMC and econ article annotated:**
+
+```{r csv_articles}
+csv_articles %>%
+  filter(!is.na(no_selections_found)) %>% 
+  mutate(has_software_mentions=if_else(no_selections_found == T, "No mentions", "Has mentions")) %>% 
+  filter(article_set == "pmc_article"|article_set == "econ_article") %>%
+  group_by(article, article_set) %>% 
+  # 5,553 articles
+  tabyl(has_software_mentions, article_set) %>% 
+  adorn_totals(c("row", "col")) %>%
+  adorn_percentages() %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_articles %>%
+  filter(!is.na(no_selections_found)) %>% 
+  mutate(has_software_mentions=if_else(no_selections_found == T, "No mentions", "Has mentions")) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>%
+  group_by(article, article_set) %>% 
+  ggplot(aes(x=article_set, fill=has_software_mentions, position = "identity")) + 
+  geom_bar(stat = "count") + 
+  labs(title="Number of annotated articles", x="Article set") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**2. The frequency of single- and multiple-annotated articles in PMC & econ article sets:**
+
+```{r n_annotator}
+csv_articles %>% 
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  group_by(article, article_set) %>% 
+  # filter(!is.na(coder))
+  summarise(n_coder = n_distinct(coder)) %>% 
+  mutate(n_annotator = if_else(n_coder>1, "multiple", "single")) %>% 
+  tabyl(n_annotator, article_set) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting(digits=1) %>% 
+  adorn_title("combined") %>% 
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_articles %>% 
+  filter(!is.na(no_selections_found)) %>% 
+  filter(article_set %in% c("pmc_article", "econ_article")) %>% 
+  group_by(article, article_set) %>% 
+  # filter(!is.na(coder))
+  summarise(n_coder = n_distinct(coder)) %>% 
+  mutate(n_annotator = if_else(n_coder>1, "multiple", "single")) %>% 
+  ggplot(aes(x=article_set, fill=n_annotator)) +
+  geom_bar(position="dodge") +
+  labs(title="Number of multiply annotated articles across article sets", x="Article set") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**3. Among all 7,027 in-text selections:**
+
+Note that this is a rough comparison: entities are not evenly annotated for a same number of times. So the numbers below are not the absolute amount of entities mentioned in the text, but just give a sense of the entity mention distribution across article sets.
+
+```{r csv_mentions}
+csv_mentions %>%
+  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>% 
+  tabyl(entity_type, article_set) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages() %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
+
+csv_mentions %>%
+  mutate(entity_type = if_else(mention_type == "software", "software", "non-software")) %>% 
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>%
+  ggplot(aes(x=article_set, fill=entity_type)) +
+  geom_bar(stat="count") +
+  labs(title="Number of software vs. non-software entity mentions annotated", x="Entity type") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+For the breakdown of non-software mention types:
+
+```{r mention_type}
+csv_mentions %>%
+  left_join(csv_articles, by=c("article", "coder")) %>% 
+  select(-no_selections_found, -codable, -article) %>% 
+  filter(article_set == "pmc_article" | article_set == "econ_article") %>% 
+  tabyl(mention_type, article_set) %>%
+  adorn_totals(c("row","col")) %>%
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>%
+  adorn_ns() %>% 
+  knitr::kable() %>% kable_styling()
+```

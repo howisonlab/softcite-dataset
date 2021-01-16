@@ -1,0 +1,1718 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "With increasing instantaneous luminosity at the LHC come additional reconstruction challenges. At high luminosity, many collisions occur simultaneously within one proton-proton bunch crossing. The isolation of an interesting collision from the additional \"pileup\" collisions is needed for effective physics performance. In the CMS Collaboration, several techniques capable of mitigating the impact of these pileup collisions have been developed. Such methods include charged-hadron subtraction, pileup jet identification, isospin-based neutral particle \"\u03b4\u03b2\" correction, and, most recently, pileup per particle identification. This paper surveys the performance of these techniques for jet and missing transverse momentum reconstruction, as well as muon isolation. The analysis makes use of data corresponding to 35.9 fb \u22121 collected with the CMS experiment in 2016 at a center-of-mass energy of 13 TeV. The performance of each algorithm is discussed for up to 70 simultaneous collisions per bunch crossing. Significant improvements are found in the identification of pileup jets, the jet energy, mass, and angular resolution, missing transverse momentum resolution, and muon isolation when using pileup per particle identification.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "At the CERN LHC, instantaneous luminosities of up to 1.5 \u00d7 10 34 cm \u22122 s \u22121 [1] are sufficiently large for multiple proton-proton (pp) collisions to occur in the same time window in which proton bunches collide. This leads to overlapping of particle interactions in the detector. To study a specific pp interaction, it is necessary to separate this single interaction from the overlapping ones. The additional collisions, known as pileup (PU), will result in additional particles throughout the detector that confuse the desired measurements. With PU mitigation techniques, we can minimize the impact of PU and better isolate the single collision of interest. With increasing beam intensity over the past several years, identification of interesting pp collisions has become an ever-growing challenge at the LHC. The number of additional collisions that occur when two proton bunches collide was, on average, 23 in 2016 and subsequently increased to 32 in 2017 and 2018. At this level of collision density, the mitigation of the PU effects is necessary to enable physics analyses at the LHC.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 76,
+                    "text": "[1]",
+                    "end": 79
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "-1 -",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 3
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The CMS Collaboration has developed various widely used techniques for PU mitigation. One technique, charged-hadron subtraction (CHS) [2], has been the standard method to mitigate the impact of PU on the jet reconstruction for the last few years. It works by excluding charged particles associated with reconstructed vertices from PU collisions from the jet clustering procedure. In this technique, to mitigate the impact of neutral PU particles in jets, an event-by-event jet-area-based correction [3][4][5] is applied to the jet four-momenta. Further, a PU jet identification (PU jet ID) technique [6] is used to reject jets largely composed of particles from PU interactions.",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 134,
+                    "text": "[2]",
+                    "end": 137
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 499,
+                    "text": "[3]",
+                    "end": 502
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 502,
+                    "text": "[4]",
+                    "end": 505
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 505,
+                    "text": "[5]",
+                    "end": 508
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 600,
+                    "text": "[6]",
+                    "end": 603
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "These techniques have limitations when attempting to remove PU contributions due to neutral particles. For the jet-area-based correction, the jet four-momentum correction acts on a whole jet and is therefore not capable of removing PU contributions from jet shape or jet substructure observables. To overcome this limitation, a new technique for PU mitigation, pileup per particle identification (PUPPI) [7], is introduced that operates at the particle level. The PUPPI algorithm builds on the existing CHS algorithm. In addition, it calculates a probability that each neutral particle originates from PU and scales the energy of these particles based on their probability. As a consequence, objects clustered from hadrons, such as jets, missing transverse momentum (p miss T ), and lepton isolation are expected to be less susceptible to PU when PUPPI is utilized.",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 404,
+                    "text": "[7]",
+                    "end": 407
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "In this paper, the performance of PU mitigation techniques, including the commissioning of PUPPI in pp collision data, is summarized. After a short description of the CMS detector in section 2 and definitions of the data set and Monte Carlo (MC) simulations used in these studies in section 3, the CHS and PUPPI algorithms are described in section 4. In section 5.1 performance in terms of jet resolution at a high number of interactions is presented. Section 5.2 summarizes the impact on noise rejection of PU mitigation techniques. Section 5.3 presents the rejection of jets originating from PU with PU jet ID and PUPPI. Jets reconstructed with a larger cone size are often used to identify the decay of Lorentz-boosted heavy particles such as W, Z, and Higgs bosons, and top quarks. Pileup significantly degrades the reconstruction performance, and the gain from PU mitigation techniques for such large-size jets is discussed in section 6. The measurement of p miss T also benefits from PU mitigation techniques, which is discussed in section 7. Mitigation of PU for muon isolation variables is presented in section 8.",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "The CMS detector",
+            "section_rank": 4
+        },
+        {
+            "section": "The CMS detector",
+            "text": "The central feature of the CMS apparatus is a superconducting solenoid of 6 m internal diameter, providing a magnetic field of 3.8 T. Within the solenoid volume are a silicon pixel and strip tracker, a lead tungstate crystal electromagnetic calorimeter (ECAL), and a brass and scintillator hadron calorimeter (HCAL), each composed of a barrel and two endcap sections. The ECAL covers the pseudorapidity range |\u03b7| < 3, while the HCAL is extended with forward calorimeters up to |\u03b7| < 5. Muons are detected in gas-ionization chambers embedded in the steel flux-return yoke outside the solenoid. The silicon tracker measures charged particles within |\u03b7| < 2.5. It consists of 1440 silicon pixel and 15 148 silicon strip detector modules. For nonisolated particles with transverse momentum of 1 < p T < 10 GeV and |\u03b7| < 1.4, the track resolutions are typically 1.5% in p T and 25-90 (45-150) \u00b5m in the transverse (longitudinal) impact parameter [8]. A more detailed description of the CMS detector, together with a definition of the coordinate system used and the relevant kinematic variables, can be found in ref. [9].",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 941,
+                    "text": "[8]",
+                    "end": 944
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 1111,
+                    "text": "[9]",
+                    "end": 1114
+                }
+            ]
+        },
+        {
+            "section": "The CMS detector",
+            "text": "-2 -",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 5
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The particle-flow (PF) event reconstruction [2] reconstructs and identifies each individual particle in an event, with an optimized combination of all subdetector information. In this process, the identification of the particle type (photon, electron, muon, charged or neutral hadron) plays an important role in the determination of the particle direction and energy. Photons (e.g., coming from \u03c0 0 decays or from electron bremsstrahlung) are identified as ECAL energy clusters not linked to the extrapolation of any charged particle trajectory to the ECAL. Electrons (e.g., coming from photon conversions in the tracker material or from B hadron semileptonic decays) are identified as a primary charged-particle track and potentially many ECAL energy clusters corresponding to this track extrapolation to the ECAL and to possible bremsstrahlung photons emitted along the way through the tracker material. Muons are identified as tracks in the central tracker consistent with either tracks or several hits in the muon system, and associated with calorimeter deposits compatible with the muon hypothesis. Charged hadrons are identified as charged particle tracks neither identified as electrons, nor as muons. Finally, neutral hadrons are identified as HCAL energy clusters not linked to any charged-hadron trajectory, or as a combined ECAL and HCAL energy excess with respect to the expected charged-hadron energy deposit.",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 44,
+                    "text": "[2]",
+                    "end": 47
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The energy of photons is obtained from the ECAL measurement, corrected for zero-suppression effects. The energy of electrons is determined from a combination of the track momentum at the main interaction vertex, the corresponding ECAL cluster energy, and the energy sum of all bremsstrahlung photons attached to the track. The energy of muons is obtained from the corresponding track momentum. The energy of charged hadrons is determined from a combination of the track momentum and the corresponding ECAL and HCAL energy, corrected for zero-suppression effects and for the response function of the calorimeters to hadronic showers. Finally, the energy of neutral hadrons is obtained from the corresponding corrected ECAL and HCAL energy.",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The collision rate is 40 MHz, and the events of interest are selected using a two-tiered trigger system [10]. The first level (L1), composed of custom hardware processors, uses information from the calorimeters and muon detectors to select events at a rate of around 100 kHz within a fixed time interval of less than 4 \u00b5s. The second level, known as the high-level trigger (HLT), consists of a farm of processors running a version of the full event reconstruction software optimized for fast processing, and reduces the event rate to around 1 kHz before data storage.",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 104,
+                    "text": "[10]",
+                    "end": 108
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "All detector subsystems have dedicated techniques to reject signals from electronic noise or from particles that do not originate from the pp collisions in the bunch crossing of interest, such as particles arriving from pp collisions that occur in adjacent bunch crossings before or after the bunch crossing of interest (so called out-of-time PU). While these rejection techniques are not the focus of this paper, some false signals can pass these filters and affect the PF reconstruction. Particularly relevant is residual noise from ECAL and HCAL electronics that may add to the energy of reconstructed photons, electrons, and hadrons. Algorithms for the rejection of this noise are further discussed in section 5.2.",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Data and simulated samples",
+            "section_rank": 6
+        },
+        {
+            "section": "Data and simulated samples",
+            "text": "In this paper, data corresponding to an integrated luminosity of 35.9 fb \u22121 [1] taken in 2016 are used. Figure 1 shows the PU conditions in the years 2016-2018. The number of pp interactions is calculated from the instantaneous luminosity based on an estimated inelastic pp collision cross -3 -",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 76,
+                    "text": "[1]",
+                    "end": 79
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 104,
+                    "text": "Figure 1",
+                    "end": 112
+                }
+            ]
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 7
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "section of 69.2 mb. This number is obtained using the PU counting method described in the inelastic cross section measurements [11,12]. In the following sections of this paper, we distinguish between two definitions: \"mean number of interactions per crossing\" (abbreviated \"number of interactions\" and denoted \u00b5) and \"number of vertices\" (denoted N vertices ). Vertices are reconstructed through track clustering using a deterministic annealing algorithm [8]. The number of interactions is used to estimate the amount of PU in simulation. The number of vertices can be determined in both data and simulation. Further details on the relationship between \u00b5 and N vertices are provided in section 5.3. The studies presented in this paper focus on the PU conditions in 2016, though the trends towards higher PU scenarios with up to 70 simultaneous interactions are explored as well. The trigger paths used for the data taking are mentioned in each section. Samples of simulated events are used to evaluate the performance of the PU mitigation techniques discussed in this paper. The simulation of standard model events composed uniquely of jets produced through the strong interaction, referred to as quantum chromodynamics (QCD) multijet events, is performed with v8.212 [13] in standalone mode using the Lund string fragmentation model [14,15] for jets. For studies of lepton isolation, dedicated QCD multijet samples that are enriched in events containing electrons or muons (e.g., from heavy-flavor meson decays) are used. The W and Z boson production in association with jets is simulated at leading-order (LO) with the M G 5_a @ v2.2.2 [16] generator. Production of top quark-antiquark pair (tt) events is simulated with (v2) [17][18][19]. Single top quark production via the s-and t-channels, and tW processes are simulated at next-to-leading-order (NLO) with M -G 5_a @ that is interfaced with . For Lorentz-boosted W boson studies [20], MC simulation of high mass bulk graviton resonance [21][22][23] decaying to WW boson pairs are generated at LO with M G 5_a @ . All parton shower simulations are performed using . For Z+jets production, an additional sample is generated using M G 5_a @ -4 -",
+            "paragraph_rank": 14,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 127,
+                    "text": "[11,",
+                    "end": 131
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 131,
+                    "text": "12]",
+                    "end": 134
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 455,
+                    "text": "[8]",
+                    "end": 458
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 1268,
+                    "text": "[13]",
+                    "end": 1272
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 1334,
+                    "text": "[14,",
+                    "end": 1338
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 1338,
+                    "text": "15]",
+                    "end": 1341
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 1638,
+                    "text": "[16]",
+                    "end": 1642
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 1728,
+                    "text": "[17]",
+                    "end": 1732
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 1732,
+                    "text": "[18]",
+                    "end": 1736
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 1736,
+                    "text": "[19]",
+                    "end": 1740
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 1936,
+                    "text": "[20]",
+                    "end": 1940
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 1993,
+                    "text": "[21]",
+                    "end": 1997
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 1997,
+                    "text": "[22]",
+                    "end": 2001
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 2001,
+                    "text": "[23]",
+                    "end": 2005
+                }
+            ]
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 8
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "interfaced with ++ v2.7.1 [24,25] with the UE-EE-5C underlying event tune [26] to assess systematic uncertainties related to the modeling of the parton showering and hadronization.",
+            "paragraph_rank": 15,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 26,
+                    "text": "[24,",
+                    "end": 30
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 30,
+                    "text": "25]",
+                    "end": 33
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 74,
+                    "text": "[26]",
+                    "end": 78
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The LO and NLO NNPDF 3.0 [27] parton distribution functions (PDF) are used in all generated samples matching the QCD order of the respective process. The parameters for the underlying event are set according to the CUETP8M1 tune [28,29], except for the tt sample, which uses CUETP8M2 [30]. All generated samples are passed through a detailed simulation of the CMS detector using G 4 [31]. To simulate the effect of additional pp collisions within the same or adjacent bunch crossings, additional inelastic events are generated using with the same underlying event tune as the main interaction and superimposed on the hard-scattering events. The MC simulated events are weighted to reproduce the distribution of the number of interactions observed in data.",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 25,
+                    "text": "[27]",
+                    "end": 29
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 229,
+                    "text": "[28,",
+                    "end": 233
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 233,
+                    "text": "29]",
+                    "end": 236
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 284,
+                    "text": "[30]",
+                    "end": 288
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 383,
+                    "text": "[31]",
+                    "end": 387
+                }
+            ]
+        },
+        {
+            "text": "The CHS and PUPPI algorithms",
+            "section_rank": 9
+        },
+        {
+            "section": "The CHS and PUPPI algorithms",
+            "text": "A detailed description of the CHS algorithm and its performance is found in ref. [2]. In the following, we summarize the salient features and differences with respect to the PUPPI algorithm. Both algorithms use the information of vertices reconstructed from charged-particle tracks. The physics objects considered for selecting the primary pp interaction vertex are track jets, clustered using the anti-k T algorithm [32,33] with the tracks assigned to the vertex as inputs, and the associated \u00ec p miss T,tracks , which is the negative vector p T sum of those jets. The reconstructed vertex with the largest value of summed physics-object p 2 T is selected as the primary pp interaction vertex or \"leading vertex\" (LV). Other reconstructed collision vertices are referred to as PU vertices.",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 81,
+                    "text": "[2]",
+                    "end": 84
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 417,
+                    "text": "[32,",
+                    "end": 421
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 421,
+                    "text": "33]",
+                    "end": 424
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 641,
+                    "text": "2",
+                    "end": 642
+                }
+            ]
+        },
+        {
+            "section": "The CHS and PUPPI algorithms",
+            "text": "The CHS algorithm makes use of tracking information to identify particles originating from PU after PF candidates have been reconstructed and before any jet clustering. The procedure removes charged-particle candidates that are associated with a reconstructed PU vertex. A charged particle is associated with a PU vertex if it has been used in the fit to that PU vertex [8]. Charged particles not associated with any PU vertex and all neutral particles are kept.",
+            "paragraph_rank": 18,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 370,
+                    "text": "[8]",
+                    "end": 373
+                }
+            ]
+        },
+        {
+            "section": "The CHS and PUPPI algorithms",
+            "text": "The PUPPI [7] algorithm aims to use information related to local particle distribution, event PU properties, and tracking information to mitigate the effect of PU on observables of clustered hadrons, such as jets, p miss T , and lepton isolation. The PUPPI algorithm operates at the particle candidate level, before any clustering is performed. It calculates a weight in a range from 0 to 1 for each particle, exploiting information about the surrounding particles, where a value of 1 is assigned to particles considered to originate from the LV. These per-particle weights are used to rescale the particle four-momenta to correct for PU at particle-level, and thus reduces the contribution of PU to the observables of interest.",
+            "paragraph_rank": 19,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 10,
+                    "text": "[7]",
+                    "end": 13
+                }
+            ]
+        },
+        {
+            "section": "The CHS and PUPPI algorithms",
+            "text": "For charged particles, the PUPPI weight is assigned based on tracking information. Charged particles used in the fit of the LV are assigned a weight of 1, while those associated with a PU vertex are assigned a weight of 0. A weight of 1 is assigned to charged particles not associated with any vertex provided the distance of closest approach to the LV along the z axis (d z ) is smaller than 0.3 cm; a weight of 0 is applied in all other scenarios. The threshold of 0.3 cm corresponds to about 15 standard deviations of the vertex reconstruction resolution in the z direction at an average PU of 10 [8], and it works as an additional filter against undesirable objects, such as accidentally reconstructed particles from detector noise.",
+            "paragraph_rank": 20,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 597,
+                    "text": "10 [8]",
+                    "end": 603
+                }
+            ]
+        },
+        {
+            "section": "The CHS and PUPPI algorithms",
+            "text": "-5 -",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 10
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "Neutral particles are assigned a weight based on a discriminating variable \u03b1. In general, the \u03b1 variable is used to calculate a weight, which encodes the probability that an individual particle originates from a PU collision. As discussed in ref. [7], various definitions of \u03b1 are possible. Within CMS, the \u03b1 variable for a given particle i is defined as where i refers to the particle in question, j are other particles, p T, j is the transverse momentum of particle j in GeV, and",
+            "paragraph_rank": 22,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 247,
+                    "text": "[7]",
+                    "end": 250
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "where \u03c6 is the azimuthal angle in radians) is the distance between the particles i and j in the \u03b7-\u03c6 plane. The summation runs over the particles j in the cone of particle i with a radius of R 0 = 0.4. A value of \u03b1 i = 0 is assigned when there are no particles in the cone. The choice of the cone radius R 0 in the range of 0.2-0.6 has a weak impact on the performance. The value of 0.4 was chosen as a compromise between the performance when used in the definition of the isolation variable (preferring larger cones) and jet performance (preferring smaller cones). In |\u03b7| < 2.5, where tracking information is available, only charged particles associated with the LV are included as particle j, whereas all particles with |\u03b7| > 2.5 are included. The variable \u03b1 contrasts the collinear structure of QCD in parton showers with the soft diffuse radiation coming from PU interactions. A particle from a shower is expected to be close to other particles from the same shower, whereas PU particles can be distributed more homogeneously. The \u03b1 variable is designed such that a particle gets a large value of \u03b1 if it is close to either particles from the LV or, in |\u03b7| > 2.5, close to highly energetic particles.",
+            "paragraph_rank": 23,
+            "section_rank": 10
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "To translate \u03b1 i of each particle into a probability, charged particles assigned to PU vertices are used to generate the expected PU distribution in an event. From this expected distribution a median and root-mean-square (RMS) of the \u03b1 values are computed. The \u03b1 i of each neutral particle is compared with the computed median and RMS of the \u03b1 distribution of the charged PU particles using a signed \u03c7 2 approximation:",
+            "paragraph_rank": 24,
+            "section_rank": 10
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "where \u03b1 PU is the median value of the \u03b1 i distribution for charged PU particles in the event and RMS PU is the corresponding RMS. If signed \u03c7 2 i is large, the particle most likely originates from the LV. The sign of the numerator is sensitive to the direction of the deviation of \u03b1 i from \u03b1 PU . For the detector region where |\u03b7| > 2.5 and tracking is not available, the values \u03b1 PU and RMS PU can not be calculated directly. Therefore, \u03b1 PU and RMS PU are taken from the detector region where |\u03b7| < 2.5 and extrapolated to the region where |\u03b7| > 2.5 by multiplying with transfer factors (see table 1) derived from MC simulation. The transfer factors are necessary, since the granularity of the detector varies with \u03b7 and leads to a variation of \u03b1 with \u03b7, particularly outside of the tracker coverage (|\u03b7| = 2.5) and ECAL coverage (|\u03b7| = 3.0). Lastly, to compute the p T weight of the particles, the signed \u03c7 2 i for PU particles is assumed to be approximately distributed according to a \u03c7 2 distribution for \u03c7 2 i > 0. The p T weight is given by",
+            "paragraph_rank": 25,
+            "section_rank": 10
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "is the cumulative distribution function of the \u03c7 2 distribution with one degree of freedom. Particles with weights w i smaller than 0.01, i.e., those with a probability greater than 99% to -6 -",
+            "paragraph_rank": 26,
+            "section_rank": 10
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 11
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "originate from PU are rejected; this last rejection removes remaining high-energy noise deposits. In addition, neutral particles that fulfill the following condition:",
+            "paragraph_rank": 27,
+            "section_rank": 11
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "where N vertices is the number of vertices in the event, get a weight of 0. This selection reduces the residual dependence of jet energies on the number of interactions. The parameters A and B are tunable parameters. To perform the tuning of these parameters, jets clustered from PUPPI-weighted particles in the regions |\u03b7| < 2.5 and 2.5 < |\u03b7| < 3.0 are adjusted to have near-unity jet response, as a function of the number of interactions, i.e., the reconstructed jet energy matches the true jet energy regardless of the amount of PU. In the region |\u03b7| > 3, the parameters are chosen such that p miss T resolution is optimized. Table 1 summarizes the resulting parameters that have been obtained using QCD multijet simulation with an average number of interactions of 23 and a significant amount of events beyond 30 interactions reflecting the 2016 data (orange curve in figure 1). The parameters A and B are smaller in |\u03b7| < 2.5 (where the majority of particles are reconstructed with the tracker) than in |\u03b7| > 2.5 (where the measurement comes solely from the calorimeters that have a coarser granularity and thus collect more PU energy per cell). ",
+            "paragraph_rank": 28,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "start": 629,
+                    "text": "Table 1",
+                    "end": 636
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 872,
+                    "text": "figure 1",
+                    "end": 880
+                }
+            ]
+        },
+        {
+            "text": "Data-to-simulation comparison for variables used within PUPPI",
+            "section_rank": 12
+        },
+        {
+            "section": "Data-to-simulation comparison for variables used within PUPPI",
+            "text": "The behavior of the variables used in PUPPI has been studied in two complementary data samples. A subset of the data taken in 2016, corresponding to an integrated luminosity of 0.36 fb \u22121 and selected using trigger paths based on the scalar sum (H T ) of the p T of jets with p T > 30 GeV and |\u03b7| < 3, requiring an offline selection of H T > 1500 GeV, is referred to as the jet sample. The details of jet reconstruction and performance are discussed in section 5. Here, we present comparisons of data and QCD multijet simulation based on all PF candidates in the event, rather than clustered jets. As a reference, a data sample enriched in events containing mainly particles from PU collisions is compared with PU-only simulation and is referred to as the PU sample. The PU data sample is recorded with a zero-bias trigger that randomly selects a fraction of the collision events, corresponding to an integrated luminosity of 3.18 nb \u22121 . The distribution of the number of PU interactions in both subsets of data is comparable to the one in the whole data sample collected in 2016. Figure 2 shows the distribution of the three main variables used in PUPPI for data and simulation. The upper left plot presents the distribution of \u03b1 for charged particles from the LV and the PU vertices and for neutral particles with |\u03b7| < 2.5 in the jet sample. The separation power of the variable \u03b1 between particles from the LV and PU vertices for charged particles can be deduced from this figure. The majority of the charged particles from PU vertices have an \u03b1 value below 8, whereas only a small fraction of particles have higher values. Charged particles from the LV exhibit a double-peak structure. The first peak at large \u03b1 is characteristic of particles within jets -    2 for neutral particles with |\u03b7| < 2.5 in the jet sample (black crosses) and in the PU sample (orange diamonds). The lower right plot shows the PUPPI weight distribution for neutral particles in the jet sample (black crosses) and the PU sample (orange diamonds). The error bars correspond to the statistical uncertainty.",
+            "paragraph_rank": 29,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1082,
+                    "text": "Figure 2",
+                    "end": 1090
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1766,
+                    "text": "2",
+                    "end": 1767
+                }
+            ]
+        },
+        {
+            "section": "Data-to-simulation comparison for variables used within PUPPI",
+            "text": "-8 -",
+            "paragraph_rank": 30,
+            "section_rank": 12
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 13
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "originating from the LV. The second peak at lower \u03b1 consists of charged particles that are isolated from other particles originating from the LV. With the exception of particles from lepton decays, which are directly addressed later, isolated particles have limited physics impact and consequently a low \u03b1 value has a negligible impact on the algorithm performance on physics objects.",
+            "paragraph_rank": 31,
+            "section_rank": 13
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The \u03b1 distribution of neutral PU particles can be compared to charged PU particles in the PU sample shown in figure 2 (upper right). It becomes clear that the median and RMS of the \u03b1 distribution are similar for charged and neutral particles originating from PU. This similarity confirms one of the primary assumptions of PUPPI, namely that \u03b1 PU and RMS PU , which are computed for charged particles, can be used to compute weights for neutral particles with a discrimination power between PU and LV particles. Although the qualitative features of the \u03b1 distribution in data are reproduced by the simulation, a disagreement between data and simulation is observed, which is most pronounced for neutral particles from PU with large values of \u03b1.",
+            "paragraph_rank": 32,
+            "section_rank": 13
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The \u03c7 2 distribution shown in figure 2 (lower left) shows two peaks for both the jet sample and the PU sample. The first peak results from particles without any neighbor and an \u03b1 value of zero. The second peak at zero represents all PU particles. The jet sample (black curve) shows a third peak for all LV particles. Additionally, the shape of the resulting PUPPI weight distribution, shown in figure 2 (lower right) is well modeled by simulation for particles with high weights (i.e., those likely originating from the LV). A considerable mismodeling is observed at low values of PUPPI weight, where low-p T particles from PU interactions dominate. This mismodeling does not propagate to further observables, because these particles receive small weights, and as a consequence have a negligible contribution. Although both samples have a similar distribution of number of interactions, the weight distribution of the jet sample has more events at higher values of the weight compared to the PU sample because of the selection of a high p T jet.",
+            "paragraph_rank": 33,
+            "section_rank": 13
+        },
+        {
+            "text": "Jet reconstruction",
+            "section_rank": 14
+        },
+        {
+            "section": "Jet reconstruction",
+            "text": "Jets are clustered from PF candidates using the anti-k T algorithm [32] with the F J software package [33]. Distance parameters of 0.4 and 0.8 are used for the clustering. While jets with R = 0.4 (AK4 jets) are mainly used in CMS for reconstruction of showers from light-flavor quarks and gluons, jets with R = 0.8 (AK8 jets) are mainly used for reconstruction of Lorentz-boosted W, Z, and Higgs bosons, and for top quark identification, as discussed in detail in section 6. Before jet clustering, CHS-or PUPPI-based PU mitigation is applied to the PF candidates. Reconstructed jets with the respective PU mitigation technique applied are referred to as CHS and PUPPI jets, respectively.",
+            "paragraph_rank": 34,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 67,
+                    "text": "[32]",
+                    "end": 71
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 102,
+                    "text": "[33]",
+                    "end": 106
+                }
+            ]
+        },
+        {
+            "section": "Jet reconstruction",
+            "text": "Jet momentum is determined as the vectorial sum of all particle momenta in the jet, and from simulation is, on average, within 5 to 20% of the true momentum over the whole p T spectrum and detector acceptance. For CHS jets, an event-by-event jet-area-based correction [3][4][5] is applied to the jet four-momenta to remove the remaining energy due to neutral and charged particles originating from PU vertices, while no such correction is necessary for PUPPI jets. Although CHS removes charged particles associated with a PU vertex, charged particles not associated with any vertex are kept and can add charged PU energy to the jet. The remaining energy from PU particles subtracted from the jet energy is assumed proportional to the jet area and parametrized as a function of the median energy density in the event, the jet area, \u03b7, and p T . In addition, jet energy corrections are derived from simulation for CHS and PUPPI to bring the measured response of jets to that of -9 -generated particle-level jets on average. In situ measurements of the momentum balance in dijet, photon+jets, Z+jets, and multijet events are used to correct any residual differences in jet energy scale between data and simulation [5].",
+            "paragraph_rank": 35,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 268,
+                    "text": "[3]",
+                    "end": 271
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 271,
+                    "text": "[4]",
+                    "end": 274
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 274,
+                    "text": "[5]",
+                    "end": 277
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 1211,
+                    "text": "[5]",
+                    "end": 1214
+                }
+            ]
+        },
+        {
+            "section": "Jet reconstruction",
+            "text": "In the following, only jets with p T > 15 GeV are used, which is the lowest jet p T used in physics analysis in CMS. The presentation of jet performance focuses on |\u03b7| < 2.5, covered by the tracking detector, ECAL, and HCAL, and the forward region, |\u03b7| > 3, where only the hadron forward calorimeter is present. The intermediate region, 2.5 < |\u03b7| < 3.0, which is covered by ECAL and HCAL resembles the forward region in sensitivity to PU and is not discussed in this paper. For section 5.1 the focus is set on |\u03b7| < 0.5, as the region 0.5 < |\u03b7| < 2.5 provides no further information and shows a similar performance.",
+            "paragraph_rank": 36,
+            "section_rank": 14
+        },
+        {
+            "text": "Jet energy and angular resolutions",
+            "section_rank": 15
+        },
+        {
+            "section": "Jet energy and angular resolutions",
+            "text": "The performance of the jet four-momentum reconstruction is evaluated in QCD multijet simulation by comparing the kinematics of jets clustered from reconstructed PF candidates (reconstructionlevel jets) to jets clustered from stable (lifetime c\u03c4 > 1 cm) particles excluding neutrinos before any detector simulation (particle-level jets). Particle-level jets are clustered without simulation of PU collisions whereas the reconstruction-level jets include simulation of PU collisions. Jet energy corrections are applied to the reconstruction-level jets such that the ratio of reconstruction and particle-level jet p T (the response) is on average 1. The jet energy resolution (JER) is defined as the spread of the response distribution, which is Gaussian to a good approximation. The resolution is defined as the \u03c3 of a Gaussian fit to the distribution in the range [m \u2212 2\u03c3, m + 2\u03c3], where m and \u03c3 are the mean and width of the Gaussian fit, determined with an iterative procedure. The cutoff at \u00b12\u03c3 is set so that the evaluation is not affected by outliers in the tails of the distribution. Figure 3 shows the JER as a function of jet p T for jets reconstructed from all of the PF candidates (PF jets), CHS jets, and PUPPI jets, simulated with on average 20-30 PU interactions. For AK4 jets, the performance of the CHS and PUPPI algorithms is similar. Jet resolution for PUPPI is slightly degraded below 30 PU, since PUPPI has been optimized for overall performance, including p miss T resolution and stability, beyond 30 PU interactions. This behavior at low PU can in principle be overcome through a special treatment in the limit of small amount of PU, where the number of particles to compute \u03b1 PU and RMS PU is limited. The PF jets in the detector region of |\u03b7| < 0.5 exhibit a worse performance, particularly at low p T , since these jets are more affected by PU. In the region of 3.2 < |\u03b7| < 4.7, PF jets show the same performance as CHS jets, because no tracking is available. For AK8 jets, PUPPI provides better performance than the CHS and PF algorithms, since neutral particles from PU interactions contribute significantly to such jets. Figure 4 demonstrates how the JER scales with the number of interactions. At more than 30 interactions, JER for AK4 jets with |\u03b7| < 0.5 and p T = 30 GeV is better with the PUPPI than with the CHS PU mitigation. However, JER for AK4 jets with 3.2 < |\u03b7| < 4.7 and p T = 30 GeV is better with the CHS than with the PUPPI PU mitigation, which is a result of the PUPPI algorithm being tuned to yield the best p miss T resolution rather than the best jet resolution in the |\u03b7| > 3 region. This is achieved with a low PU particle rate, rather than the best jet resolution, achieved by high LV particle efficiency. At p T > 100 GeV, PUPPI jets have a resolution that is slightly worse than that of CHS jets with |\u03b7| < 0.5, while in 3.2 < |\u03b7| < 4.7 PUPPI and CHS performances are comparable. For AK8 jets at low p T , PUPPI yields a better JER than CHS; this improvement is present through -10 -2020 JINST 15 P09018 Jet energy resolution as a function of the particle-level jet p T for PF jets (orange circles), PF jets with CHS applied (red triangles), and PF jets with PUPPI applied (blue squares) in QCD multijet simulation. The number of interactions is required to be between 20 and 30. The resolution is shown for AK4 jets with |\u03b7| < 0.5 (upper left) and 3.2 < |\u03b7| < 4.7 (upper right), as well as for AK8 jets with |\u03b7| < 0.5 (lower). The error bars correspond to the statistical uncertainty in the simulation. the high-PU scenarios, e.g., at 50 or 60 interactions. The jet energy resolution becomes worse with PUPPI than with CHS for jets with p T > 200 GeV. The behavior of PUPPI at high p T is to a large extent limited by the quality of track-vertex association using d z for high-p T charged hadrons. The effect is not visible in CHS because the d z requirement for charged particles that are not associated to any vertex is not used, but instead CHS keeps all charged particles not associated with any vertex. Figure 5 shows the jet \u03b7 angular resolution simulated with 20-30 interactions. The same qualitative conclusions also hold for the resolution in \u03c6, since \u03c6 and \u03b7 segmentation of the detector are similar. The resolution is evaluated as the width of a Gaussian function fit to the distribution of the \u03b7-difference between the generator-and reconstruction-level jets. The same conclusions as for JER also hold for jet angular resolution. The CHS and PUPPI algorithms perform similarly for AK4 jets with |\u03b7| < 0.5. However, significant improvements from PUPPI are observed for AK8 jets -11 - for |\u03b7| < 0.5. Angular resolution of large-size jets is particularly sensitive to PU as the clustered energy from PU particles increases with the jet size. Hence, the improvements are larger when PUPPI jets are considered.",
+            "paragraph_rank": 37,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "start": 1089,
+                    "text": "Figure 3",
+                    "end": 1097
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 2147,
+                    "text": "Figure 4",
+                    "end": 2155
+                },
+                {
+                    "type": "figure",
+                    "start": 4059,
+                    "text": "Figure 5",
+                    "end": 4067
+                }
+            ]
+        },
+        {
+            "text": "Noise jet rejection",
+            "section_rank": 16
+        },
+        {
+            "section": "Noise jet rejection",
+            "text": "The identification and rejection of jets originating from noise and reconstruction failures are critical to all CMS analyses where a jet or p miss T is used as part of the selection. To further reject noise after detector signal processing and jet clustering, a set of criteria on the PF candidates within a jet are applied [6]. The criteria listed in table 2 are based on jet constituent energy fractions and multiplicities. They reject residual noise from the HCAL and ECAL, retaining 98-99% of genuine jets, i.e., jets initiated by genuine particles rather than detector noise. Although PU mitigation -12 -2020 JINST 15 P09018  Figure 5. Jet \u03b7 resolution as a function of particle-level jet p T for PF jets (orange circles), PF jets with CHS applied (red triangles), and PF jets with PUPPI applied (blue squares) in QCD multijet simulation. The number of interactions is required to be between 20 and 30. The resolution is shown for AK4 jets with |\u03b7| < 0.5 (upper left) and 3.2 < |\u03b7| < 4.7 (upper right) as well as for AK8 jets with |\u03b7| < 0.5 (lower). The error bars correspond to the statistical uncertainty in the simulation. algorithms are not designed to have an effect on detector noise, they could, in principle, affect the rejection capability of the noise jet ID. Figure 6 (upper left/right and lower left) shows the distribution of the charged and neutral constituent multiplicities comparing genuine jet enriched (dijet) and noise jet enriched (minimum bias) data, demonstrating the separation power. For the dijet selection, data are selected with an HLT requirement of at least one jet having a p T > 400 GeV, two offline reconstructed jets with p T greater than 60 and 30 GeV, respectively, and an opening in azimuthal angle greater than 2.7. For the minimum bias selection, jets with p T > 30 GeV passing the minimum bias trigger path are used. The noise jet ID requires at least one charged constituent for jets with |\u03b7| < 2.4 and at least two constituents (neutral or charged) for |\u03b7| < 2.7. The charged constituent multiplicity is smaller for PUPPI than for CHS jets because PUPPI rejects additional charged particles by -13 - The efficiency of the jet ID criteria for genuine jets is measured in data using a tag-andprobe procedure in dijet events [6]. The background rejection is estimated using a noise-enriched minimum bias event selection. The fraction of rejected noise jets after applying jet ID criteria that yield a 99% efficiency for genuine jets is summarized in table 3 for different regions in \u03b7. The number of noise jets reconstructed with the CHS and PUPPI algorithms is not the same, because the PUPPI reconstruction criteria reject particles that would otherwise give rise to a fraction of noise jets before jet ID criteria are applied. The absolute number of noise jets remaining after PU mitigation and jet ID together differs by less than 20% between CHS and PUPPI jets.",
+            "paragraph_rank": 38,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 324,
+                    "text": "[6]",
+                    "end": 327
+                },
+                {
+                    "type": "figure",
+                    "start": 631,
+                    "text": "Figure 5",
+                    "end": 639
+                },
+                {
+                    "type": "figure",
+                    "start": 1275,
+                    "text": "Figure 6",
+                    "end": 1283
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 2269,
+                    "text": "[6]",
+                    "end": 2272
+                }
+            ]
+        },
+        {
+            "section": "Noise jet rejection",
+            "text": "-14 -2020 JINST 15 P09018 Table 3. Fraction of noise jets rejected when applying jet ID criteria to PUPPI and CHS jets yielding a genuine jet efficiency of 99% in different regions of |\u03b7|.",
+            "paragraph_rank": 39,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "start": 26,
+                    "text": "Table 3",
+                    "end": 33
+                }
+            ]
+        },
+        {
+            "text": "Region of |\u03b7|",
+            "section_rank": 17
+        },
+        {
+            "section": "Region of |\u03b7|",
+            "text": "Fraction   Figure 6. The charged-and neutral-particle multiplicities for CHS and PUPPI in a dijet (genuine jets) and minimum bias (noise jets) selection in data. The multiplicities are shown for AK4 jets using CHS reconstructed real jets (red dashed), CHS reconstructed noise jets (black long dashed), PUPPI reconstructed genuine jets (blue circles), and PUPPI reconstructed noise jets (orange triangles). The upper plots show the charged (left) and neutral particle multiplicities (right) for jets with |\u03b7| < 0.5. The lower left plot shows the neutral particle multiplicity for jets with 3 < |\u03b7| < 5. The lower right plot shows the neutral particle multiplicity of AK4 jets with |\u03b7| < 0.5 in a dijet selection in data using CHS and PUPPI for 15-20 and 35-50 interactions. The error bars correspond to the statistical uncertainty.",
+            "paragraph_rank": 40,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 11,
+                    "text": "Figure 6",
+                    "end": 19
+                }
+            ]
+        },
+        {
+            "section": "Region of |\u03b7|",
+            "text": "-15 -2020 JINST 15 P09018",
+            "paragraph_rank": 41,
+            "section_rank": 17
+        },
+        {
+            "text": "Pileup jet rejection",
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "Particles resulting from PU collisions will introduce additional jets that do not originate from the LV. These jets are referred to as PU jets. PU jets can be classified in two categories: QCD-like PU jets, originating from PU particles from a single PU vertex, and stochastic PU jets, originating from PU particles from multiple different PU vertices. Both PU mitigation techniques, PUPPI and CHS, remove the charged tracks associated with PU vertices, reducing the p T of QCD-like PU jets to roughly 1/3 of their original p T , such that they can be largely reduced by selections on the jet p T . In CMS, a multivariate technique to reject the remaining PU jets (dominated by stochastic PU jets) has been developed and applied for CHS jets [6], whereas PUPPI intrinsically suppresses PU jets better by rejecting more charged and neutral particles from PU vertices before jet clustering. Both techniques suppress both QCD-like and stochastic PU jets, though the observables used for neutral particle rejection are primarily sensitive to stochastic PU jets.",
+            "paragraph_rank": 42,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 742,
+                    "text": "[6]",
+                    "end": 745
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "The performance of the PU jet rejection for both PUPPI and CHS is evaluated in Z+jets events in data and simulation. The jet recoiling against the Z boson provides a pure sample of LV jets, whereas additional jets are often from PU collisions. The Z+jets events are selected by requiring two oppositely charged muons with p T > 20 GeV and |\u03b7| < 2.4 whose combined invariant mass is between 70 and 110 GeV. Jets that overlap with leptons within \u2206R(lepton, jet) < 0.4 from the Z boson decay are removed from the collections of particle-and reconstruction-level jets.",
+            "paragraph_rank": 43,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "In simulation jets are categorized into four groups based on the separation from particle-level jets and their constituents. If a reconstruction-level jet has a particle-level jet within \u2206R < 0.4, it is regarded as originating from the LV. Jet flavors are defined by associating generated particles to reconstructed jets. This is done by clustering a new jet with the generated and reconstructed particles together where, in this case, the four-momenta of generated particles are scaled by a very small number. Newly reconstructed jets in this way are almost identical to the original jets because the added particles, with extremely small energy, do not affect the jet reconstruction. If a jet originating from the LV contains generated quarks or gluons, it is regarded as a jet of quark or gluon origin, depending on the label of the highest p T particle-level particle. If a jet not originating from the LV does not contain any generated particles from the hard scattering, it is regarded as a jet originating from a PU vertex, i.e., a PU jet. The remaining jets, which do not have nearby particle-level jets but contain particle-level particles (from LV), are labeled as unassigned.",
+            "paragraph_rank": 44,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "This identification of PU jets is based on two observations: (i) the majority of tracks associated with PU jets do not come from the LV, and (ii) PU jets contain particles originating from multiple PU collisions and therefore tend to be more broad and diffuse than jets originating from one single quark or gluon. Table 4 summarizes the input variables for a multivariate analysis. Track-based variables include the LV p T fraction and N vertices , where the LV p T fraction is the summed p T of all charged PF candidates in the jet originating from the LV, divided by the summed p T of all charged candidates in the jet. The LV p T fraction variable provides the strongest discrimination of any variable included in the discriminator, but is available only within the tracking volume. The inclusion of the N vertices variable allows the multivariate analysis to determine the optimal discriminating variables as the PU is increased. Jet shape variables included in the multivariate discriminant are as follows: Square distance from the jet axis scaled by p 2 T average of jet constituents: ",
+            "paragraph_rank": 45,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "table",
+                    "ref_id": "tab_5",
+                    "start": 314,
+                    "text": "Table 4",
+                    "end": 321
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "where \u00ec r i is the direction of the particle i from the direction of the jet ",
+            "paragraph_rank": 46,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "\u2206R 2 of large value relative to genuine jets. For the set of f ringX , PU jets tend to have large values for variables with large R, which represents the characteristic of PU jets having a large fraction of energy deposited in the outer annulus. Most of the other variables are included to distinguish quark jets from gluon jets, and thus enhance the separation from PU jets. In particular, the variable p D T tends to be larger for quark jets than for gluon jets, and smaller than both quark jets and gluon jets for PU jets. The N total , p D T and \u03c3 2 variables have previously been used for a dedicated quark-and gluon-separation technique; more details on their definition and performance are found in ref. [6]. Figure 7 shows the distribution of the LV p T fraction and the charged-particle multiplicity of jets with 30 < p T < 50 GeV and |\u03b7| < 1 in data and simulation. The distributions of the variables in selected data events agree with simulation within the uncertainties, with a clear separation in the discriminating variables between LV and PU jets.",
+            "paragraph_rank": 47,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 542,
+                    "text": "D",
+                    "end": 543
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 711,
+                    "text": "[6]",
+                    "end": 714
+                },
+                {
+                    "type": "figure",
+                    "start": 716,
+                    "text": "Figure 7",
+                    "end": 724
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "The set of 15 variables listed in table 4 is used to train a boosted decision tree (BDT) algorithm, and to distinguish between jets from the LV and PU jets. For the BDT training, M -G 5_a @ Z+jets simulation events are used. To perform the training, reconstruction-level jets that are within a distance of \u2206R < 0.  Figure 7. Data-to-simulation comparison for two input variables to the PU jet ID calculation for CHS jets with 30 < p T < 50 GeV: the LV p T fraction (left) and charged-particle multiplicity (right). Black markers represent the data while the colored areas are Z+jets simulation events. The simulation sample is split into jets originating from quarks (red), gluons (purple), PU (green), and jets that could not be assigned (gray). The distributions are normalized to unity. The shape of a sample showered with ++ is superimposed. The lower panels show the data-to-simulation ratio along with a gray band corresponding to the one-sided uncertainty, which is the difference between simulated Z+jets events showered with the PYTHIA parton shower and those showered with the HERWIG++ parton shower. Also included in the ratio panel is the PU rate uncertainty (dark gray).",
+            "paragraph_rank": 48,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 315,
+                    "text": "Figure 7",
+                    "end": 323
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "it passes certain thresholds on the output of the BDT discriminator. This output is dependent on the \u03b7 and p T of the jet. Three working points are considered in the following resulting in different efficiencies and misidentification rates. These working points are defined by their average efficiency on quark-initiated jets. The definitions are:",
+            "paragraph_rank": 49,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "\u2022 tight working point: 80% efficient for quark jets,",
+            "paragraph_rank": 50,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "\u2022 medium working point: 90% efficient for quark jets,",
+            "paragraph_rank": 51,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "\u2022 loose working point: 99% efficient for quark jets in |\u03b7| < 2.5, 95% efficient for quark jets in |\u03b7| > 2.5.",
+            "paragraph_rank": 52,
+            "section_rank": 18
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "Since 92% of the PU jets tend to occur at p T < 50 GeV, the contamination from PU jets with p T > 50 GeV is small. Thus, the PU jet ID is designed to act only on jets with p T < 50 GeV. The fraction of PU jets in simulation passing this kinematic event selection is 10% for |\u03b7| < 2.5, 48% for 2.50 < |\u03b7| < 2.75, 59% for 2.75 < |\u03b7| < 3.00, and 65% for 3 < |\u03b7| < 5. The distribution of the output BDT discriminator in selected data events and simulation is shown in figure 8. Some disagreement is present between the data and simulation. This disagreement is largest for |\u03b7| > 2.5 and at low discrimination values, where PU jets dominate. The difference between data and simulation is roughly comparable to the total uncertainty in simulation, considering the uncertainty in the number of interactions and the difference to an alternative ++-based parton shower prediction.  Figure 8. Data-to-simulation comparison of the PU jet ID boosted decision tree (BDT) output for AK4 CHS jets with 30 < p T < 50 GeV for the detector region within the tracker volume (left) and 3 < |\u03b7| < 5 (right). Black markers represent the data while the colored areas are Z+jets simulation events. The simulation sample is split into jets originating from quarks (red), gluons (purple), PU (green), and jets that could not be assigned (gray). The distributions are normalized to unity. The shape of a sample showered with ++ is superimposed The lower panels show the data-to-simulation ratio along with a gray band corresponding to the one-sided uncertainty that is the difference between simulated Z+jets events showered with the PYTHIA parton shower to those showered with the HERWIG++ parton shower. Also included in the ratio panel is the PU rate uncertainty (dark gray).",
+            "paragraph_rank": 53,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 464,
+                    "text": "figure 8",
+                    "end": 472
+                },
+                {
+                    "type": "figure",
+                    "start": 873,
+                    "text": "Figure 8",
+                    "end": 881
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "When studying jet performance with PU, it is clear that jet reconstruction and selection, including PU mitigation, affect the relationship between the number of reconstructed vertices and the mean number of interactions per crossing. The mean number of vertices as a function of the number of interactions can be seen in figure 9 (left). Without jet selection, the number of vertices is on average 30% smaller [8,34] than the number of interactions, because the vertex reconstruction and identification efficiency is about 70% (although it is nearly 100% for hardscattering interactions). When introducing a selection on the jet p T , the mean number of vertices for a given number of interactions is reduced. This effect is largest for CHS jets, where no treatment of jets composed of mostly PU particles is present. If a PU vertex is close to or overlaps with the LV, jets composed of PU particles end up in the event reconstruction and cause the observed bias. When applying a technique to reduce the number of additional jets composed of mostly PU particles (PUPPI or CHS+tight PU jet ID), the relationship shows a behavior more similar to the one without selection. The mean number of interactions as a function of the number of vertices is presented in figure 9 (right). This relationship depends on the assumed distribution of pileup interactions in data and is adjusted to match the 2016 data taking. The largest difference between events with and without a p T cut is observed for a high number of vertices, while the different PU mitigation techniques show a similar behavior. efficiency is defined as the fraction of particle-level jets with p T > 30 GeV that match within \u2206R < 0.4 with a reconstruction-level jet with p T > 20 GeV. The purity is defined as the fraction of reconstruction-level jets with p T > 30 GeV that match within \u2206R < 0.4 with a particle-level jet with p T > 20 GeV from the main interaction. The p T cuts at reconstruction and generator level are chosen to be different to remove any significant JER effects on this measurement.",
+            "paragraph_rank": 54,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 410,
+                    "text": "[8,",
+                    "end": 413
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 413,
+                    "text": "34]",
+                    "end": 416
+                }
+            ]
+        },
+        {
+            "section": "Pileup jet rejection",
+            "text": "For CHS jets, the efficiency is larger than 95% in entire detector region up to |\u03b7| < 5 regardless of the number of interactions. However, the purity drops strongly with the number of interactions down to 70 and 18% at 50 interactions for the regions of |\u03b7| < 2.5 and |\u03b7| > 2.5, respectively. The PU jet ID applied on top of CHS reduces the efficiency with respect to using only CHS, but at the same time improves the purity, especially for low-p T jets. In |\u03b7| < 2.5, the loose working point has only a slightly reduced efficiency compared to CHS alone. In |\u03b7| > 2.5, the efficiency drops to roughly 80% at high PU for the loose working point. In |\u03b7| < 2.5, the purity remains constant at around 98% over the whole range of PU scenarios. In |\u03b7| > 2.5, the purity is PU-dependent, but improves over CHS alone by a factor of 1.7 at high PU for the loose working point. The tight PU jet ID achieves the best purity in |\u03b7| > 2.5 at 40% with collisions at 50 interactions and a jet efficiency of 45%. PUPPI also reduces the efficiency with respect to CHS by removing neutral particles. At the same time, PUPPI improves the purity by removing PU jets from the event without the need of a PU jet ID. At low PU (below 10 interactions), the purity of PUPPI jets is equal to that of CHS. At high PU, the purity of PUPPI jets with respect to CHS jets is significantly higher than that of CHS jets. PUPPI has a constant efficiency above 95% in |\u03b7| < 2.5, and a purity compatible with the tight PU jet ID working point at high PU. In |\u03b7| > 2.5, above 30 interactions the efficiency of PUPPI is better than the loose PU jet ID, whereas the purity is compatible to within a few percent to the loose PU jet ID. In summary, PUPPI shows an intrinsic good balance between efficiency and purity -20 -compared to CHS, but if purity in |\u03b7| > 2.5 is crucial to an analysis, CHS+tight PU jet ID yields better performance. Using variables designed to distinguish quark jets from gluon jets results in a < 1% difference for 20 < PU < 30 in efficiency for PUPPI and CHS in |\u03b7| < 2.5 and range up to 5% (12%) in |\u03b7| > 3 for PUPPI (CHS) with tight PU ID. To evaluate the performance of PU jet identification in data, the ratio of PU jets to genuine jets for the leading p T jet in the event is studied. Events are split into two categories to compare both PU and LV jets. The categorization is performed utilizing the difference between the azimuths \u03c6 of the leading p T jet and the Z boson. The PU-enriched events are required to have \u2206\u03c6(Z boson, jet) < 1.5, -21 -while events enriched in LV jets are required to have \u2206\u03c6(Z boson, jet) > 2.5. Figure 11 shows the rate of events in the PU-enriched region divided by the rate of events in the LV-enriched region, as a function of the number of vertices for CHS jets, CHS jets with medium PU jet ID applied, and PUPPI jets in Z+jets simulation and data. The rate of PU-enriched events selecting CHS jets alone exhibits a strong dependence on the number of vertices in detector regions where |\u03b7| < 2.5. This dependence increases from 8 to 25% when going from 5 to 40 vertices. The dependence is strongly reduced when the PU jet ID is applied or PUPPI is utilized. PUPPI shows a stable behavior across the whole range in |\u03b7| < 2.5 for both data and simulation. For |\u03b7| > 2.5, all three algorithms show a PU dependence with CHS jets having the worst performance. Furthermore, categorization with PUPPI jets has a PU-enriched rate between that of events categorized with CHS and CHS+medium PU jet ID. For reference, the rate of jets that are matched to a particle-level jet in simulation is also shown for CHS jets (simulation, CHS LV). This line shows the expected ratio of events in the two regions when only the LV jets are used for the categorization. This curve shows a slight PU dependence because of the high matching parameter of generator-with reconstruction-level jets (\u2206R < 0.4).",
+            "paragraph_rank": 55,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2615,
+                    "text": "Figure 11",
+                    "end": 2624
+                }
+            ]
+        },
+        {
+            "text": "Number of interactions",
+            "section_rank": 19
+        },
+        {
+            "section": "Number of interactions",
+            "text": "Scale factors for the efficiency of data and simulation for both matched jets from the LV and PU jets for various PU jet ID working points are derived using the event categories enriched in genuine jets and PU jets. Scale factors are within a few percent of unity in the detector region where |\u03b7| < 2.5. In |\u03b7| > 2.5, they are farther from unity, with differences up to 10% for jets with 2.5 < |\u03b7| < 3.0 and the tight working point applied. The scale factor for PU jets is significantly larger and leads to a visible disagreement in figure 11. This disagreement is found to be as large as 30% for low p T jets with |\u03b7| > 2.5. The difference in modeling when using ++ instead of for parton showering shown in the lower panel of figure 11 is considered as an additional uncertainty. The difference of data with respect to showered jets is contained within the total variation when considering both ++ and based parton showers.",
+            "paragraph_rank": 56,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 533,
+                    "text": "figure 11",
+                    "end": 542
+                }
+            ]
+        },
+        {
+            "text": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "section_rank": 20
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "In various searches for new physics phenomena and measurements of standard model properties, top quarks, W, Z, and Higgs bosons are important probes. They can be produced with a large Lorentz boost, \u03b3, such that the direction of their decay particles becomes very collinear. The spatial separation between the decay products in the \u03b7-\u03c6 plane is approximately \u2206R \u2248 2/\u03b3. In such cases, it is difficult to reconstruct the decay products of the hadronically decaying objects of interest properly with traditional jets of size 0.4. As a result, techniques to reconstruct all decay products within one jet with a larger size of 0.8 have been widely studied and used [20,35]. The invariant mass and substructure of the reconstructed jets are typically used to identify the different bosons and top quarks. These larger cone size jets tend to collect more PU, hence PU mitigation techniques are relevant across a larger p T range, extending to well beyond p T > 100 GeV. In addition, the jet mass and substructure variables are particularly affected by soft and wide-angle radiation. A grooming technique is applied on top of CHS and PUPPI to remove soft radiation from the jet-clustering algorithm and thereby mitigate the effects from PU, underlying event, and initial-state radiation.",
+            "paragraph_rank": 57,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 660,
+                    "text": "[20,",
+                    "end": 664
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 664,
+                    "text": "35]",
+                    "end": 667
+                }
+            ]
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "The main grooming algorithm used in CMS is the soft drop or modified mass drop tagger [36,37].  For reference, the rate of jets that are matched to a particle-level jet in simulation is also shown for CHS jets (black solid line). The plots show the ratio for events with |\u03b7| < 2.5 (left) and |\u03b7| > 2.5 (right). The lower panels show the data-to-simulation ratio along with a gray band corresponding to the one-sided uncertainty that is the difference between simulated Z+jets events showered with the parton shower to those showered with the ++ parton shower.",
+            "paragraph_rank": 58,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 86,
+                    "text": "[36,",
+                    "end": 90
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 90,
+                    "text": "37]",
+                    "end": 93
+                }
+            ]
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "It reclusters a jet with the Cambridge-Aachen algorithm [38], and splits the jet in two subjets by undoing the last step of the jet clustering. It regards the jet as the final soft drop jet if the two subjets satisfy the condition min(p 1 ",
+            "paragraph_rank": 59,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 56,
+                    "text": "[38]",
+                    "end": 60
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 237,
+                    "text": "1",
+                    "end": 238
+                }
+            ]
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "where p 1 T and p 2 T are the transverse momenta of the two subjets, R 0 is the size parameter of the jet, \u2206R 12 = (\u2206\u03b7 12 ) 2 + (\u2206\u03c6 12 ) 2 is the distance between the two subjets, and z cut and \u03b2 are tunable parameters of soft drop set to z cut = 0.1 and \u03b2 = 0 here. If the soft drop condition is not met, the declustering procedure is repeated with the subjet that has the larger p T of the two, and the other subjet is rejected. The soft drop jet mass is computed from the sum of the four-momenta of the constituents passing the grooming algorithm. The mass is then corrected by a factor derived in simulated W boson samples to ensure a p T -and \u03b7-independent jet mass distribution [6].",
+            "paragraph_rank": 60,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 684,
+                    "text": "[6]",
+                    "end": 687
+                }
+            ]
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "Additional separation of boosted W, Z, and Higgs bosons, and top quarks from quark and gluon jet background can be achieved with a substructure observable. A commonly used observable in CMS is N-subjettiness [39], defined as",
+            "paragraph_rank": 61,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 208,
+                    "text": "[39]",
+                    "end": 212
+                }
+            ]
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "with the normalization factor d 0 :",
+            "paragraph_rank": 62,
+            "section_rank": 20
+        },
+        {
+            "section": "W, Z, Higgs boson, and top quark identification 6.1 Jet substructure reconstruction",
+            "text": "where R 0 is the size parameter used in the clustering process, p Tk is the transverse momentum of the k-th constituent of the jet, and \u2206R n,k estimates the angular separation of the constituents of the jet to the closest subjet axis. We use a one-step optimization of the exclusive k T axes as a definition for the subjet axes. The ratio \u03c4 2 /\u03c4 1 , which is called \u03c4 21 , has excellent capability in separating jets with bipolar structures, originating from boosted W, Z, and Higgs bosons, from jets coming from quarks and gluons. The ratio \u03c4 32 = \u03c4 3 /\u03c4 2 can be used to discriminate top quark jets from W, Z, and Higgs boson jets, or quark and gluon jets.",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "Identification performance and pileup",
+            "section_rank": 21
+        },
+        {
+            "section": "Identification performance and pileup",
+            "text": "The variation as a function of pileup of the median soft drop jet mass, median \u03c4 21 , and the soft drop jet mass resolution is shown in figure 12 for jets from boosted W bosons with 400 < p T < 600 GeV using simulation of bulk gravitons decaying into WW pairs. The soft drop jet mass resolution is defined as the spread of the ratio of reconstruction-and particle-level jet mass (the response) divided by the mean of the response. The response distribution is, to a very good approximation, Gaussian, and the resolution is determined using the same procedure as for the JER described in section 5.1. The CHS jets exhibit a PU dependence for the soft drop jet mass and \u03c4 21 observables. The PUPPI jets, on the other hand, entirely remove the PU dependence of the soft drop jet mass and \u03c4 21 medians. The soft drop jet mass resolution is similar for the CHS and PUPPI algorithms, though a slightly better resolution is observed for the CHS algorithm for fewer than 20 interactions, while the PUPPI algorithm shows less dependence on PU leading to an improved resolution for more than 30 interactions, for which it has been optimized. The performance of a typical W or Z boson tagger with respect to the PU contamination is studied using simulation of bulk gravitons decaying into WW pairs for tagging efficiency and QCD multijet production for misidentification rate. Reconstructed jets are required to have p T larger than 200 GeV and |\u03b7| < 2, and not to overlap with any well-reconstructed leptons. In addition, jets are required to have reconstructed mass compatible with the W boson mass (within 65-105 GeV). Figure 13 shows the evaluated efficiency and misidentification rate of the tagger with CHS and PUPPI jets operated at two cutoff values on \u03c4 21 (0.6 and 0.45 for CHS jets, and 0.55 and 0.40 for PUPPI jets, which give a comparable efficiency to that for CHS jets). The tagger with PUPPI provides stable performance for both efficiency and misidentification rate, whereas the one with CHS reduces both efficiency and misidentification rate as the PU increases. This behavior of the tagger with CHS results from the linear dependence of median \u03c4 21 on the number of vertices for both q/g jets and W jets (see figure 12).",
+            "paragraph_rank": 64,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 136,
+                    "text": "figure 12",
+                    "end": 145
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1611,
+                    "text": "Figure 13",
+                    "end": 1620
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2217,
+                    "text": "figure 12)",
+                    "end": 2227
+                }
+            ]
+        },
+        {
+            "section": "Identification performance and pileup",
+            "text": "The same stability of the PUPPI algorithm is seen in top quark jet identification, which is performed by selecting jets originating from top quarks in simulation that have a soft drop mass within 105-210 GeV and \u03c4 32 < 0.54. Figure 14 shows the tagging performance using the CHS and PUPPI algorithms with the soft drop mass and \u03c4 32 conditions applied separately, and with both of them together. Although the efficiency is slightly different between the application of PUPPI or CHS, the same stability is observed with respect to PU as for W tagging.",
+            "paragraph_rank": 65,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 225,
+                    "text": "Figure 14",
+                    "end": 234
+                }
+            ]
+        },
+        {
+            "section": "Identification performance and pileup",
+            "text": "The performance of the W boson tagger with the CHS and PUPPI algorithms is compared in data and simulation following the procedure described in ref. [20]. The W boson identification efficiency is measured in a region enriched in tt events, where one top quark decays to a final state with a lepton, neutrino, and a bottom quark and is used to tag the event.    -26 -2020 JINST 15 P09018 Table 5. Data-to-simulation scale factors for the jet mass scale, jet mass resolution, and the \u03c4 21 selection efficiency for the CHS and PUPPI algorithms.",
+            "paragraph_rank": 66,
+            "section_rank": 21,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 149,
+                    "text": "[20]",
+                    "end": 153
+                },
+                {
+                    "type": "table",
+                    "start": 387,
+                    "text": "Table 5",
+                    "end": 394
+                }
+            ]
+        },
+        {
+            "text": "Parameter",
+            "section_rank": 22
+        },
+        {
+            "section": "Parameter",
+            "text": "Data is corrected with the difference between the vector p T sum of all reconstructed jets in the event calibrated to the particle level and the vector sum of all uncalibrated jet momenta (called type-1 correction), to account for the detector response of jet objects. Anomalous high-p miss T events can be due to a variety of reconstruction failures, detector malfunctions, or noncollision backgrounds. Such events are rejected by event filters that are designed to identify more than 85-90% of the spurious highp miss T events with a mistagging rate less than 0.1% [40]. The performance of the \u00ec p miss T reconstruction in CMS (covering Z \u2192 ee, Z \u2192 \u00b5\u00b5 and \u03b3+jets data samples) is discussed in detail in ref. [40].",
+            "paragraph_rank": 67,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 567,
+                    "text": "[40]",
+                    "end": 571
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 710,
+                    "text": "[40]",
+                    "end": 714
+                }
+            ]
+        },
+        {
+            "section": "Parameter",
+            "text": "The PUPPI algorithm can be used for the computation of \u00ec p miss T by scaling the PF candidates by their PUPPI weight (PUPPI \u00ec p miss T ), and then applying the type-1 correction using PUPPI jets. The PUPPI metric as defined in eq. 4.1 in section 4 treats charged leptons and charged hadrons in the same way, i.e., charged leptons get a weight of 0 or 1 depending on their vertex association and enter into the computation of the weight of their surrounding particles. This causes prompt leptons, e.g., leptons from the decay of the Z boson, to create a PU dependence by giving PU particles around the prompt lepton a higher weight. Therefore, a second PUPPI metric is defined in which charged leptons are excluded from the calculation. In this definition, it is assumed that all leptons in the event are prompt. This results in PU particles surrounding a prompt lepton having a lower weight consistent with the PU hypothesis. In the following discussion, the metric defined with the default PUPPI weight, including the leptons, is referred to as \"PUPPI-with-lepton\" and the metric, which excludes the leptons, as \"PUPPI-no-lepton.\" For the purpose of the PUPPI \u00ec p miss T computation, PUPPI-no-lepton collection is combined with the collection of leptons given a weight of 1. In -27 -",
+            "paragraph_rank": 68,
+            "section_rank": 22
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 23
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "addition, a PUPPI weight of 1 is automatically assigned to photons reconstructed in the tracker region (|\u03b7| < 2.5) with p T > 20 GeV. These photons are required to pass certain identification and isolation criteria ensuring an efficiency of above 80% and a purity of above 95%.",
+            "paragraph_rank": 69,
+            "section_rank": 23
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The resolution of p miss T is quantified by measuring the resolution of the hadronic recoil in Z boson events. The recoil is defined as the vector sum of the momenta of all the objects (with the same PU mitigation applied as for p miss T ) in the event but the Z boson. The transverse momenta of the recoil and of the Z boson are balanced against each other, such that their difference allows the determination of the momentum resolution. The momentum of the Z boson decaying into charged leptons can be reconstructed with high resolution such that it can serve as a reference for the measurement of the energy resolution of the hadronic recoil. The momentum of the recoil is projected to axes parallel and perpendicular to the momentum of the reconstructed Z boson. The resolution of the former is sensitive to the energy resolution and the latter to the PU contribution.",
+            "paragraph_rank": 70,
+            "section_rank": 23
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The pp collision data collected with a dielectron trigger are used to evaluate the performance. Events with two isolated electrons, within |\u03b7| < 2.5, with the leading (subleading) electron p T > 25 (20) GeV, and the invariant mass of the two electrons within a 20 GeV window centered around the Z boson mass are selected. The four-momentum of the Z boson are reconstructed from the four-momentum of the two electrons. The recoil is calculated as the vector sum of the momenta of all particles, but the two electrons. Figure 15 shows the ratio of the recoil to the Z boson transverse momentum (u ) as a function of the Z boson transverse momentum (q T ) for PUPPI \u00ec p miss",
+            "paragraph_rank": 71,
+            "section_rank": 23,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 517,
+                    "text": "Figure 15",
+                    "end": 526
+                }
+            ]
+        },
+        {
+            "text": "T",
+            "section_rank": 24
+        },
+        {
+            "section": "T",
+            "text": "and PF \u00ec p miss T . The PUPPI p miss T tends to have a smaller response in events with low momentum recoil. This is because of the removal of PF candidates that are wrongly assigned to the PU vertex by the PUPPI algorithm. Deviations from unity indicate imperfect calibration of the hadronic energy scale. ",
+            "paragraph_rank": 72,
+            "section_rank": 24
+        },
+        {
+            "text": "Muon isolation",
+            "section_rank": 25
+        },
+        {
+            "section": "Muon isolation",
+            "text": "Muons are reconstructed through a fit to hits in both the inner tracking system and the muon spectrometer [41,42]. Muons must satisfy identification and reconstruction requirements on the impact parameters of the track, the number of hits reconstructed in both the silicon tracker and the muon detectors, and the uncertainty in the p T measurement. These quality criteria ensure a precise measurement of the four-momentum, and rejection of badly reconstructed muons.",
+            "paragraph_rank": 73,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 106,
+                    "text": "[41,",
+                    "end": 110
+                },
+                {
+                    "type": "bibr",
+                    "start": 110,
+                    "text": "42]",
+                    "end": 113
+                }
+            ]
+        },
+        {
+            "section": "Muon isolation",
+            "text": "To distinguish prompt charged leptons from those originating from semileptonic decays of hadrons, the lepton isolation provides a powerful handle. Lepton isolation is defined as the p T sum of all surrounding particles in a cone around the lepton. In this study, PUPPI is investigated in the context of muon isolation and compared with other techniques commonly used in CMS. While not shown here, these techniques are also applicable to electron isolation.  Figure 15. The hadronic recoil response (\u2212 u / q T ) of the Z boson computed for PUPPI and PF p miss T , as a function of q T in Z \u2192 ee events in collision data. The lower panel shows the data-to-simulation ratio. A gray shaded band is added in the lower panel showing the systematic uncertainties resulting from jet energy scale and jet energy resolution variations, and variations in the unclustered energy added in quadrature.  ",
+            "paragraph_rank": 74,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 458,
+                    "text": "Figure 15",
+                    "end": 467
+                }
+            ]
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 26
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "Various techniques exist to limit the impact of PU on isolation. A widely used variable within CMS is the \u03b4\u03b2-corrected isolation [41]. This variable is used to estimate the contribution of neutral particles based on the nearby contributions of charged particles, defined by:",
+            "paragraph_rank": 75,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 129,
+                    "text": "[41]",
+                    "end": 133
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "where each sum runs over the particles, indexed with j, with \u2206R < 0.4 of the muon, p j T is the transverse momentum of each surrounding particle, Ch-LV and Ch-PU are charged particles associated with the LV and PU vertices, respectively, and Nh and Ph are neutral hadrons and photons reconstructed with the PF algorithm, respectively. The subtraction by one half of the amount of Ch-PU corresponds to the subtraction of the PU contamination. It is motivated by isospin symmetry, yielding the ratio of charged to neutral pion production of two, which is responsible for the fact that jets are composed of roughly one-third neutral pions and two-thirds charged pions [5]. An alternative isolation can be constructed using PUPPI. The simplest definition of PUPPI muon isolation is:",
+            "paragraph_rank": 76,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 665,
+                    "text": "[5]",
+                    "end": 668
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "where p j T and \u03c9 j are the transverse momentum and the PUPPI weight of particle j, respectively. The PUPPI weight is either determined from PUPPI-with-lepton or PUPPI-no-lepton as described in section 7. In addition, a combined isolation defined as the mean of the two isolation quantities is referred as \"PUPPI-combined\":",
+            "paragraph_rank": 77,
+            "section_rank": 26
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "3)",
+            "paragraph_rank": 78,
+            "section_rank": 26
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The performance of muon isolation is tested using simulated Z boson (prompt muons) and QCD multijet (nonprompt muons) events with a PU distribution having a mean of 20 interactions comparable to the 2016 PU conditions. For comparison, the relative isolation algorithm, defined as the isolation divided by the muon p T , is used. Muons are selected if the relative isolation is below a certain threshold. The threshold value for the relative isolation (0.156 for PUPPI-combined and 0.15 for \u03b4\u03b2-corrected) is defined such that each isolation quantity gives an inclusive misidentification rate of 12% for the muons selected in QCD multijet simulation. The fraction of muons passing the criteria is referred to as isolation efficiency for prompt muons and as misidentification rate for nonprompt muons. The efficiency is calculated with respect to reconstructed prompt muons with p T > 20 GeV and |\u03b7| < 2.4. As explained before, PUPPI-with-lepton has the shortcoming that PU particles around a prompt lepton get too high a weight because of the p T of the lepton in the \u03b1 i calculation. Therefore, the application of the weights from PUPPI-with-lepton for the muon isolation leads to a PU-dependent efficiency for prompt muons and a PU-independent misidentification rate. The misidentification rate is PU-independent, because LV particles, which drive the isolation of nonprompt leptons, get a reasonable weight. Conversely, PUPPI-no-lepton has the shortcoming that LV particles near a nonprompt lepton get a reduced weight because the p T of the nonprompt lepton is excluded when calculating \u03b1 i for these particles. The weight of LV particles contributing to the isolation is thus less -30 -stable against their surroundings. PU particles around leptons, however, get reasonable weights, resulting in a good estimate of the isolation for prompt leptons. Therefore, using PUPPI-no-lepton for the isolation calculation yields a stable efficiency and a less PU-resilient misidentification rate. Figure 17 shows the isolation efficiency and the misidentification rate as a function of the number of vertices. All three PUPPI isolation quantities are observed to be more stable across PU when compared with the \u03b4\u03b2-corrected isolation in terms of misidentification rate. In terms of efficiency, the PUPPI-no-lepton shows a more stable behavior compared with \u03b4\u03b2-corrected isolation whereas PUPPI-with-lepton shows a stronger dependence on the number of vertices. The stability of the PUPPI-combined isolation efficiency is between the two PUPPI isolation variants and similar to the \u03b4\u03b2-corrected isolation.  Figure 17. The identification efficiency for prompt muons in simulated Z+jets events (left) and the misidentification rate for nonprompt muons in QCD multijet simulated events (right) for the different definitions of the isolation: \u03b4\u03b2-corrected isolation (black circles), PUPPI-with-lepton (blue triangles), PUPPI-no-lepton (red crosses), PUPPI-combined (green squares), as a function of the number of vertices. The threshold of each isolation is set to yield a 12% misidentification rate for reconstructed muons in QCD multijet simulation. The error bars correspond to the statistical uncertainty in the simulation. Figure 18 shows a receiver operating characteristic (ROC) curve, i.e., the efficiency as a function of the misidentification rate, when using different definitions of the isolation. The combined PUPPI isolation provides the best performance over the typical analysis working points.",
+            "paragraph_rank": 79,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1990,
+                    "text": "Figure 17",
+                    "end": 1999
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 2599,
+                    "text": "Figure 17",
+                    "end": 2608
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 3216,
+                    "text": "Figure 18",
+                    "end": 3225
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The PUPPI isolation is further investigated in collision data collected with a single-muon trigger path requiring an isolated muon with p T > 24 GeV. Two levels of muons are defined: loose muons are required to have p T > 15 GeV and |\u03b7| < 2.4 with no isolation requirement and tight muons p T > 26 GeV and |\u03b7| < 2.1 with a \u03b4\u03b2-corrected isolation corresponding to an efficiency of 95% (threshold of 0.15). One tight and one loose muon, with the invariant mass of the two muons within a 10 GeV window centered around the Z boson mass are selected. The performance is measured using a tag-and-probe method, with the tight muon as the tag muon and the loose muon as the probe muon. The behavior of the isolation variables in data are compared with Z+jets simulation. Other backgrounds are neglected.  Figure 18. The identification efficiency for prompt muons in simulated Z+jets events as a function of the misidentification rate for nonprompt muons in QCD multijet simulated events for the different definitions of the isolation: \u03b4\u03b2-corrected isolation (black solid line), PUPPI-with-lepton (blue dashed line), PUPPI-no-lepton (red mixed dashed), PUPPI-combined (green long mixed dashed). The average number of interactions is 27. Figure 19 shows the mean fractions of the contributions of charged hadrons, neutral hadrons, and photons to the relative isolation variable, as a function of the number of vertices for the two types of PUPPI isolation in data and Z+jets simulation. The neutral hadrons and photons make up a large contribution to the total isolation and show a clear PU dependence for the PUPPI-with-lepton isolation, whereas this is not the case for the PUPPI-no-lepton isolation. The trend in data is well described by simulation.  Figure 19. Mean relative isolation for PUPPI-with-lepton (left) and PUPPI-no-lepton (right) in data compared to Z+jets simulation. The relative isolation is split into separate charged hadron (Ch, green squares), neutral hadron (Nh, blue circles), photon (Ph, red crosses) components, and combined (black triangles). Data and simulation are shown using full and open markers, respectively. The lower panels show the data-to-simulation ratio of each component. The error bars correspond to the statistical uncertainty.",
+            "paragraph_rank": 80,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 797,
+                    "text": "Figure 18",
+                    "end": 806
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1228,
+                    "text": "Figure 19",
+                    "end": 1237
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1745,
+                    "text": "Figure 19",
+                    "end": 1754
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "-32 -",
+            "paragraph_rank": 81,
+            "section_rank": 26
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 27
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The isolation efficiency of the PUPPI-combined isolation is evaluated using the same tag-andprobe method, and is compared to the \u03b4\u03b2-corrected isolation. The threshold for PUPPI-combined isolation (0.15) is chosen such that the isolation efficiencies are roughly equal for muons with 15 < p T < 20 GeV, where \u03b4\u03b2-corrected isolation is applied.  Figure 20. The identification efficiency for prompt muon isolation selection in Z \u2192 \u00b5\u00b5 events in data compared to Z+jets simulation, as a function of the number of vertices for PUPPI-combined (green circles) and \u03b4\u03b2-corrected isolation (black squares). Data and simulation are shown using full and open markers, respectively. The lower panel shows the data-to-simulation ratio. The error bars correspond to the statistical uncertainty. The threshold for PUPPI-combined isolation (0.15) is chosen such that the isolation efficiencies are roughly equal for muons with 15 < p T < 20 GeV, where \u03b4\u03b2-corrected isolation is applied, leading to an approximately 1% higher efficiency for p T > 15 GeV with variations as a function of the number of vertices. Figure 20 shows the efficiency of the chosen PUPPI and \u03b4\u03b2-corrected isolation variables as a function of the number of vertices. The ratio of efficiency in data to that in simulation is 0.99. Although the PU dependence of the efficiency of the PUPPI-combined isolation is stronger than that of the \u03b4\u03b2-corrected isolation, this does not mean PUPPI-combined isolation is more susceptible to PU, because the misidentification rate is stable against PU (see figure 21). The PUPPI-combined isolation outperforms \u03b4\u03b2-corrected isolation across the PU conditions studied.",
+            "paragraph_rank": 82,
+            "section_rank": 27,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 344,
+                    "text": "Figure 20",
+                    "end": 353
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 1092,
+                    "text": "Figure 20",
+                    "end": 1101
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 1546,
+                    "text": "figure 21)",
+                    "end": 1556
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The misidentification rate of the PUPPI isolation is evaluated in data by selecting Z \u2192 \u00b5\u00b5 events passing a dimuon trigger path (p T > 17 and 8 GeV for the leading and subleading muons, respectively). To obtain the Z boson candidates, two oppositely charged muons are selected within a -33 -",
+            "paragraph_rank": 83,
+            "section_rank": 27
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 28
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "10 GeV window centered around the Z boson mass and passing loose isolation criteria. In addition to the two muons from the Z boson decay, a third muon is required and labeled as the misidentified muon. This additional muon is either a third prompt muon initiated by leptonic decays of WZ and ZZ processes or, as is usually the case, a nonprompt muon from a semileptonic hadron decay. To further reduce the prompt-muon contribution from WZ production, the transverse mass (as defined in ref. [40]) obtained from the muon with third-highest p T and p miss T needs to be less than 40 GeV. Both WZ and ZZ production are well measured and generally well modeled. The difference in agreement between data and simulation is thus ascribed to nonprompt-lepton events.",
+            "paragraph_rank": 84,
+            "section_rank": 28,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 491,
+                    "text": "[40]",
+                    "end": 495
+                }
+            ]
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The misidentification rate shown in figure 21 is defined as the number of events with a third isolated muon divided by the total number of events after subtracting the background. The misidentification rate of the \u03b4\u03b2-corrected isolation is (5.4 \u00b1 0.4)% while that of PUPPI-combined isolation is (4.2 \u00b1 0.4)%. The uncertainty is statistical only. The ratio of the misidentification rate of PUPPI isolation to the \u03b4\u03b2-corrected isolation is (77 \u00b1 4)%, where the correlation is included in the uncertainty computation. The performance improvements from PUPPI-combined isolation expected from simulation studies are thus confirmed by data measurements.  Figure 21. The misidentification rate defined as the number of events with a third isolated muon divided by the total number of events with a third muon in Z \u2192 \u00b5\u00b5 data for PUPPI-combined (blue closed circles) and \u03b4\u03b2-corrected isolation (red open circles). The lower panel shows the ratio of PUPPI-combined and \u03b4\u03b2-corrected isolation, taking the correlation of their uncertainties into account. The threshold for PUPPIcombined isolation (0.15) is chosen such that the isolation efficiencies are roughly equal for muons with 15 < p T < 20 GeV, where \u03b4\u03b2-corrected isolation is applied.",
+            "paragraph_rank": 85,
+            "section_rank": 28,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 36,
+                    "text": "figure 21",
+                    "end": 45
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 649,
+                    "text": "Figure 21",
+                    "end": 658
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 29
+        },
+        {
+            "section": "Summary",
+            "text": "The impact of pileup (PU) mitigation techniques on object reconstruction performance in the CMS experiment has been presented. The main techniques under study are charged-hadron subtraction (CHS) and pileup per particle identification (PUPPI), which both exploit particle-level information.",
+            "paragraph_rank": 86,
+            "section_rank": 29
+        },
+        {
+            "section": "Summary",
+            "text": "-34 -",
+            "paragraph_rank": 87,
+            "section_rank": 29
+        },
+        {
+            "text": "JINST 15 P09018",
+            "section_rank": 30
+        },
+        {
+            "section": "JINST 15 P09018",
+            "text": "The performance of these techniques is evaluated in the context of the reconstruction of jets and missing transverse momentum (p miss T ), lepton isolation, and the calculation of jet substructure observables for boosted object tagging. The CHS and PUPPI algorithms are further compared with other algorithmic approaches that act on jet, p miss T , and lepton objects. While CHS rejects charged particles associated with PU vertices, PUPPI applies a more stringent selection to charged particles and rescales the four-momentum of neutral particles according to their probability to originate from the leading vertex. Both techniques reduce the dependence on PU interactions across all objects. A stronger reduction is achieved with PUPPI, especially for events with more than 30 interactions. The PUPPI algorithm provides the best performance for jet mass and substructure observables, p miss T resolution, and rejection of misidentified muons. With respect to jet-momentum resolution and PU jet rejection, the preferred algorithm depends on the physics process under study: the PUPPI algorithm provides a better jet momentum resolution for jets with p T < 100 GeV, whereas CHS does so for p T > 100 GeV. The highest rejection rate for jets originating purely from PU is obtained when using a dedicated PU jet identification in addition to CHS. However, when a looser working point for the PU jet identification is chosen such that its efficiency for selecting jets coming from the leading vertex is similar to that of PUPPI, both provide a similar rejection power. The PU suppression techniques studied in this paper are proven to maintain reasonable object performance up to 70 interactions. Their use will be crucial for future running of the LHC, where even more challenging PU conditions up to 200 interactions per bunch crossing are expected. ",
+            "paragraph_rank": 88,
+            "section_rank": 30
+        },
+        {
+            "text": "Figure 1 .",
+            "section_rank": 31
+        },
+        {
+            "section": "Figure 1 .",
+            "text": "Figure 1. Distribution of the mean number of inelastic interactions per crossing (pileup) in data for pp collisions in 2016 (dotted orange line), 2017 (dotted dashed light blue line), 2018 (dashed navy blue line), and integrated over 2016-2018 (solid grey line). A total inelastic pp collision cross section of 69.2 mb is chosen. The mean number of inelastic interactions per bunch crossing is provided in the legend for each year.",
+            "paragraph_rank": 89,
+            "section_rank": 31
+        },
+        {
+            "text": "5, j are charged particles from LV, for |\u03b7 i | > 2.5, j are all kinds of reconstructed particles, (4.1)",
+            "paragraph_rank": 90,
+            "section_rank": 32
+        },
+        {
+            "text": "Figure 2 .",
+            "section_rank": 33
+        },
+        {
+            "section": "Figure 2 .",
+            "text": "Figure 2. Data-to-simulation comparison for three different variables of the PUPPI algorithm. The markers show a subset of the data taken in 2016 of the jet sample and the PU sample, while the solid lines are QCD multijet simulations or PU-only simulation. The lower panel of each plot shows the ratio of data to simulation. Only statistical uncertainties are displayed. The upper left plot shows the \u03b1 distribution in the jet sample for charged particles associated with the LV (red triangles), charged particles associated with PU vertices (blue circles), and neutral particles (black crosses) for |\u03b7| < 2.5. The upper right plot shows the \u03b1 distribution in the PU sample for charged (blue circles) and neutral (orange diamond) particles. The lower left plot shows the signed \u03c7 2 = (\u03b1 \u2212 \u03b1 PU )|\u03b1 \u2212 \u03b1 PU |/(\u03b1 RMS PU ) 2 for neutral particles with |\u03b7| < 2.5 in the jet sample (black crosses) and in the PU sample (orange diamonds). The lower right plot shows the PUPPI weight distribution for neutral particles in the jet sample (black crosses) and the PU sample (orange diamonds). The error bars correspond to the statistical uncertainty.",
+            "paragraph_rank": 91,
+            "section_rank": 33
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 34
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Figure 3. Jet energy resolution as a function of the particle-level jet p T for PF jets (orange circles), PF jets with CHS applied (red triangles), and PF jets with PUPPI applied (blue squares) in QCD multijet simulation. The number of interactions is required to be between 20 and 30. The resolution is shown for AK4 jets with |\u03b7| < 0.5 (upper left) and 3.2 < |\u03b7| < 4.7 (upper right), as well as for AK8 jets with |\u03b7| < 0.5 (lower). The error bars correspond to the statistical uncertainty in the simulation.",
+            "paragraph_rank": 92,
+            "section_rank": 34
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 35
+        },
+        {
+            "section": "Figure 4 .",
+            "text": "Figure 4. Jet energy resolution as a function of the number of interactions for jets with CHS (solid red line) and with PUPPI (dashed blue line) algorithms applied in QCD multijet simulation for different jet p T values (different markers). The resolution is shown for AK4 jets with |\u03b7| < 0.5 (upper left) and 3.2 < |\u03b7| < 4.7 (upper right), as well as for AK8 jets with |\u03b7| < 0.5 (lower). The error bars correspond to the statistical uncertainty in the simulation.",
+            "paragraph_rank": 93,
+            "section_rank": 35
+        },
+        {
+            "text": "1",
+            "section_rank": 36
+        },
+        {
+            "section": "1",
+            "text": "Major axis of the jet ellipsoid in the \u03b7-\u03c6 space \u03c3 2Minor axis of the jet ellipsoid in the \u03b7-\u03c6 space",
+            "paragraph_rank": 94,
+            "section_rank": 36
+        },
+        {
+            "text": "4 from any particle-level jet are regarded as jets from the LV, and the remaining jets are identified as PU jets. A jet is considered to satisfy the PU jet ID if",
+            "paragraph_rank": 95,
+            "section_rank": 37
+        },
+        {
+            "text": "Figure 10 Figure 9 .",
+            "section_rank": 38
+        },
+        {
+            "section": "Figure 10 Figure 9 .",
+            "text": "Figure 10shows the LV jet efficiency and purity in Z+jets simulation as a function of the number of interactions for CHS jets, CHS jets with a PU jet ID applied, and PUPPI jets. The",
+            "paragraph_rank": 96,
+            "section_rank": 38
+        },
+        {
+            "text": "Figure 10 .",
+            "section_rank": 39
+        },
+        {
+            "section": "Figure 10 .",
+            "text": "Figure 10. The LV jet efficiency (upper) and purity (lower) in Z+jets simulation as a function of the number of interactions for PUPPI (blue closed squares), CHS (red closed triangles), CHS+tight PU jet ID (magenta open squares), CHS+medium PU jet ID (orange crosses), and CHS+loose PU jet ID (black triangles). Plots are shown for AK4 jets p T > 20 GeV, and (left) |\u03b7| < 2.5 and (right) |\u03b7| > 3. The LV jet efficiency is defined as the number of matched reconstruction-level jets with p T > 20 GeV divided by the number of particle-level jets with p T > 30 GeV that originate from the main interaction. For the lower plots, the purity is defined as the number of matched particle-level jets with p T > 20 GeV divided by the number of reconstructed jets that have p T > 30 GeV. The error bars correspond to the statistical uncertainty in the simulation.",
+            "paragraph_rank": 97,
+            "section_rank": 39
+        },
+        {
+            "text": "Figure 11 .",
+            "section_rank": 40
+        },
+        {
+            "section": "Figure 11 .",
+            "text": "Figure 11. Rate of jets in the PU-enriched region divided by the rate of jets in the LV-enriched region as a function of the number of vertices for CHS jets (red triangles), CHS jets with medium PU jet ID applied (orange crosses) and PUPPI jets (blue squares) in Z+jets simulation (open markers), and data (full markers). For reference, the rate of jets that are matched to a particle-level jet in simulation is also shown for CHS jets (black solid line). The plots show the ratio for events with |\u03b7| < 2.5 (left) and |\u03b7| > 2.5 (right). The lower panels show the data-to-simulation ratio along with a gray band corresponding to the one-sided uncertainty that is the difference between simulated Z+jets events showered with the parton shower to those showered with the ++ parton shower.",
+            "paragraph_rank": 98,
+            "section_rank": 40
+        },
+        {
+            "text": "Figure 12 .Figure 13 .",
+            "section_rank": 41
+        },
+        {
+            "section": "Figure 12 .Figure 13 .",
+            "text": "Figure 12. Median soft drop jet mass (upper left), median \u03c4 21 (upper right), and soft drop jet mass resolution (lower) for AK8 jets from boosted W bosons with 400 < p T < 600 GeV for CHS (red triangles) and PUPPI (blue squares) jets in a bulk graviton decaying to WW signal sample, as a function of the number of vertices. The error bars correspond to the statistical uncertainty in the simulation.",
+            "paragraph_rank": 99,
+            "section_rank": 41
+        },
+        {
+            "text": "Figure 14 .",
+            "section_rank": 42
+        },
+        {
+            "section": "Figure 14 .",
+            "text": "Figure 14. Top quark identification efficiency (left) and misidentification rate (right) as a function of the number of vertices for CHS (open symbols) and PUPPI (closed symbols) jets, using different combinations of substructure variables: soft drop mass cut between 105 and 210 GeV (blue rectangles), \u03c4 32 < 0.54 (orange circles), and both requirements together (red triangles). The error bars correspond to the statistical uncertainty in the simulation.",
+            "paragraph_rank": 100,
+            "section_rank": 42
+        },
+        {
+            "text": "Figure 16 shows",
+            "section_rank": 43
+        },
+        {
+            "section": "Figure 16 shows",
+            "text": "the resolution of the recoil, parallel (\u03c3 ), and perpendicular (\u03c3 \u22a5 ) to the Z boson momentum, as a function of the number of vertices for PUPPI \u00ec p miss T and PF \u00ec p miss T . The scale of the recoil is corrected as a function of the Z boson momentum for comparison. The PUPPI \u00ec p miss T resolution for both components is consistently better than the PF \u00ec p miss T resolution above a number of vertices of 10. In addition, PUPPI \u00ec p miss T provides a more stable performance with respect to PU than \u00ec p miss T , up to at least 50 vertices.",
+            "paragraph_rank": 101,
+            "section_rank": 43
+        },
+        {
+            "text": "Figure 16 .",
+            "section_rank": 44
+        },
+        {
+            "section": "Figure 16 .",
+            "text": "Figure 16. The hadronic recoil components u | | (left) and u \u22a5 (right) for PUPPI and PF p miss T resolution as a function of the number of vertices in Z \u2192 ee events in collision data. The lower panel shows the datato-simulation ratio. A gray shaded band is added in the lower panel showing the systematic uncertainties resulting from jet energy scale and jet energy resolution variations, and variations in the unclustered energy added in quadrature.",
+            "paragraph_rank": 102,
+            "section_rank": 44
+        },
+        {
+            "text": "the",
+            "section_rank": 45
+        },
+        {
+            "section": "the",
+            "text": "Leventis Foundation; the A.P. Sloan Foundation; the Alexander von Humboldt Foundation; the Belgian Federal Science Policy Office; the Fonds pour la Formation \u00e0 la Recherche dans l'Industrie et dans l'Agriculture (FRIA-Belgium); the Agentschap voor Innovatie door Wetenschap en Technologie (IWT-Belgium); the F.R.S.-FNRS and FWO (Belgium) under the \"Excellence of Science -EOS\" -be.h project n. 30820817; the Beijing Municipal Science & Technology Commission, No. Z191100007219010; the Ministry of Education, Youth and Sports (MEYS) of the Czech Republic; the Deutsche Forschungsgemeinschaft (DFG) under Germany's Excellence Strategy -EXC 2121 \"Quantum Universe\" -390833306; the Lend\u00fclet (\"Momentum\") Program and the J\u00e1nos Bolyai Research Scholarship of the Hungarian Academy of Sciences, the New National Excellence Program \u00daNKP, the NKFIA research grants 123842, 123959, 124845, 124850, 125105, 128713, 128786, and 129058 (Hungary); the Council of Science and Industrial Research, India; the HOMING PLUS program of the Foundation for Polish Science, cofinanced from European Union, Regional Development Fund, the Mobility Plus program of the Ministry of Science and Higher Education, the National Science Center (Poland), contracts Harmonia 2014/14/M/ST2/00428, Opus 2014/13/B/ST2/02543, 2014/15/B/ST2/03998, and 2015/19/B/ST2/02861, Sonata-bis 2012/07/E/ST2/01406; the National Priorities Research Program by Qatar National Research Fund; the Ministry of Science and Education, grant no. 14.W03.31.0026 (Russia); the Tomsk Polytechnic University Competitiveness Enhancement Program and \"Nauka\" Project FSWW-2020-0008 (Russia); the Programa Estatal de Fomento de la Investigaci\u00f3n Cient\u00edfica y T\u00e9cnica de Excelencia Mar\u00eda de Maeztu, grant MDM-2015-0509 and the Programa Severo Ochoa del Principado de Asturias; the Thalis and Aristeia programs cofinanced by EU-ESF and the Greek NSRF; the Rachadapisek Sompot Fund for Postdoctoral Fellowship, Chulalongkorn University and the Chulalongkorn Academic into Its 2nd Century Project Advancement Project (Thailand); the Kavli Foundation; the Nvidia Corporation; the SuperMicro Corporation; the Welch Foundation, contract C-1845; and the Weston Havens Foundation (U.S.A.).",
+            "paragraph_rank": 103,
+            "section_rank": 45
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 46
+        },
+        {
+            "section": "Table 1 .",
+            "text": "The tunable parameters of PUPPI optimized for application in 2016 data analysis. The transfer factors used to extrapolate the \u03b1 PU and \u03b1 RMS PU to |\u03b7| > 2.5 are denoted TF.",
+            "paragraph_rank": 104,
+            "section_rank": 46
+        },
+        {
+            "text": "Table 2 .",
+            "section_rank": 47
+        },
+        {
+            "section": "Table 2 .",
+            "text": "Jet ID criteria for CHS and PUPPI jets yielding a genuine jet efficiency of 99% in different regions of |\u03b7|. d z requirement on tracks not associated with any vertex. The PUPPI weighted neutral constituent multiplicity, defined as the sum of PUPPI weights of all neutral particles in the jet, is also smaller than the neutral constituent multiplicity for CHS. In 3 < |\u03b7| < 5, the PUPPI neutral constituent multiplicity is significantly lower than for CHS. Thus, the ability to separate noise is reduced. With CHS, noise jets are rejected by requiring a minimum of 10 neutral particles. With PUPPI, a minimum of 3 is required for the PUPPI scaled neutral multiplicity.Figure 6(lower right) demonstrates the PU dependence of the neutral constituent multiplicity. While for CHS, the average multiplicity changes by 30-40% going from 20-30 to 50-60 reconstructed vertices, the PUPPI scaled multiplicities do not change significantly, making noise jet rejection independent of PU.",
+            "paragraph_rank": 105,
+            "section_rank": 47
+        },
+        {
+            "text": "Table 4 .",
+            "section_rank": 48
+        },
+        {
+            "section": "Table 4 .",
+            "text": "List of variables used in the PU jet ID for CHS jets. T of charged particles associated with the LV, defined as i \u2208LV p T, i / i p T, i where i iterates over all charged PF particles in the jet",
+            "paragraph_rank": 106,
+            "section_rank": 48
+        },
+        {
+            "section": "Table 4 .",
+            "text": "charged , major axis (\u03c3 1 ), minor axis (\u03c3 2 ), and p D T , with their definitions given in table 4. Pileup jets tend to have -16 -2020 JINST 15 P09018",
+            "paragraph_rank": 107,
+            "section_rank": 48
+        },
+        {
+            "text": "Fraction of p T of the constituents ( p T, i /p jet T ) in the region R i < \u2206R < R i+1 around the jet axis, where R i = 0, 0.1, 0.2, and 0.3 for",
+            "paragraph_rank": 108,
+            "section_rank": 49
+        },
+        {
+            "text": "p T fraction carried by the leading PF candidate p l. ch. T /p jet T p T fraction carried by the leading charged PF candidate | \u00ec m| Pull magnitude, defined as |( i",
+            "paragraph_rank": 109,
+            "section_rank": 49
+        },
+        {
+            "text": "accurate measurement of the reconstructed physics objects, namely muons, electrons, photons, hadronically decaying taus, jets, and unclustered energy. The unclustered energy is the contribution from the PF candidates not associated with any of the previous physics objects. The CHS procedure is not suitable for \u00ec p miss T computation since it selectively removes only particles within the tracker volume (|\u03b7| < 2.5). PU events that spread across the tracker volume boundary are thus partially removed leading to a degradation in the \u00ec p miss",
+            "paragraph_rank": 110,
+            "section_rank": 50
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 52
+        },
+        {
+            "section": "Acknowledgments",
+            "text": "We congratulate our colleagues in the CERN accelerator departments for the excellent performance of the LHC and thank the technical and administrative staffs at CERN and at other CMS institutes for their contributions to the success of the CMS effort. In addition, we gratefully acknowledge the computing centers and personnel of the Worldwide LHC Computing Grid for delivering so effectively the computing infrastructure essential to our analyses. Finally, we acknowledge the enduring support for the construction and operation of the LHC and the CMS detector provided by the following funding agencies: BMBWF and FWF (Austria); FNRS and FWO (Belgium); CNPq, CAPES, FAPERJ, FAPERGS, and FAPESP (Brazil); MES (Bulgaria); CERN; CAS, MoST, and NSFC ",
+            "paragraph_rank": 111,
+            "section_rank": 52
+        },
+        {
+            "text": "Georgian Technical University, Tbilisi, Georgia T. Toriashvili 16 Tbilisi State University, Tbilisi, Georgia Z. Tsamalaidze 10  ",
+            "paragraph_rank": 112,
+            "section_rank": 54,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 63,
+                    "text": "16",
+                    "end": 65
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 124,
+                    "text": "10",
+                    "end": 126
+                }
+            ]
+        },
+        {
+            "text": "RWTH",
+            "section_rank": 55
+        }
+    ]
+}

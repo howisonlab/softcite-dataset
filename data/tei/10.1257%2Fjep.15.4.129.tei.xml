@@ -1,0 +1,1543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">The Bootstrap and Multiple Imputations: Harnessing Increased Computing Power for Improved Statistical Tests</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>American Economic Association</publisher>
+				<availability status="unknown"><p>Copyright American Economic Association</p>
+				</availability>
+				<date type="published" when="2001-11">2001-11</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Brownstone</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Valletta</surname></persName>
+							<email>͗rob.valletta@sf.frb.org͘@respectively.</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">David Brownstone is Professor of Economics</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Federal Reserve Bank of San Francisco</orgName>
+								<address>
+									<settlement>San Francisco</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">The Bootstrap and Multiple Imputations: Harnessing Increased Computing Power for Improved Statistical Tests</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Journal of Economic Perspectives</title>
+						<title level="j" type="abbrev">Journal of Economic Perspectives</title>
+						<idno type="ISSN">0895-3309</idno>
+						<imprint>
+							<publisher>American Economic Association</publisher>
+							<biblScope unit="volume">15</biblScope>
+							<biblScope unit="issue">4</biblScope>
+							<biblScope unit="page" from="129" to="141"/>
+							<date type="published" when="2001-11" />
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1257/jep.15.4.129</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2-SNAPSHOT" ident="GROBID" when="2020-08-14T00:52+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+				<p>hen an applied econometrician calculates regression coefficients or other statistics based on a data sample, there is a moment of truth when the statistical precision or reliability of the estimates is evaluated using critical values of relevant probability distributions. If statistical precision is underestimated, producing confidence intervals that are too wide, the researcher may falsely conclude that no useful or reliable evidence has been provided. Since statistically imprecise results often are regarded as noninformative and may never see the light of day, applied econometricians have a strong incentive to obtain tight confidence bands. But overestimation of statistical precision also is a concern, as it potentially causes rejection of a null hypothesis when in fact no statistically reliable evidence has been presented. Such results are misleading and provide poor guidance for future research and perhaps public policy as well. This article describes two techniques that have been developed by statisticians in the last 20 years to enhance the accuracy of estimated confidence bands and critical values: the bootstrap and multiple imputations. These are computationally intensive methods that rely on repeated sampling from empirical data sets and associated estimates. As such, their development and dissemination have been supported by substantial increases in computing power over the same period. These techniques often can provide accurate estimates of statistical precision when standard analytical estimates are biased or, in some cases, unavailable. Both already</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>are important in the toolkits of applied econometricians and statisticians, and they are likely to be more important in the future. We will focus our intuitive discussion on deriving more accurate confidence bands in ordinary least squares regressions, the most commonly used model in applied econometrics. However, computationally intensive approaches also can be used to remove biases in estimated coefficients and can be applied to more general models. Indeed, these techniques may be most appealing or powerful when applied in more complex settings as an alternative to analytical estimates.</p><p>The theoretical justification for the bootstrap, multiple imputations and standard analytic inference methods commonly used in applied econometrics is based on large-sample approximations. In the remainder of this paper, we will use the formal term "consistent" to mean that as the sample size of the estimation data set increases, the estimator gets closer to its true value in the underlying population.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Bootstrap</head><p>To motivate the discussion of the bootstrap approach in regression analysis, begin by considering the simpler problem of estimating the sampling distribution (for example, standard errors, confidence intervals and other statistical measures) of the mean height among a country's population, based on a small random sample. The sample mean typically will differ from the population mean due to sampling error, and the sampling distribution summarizes how the sample mean will vary across a large number of independent samples from the same population. <ref type="bibr">Efron's (1979</ref><ref type="bibr" target="#b4">Efron's ( , 1982</ref> bootstrap method treats the observed sample as the population and draws samples from this approximate population to estimate the sampling distribution. These bootstrap samples are drawn with replacement from the original observed data, and the mean is computed for each bootstrap sample. This produces a data set of estimated means, with size equal to the number of bootstrap repetitions. The distribution of these resampled means is used to approximate the sampling distribution of the population mean.</p><p>This bootstrap method described above will only give accurate estimates if the original sample is large enough to reflect the true population accurately. The traditional analytic approach approximates the sampling distribution by a normal distribution centered at the sample mean with variance equal to the sample variance. This traditional approximation requires that the sample be large enough for the Central Limit Theorem to apply to the sample mean. If the sample size is small and the true population is not normally distributed, then the bootstrap approximation should be more accurate.</p><p>The application of the bootstrap to linear regression models is similar to the sample mean case above, although several different approaches are possible. The most popular way to implement the bootstrap to estimate the sampling distribution of the least squares coefficient estimators is the XY, or paired bootstrap. Using this approach, with an observed sample of size N, randomly draw N complete data points with replacement from the observed sample (or, in other words, sample rows of the data matrix). Then recompute the least squares estimator for each bootstrap sample. This produces a different estimate of the coefficients for each repetition. The distribution of the resulting set of estimated coefficients is an estimate of their sampling distribution. Whether the error terms are homoskedastic or heteroskedastic, the paired bootstrap will generate consistent estimates of the sampling distribution of the least squares estimator. Brownstone and Kazimi (2000), <ref type="bibr">Efron and Tibshirani (1993)</ref>, <ref type="bibr">Horowitz (2001)</ref> and Jeong and Maddala (1993) provide more complete applied discussions of this and other bootstrap procedures, including details regarding hypothesis tests and confidence intervals based on the bootstrapped estimates. <ref type="bibr" target="#b19">1</ref> Horowitz (1997) points out that the different nature of the bootstrap approximation provides a rough check on the adequacy of large-sample theory. If the assumptions commonly made for large-sample econometrics hold-for example, residuals that are independent and distributed identically with finite variancethen the bootstrap and standard methods used in econometric software packages should yield the same answers. If significant departures from these assumptions are present, then one or both of the methods are not reliable for the particular problem and data. Deciding between them requires more detailed analysis, which explains why much of the ongoing research on the bootstrap is based on simulations rather than on empirical data sets.</p><p>Despite this inherent uncertainty about the superiority of the bootstrap in specific applications, Hall (1992) has shown that in many cases the bootstrap achieves accurate estimates of sampling distributions at smaller sample sizes than standard large-sample analytic techniques. This finding holds for most of the statistics that are commonly used for testing hypotheses about parameter estimates from econometric models, such as t-statistics and others based on standard normal and chi-square distributions. <ref type="bibr" target="#b20">2</ref> This feature of the bootstrap provides the strongest argument for its widespread application in common econometric models, although the simple bootstrap methods described in this paper need to be modified to simulate the distribution of test statistics rather than coefficient estimates for Hall's results to apply.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>An Empirical Example: An Earnings Regression</head><p>We illustrate these ideas with an example based on a standard regression equation for explaining male earnings. The dependent variable is the log of yearly earnings, deflated by the GDP deflator for personal consumption expenditure. We report coefficient estimates for the following explanatory variables: years of formal education, potential labor market experience (and its square), and tenure at the current firm, along with dummy variables indicating whether the respondent is a union member, black, married and resides in a metropolitan statistical area (MSA). We also included a constant and dummy variables representing region of residence and observation years. The data are drawn from the Panel Study of Income Dynamics (PSID) for the years 1984 -1993. We restricted the sample to male household heads, aged 21-64 and employed in the private sector (excluding self-employed individuals). We report results based on a 2 percent random sample of individuals observed at any time in the panel (260 observations on 50 individuals), since in large samples all the procedures give the same results. Using a small subsample also allows us to simulate the true sampling distribution by drawing many independent subsamples of 50 individuals from the data and reestimating the model for each subsample. This simulation uses the original PSID sample of 2,789 individuals (16,327 panel observations) to approximate the true population of anybody who could have been sampled by the PSID. <ref type="table" target="#tab_0">Table 1</ref> presents results for the male wage equation. The estimated regression coefficients are listed in the second column. The next column gives the true confidence intervals calculated from 1000 independent subsamples of 50 individuals from the data. These are the true confidence intervals if the PSID main sample is identical to the population. If the PSID main sample is only an approximation of the true population, then these "true" confidence intervals are bootstrap intervals with bootstrap sample size much smaller than the data. It is, of course, more efficient to use the entire sample in this case, but we are only interested in using these intervals as a benchmark for comparing results based on only one subsample.</p><p>The subsequent four columns in <ref type="table" target="#tab_0">Table 1</ref> list 95 percent confidence intervals estimated in different ways from the original subsample of 260 observations. The first column of confidence intervals shows those obtained through ordinary least squares regression analysis. The next column provides confidence intervals based on the "robust" estimator of the model's sampling variance, which was developed independently by <ref type="bibr" target="#b5">Huber (1967)</ref> and <ref type="bibr">White (1980</ref><ref type="bibr" target="#b16">White ( , 1982</ref>. The robust estimator of sampling variance does not require homoskedasticity-that the errors in the regression model have constant variance. Instead, the Huber-White estimator approximates the variance of each residual by the square of the least squares residual. We use a generalization of the Huber-White estimator that also allows for the residuals to be correlated across time for a given individual. In the example in <ref type="table" target="#tab_0">Table 1</ref>, the confidence intervals from the robust regression are noticeably wider than the ordinary least squares confidence intervals, which suggests that heteroskedasticity or a similar departure from the common assumptions used in applying ordinary least squares is present.</p><p>The third set of confidence intervals is obtained through application of the paired (XY ) bootstrap procedure. For each bootstrap repetition, we sample randomly with replacement from the set of 50 individuals in the original sample. We take all of the dependent and independent variables for all years for the sampled individual and continue until a bootstrap sample of approximately the same size as the empirical data set has been selected. The regression equation is then reestimated for each bootstrap sample. The coefficient estimates from each repetition are saved in a file, and the resulting data set (whose size is determined by the number of coefficients and bootstrap repetitions) provides an estimate of the sampling distribution of the estimated coefficients.</p><p>All of the bootstrapped distributions reported in the table were obtained using 1000 bootstrap repetitions. Although standard errors can be reliably estimated with fewer repetitions (on the order of 100), confidence intervals directly based on the bootstrap distribution will be more accurate than those based on standard errors if the bootstrap distribution is skewed. Once the repetitions were completed, we obtained the 95 percent confidence intervals through the simple "percentile method"-by setting them equal to the values corresponding to the 2.5 and 97.5 percentiles of the bootstrap distributions of the estimated coefficients. <ref type="bibr" target="#b21">3</ref>  For the final column, we used a different bootstrap approach due to <ref type="bibr" target="#b17">Wu (1986)</ref>, known as the "wild bootstrap." First, run an ordinary least squares regression, and save the residuals. Then multiply each value of the residual by a random variable that takes on one of two values: i) (1 Ϫ ͌ 5)/2 with probability (1 ϩ ͌ 5)/(2 ͌ 5); or ii) (1 ϩ ͌ 5)/2 with probability 1 Ϫ (1 ϩ ͌ 5)/(2 ͌ 5). Note that this random variable has a mean of zero with variance equal to one. The resulting bootstrap residuals therefore will have mean zero and variance equal to the square of the least squares residual for that observation, which is identical to the approximation used to calculate Huber-White robust standard errors. The resampled residual vector is then added to the predicted value from the original regression to create the resampled dependent variable. We modified the wild bootstrap to account for the panel data structure of our data by multiplying the entire vector of residuals for each individual by the same draw of the two-point random variable defined above. The wild bootstrap confidence intervals reported in the table are based on the calculation of t-statistics using the Huber-White robust standard errors for each bootstrap sample. This method should be superior to simple percentile method intervals in small samples (for details, see Brownstone and Kazimi, 2000; Horowitz, 2001). Both paired bootstrapping and wild bootstrapping will provide consistent inference with heteroskedasticity, but wild bootstrapping generally will be more accurate, since, unlike the paired bootstrap, it imposes a restriction on each bootstrap sample that is identical to the conditions used to identify the ordinary least squares model. <ref type="bibr" target="#b22">4</ref> The least squares confidence intervals in <ref type="table" target="#tab_0">Table 1</ref> are much narrower than the true bands. The other confidence intervals are usually narrower than the true bands, but not for all of the coefficients. The confidence intervals based on the paired bootstrap are somewhat wider than the robust confidence intervals. In contrast, the wild bootstrap confidence intervals are narrower than the paired bootstrap intervals and are close to the robust intervals in width. The bootstrap intervals are closer to the truth for six of the eight coefficients in <ref type="table" target="#tab_0">Table 1</ref>, although the theoretical superiority of the wild bootstrap bands is not clear from this example. Of course, the results in <ref type="table" target="#tab_0">Table 1</ref> are just based on one subsample from the PSID, and the differences between the bootstrap and robust regression intervals are not large. Most of the studies finding large differences between the bootstrap and standard methods have used nonlinear models and more complex estimators (Horowitz, 1997; 2001).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Extensions and Limitations of the Bootstrap</head><p>The discussion of the bootstrap to this point has focused on a linear regression model with error terms that are independent, but not necessarily normally distrib-uted or homoskedastic. However, there has been considerable work in recent years applying the bootstrap approach to other situations.</p><p>Cross-section extensions are numerous. Any of the bootstrapping methods discussed above for the linear regression model can be applied to the nonlinear regression model, with the caveat that bootstrapped residuals must be adjusted to insure that their mean is zero. In the standard analytic approach, obtaining the sampling distribution of nonlinear regression estimates relies on a linear approximation to the regression function. Because bootstrap methods evaluate the appropriate transformations by simulation rather than approximation, we would expect bootstrap estimates of the sampling distribution to be more accurate than the standard analytic estimates as the linear approximation becomes less accurate. Horowitz (2001, section 5.3) verified this in a small simulation study of a particular nonlinear regression model. <ref type="bibr" target="#b23">5</ref> In time series models, error terms are often serially correlated, and this requires bootstrap approaches that differ from the cross-section case. The simplest approach, called model-based bootstrapping, is to assume that the time series can be fit by an appropriate autoregressive moving average model with serially uncorrelated residuals. Then the bootstrap can be implemented using bootstrap approaches that take samples from the residuals of a regression (as discussed in more detail in footnote 1), although the method of generating the bootstrap samples from these bootstrapped residuals needs to be modified to account for the dynamic nature of the time series model. <ref type="bibr" target="#b24">6</ref> Similarly, in panel data settings, the bootstrap must be modified to account for time dependence for observations within crosssection units-for example, through bootstrap sampling of the complete set of observations for cross-section units <ref type="bibr" target="#b18">(Ziliak, 1997)</ref>.</p><p>Although it is mechanically possible to apply the bootstrap to any model, there are circumstances where the bootstrap will fail to estimate the sampling distribution consistently (for details, see Horowitz, 2001, section 2.1). For example, <ref type="bibr" target="#b0">Andrews (2000)</ref> shows that the bootstrap does not accurately estimate the sampling distribution of a coefficient whose true value is zero and whose estimate is constrained to be greater than or equal to zero.</p><p>Despite these caveats and inherent uncertainty about the superiority of the bootstrap in specific settings, the availability of powerful desktop computers makes widespread use of the bootstrap very tempting. Bootstrap estimates-especially based on the paired approach-are trivial to obtain once the estimation model is specified. The statistical package Stata has several bootstrap procedures and subroutines available in its core program, and a researcher who has never read a single <ref type="bibr" target="#b23">5</ref> Other useful cross-section applications, surveyed in Brownstone and Kazimi (2000), include quantile regression, discrete choice and hazard models, and frontier production function estimates. <ref type="bibr" target="#b24">6</ref>  <ref type="bibr" target="#b1">Bickel and Freedman (1983)</ref> provided an early example of model-based bootstrapping for time series. Their approach has been generalized to autoregressive moving average models (Berkowitz and <ref type="bibr" target="#b0">Kilian, 2000;</ref><ref type="bibr" target="#b7">Li and Maddala, 1996)</ref> and cointegrated regression models <ref type="bibr" target="#b8">(Li and Maddala, 1997)</ref>. <ref type="bibr">Kilian (1998a, b)</ref> considers bootstrapping vector autoregression models and applies this technique to examine international effects of monetary policy.</p><p>word about the bootstrap could produce bootstrapped estimates in Stata with little difficulty. Researchers should be cautious about such casual application, because results regarding the reliability and accuracy of bootstrapped sampling distributions are not yet available for many classes of econometric models. However, while we await further results, the bootstrap can be very useful for simple applications such as estimating the sampling distributions of nonparametric statistics (for example, quantiles and percentiles of univariate distributions) or statistics with illdefined distributions (see Valletta, 1993, footnote 13, for an example).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multiple Imputations</head><p>Applied econometricians routinely face the problem of missing values of key variables in their data. The multiple imputation technique was developed by <ref type="bibr" target="#b13">Rubin (1987)</ref> as a general, computationally intensive method "to handle the problem of missing data in public-use data bases where the data-base constructor and the ultimate user are distinct entities" <ref type="bibr" target="#b13">(Rubin, 1996)</ref>. This approach represents a useful compromise between the naïve extremes of eliminating observations with missing values from the analysis sample or replacing missing values with a single imputed (fitted) value. The former approach typically underutilizes the full information available in the data, whereas the latter typically leads to an overstatement of statistical precision in resulting estimates. The technique also can be used for consistent inference using data that are mismeasured rather than missing.</p><p>Consider the general application to a linear regression model. Multiple imputation consists of two main steps. In the first step, the data provider or analyst uses all available data to estimate a proper imputation model, which provides multiple fitted values of the missing or erroneous variables. In the second step, the analyst combines the estimated imputations with the main data set and estimates the regression equation of interest.</p><p>The full definition of a proper imputation procedure is given in <ref type="bibr">Rubin (1987, pp. 118 -119</ref>). If we have a model for predicting the missing (or erroneous) values conditional on all observed data, then we can use this model to make independent simulated draws for the missing data. The safest way to implement a proper imputation procedure, as Rubin first proposed, is to draw explicitly from the (Bayesian) posterior predictive distribution of the missing values under a specific model. <ref type="bibr" target="#b25">7</ref> However, there are other proper multiple imputation procedures that require no explicit Bayesian calculations. Indeed, although Rubin developed the theoretical properties of this methodology for Bayesian models, he showed that these results also apply in large samples to classical statistical models <ref type="bibr">(Rubin, 1987, chapter 4)</ref>.</p><p>Whether the prediction approach is Bayesian or non-Bayesian, any proper imputation procedure must condition on all observed data. In addition, different sets of imputed values must be drawn independently so that they reflect all sources of uncertainty in the response process.</p><p>Once the imputations are provided, the substantive model is estimated once for each set of imputed values. The resulting estimates are averaged to obtain consistent parameter estimates; depending on the pattern of missing responses, the estimates are likely to differ from those obtained using naïve approaches to missing data. The covariance matrix of these coefficient estimates is determined by the average of the usual covariance matrix of the coefficient estimates across different sets of imputations, plus a term that represents the variability of the estimates across the different imputed data sets (see <ref type="bibr">Rubin, 1987, or Brownstone and</ref><ref type="bibr">Valletta, 1996</ref>, for the exact expressions). This covariance estimator is consistent as long as there are at least two sets of imputed values, but increasing the number of sets of imputed values clearly improves the accuracy of the covariance component due to uncertainty in the imputation process.</p><p>The goal is for the imputed data to provide both consistent estimators of coefficients and a measure of the statistical precision or confidence intervals for these coefficients, where the confidence intervals must be broadened somewhat to account for the component of variance associated with imputation error. As long as the variables used in the imputation model have an identifiable, systematic relationship with the imputed variables, the imputation process adds information; the precision of this information is limited by the precision of the imputation process. The computations required typically can be performed using standard econometric packages with relatively minimal programming, although we are not aware of any econometrics packages that currently provide multiple imputation routines or subroutines.</p><p>Several statistical agencies have incorporated or are experimenting with multiply imputed values in public-use survey data. Such applications are a key component of Rubin's original vision for the methodology, which he views as an appropriate form of data enhancement by public agencies whose survey information may be more extensive than that available to end users <ref type="bibr" target="#b13">(Rubin, 1996)</ref>. By exploiting confidential information (such as precise location or financial characteristics) in the imputation procedure, data agencies can better meet the simultaneous demands of providing high-quality data, while protecting survey respondents against breaches of confidentiality. Moreover, one advantage of multiple imputations is that it can be done once by the data provider and then used for a variety of purposes by many analysts.</p><p>Among the first major applications of multiple imputations was a project conducted at the U.S. Census Bureau to assess the comparability of the different industry and occupation codings in the 1970 and 1980 censuses <ref type="bibr" target="#b2">(Clogg et al., 1991)</ref>. In this project, analysts used a Bayesian strategy to provide multiply imputed values of 1980 industry and occupation codes in public-use samples from the 1970 census. The imputations were based on logistic regression models estimated from a special subsample of the 1970 census units for which the 1970 and 1980 codes had been recorded. The resulting multiply imputed data set has provided a useful bridge for analysts who rely on accurate assessment of trends in the relative prevalence of precise industry and occupation categories.</p><p>In probably the most important ongoing application, the Federal Reserve has provided multiply imputed income and wealth variables in the public release of its Survey of Consumer Finances since 1989 <ref type="bibr">(Kennickell, 1998)</ref>. This survey focuses on household finances, a subject for which responses are sensitive and often defined imprecisely. As a result, the survey exhibits high rates of missing information. Fed analysts have developed and implemented a complex iterative imputation procedure for continuous, multinomial and binary variables. The imputation model relies on the publicly available survey information concerning consumer income and wealth, combined with confidential information such as census tract characteristics and industry and occupation characteristics tabulated from the Current Population Survey of the U.S. Bureau of Labor Statistics. Although these multiply imputed data have been used successfully by many researchers, Kennickell reports frequent misuse and notes that "the need for education is great." <ref type="bibr" target="#b26">8</ref> Multiple imputations have been used less in specific applications than in general data provision. However, Brownstone and Valletta (1996) extended the basic approach to the specific application of correcting for measurement error in the dependent variable in earnings regression equations. <ref type="bibr" target="#b27">9</ref> Research on earnings data, which compares surveyed earnings responses to validated earnings data gathered through company personnel files or Social Security records, has shown that measurement error in survey earnings is large and correlated with important explanatory variables (for example, Bound et al., 1994; Bound and Krueger, 1991; and <ref type="bibr" target="#b3">Duncan and Hill, 1985)</ref>. Thus, measurement error in earnings is likely to bias estimated coefficients and statistical confidence in earnings regression models.</p><p>In Brownstone and Valletta (1996), we estimated equations for the determinants of earnings where the explanatory variables included experience, job tenure, union membership and dummy variables for union membership, race, marriage, blue-collar work and whether the job was hourly. We used survey data on earnings from the Panel Study of Income Dynamics (PSID) combined with information from the PSID Validation Study (PSIDVS). The PSIDVS collected standard PSID variables for several hundred employees from a large Detroit area manufacturing firm in 1983 and 1987 and matched this information with company personnel records on earnings and other variables. The company earnings records are highly accurate and were treated as error-free in our analyses.</p><p>The first step in the multiple imputation process is to estimate an imputation model for company record earnings in the PSIDVS as a function of an error-prone survey earnings variable and the other variables as the explanatory variables. The estimated imputation model is used to provide multiply imputed estimates of true earnings in the main data set. The procedure is completed by combining the multiply imputed estimates of true earnings with observed values of the explanatory variables and using the pooled data for estimating the final earnings equation.</p><p>In our analysis of data for income years 1982 and 1986, we found that measurement error biases several coefficients from the earnings equation and often causes underestimation of their sampling variance. In both cross-section and longitudinal equations, accounting for measurement error reduces the estimated effect of union membership on earnings and causes the negative effect of working in a blue-collar occupation to become less negative or perhaps positive. We also found that measurement error in earnings appears to pose more significant problems during recessionary periods than expansionary periods, probably because errors in reported earnings are based largely on misperceptions of hours worked. Moreover, the standard errors in the earnings equations typically were increased by the multiple imputation procedure, because the procedure correctly accounts for sampling error that is ignored in analyses that treat earnings as an error-free variable. Clearly, multiple imputation can make a substantial difference in both qualitative conclusions and statistical accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p>Grand claims sometimes have been made for bootstrap analysis. For instance, <ref type="bibr">Efron and Tibshirani (1993)</ref> and <ref type="bibr" target="#b15">Vinod (1998)</ref> envision the bootstrap as part of a strategy to find universally applicable methods for estimation and inference, which can be implemented with very little effort or analysis by researchers. This vision is tempting, especially given the ease and speed with which bootstrap estimates for many models can be obtained using modern desktop computers. However, <ref type="bibr" target="#b10">Manski (1996)</ref> argues that this vision is flawed due to the inherent ambiguity of statistical theory in comparing alternative estimation procedures. Moreover, the current state of the art in bootstrap methods cannot support such universal application because the necessary evidence regarding bootstrap superiority (or even consistency) is not available for many classes of models. At this point, however, the bootstrap can effectively serve the less grandiose but very practical purpose of deriving better confidence bands in models characterized by deviations from a variety of assumptions commonly made in least squares analysis.</p><p>Similarly, multiple imputations is an approach that applied economists should consider to help alleviate problems caused by survey nonresponse, missing data and measurement error. The best way to circumvent these problems is to put more resources into reducing response biases during survey administration. The secondbest solutions include the collection of external validation data or incorporation of confidential survey information to enable accurate estimation of the nonresponse or error process. Under these second-best circumstances, the multiple imputation methods presented in this paper provide a straightforward and consistent way for researchers to adjust for missing and erroneous data in their modeling and forecasting efforts. Multiple imputation is like an adjustable crescent wrench-it rarely is the ideal tool for any particular job, but it works well for a wide variety of problems.</p><p>y We gratefully acknowledge the unusually thorough and helpful comments from the editors.</p><p>Much of this work was completed while the second author was visiting at the Organization for Economic Cooperation and Development (OECD) in Paris, France. The views expressed in this paper are solely those of the authors and do not necessarily represent the views of the Federal Reserve Bank of San Francisco, the Federal Reserve System or the OECD. The authors also are solely responsible for any errors or omissions.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 Bootstrap Confidence Intervals, Regression Equation, Log Yearly Earnings, Male Heads, PSID, 1984 -1993, 2 Percent Sample</head><label>1</label><figDesc>.365 Ϫ.717, Ϫ.042 Ϫ.971, .212 Ϫ1.238, .292 a Ϫ.965, .208 Married .076 Ϫ.228, .596 Ϫ.129, .281 Ϫ.407, .559 Ϫ.395, .599 a Ϫ.413, .581 MSA .164 Ϫ.174, .508 .003, .326 Ϫ.114, .443 Ϫ.156, .445 a Ϫ.119, .479 a Denotes closest confidence region to the true confidence bands as measured by the sum of the absolute deviations from the upper and lower bands, respectively.</figDesc><table><row><cell cols="3">(260 observations, 50 individuals)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell cols="3">Pooled Cross-Section Ordinary Least Squares</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="3">95 Percent Confidence Intervals</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>Robust</cell><cell>(x,y)</cell><cell>Wild</cell></row><row><cell>Variable</cell><cell>Coefficient</cell><cell>Truth</cell><cell>Least Squares</cell><cell>Regression</cell><cell>Bootstrap</cell><cell>Bootstrap</cell></row><row><cell>Education</cell><cell>.125</cell><cell>.033, .186</cell><cell>.087, .164</cell><cell>.060, .191</cell><cell>.053, .217</cell><cell>.053, .196 a</cell></row><row><cell>Potential</cell><cell>.047</cell><cell>Ϫ.002, .097</cell><cell>.003, .092</cell><cell cols="3">Ϫ.006, .101 a Ϫ.013, .115 Ϫ.005, .105</cell></row><row><cell>Experience</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>(Pot. Exp.) 2 /100</cell><cell>Ϫ.116</cell><cell cols="3">Ϫ.194, .023 Ϫ.245, .013 a Ϫ.273, .042</cell><cell cols="2">Ϫ.318, .080 Ϫ.283, .032</cell></row><row><cell>Tenure</cell><cell>.024</cell><cell>Ϫ.003, .045</cell><cell>.011, .036</cell><cell>.005, .042</cell><cell>.004, .056</cell><cell>.001, .041 a</cell></row><row><cell>Union</cell><cell>.239</cell><cell>Ϫ.157, .474</cell><cell>.034, .443</cell><cell>Ϫ.036, .514</cell><cell cols="2">Ϫ.043, .668 Ϫ.067, .515 a</cell></row><row><cell>Black</cell><cell>Ϫ.380</cell><cell>Ϫ1.58,</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note>Notes: The sample is restricted to male heads aged 21-64 and employed in the private sector. Other variables controlled for include three region dummies, nine year dummies and a constant.</note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Here are two other common ways to implement the bootstrap in this case. In a nonparametric residual bootstrap, first estimate an ordinary least squares regression equation and then sample from the residuals; in this case, the bootstrap distribution will be the empirical distribution function of the least squares residuals. In a parametric residual bootstrap, one again generates a resampled residual vector, but the sampling is done independently from a standard normal distribution. The parametric approach is consistent only if the error terms follow a normal distribution, in which case it yields the most accurate estimates. The nonparametric approach provides consistent estimates as long as the errors are homoskedastic. Neither the parametric nor the nonparametric approach provides consistent estimates if the true errors are heteroskedastic, whereas the paired approach described in the text does.<ref type="bibr" target="#b20">2</ref> We are referring here to "asymptotically pivotal" statistics, whose asymptotic distributions do not depend on unknown population parameters; see Horowitz (2001) for discussion.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3"> See Efron and Tibshirani (1993)  regarding the appropriate number of repetitions and calculation of confidence intervals.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4"> Mammen (1992, chapter 8)  shows that the distribution of the wild bootstrap converges to the correct sampling distribution faster than the paired bootstrap, and Horowitz (2001, section 5.2) gives supporting simulation evidence.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7"><ref type="bibr" target="#b11">Meng (2000)</ref> shows that the process of drawing proper imputations is identical to Bayesian data augmentation<ref type="bibr" target="#b14">(Tanner and Wong, 1987)</ref>.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8">In a similar vein, the U.S. Bureau of Labor Statistics is experimenting with multiple imputation as a solution to income item nonresponse in the Consumer Expenditure Survey<ref type="bibr" target="#b12">(Paulin, 1999</ref>).<ref type="bibr" target="#b27">9</ref> Brownstone, Golob and Kazimi (1999) and Clogg et al.(1991)  show that multiple imputations also can be implemented with discrete choice models.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Inconsistency of the Bootstrap when a Parameter is on the Boundary of the Parameter Space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Donald</forename><forename type="middle">W K</forename><surname>Andrews</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeremy</forename><surname>Berkowitz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lutz</forename><surname>Kilian</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/1468-0262.00114</idno>
+		<idno type="ark">ark:/67375/WNG-N3SJXK39-3</idno>
+		<idno type="istexId">A80D06E4F40A540634AAF37C668BB084F640D51D</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<idno type="ISSNe">1468-0262</idno>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="399" to="405" />
+			<date type="published" when="2000-03" />
+			<publisher>The Econometric Society</publisher>
+		</imprint>
+	</monogr>
+	<note>Econometrica</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Bootstrapping Regression Models With Many Parameters</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><forename type="middle">J</forename><surname>Bickel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">A</forename><surname>Freedman</surname></persName>
+		</author>
+		<editor>A Festschrift for Erich Lehmann. P</editor>
+		<imprint>
+			<date type="published" when="1983" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Multiple Imputation of Industry and Occupation Codes in Census Public-Use Samples Using Bayesian Logistic Regression</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Bickel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Docksum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>Hodges</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Bound</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Presented at the International Conference on Survey Nonresponse</title>
+		<editor>Amsterdam: Elsevier. Brownstone, David and Robert G. Valletta</editor>
+		<meeting><address><addrLine>Brownstone, David, Thomas F; New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="1991-01" />
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="68" to="78" />
+		</imprint>
+		<respStmt>
+			<orgName>University of California, Irvine. Forthcoming in Handbook of Econometrics</orgName>
+		</respStmt>
+	</monogr>
+	<note>Oregon. Forthcoming, Survey Nonresponse</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">An Investigation of the Extent and Consequences of Measurement Error in Labor-Economic Survey Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><forename type="middle">J</forename><surname>Duncan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><forename type="middle">H</forename><surname>Hill</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/298067</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Labor Economics</title>
+		<title level="j" type="abbrev">Journal of Labor Economics</title>
+		<idno type="ISSN">0734-306X</idno>
+		<idno type="ISSNe">1537-5307</idno>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="508" to="532" />
+			<date type="published" when="1985-10" />
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+	<note>Annals of Statistics</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">The Jackknife, the Bootstrap and Other Resampling Plans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bradley</forename><surname>Efron</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/1.9781611970319</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/a68f/ff5d07699b33af739e88c59ff5b0dd4ee874.pdf" />
+		<editor>SIAM. Efron, Bradley and Robert Tibshirani</editor>
+		<imprint>
+			<date type="published" when="1982-01" />
+			<publisher>Society for Industrial and Applied Mathematics</publisher>
+			<pubPlace>Philadelphia, Pennsylvania</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The Behavior of Maximum Likelihood Estimates Under Non-Standard Conditions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">J</forename><surname>Huber</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lutz</forename><surname>Kilian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Economics and Econometrics: Seventh World Congress of the Econometric Society</title>
+		<editor>C. R. Rao and H. D. Vinod</editor>
+		<meeting><address><addrLine>New York; New York; Cambridge, Mass; Amsterdam; Berkeley; Amsterdam; Kennickell, Arthur B; Washington, D.C.</addrLine></address></meeting>
+		<imprint>
+			<publisher>Elsevier Science Publishers</publisher>
+			<date type="published" when="1967" />
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="218" to="248" />
+		</imprint>
+	</monogr>
+	<note>Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Confidence intervals for impulse responses under departures from normality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lutz</forename><surname>Kilian</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07474939808800401</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Econometric Reviews</title>
+		<title level="j" type="abbrev">Econometric Reviews</title>
+		<idno type="ISSN">0747-4938</idno>
+		<idno type="ISSNe">1532-4168</idno>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="29" />
+			<date type="published" when="1998-01" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Bootstrapping Time Series Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hongyi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">S</forename><surname>Maddala</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996" />
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="115" to="58" />
+		</imprint>
+	</monogr>
+	<note>Econometric Reviews</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Bootstrapping cointegrating regressions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hongyi</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">S</forename><surname>Maddala</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s0304-4076(97)00043-2</idno>
+		<idno type="PII">S0304-4076(97)00043-2</idno>
+		<idno type="ark">ark:/67375/6H6-9K33QT7W-S</idno>
+		<idno type="istexId">22336EDB58CDFF84377477FF7D774AB837EACCD5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<title level="j" type="abbrev">Journal of Econometrics</title>
+		<idno type="ISSN">0304-4076</idno>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="297" to="318" />
+			<date type="published" when="1997-10" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Bootstrap and asymptotic normality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Enno</forename><surname>Mammen</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-4612-2950-6_2</idno>
+		<idno type="ark">ark:/67375/HCB-X4LXX05X-2</idno>
+		<idno type="istexId">8EC643217CB2881FF780CAC935CED2C4C806D3E6</idno>
+	</analytic>
+	<monogr>
+		<title level="m">When Does Bootstrap Work?</title>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer New York</publisher>
+			<date type="published" when="1992" />
+			<biblScope unit="page" from="9" to="30" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Review of An Introduction to the Bootstrap, by B. Efron and R. Tibshirani</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charles</forename><forename type="middle">F</forename><surname>Manski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Literature. September</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1340" to="1382" />
+			<date type="published" when="1996" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Missing Data: Dial M for ???</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiao-Li</forename><surname>Meng</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2669781</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="issue">452</biblScope>
+			<biblScope unit="page">1325</biblScope>
+			<date type="published" when="2000-12" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Applied Analyses of Multiply Imputed Income Data from the Consumer Expenditure Survey</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Paulin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Section on Survey Research Methods</title>
+		<meeting>the Section on Survey Research Methods</meeting>
+		<imprint>
+			<publisher>American Statistical Association</publisher>
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Multiple Imputation for Nonresponse in Surveys</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Donald B ;</forename><surname>Rubin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rubin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Donald</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="page" from="473" to="89" />
+			<date type="published" when="1987" />
+			<publisher>John Wiley</publisher>
+		</imprint>
+	</monogr>
+	<note>Multiple Imputation After 18ϩ Years</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">The Calculation of Posterior Distributions by Data Augmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><forename type="middle">A</forename><surname>Tanner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wing</forename><forename type="middle">Hung</forename><surname>Wong</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2289457</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">398</biblScope>
+			<biblScope unit="page">528</biblScope>
+			<date type="published" when="1987-06" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+	<note>Journal of Labor Economics</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A Heteroskedasticity-Consistent Covariance Matrix Estimator and a Direct Test for Heteroskedasticity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">D</forename><surname>Vinod</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="817" to="855" />
+			<date type="published" when="1980-05" />
+		</imprint>
+	</monogr>
+	<note>Econometrica</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Maximum Likelihood Estimation of Misspecified Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Halbert</forename><surname>White</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1912004</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/395b/c88e0c22c646acd1d95d69ccca9c03e4113d.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">513</biblScope>
+			<date type="published" when="1983-03" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+	<note>Econometrica</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Jackknife, Bootstrap and Other Resampling Methods in Regression Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C.-F</forename><forename type="middle">J</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/aos/1176350142</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Statistics</title>
+		<title level="j" type="abbrev">Ann. Statist.</title>
+		<idno type="ISSN">0090-5364</idno>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1261" to="1295" />
+			<date type="published" when="1986-12" />
+			<publisher>Institute of Mathematical Statistics</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Efficient Estimation With Panel Data When Instruments Are Predetermined: An Empirical Comparison of Moment-Condition Estimators</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">P</forename><surname>Ziliak</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07350015.1997.10524720</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Business &amp; Economic Statistics</title>
+		<title level="j" type="abbrev">Journal of Business &amp; Economic Statistics</title>
+		<idno type="ISSN">0735-0015</idno>
+		<idno type="ISSNe">1537-2707</idno>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="419" to="431" />
+			<date type="published" when="1997-10" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+	<note>This article has been cited by</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Tax policy endogeneity: evidence from R&amp;D tax credits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">C</forename><surname>Chang</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10438599.2017.1415001</idno>
+		<ptr type="open-access" target="http://www.federalreserve.gov/econresdata/feds/2014/files/2014101pap.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Economics of Innovation and New Technology</title>
+		<title level="j" type="abbrev">Economics of Innovation and New Technology</title>
+		<idno type="ISSN">1043-8599</idno>
+		<idno type="ISSNe">1476-8364</idno>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="809" to="833" />
+			<date type="published" when="2018-01-12" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">An extensive analysis of the interaction between missing data types, imputation methods, and supervised classifiers</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Unai</forename><surname>Garciarena</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roberto</forename><surname>Santana</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.eswa.2017.07.026</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<title level="j" type="abbrev">Expert Systems with Applications</title>
+		<idno type="ISSN">0957-4174</idno>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="52" to="65" />
+			<date type="published" when="2017-12" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Growth effects of inequality and redistribution: What are the transmission channels?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Klaus</forename><surname>Gründler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philipp</forename><surname>Scheuermeyer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jmacro.2017.12.001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Macroeconomics</title>
+		<title level="j" type="abbrev">Journal of Macroeconomics</title>
+		<idno type="ISSN">0164-0704</idno>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="293" to="313" />
+			<date type="published" when="2018-03" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Modelling the treatment effect of renewable energy policies on economic growth: Evaluation from MENA countries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Montassar</forename><surname>Kahia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><surname>Kadria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><forename type="middle">Safouane</forename><surname>Ben Aissa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charfeddine</forename><surname>Lanouar</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jclepro.2017.02.030</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cleaner Production</title>
+		<title level="j" type="abbrev">Journal of Cleaner Production</title>
+		<idno type="ISSN">0959-6526</idno>
+		<imprint>
+			<biblScope unit="volume">149</biblScope>
+			<biblScope unit="page" from="845" to="855" />
+			<date type="published" when="2017-04" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+	<note>Mohamed Safouane Ben Aissa, Charfeddine Lanouar</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Beyond performance metrics: Examining a decrease in students’ physics self-efficacy through a social networks lens</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Remy</forename><surname>Dou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Brewe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Justyna</forename><forename type="middle">P</forename><surname>Zwolak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoff</forename><surname>Potvin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">A</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laird</forename><forename type="middle">H</forename><surname>Kramer</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physrevphyseducres.12.020124</idno>
+		<ptr type="open-access" target="http://link.aps.org/pdf/10.1103/PhysRevPhysEducRes.12.020124" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Physics Education Research</title>
+		<title level="j" type="abbrev">Phys. Rev. Phys. Educ. Res.</title>
+		<idno type="ISSNe">2469-9896</idno>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2016-08-09" />
+			<publisher>American Physical Society (APS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Evidence of Organizational Learning and Organizational Forgetting from Financial Statement Audits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Monika</forename><surname>Causholli</surname></persName>
+		</author>
+		<idno type="DOI">10.2308/ajpt-51267</idno>
+	</analytic>
+	<monogr>
+		<title level="j">AUDITING: A Journal of Practice &amp; Theory</title>
+		<title level="j" type="abbrev">AUDITING: A Journal of Practice &amp; Theory</title>
+		<idno type="ISSN">0278-0380</idno>
+		<idno type="ISSNe">1558-7991</idno>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="53" to="72" />
+			<date type="published" when="2016-05" />
+			<publisher>American Accounting Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Using photographs to study animal social cognition and behaviour: Do capuchins&apos; responses to photos reflect reality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Blake</forename><surname>Morton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><forename type="middle">F</forename><surname>Brosnan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laurent</forename><surname>Prétôt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hannah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Buchanan-Smith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O'</forename><surname>Eoin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martina</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Stocker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D'</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vanessa</forename><forename type="middle">A D</forename><surname>Mello</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wilson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.beproc.2015.10.005</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Behavioural Processes</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="volume">124</biblScope>
+			<biblScope unit="page" from="38" to="46" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Inflation targeting and public deficit in emerging countries: A time varying treatment effect approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><surname>Kadria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><forename type="middle">Safouane</forename><surname>Ben Aissa</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.econmod.2015.02.022</idno>
+		<ptr type="open-access" target="https://mpra.ub.uni-muenchen.de/57442/1/MPRA_paper_57442.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Economic Modelling</title>
+		<title level="j" type="abbrev">Economic Modelling</title>
+		<editor>Mohamed Kadria, Mohamed Safouane Ben Aissa</editor>
+		<idno type="ISSN">0264-9993</idno>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="108" to="114" />
+			<date type="published" when="2016-01" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">The role of contracts and intellectual property rights in open innovation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Hagedoorn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ann-Kristin</forename><surname>Zobel</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/09537325.2015.1056134</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Technology Analysis &amp; Strategic Management</title>
+		<title level="j" type="abbrev">Technology Analysis &amp; Strategic Management</title>
+		<idno type="ISSN">0953-7325</idno>
+		<idno type="ISSNe">1465-3990</idno>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1050" to="1067" />
+			<date type="published" when="2015-06-16" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Adoption of Inflation Targeting and Economic Policies Performance in Emerging Countries: A Dynamic Treatment Effect Evaluation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><surname>Kadria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><forename type="middle">Safouane</forename><surname>Ben Aissa</surname></persName>
+		</author>
+		<idno type="DOI">10.1108/s1571-038620150000024002</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Monetary Policy in the Context of the Financial Crisis: New Challenges and Lessons</title>
+		<imprint>
+			<publisher>Emerald Group Publishing Limited</publisher>
+			<date type="published" when="2015-07" />
+			<biblScope unit="page" from="1" to="27" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Closing the Achievement Gap through Modification of Neurocognitive and Neuroendocrine Function: Results from a Cluster Randomized Controlled Trial of an Innovative Approach to the Education of Children in Kindergarten</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Clancy</forename><surname>Blair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">Cybele</forename><surname>Raver</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0112393</idno>
+		<idno type="PMID">25389751</idno>
+		<idno type="PMCID">PMC4229187</idno>
+		<ptr type="open-access" target="https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0112393&amp;type=printable" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<title level="j" type="abbrev">PLoS ONE</title>
+		<idno type="ISSNe">1932-6203</idno>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page">e112393</biblScope>
+			<date type="published" when="2014-11-12" />
+			<publisher>Public Library of Science (PLoS)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Missing Data and Imputation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Camil</forename><surname>Fuchs</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><forename type="middle">S</forename><surname>Kenett</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/9781118445112.stat03968</idno>
+		<imprint>
+			<date type="published" when="2014-09-29" />
+			<publisher>John Wiley &amp; Sons, Ltd</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">IS SPATIAL BOOTSTRAPPING A PANACEA FOR VALID INFERENCE?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Torben</forename><surname>Klarl</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/jors.12075</idno>
+		<idno type="ark">ark:/67375/WNG-2CVBN899-1</idno>
+		<idno type="istexId">EC1DC0A78DF4344E0593F6F06D637EB4A859CB20</idno>
+		<ptr type="open-access" target="https://opus.bibliothek.uni-augsburg.de/opus4/files/71095/322.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Regional Science</title>
+		<title level="j" type="abbrev">JOURNAL OF REGIONAL SCIENCE</title>
+		<idno type="ISSN">0022-4146</idno>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="304" to="312" />
+			<date type="published" when="2013-10-20" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Consumer cohorts and purchases of nonalcoholic beverages</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyrre</forename><surname>Geir Waehler Gustavsen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rickertsen</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00181-013-0688-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Empirical Economics</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="427" to="449" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Evidence that Market Participants Assess Recognized and Disclosed Items Similarly when Reliability is Not an Issue</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Bratten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Preeti</forename><surname>Choudhary</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katherine</forename><surname>Schipper</surname></persName>
+		</author>
+		<idno type="DOI">10.2308/accr-50421</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Accounting Review</title>
+		<title level="j" type="abbrev">The Accounting Review</title>
+		<idno type="ISSN">0001-4826</idno>
+		<idno type="ISSNe">1558-7967</idno>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1179" to="1210" />
+			<date type="published" when="2013-07" />
+			<publisher>American Accounting Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Estimating the long-run impact of forest fires on the eucalyptus timber supply in Galicia, Spain</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manuel</forename><surname>González-Gómez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcos</forename><surname>Álvarez-Díaz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">María</forename><forename type="middle">Soledad</forename><surname>Otero-Giráldez</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jfe.2012.12.002</idno>
+		<ptr type="open-access" target="http://webx06.webs4.uvigo.es/wp-content/uploads/2019/05/wp1206.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Forest Economics</title>
+		<title level="j" type="abbrev">Journal of Forest Economics</title>
+		<idno type="ISSN">1104-6899</idno>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="149" to="161" />
+			<date type="published" when="2013-04" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Estimating the long-run effects of socioeconomic and meteorological factors on the domestic tourism demand for Galicia (Spain)</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soledad</forename><surname>María</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcos</forename><surname>Otero-Giráldez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manuel</forename><surname>Álvarez-Díaz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>González-Gómez</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tourman.2012.04.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Tourism Management</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1301" to="1308" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Auditors’ going-concern-modified opinions after 2001: measuring reporting accuracy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Carey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stuart</forename><surname>Kortum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robyn</forename><surname>Moroney</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-629x.2011.00436.x</idno>
+		<idno type="ark">ark:/67375/WNG-L608G052-R</idno>
+		<idno type="istexId">CD52C6F2B5B139395826DBCAFF451FD3EC5AE132</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Accounting &amp; Finance</title>
+		<idno type="ISSN">0810-5391</idno>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1041" to="1059" />
+			<date type="published" when="2011-08-17" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Forest management and economic rents: Evidence from the charcoal trade in Madagascar</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bart</forename><surname>Minten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Klas</forename><surname>Sander</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Stifel</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.esd.2012.08.004</idno>
+		<ptr type="open-access" target="http://sites.lafayette.edu/stifeld/files/2010/05/minten_sander_stifel_mada_charcoal.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Energy for Sustainable Development</title>
+		<title level="j" type="abbrev">Energy for Sustainable Development</title>
+		<idno type="ISSN">0973-0826</idno>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="106" to="115" />
+			<date type="published" when="2013-04" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">An improved phylogeny of the Andean tit-tyrants (Aves, Tyrannidae): More characters trump sophisticated analyses</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Shane</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">C</forename><surname>Dubay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Witt</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ympev.2012.04.002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Phylogenetics and Evolution</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="285" to="296" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">A nonparametric analysis of the impact of agri-environmental advisory activities on best management practice adoption: A case study of Québec</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Lota</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tamini</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ecolecon.2011.02.012</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ecological Economics</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1363" to="1374" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Analysing the profitability of the Spanish fleet after the anchovy moratorium using bootstrap techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dolores</forename><surname>Garza-Gil</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manuel</forename><forename type="middle">M</forename><surname>Varela-Lafuente</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gonzalo</forename><surname>Caballero-Miguez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcos</forename><surname>Álvarez-Díaz</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ecolecon.2011.01.008</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ecological Economics</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1154" to="1161" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dermot</forename><forename type="middle">J</forename><surname>Monchuk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">A</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Miranowski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Dayton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lambert</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-9787.2011.00716.x</idno>
+	</analytic>
+	<monogr>
+		<title level="m">INFERENCE BASED ON ALTERNATIVE BOOTSTRAPPING METHODS IN SPATIAL MODELS WITH AN APPLICATION TO COUNTY INCOME GROWTH IN THE UNITED STATES*</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Why Do Firms Bribe</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyeungrae</forename><surname>Seung-Hyun Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lorraine</forename><surname>Oh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Eden</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11575-010-0057-9</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Management International Review</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="775" to="796" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Measuring the incentives to learn in Colombia using new quantile regression approaches</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carlos</forename><surname>Lamarche</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jdeveco.2010.10.003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Development Economics</title>
+		<title level="j" type="abbrev">Journal of Development Economics</title>
+		<idno type="ISSN">0304-3878</idno>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="278" to="288" />
+			<date type="published" when="2011-11" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">The Empirics of International Monetary Transmission: Identification and the Impossible Trinity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">C</forename><surname>Bluedorn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Bowdler</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1538-4616.2010.00303.x</idno>
+		<idno type="ark">ark:/67375/WNG-2H7MJQRG-G</idno>
+		<idno type="istexId">24079CBA14BB9EC9A836B7845703AFA61D2DCB78</idno>
+		<ptr type="open-access" target="https://eprints.soton.ac.uk/71061/1/bluedorn_bowdler_2010_empirics_of_international_monetary_transmission-identification_and_the_impossible_trinity.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Money, Credit and Banking</title>
+		<idno type="ISSN">0022-2879</idno>
+		<idno type="ISSNe">1538-4616</idno>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="679" to="713" />
+			<date type="published" when="2010-06" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Matching Donors and Nonprofits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gina Yannitell</forename><surname>Reinhardt</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0951629809103965</idno>
+		<idno type="ark">ark:/67375/M70-XKQ8TH5N-H</idno>
+		<idno type="istexId">011E2038C8949CED8B966263D496F5AC20AAD6F4</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Politics</title>
+		<title level="j" type="abbrev">Journal of Theoretical Politics</title>
+		<idno type="ISSN">0951-6298</idno>
+		<idno type="ISSNe">1460-3667</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="283" to="309" />
+			<date type="published" when="2009-06-10" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">The Native-Immigrant Income Gap among the Self-Employed in Sweden. International Migration</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joona</forename><surname>Pernilla Andersson</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-2435.2009.00510.x</idno>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Bootstrap-Based Improvements for Inference with Clustered Errors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Colin</forename><surname>Cameron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonah</forename><forename type="middle">B</forename><surname>Gelbach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Douglas</forename><forename type="middle">L</forename><surname>Miller</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/rest.90.3.414</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Review of Economics and Statistics</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="page" from="414" to="427" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Isolation and agricultural productivity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Stifel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bart</forename><surname>Minten</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1574-0862.2008.00310.x</idno>
+		<idno type="ark">ark:/67375/WNG-T6PDSJ7W-9</idno>
+		<idno type="istexId">94589499B34EB9DB9CE0E21C57A9A2C3A955982B</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Agricultural Economics</title>
+		<title level="j" type="abbrev">Agricultural Economics</title>
+		<idno type="ISSN">0169-5150</idno>
+		<idno type="ISSNe">1574-0862</idno>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="15" />
+			<date type="published" when="2008-07" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">SOME PRACTICAL GUIDANCE FOR THE IMPLEMENTATION OF PROPENSITY SCORE MATCHING</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marco</forename><surname>Caliendo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sabine</forename><surname>Kopeinig</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-6419.2007.00527.x</idno>
+		<idno type="ark">ark:/67375/WNG-X23VDD88-5</idno>
+		<idno type="istexId">C771C4C468E8A581B1822D39E8E52AA804E6DAF7</idno>
+		<ptr type="open-access" target="http://www.diw.de/documents/publikationen/73/diw_01.c.43214.de/dp485.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Surveys</title>
+		<title level="j" type="abbrev">J Economic Surveys</title>
+		<idno type="ISSN">0950-0804</idno>
+		<idno type="ISSNe">1467-6419</idno>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="31" to="72" />
+			<date type="published" when="2008-02" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fintel</forename><surname>Dieter Von</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1813-6982.2007.00122.x</idno>
+	</analytic>
+	<monogr>
+		<title level="m">DEALING WITH EARNINGS BRACKET RESPONSES IN HOUSEHOLD SURVEYS ? HOW SHARP ARE MIDPOINT IMPUTATIONS</title>
+		<imprint>
+			<date type="published" when="2007" />
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page" from="293" to="312" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Why Are Black‐Owned Businesses Less Successful than White‐Owned Businesses? The Role of Families, Inheritances, and Business Human Capital</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">W</forename><surname>Fairlie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alicia</forename><forename type="middle">M</forename><surname>Robb</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/510763</idno>
+		<ptr type="open-access" target="https://escholarship.org/content/qt5gk2188g/qt5gk2188g.pdf?t=krnfxb" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Labor Economics</title>
+		<title level="j" type="abbrev">Journal of Labor Economics</title>
+		<idno type="ISSN">0734-306X</idno>
+		<idno type="ISSNe">1537-5307</idno>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="289" to="323" />
+			<date type="published" when="2007-04" />
+			<publisher>University of Chicago Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Families, Human Capital, and Small Business: Evidence from the Characteristics of Business Owners Survey</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">W</forename><surname>Fairlie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alicia</forename><surname>Robb</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001979390706000204</idno>
+		<ptr type="open-access" target="http://ageconsearch.umn.edu/record/28446/files/dp030871.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ILR Review</title>
+		<title level="j" type="abbrev">ILR Review</title>
+		<idno type="ISSN">0019-7939</idno>
+		<idno type="ISSNe">2162-271X</idno>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="225" to="245" />
+			<date type="published" when="2007-01" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Employer Willingness to Permit Phased Retirement: Why are Some More Willing Than others?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Hutchens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karen</forename><surname>Grace-Martin</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001979390605900401</idno>
+	</analytic>
+	<monogr>
+		<title level="j">ILR Review</title>
+		<title level="j" type="abbrev">ILR Review</title>
+		<idno type="ISSN">0019-7939</idno>
+		<idno type="ISSNe">2162-271X</idno>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="525" to="546" />
+			<date type="published" when="2006-07" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Length of Hospital Stays Among Obese Individuals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Claire</forename><surname>Zizza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amy</forename><forename type="middle">H</forename><surname>Herring</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">June</forename><surname>Stevens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Barry</forename><forename type="middle">M</forename><surname>Popkin</surname></persName>
+		</author>
+		<idno type="DOI">10.2105/ajph.94.9.1587</idno>
+		<idno type="PMID">15333319</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Public Health</title>
+		<title level="j" type="abbrev">Am J Public Health</title>
+		<idno type="ISSN">0090-0036</idno>
+		<idno type="ISSNe">1541-0048</idno>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1587" to="1591" />
+			<date type="published" when="2004-09" />
+			<publisher>American Public Health Association</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">The effect of workplace gender and race demographic composition on hiring through employee referrals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mary</forename><forename type="middle">E</forename><surname>Taber</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wallace</forename><surname>Hendricks</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hrdq.1068</idno>
+		<idno type="ark">ark:/67375/WNG-WXXLLKLC-1</idno>
+		<idno type="istexId">8388DE73CAF997BB05DD879D831E24328B8B008C</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Human Resource Development Quarterly</title>
+		<title level="j" type="abbrev">Human Resource Development Quarterly</title>
+		<idno type="ISSN">1044-8004</idno>
+		<idno type="ISSNe">1532-1096</idno>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="303" to="319" />
+			<date type="published" when="2003" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Career, experience and returns to human capital: is the dual labour market hypothesis relevant for the UK?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Rannia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Leontaridi</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/reec.2002.0284</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Research in Economics</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="399" to="426" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,637 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "We propose a way to simulate Cherenkov detector response using a generative adversarial neural network to bypass low-level details. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This network is trained to reproduce high level features of the simulated detector events based on input observables of incident particles. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This allows the dramatic increase of simulation speed. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "We demonstrate that this approach provides simulation precision which is consistent with the baseline and discuss possible implications of these results.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "New runs of the Large Hadron Collider and next generation of colliding experiments with increased luminosity will require an unprecedented amount of simulated events to be produced. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This would bring an extreme challenge to the computing resources. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Thus new approaches to events generation and simulation of detector responses are needed. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Cherenkov detectors, being relatively slow to simulate, are well suited for applying recent approaches to fast simulation. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Until recently, the most popular approaches were tabulated response [1] and parameterization of detector response [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 71,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 114,
+                    "end": 117,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "While both approaches produce valuable results, they require a significant effort at each retuning. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "That is why a new way to parameterize the detector response needs to be introduced. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "This way can be paved using a modern day machine learning tools. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The most common approach used now is Generative adversarial neural networks (GANs) [3], while variational autoencoders can also be used [4]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                },
+                {
+                    "start": 136,
+                    "end": 139,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "This paper present the first attempt to parameterize a Cherenkov detector response using GANs.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Fast Simulation Method",
+            "section_rank": 3
+        },
+        {
+            "text": "GANs provide a rule to connect input observables with distributions of output ones [3]. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "A first attempt to apply the GAN to fast simulation in physics analyses was performed recently in [5]. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 98,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "This attempt used a Geant4 generated calorimeter response as a training sample with the aim to mimic the low-level detector response.",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "Our model instead concentrates on the high-level observables reconstruction, thus, effectively bypassing the photon generation stage. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "This allows us to concentrate on the quality of simulation in terms of the observables used in further analysis.",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Various divergences can be minimised when training GANs. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "We find that the Wasserstein GAN [6] that has already been explored in the context of HEP shows good behaviour. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 33,
+                    "end": 36,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "The distance can be written as a Kantorovich-Rubinstein dual representation [7]:",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 76,
+                    "end": 79,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ]
+        },
+        {
+            "text": "here p \u03b8 is the optimised parametric distribution, p r is the empirical distribution. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "f is an element of 1-Lipshitz function space. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "This condition allows us to construct a faster converging and more reliable local operator, with f that can be approximated by a sufficiently complex neural network. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "However, we also find that the best solution is a Cramer GAN [8], which provides unbiased gradients leading to a better fidelity in reproducing distributions. ",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "The metrics can also be written out in form of a dual representation (1), exchanging f (x) to a specific form described in [8].",
+            "section": "Fast Simulation Method",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 123,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Input data Sample",
+            "section_rank": 4
+        },
+        {
+            "text": "As a source of reliable simulated events, we used the Fast-DIRC [9] simulation of the Detector of Internally Reflected Cherenkov light. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 64,
+                    "end": 67,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "This detector was first used by the BaBar experiment [10] and now is going to be introduced in the GlueX [11] experiment. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 53,
+                    "end": 57,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                },
+                {
+                    "start": 105,
+                    "end": 109,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 99,
+                    "end": 105,
+                    "type": "software",
+                    "rawForm": "GlueX",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "The generation is two-fold: in the first stage a sufficient amount of the photons are generated; in the second stage a kernel density estimation is used to produce the likelihood for particle identification. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The biggest problem of the fast simulation is expected to come from the interference of two adjacent particles. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "That is why we modified the code in order to test multiparticle events. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "We simulate tracks sampling a flat distribution in pseudorapidity between -1.5 and 1.  ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "greater than 2.5 GeV. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "We also update the code adding an additional \"background\" particle in each event. ",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In the following, the sample generated by the FastDIRC package is referred to as \"FastDIRC\", our model results is referred to as \"GAN\".",
+            "section": "Input data Sample",
+            "paragraph_rank": 7,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 46,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "FastDIRC",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                },
+                {
+                    "start": 82,
+                    "end": 90,
+                    "type": "software",
+                    "rawForm": "FastDIRC",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Model Study",
+            "section_rank": 5
+        },
+        {
+            "text": "We construct a neural network for each particle species that takes signal kinematic observables along with a distance to the closest adjacent particle and train it to predict the multidimensional distribution of the likelihoods produced by FastDirc.",
+            "section": "Model Study",
+            "paragraph_rank": 8,
+            "section_rank": 5
+        },
+        {
+            "text": "The amount of input observables and the architecture of the neural network was optimised to obtain a subpercent quality of the prediction. ",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The final architecture design is a 10-denselayers neural network, each containing 128 neurons. ",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "The model was trained using 1 million generated events. ",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Here, the input observables used are the full kinematics of event: energy, pseudorapidity and the distance between the particle track and DIRC bar side of signal particle. ",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "We trained a separate model for each signal particle type. ",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "We transformed each observable distribution into a normal one using quantile transformation before passing them to neural network",
+            "section": "Model Study",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "We first check that the predictions are consistent with our expectations for one particle tests: we check one-and multidimensional distributions of the output likelihoods in order to understand, whether they are consistent with the output of Fast-DIRC. ",
+            "section": "Model Study",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "We find the histograms to be in a good agreement. ",
+            "section": "Model Study",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "An example of the plots is shown in Fig. 1.",
+            "section": "Model Study",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 36,
+                    "end": 42,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "One of the main possible problem of high level observables generation is their interaction with other particles. ",
+            "section": "Model Study",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "We take the influence into account by adding an information about the kinematics of the background particle into input observables list. ",
+            "section": "Model Study",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "This information is checked to bring the maximum needed quality to the model. ",
+            "section": "Model Study",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "In general, this information can be removed if the quality is sufficient.",
+            "section": "Model Study",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "We then study the dependence of the generation bias on the closest neighbouring track position. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "We check this in bins of the kinematic observables for signal and neighbouring particle. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "In each bin we calculate the separation power between two signal particle species, pions and kaons. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "We characterise the separation power using area under receiver operating characteristic (ROC AUC). ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "This is done both for likelihoods generated by FastDIRC and our GAN. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The test is considered successful if the difference between AUCs generated by different methods is small. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The results are shown in Fig. 2. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 25,
+                    "end": 31,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "We conclude that the closest neighbour information inserted is sufficient to overcome the problem. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The obtained generation model is lightweight. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The speed improvement with respect to full simulation in GEANT [12] is 8 \u2022 10 4 times on a single CPU core. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 63,
+                    "end": 67,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 57,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "GEANT",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "The speed is also improved with respect to the FastDIRC generation, where a factor up to 80 can be achieved. ",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The batch generation on GPU produces up to 1 million track predictions per second.",
+            "section": "Model Study",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 6
+        },
+        {
+            "text": "We present a novel approach of the fast simulation of Cherenkov detectors. ",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "This approach is based on the generative adversarial neural networks and is gives a good precision, while being very fast.",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 1: Left: An example of 1D projection to kaon delta log-likelihood observables for FastDIRC and GAN simulation for samples consisting true pions (blue) and true kaons (brown). ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "Center and Right: An example of 2D projection to kaon and proton delta log-likelihood observables for FastDIRC (left) and GAN (right) simulation. ",
+            "section": "Figure 1 :",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "The sample made of true pion.",
+            "section": "Figure 1 :",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 8
+        },
+        {
+            "text": "Figure 2: Separation power between kaons and pions measured in area under receiver operating characteristic curve score (AUC score). ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Left is the FastDIRC simulation, right is the difference between GAN and FastDIRC AUC scores. ",
+            "section": "Figure 2 :",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "The statistical uncertainty is around 0.005.",
+            "section": "Figure 2 :",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Acknowledgments",
+            "section_rank": 10
+        },
+        {
+            "text": "The research leading to these results has received funding from the Russian Science Foundation under grant agreement n 17-72-20127.",
+            "section": "Acknowledgments",
+            "paragraph_rank": 16,
+            "section_rank": 10
+        }
+    ]
+}

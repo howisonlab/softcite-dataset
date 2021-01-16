@@ -1,0 +1,1295 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Application of SNiPER framework to BESIII physics analysis * Xin Xia () \u22c6;1) Teng Li () \u22c6;2) Xing-Tao Huang () \u22c6;3) Xue-Yao Zhang () \u22c6",
+            "paragraph_rank": 0,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The Beijing Spectrometer III (BESIII) [1] is a detector at the Beijing Electron-Positron Collider II (BEPCII). ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 41,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "The accelerator has two storage rings with a circumference of 224 m and a crossing angle of 22 mrad. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "Its designed peak luminosity is 1\u00d710 33 cm \u22122 s \u22121 at a beam energy of 1.89 GeV [1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 80,
+                    "end": 83,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "In April 2016, BEPCII successfully reached this goal. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "Assuming 10 7 s data taking time each year, the BESIII detector is able to collect \u223c10 billion J/\u03c8, \u223c300 million \u03c8 \u2032 , 30 million DD or 2 million D + S D \u2212 S . ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "The huge amount of data collected makes it possible to study light hadron spectroscopy in the decay of charmonium states and charmed mesons with unprecedentedly high precision [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 176,
+                    "end": 179,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Since its first collisions in June 2008, BESIII's data volume has reached \u223c3 PB and is increasing at a speed of about 0.5 PB per year. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2
+        },
+        {
+            "text": "The BESIII Offline Software System (BOSS) is the main framework that is currently used in BESIII experiment, and its role is very important in the whole offline data processing and physics analysis workflow. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "BESIII Offline Software System (BOSS)",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "Based on Gaudi [3], BOSS provides standard interfaces for common software components which are necessary for data processing and analysis. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 18,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 20,
+                    "end": 25,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "However, Input/Output (I/O) in BOSS requires data format conversion and full-size data read-in, which uses extra CPU time and imposes restrictions on the processing speed [4]. ",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 171,
+                    "end": 174,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Consequently, I/O is becoming a bottleneck for BOSS, especially for physics analysis.",
+            "section": "Introduction",
+            "paragraph_rank": 1,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 47,
+                    "end": 51,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "The Software for Non-collider Physics Experiments (SNiPER) [5] is a software framework for simulation, reconstruction and analysis in a variety of experiments like the Jiangmen Underground Neutrino Observatory (JUNO) [6] and the Large High Altitude Air Shower Observatory (LHAASO) [7]. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 217,
+                    "end": 220,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 281,
+                    "end": 284,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "Software for Non-collider Physics Experiments (SNiPER)",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "SNiPER is a light-weight, flexible framework with an event data management system which is designed to manage any type of event data. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "Consequently, no additional data format conversion is needed. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "In order to improve the speed of BESIII physics analysis, SNiPER is being applied to the BESIII experiment. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 58,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "In this article, details are given of the redesign of the reconstructed event data model, the migration of BESIII physics analysis tools into SNiPER, and a comparison of its performance with that of BOSS.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 142,
+                    "end": 148,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                },
+                {
+                    "start": 199,
+                    "end": 203,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "Redesign of the Reconstructed Event Data Model",
+            "section_rank": 3
+        },
+        {
+            "text": "For physics analysis in BOSS, the whole information of each reconstructed event is read in from the Data Summary Tape (DST) files, where data are stored as ROOT trees. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 24,
+                    "end": 28,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                }
+            ]
+        },
+        {
+            "text": "The event data are then converted to Gaudi's data format to be managed by the Gaudi event data store. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 37,
+                    "end": 42,
+                    "type": "software",
+                    "rawForm": "Gaudi",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                },
+                {
+                    "start": 78,
+                    "end": 84,
+                    "type": "software",
+                    "rawForm": "Gaudi",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "This conversion requires extra CPU time and memory, and thus slows down the physics analysis. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "In the physics analysis, the input information of each event is processed with analysis algorithms for further event selection. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "This kind of full-size information read-in of each event also degrades the speed of analysis.",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 3,
+            "section_rank": 3
+        },
+        {
+            "text": "In SNiPER, the event data management system is designed to use the ROOT format all the way through the whole process. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "Event information that is read in from the DST files can be handled directly by SNiPER's event data management (EDM) system, so no conversion process is needed. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 80,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "The I/O system is designed to first read only part of the event information for fast event selection. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Once it meets all selection requirements, the whole event information will be read. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, time spent on the data I/O process is significantly reduced, which is similar to the tag-based pre-selection mechanism under the BOSS framework [8].",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 155,
+                    "end": 158,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 140,
+                    "end": 145,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "To use the data management system in SNiPER, a new EDM for the BESIII physics analysis has been designed. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 37,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "This reconstructed event data model consists of two layers, DstEvent and EvtHeader, as shown in Fig. 1. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 96,
+                    "end": 102,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 73,
+                    "end": 82,
+                    "type": "software",
+                    "rawForm": "EvtHeader",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "The DstEvent contains the full information of physics events, and keeps their original structure in the old DST files. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The EvtHeader is a newly added layer. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "EvtHeader",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "With the negligible increase in size (in permillage level), the Evt-Header plays a very important role in the framework. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "1) It is the entrance point for the event data service to access new ROOT files.",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "2) It stores characteristic variables of event, such as the good charged tracks, which can be customized by users to do fast selection without loading the full event information.",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "3) It stores the SmartRef, which is a smart pointer providing references to events [9]. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 17,
+                    "end": 25,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "The referenced object in DstEvent will not be loaded from input files until it is actually needed. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 25,
+                    "end": 34,
+                    "type": "software",
+                    "rawForm": "DstEvent",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                }
+            ]
+        },
+        {
+            "text": "Therefore, the unnecessary performance overhead can be avoided as a result of the lazy-loading mechanism.",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "In the analysis algorithm, fast selection is usually applied as soon as the EvtHeader is available. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 76,
+                    "end": 86,
+                    "type": "software",
+                    "rawForm": "EvtHeader",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                }
+            ]
+        },
+        {
+            "text": "In fast selection, only the variables in EvtHeader are used without loading the full event into memory. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 51,
+                    "type": "software",
+                    "rawForm": "EvtHeader",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                }
+            ]
+        },
+        {
+            "text": "After fast selection, the full information of survived events will be requested and loaded into memory by the SmartRef for further analysis. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 110,
+                    "end": 119,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "Using this mechanism, significantly less information needs to be read in from disk, which leads to less time consumption in I/O operations. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The stricter the selection is, the faster the I/O operations will be. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "These are the main strategies to improve the speed of analysis in general. ",
+            "section": "Redesign of the Reconstructed Event Data Model",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Migration of Analysis Tools",
+            "section_rank": 4
+        },
+        {
+            "text": "In BESIII physics analysis, several tools are indispensable, including particle identification (ParticleID), vertex fit (VertexFit) and kinematic fit (KinematicFit).",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 96,
+                    "end": 106,
+                    "type": "software",
+                    "rawForm": "ParticleID",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                }
+            ]
+        },
+        {
+            "text": "To organize the information left by the final state particles in detectors, a simplified version of the EvtRec-Track class was imported to integrate all the tracks in the sub-detectors into one logical track from the inside, with their corresponding track IDs stored in the TEvtRec-Track. ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "To determine the vertex, the primary vertex information and magnetic field information are needed. ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "So the DatabaseSvc and MagneticField were also migrated. ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "In all these migrated packages, an interface to access the data with the new format was developed. ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "For simplicity, TObject classes are used to substitute the EventObject classes. ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "The final workflow model used in SNiPER can be seen in Fig. 2 ",
+            "section": "Migration of Analysis Tools",
+            "paragraph_rank": 10,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 55,
+                    "end": 61,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "Performance and Tests",
+            "section_rank": 5
+        },
+        {
+            "text": "In order to validate the migration, we ran the real physics analysis of the process e + e \u2212 \u2192 \u03c0 + \u03c0 \u2212 J/\u03c8 at center-of-mass (CM) energy of \u221a s = (4.260 \u00b1 0.001) GeV [10] with both BOSS and SNiPER. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 165,
+                    "end": 169,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 189,
+                    "end": 195,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "In the analysis, the J/\u03c8 candidate was reconstructed with lepton pairs (e + e \u2212 or \u00b5 + \u00b5 \u2212 ), which results in a final state with four charged tracks. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Therefore, the number of charged tracks was required to be no less than 4, which makes the proportion of surviving events approximately 1/200. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "In SNiPER, the number of charged tracks is stored in EvtHeader and defined as a tag for fast selection, so only the selected events are fully loaded into memory for further study, which greatly increases the input speed. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "In this test, the version of BOSS was 7.0.0, and 400 DST files were randomly selected for analysis. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 38,
+                    "end": 43,
+                    "type": "version",
+                    "rawForm": "7.0.0",
+                    "resp": "service",
+                    "id": "#software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "Table 1 shows the number of surviving events after a series of selections under the two frameworks. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 7,
+                    "type": "table",
+                    "ref_id": "tab_1",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "In SNiPER, the results of event selection were exactly the same as for BOSS. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 3,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "After checking the step-by-step selections, the invariant mass spectrum of selected \u03c0 + \u03c0 \u2212 J/\u03c8 candidates was compared between BOSS and SNiPER using the whole dataset. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 137,
+                    "end": 144,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                }
+            ]
+        },
+        {
+            "text": "Figure 3 shows the distributions of M (\u03c0 + J/\u03c8), M (\u03c0 \u2212 J/\u03c8), and M (\u03c0 + \u03c0 \u2212 ) for the signal events. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The distributions in BOSS and SNiPER agree with each other very well, which means the analysis code migrated to SNiPER works properly. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 30,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s32"
+                },
+                {
+                    "start": 112,
+                    "end": 119,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                }
+            ]
+        },
+        {
+            "text": "To quantify the improvement gained by the new physics analysis framework, we ran a series of tests with the same analysis of e + e \u2212 \u2192 \u03c0 + \u03c0 \u2212 J/\u03c8 at the CM energy of \u221a s = (4.260\u00b10.001) GeV, using the same data sample as the previous test. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Under SNiPER, the total number of charged tracks, which is required to be no less than 4, is added to the EvtHeader as a pre-selection variable. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 6,
+                    "end": 12,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                },
+                {
+                    "start": 106,
+                    "end": 116,
+                    "type": "software",
+                    "rawForm": "EvtHeader",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "400 input data files were equally divided into 4 groups, and then submitted to the Portable Batch System in queue besq. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 98,
+                    "end": 105,
+                    "type": "software",
+                    "rawForm": "System",
+                    "resp": "service",
+                    "id": "software-simple-s36"
+                },
+                {
+                    "start": 114,
+                    "end": 118,
+                    "type": "software",
+                    "rawForm": "besq",
+                    "resp": "service",
+                    "id": "software-simple-s37"
+                }
+            ]
+        },
+        {
+            "text": "The time consumptions were measured under the same hardware environment with a CPU, model Intel(R) Xeon(R) CPU E5-2680 v3 at frequency of 2.50 GHz. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The analysis using the old EDM and BOSS consumed \u223c170.5 minutes on average, while \u223c44.5 minutes on average were spent with new EDM and SNiPER, which means analysis with the new version is \u223c3.8 times faster than BOSS.",
+            "section": "Performance and Tests",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 135,
+                    "end": 141,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s38"
+                }
+            ]
+        },
+        {
+            "text": "To investigate where the speed boost comes from, the time consumption of each section was measured and is listed in Table 2. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 123,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Table 2"
+                }
+            ]
+        },
+        {
+            "text": "The proportion of time consumption for each section under the two frameworks can also be seen in Fig. 4. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 97,
+                    "end": 103,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "These tests indicate that SNiPER itself is running \u223c5 times faster than BOSS, but the contribution from the new framework is very small due to its fast execution. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 33,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s39"
+                },
+                {
+                    "start": 72,
+                    "end": 76,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s40"
+                }
+            ]
+        },
+        {
+            "text": "With the new EDM with SmartRef, the I/O speed is improved by \u223c10 times, and it decreases the proportion of I/O time from \u223c80% to \u223c30%. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 22,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s41"
+                }
+            ]
+        },
+        {
+            "text": "The analysis step with SNiPER costs a similar time as BOSS, but the proportion increases significantly due to the improvement of the I/O procedure, which means computing power is concentrated on the real analysis instead of data conversion. ",
+            "section": "Performance and Tests",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 23,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s42"
+                },
+                {
+                    "start": 54,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s43"
+                }
+            ]
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 6
+        },
+        {
+            "text": "In this article, a new BESIII physics analysis framework based on SNiPER has been introduced, with SmartRef implemented into the reconstructed event data model for fast event pre-selection. ",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 66,
+                    "end": 73,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s45"
+                },
+                {
+                    "start": 99,
+                    "end": 108,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s46"
+                }
+            ]
+        },
+        {
+            "text": "The new framework was tested with a real physics analysis e + e \u2212 \u2192 \u03c0 + \u03c0 \u2212 J/\u03c8 at the CM energy of \u221a s = (4.260 \u00b1 0.001) GeV, yielding exactly the same results as the original BOSS framework. ",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 177,
+                    "end": 182,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s47"
+                }
+            ]
+        },
+        {
+            "text": "In the test, SNiPER gained 3.8 times improvement in total execution speed, and saved more than 70% of the time for this specified physics channel. ",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 13,
+                    "end": 20,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s48"
+                }
+            ]
+        },
+        {
+            "text": "More tests showed that this improvement is mainly from the new event data model with SmartRef, which gains \u223c10 times improvement compared to BOSS.",
+            "section": "Conclusion",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 85,
+                    "end": 93,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s49"
+                },
+                {
+                    "start": 141,
+                    "end": 145,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s50"
+                }
+            ]
+        },
+        {
+            "text": "We can conclude that the new physics analysis framework based on SNiPER significantly improves the I/O performance with its redesigned reconstructed event data model using SmartRef. ",
+            "section": "Conclusion",
+            "paragraph_rank": 14,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 65,
+                    "end": 72,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s51"
+                },
+                {
+                    "start": 172,
+                    "end": 180,
+                    "type": "software",
+                    "rawForm": "SmartRef",
+                    "resp": "service",
+                    "id": "software-simple-s52"
+                }
+            ]
+        },
+        {
+            "text": "We can gladly say that this framework is ready for physics analysis in BESIII, and the first stable version of SNiPERMT, which is suitable for the concurrent environment, will be released in 2017.",
+            "section": "Conclusion",
+            "paragraph_rank": 14,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 111,
+                    "end": 119,
+                    "type": "software",
+                    "rawForm": "SNiPERMT",
+                    "resp": "service",
+                    "id": "software-simple-s54"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 1 :",
+            "section_rank": 7
+        },
+        {
+            "text": "Fig. 1: Schema of the reconstructed event data model. ",
+            "section": "Fig. 1 :",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "The left-hand side is the EDM under BOSS, and the right-hand side is the new EDM under SNiPER.",
+            "section": "Fig. 1 :",
+            "paragraph_rank": 15,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 36,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s55"
+                },
+                {
+                    "start": 87,
+                    "end": 93,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s56"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 3 :",
+            "section_rank": 8
+        },
+        {
+            "text": "Fig. 3: Comparison of the invariant mass spectra of M (\u03c0 + J/\u03c8), M (\u03c0 \u2212 J/\u03c8), and M (\u03c0 + \u03c0 \u2212 ) in BOSS and SNiPER. ",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 98,
+                    "end": 103,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s57"
+                },
+                {
+                    "start": 107,
+                    "end": 113,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s58"
+                }
+            ]
+        },
+        {
+            "text": "The black line represents the results from BOSS, and the open diamonds show the results from SNiPER.",
+            "section": "Fig. 3 :",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 47,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s59"
+                },
+                {
+                    "start": 93,
+                    "end": 99,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s60"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 4 :",
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 4: Time consumption proportion under BOSS (left) and SNiPER (right) framework.",
+            "section": "Fig. 4 :",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 47,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s61"
+                },
+                {
+                    "start": 58,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s62"
+                }
+            ]
+        },
+        {
+            "text": ".",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 11
+        },
+        {
+            "text": "Number of surviving events passing cuts in BOSS and SNiPER",
+            "section": "Table 1 :",
+            "paragraph_rank": 19,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 43,
+                    "end": 48,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s63"
+                },
+                {
+                    "start": 52,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s64"
+                }
+            ]
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 12
+        },
+        {
+            "text": "Comparison of time consumption for BOSS and SNiPER.",
+            "section": "Table 2 :",
+            "paragraph_rank": 20,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "BOSS",
+                    "resp": "service",
+                    "id": "software-simple-s65"
+                },
+                {
+                    "start": 44,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "SNiPER",
+                    "resp": "service",
+                    "id": "software-simple-s66"
+                }
+            ]
+        }
+    ]
+}

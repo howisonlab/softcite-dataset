@@ -1,0 +1,74 @@
+---
+title: "Create software_name file"
+author: "James Howison"
+date: "4/1/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+```
+
+
+```{r, include=FALSE}
+articles <- read_csv(here("data/csv_dataset", "softcite_articles.csv"))
+in_text_mentions <- read_csv(here("data/csv_dataset", "softcite_in_text_mentions.csv"))
+codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv"))
+```
+
+```{r}
+codes_applied <- read_csv(here("data/csv_dataset", "softcite_codes_applied.csv")) %>% 
+  filter(code == "software_name", was_code_present == TRUE) %>% 
+  drop_na(code_label) %>% 
+  distinct(code_label)
+
+
+codes_applied <- tibble(code_label = readLines("/Users/howison/Documents/UTexas/Projects/SloanSoftCite/utaustin-tagworks-prep/softcite_data/software_lists/wikidata-softwares.csv"))
+
+
+codes_applied %>% 
+  filter(code_label != "false") %>% 
+  filter(code_label != "true") %>% 
+  filter(code_label != "ANOVA") %>% 
+  mutate(code_label = code_label %>% str_remove_all('[\\p{Pi}\\p{Pf}"\\p{C}\\p{Z}{2,}]')) %>% 
+  filter(code_label %>% str_length() > 3) %>% 
+  write_csv("wikidata_software_names.csv", col_names = FALSE)
+
+
+codes_applied %>% 
+  filter(code == "software_name", was_code_present == TRUE) %>% 
+  filter(code_label == "false")
+
+codes_applied %>% 
+  filter(code == "software_name", was_code_present == TRUE) %>% 
+  filter(code_label == "software")
+
+library(stringi)
+
+
+
+codes_applied %>% 
+  filter(code == "software_name", was_code_present == TRUE) %>% 
+  mutate(code_label = code_label %>% str_remove_all('[\\p{Pi}\\p{Pf}"\\p{C}\\p{Z}{2,}]')) %>% 
+  filter(code_label %>% str_length() > 1) 
+
+
+%>% 
+  # mutate(code_label = code_label %>% str_remove_all('"')) %>% 
+  # filter(code_label %>% str_detect('\\p{Pd}\\p{Z}')) %>% 
+  filter(code_label %>% str_detect('genetics')) 
+
+
+  pull(code_label) %>% 
+  stri_escape_unicode
+
+  # filter(code_label %>% str_detect('\\p{Z}{2}'))
+#   filter(code_label %>% str_detect('\\p{Pi}|\\p{Pf}'))
+
+```
+```{r}
+
+
+```

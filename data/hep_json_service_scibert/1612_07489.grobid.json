@@ -1,0 +1,1906 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "RapidSim is a lightweight application for the fast simulation of phase space decays of beauty and charm quark hadrons, allowing for quick studies of the properties of signal and background decays in particle physics analyses. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Based upon the TGenPhaseSpace class from the ROOT application it uses externally provided fixedorder next-to-leading-logarithm calculations to boost the initial beauty and charm hadrons to the appropriate energy for the production environment of interest. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Userdefined momentum resolution functions can be used to mimic the effect of imperfect track reconstruction. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "User-defined efficiency shapes can be applied during generation to reproduce the effects of geometric and kinematic requirements on final state particles as well as the dynamics of the decay. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The effect of mis-identification of the final state particles is simple to configure via configuration files, while the framework can easily be extended to include additional particle types. ",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "This paper describes the RapidSim framework, features and some example use cases.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "A common problem in the analysis of particle decays is understanding the kinematic properties of the signal decay of interest and the potential backgrounds that can be introduced via other particle decays that have been imperfectly reconstructed in the detector. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "In particular, it is often crucial to know the shape of the invariant mass of the final state particles (or sub-sets of them) and the corresponding shape of the background decays. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "These backgrounds can arise from a number of sources:",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 Decays to final states containing a sub-set of the particles in the signal decay;",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 Decays to final states containing the same particles as in the signal decay, with additional particles that have not been reconstructed by the detector;",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 Decays to final states where some of the particles have been misidentified by the detector such that they appear as the signal decay;",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "\u2022 Some combination of the above.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "One method to study potential background sources is to generate large samples of the decays and pass them through the full detector simulation and reconstruction software chain. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "By selecting these events as if they are the signal decay, it is possible to study the shape of the backgrounds in the invariant mass distribution of interest. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The disadvantage of this approach is the typically long time required to generate, reconstruct and select these background samples and the mass storage requirements to retain these samples.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "RapidSim [1] is an application that allows analysts to quickly generate large samples (a few seconds for millions of events) of potential background decays with momentum spectra, invariant mass resolutions and efficiency shapes that are close approximations to what can be obtained from a full detector simulation. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 12,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "The speed of generation allows analysts to quickly perform initial studies that may indicate avenues for further investigation that may need a more detailed simulation. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "RapidSim supports the generation of a single decay chain with any number of sub-decays. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "It utilises the ROOT [2] software package and, specifically, the TGenPhaseSpace class to perform the fast generation. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 24,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Fixed-order next-to leading-log (FONLL) [3] calculations are used to provide the correct kinematic properties of the heavy hadrons. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 40,
+                    "end": 43,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "By default, RapidSim is deployed with appropriate FONLL configuration files such that heavy hadrons are produced with the kinematic properties that are expected from proton-proton collisions at the CERN Large Hadron Collider [4]. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 225,
+                    "end": 228,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "In addition to generating decays in 4\u03c0 it is possible for the user to specify that the decays of interest fall within the geometrical acceptance of the LHCb experiment [5]. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 168,
+                    "end": 171,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "The simple design allows users to extend RapidSim to include alternative detector geometries. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 41,
+                    "end": 50,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "RapidSim can accommodate basic user-defined kinematic efficiency effects during generation and mis-identification of final-state particles. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "All of these features are implemented in a generic way to enable them to be configured for any decay chain.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "Section 2 of this paper describes how to compile and run the application. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Sections 3 and 4 give an overview of the configuration options and example use case, respectively. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Details of the heavy quark production, efficiency effects, track momentum resolution and particle mis-identification can be found in Sections 5, 6, 7 and 8, respectively. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "A summary is presented in Section 9.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Usage",
+            "section_rank": 3
+        },
+        {
+            "text": "The latest version of the source code can be found on GitHub [1] and is compiled using the following commands: mkdir build cd build cmake .",
+            "section": "Usage",
+            "paragraph_rank": 10,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 61,
+                    "type": "publisher",
+                    "rawForm": "GitHub",
+                    "resp": "service",
+                    "id": "#software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": ".",
+            "section": "Usage",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "make",
+            "section": "Usage",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "The user should define the environment variable RAPIDSIM ROOT to point to the root of the RapidSim directory structure. ",
+            "section": "Usage",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 90,
+                    "end": 99,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "The executable may then be run as $RAPIDSIM_ROOT/build/src/RapidSim.exe <decay mode> <events to generate> [<save tree?>] for example,",
+            "section": "Usage",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 48,
+                    "type": "software",
+                    "rawForm": "RAPIDSIM_ROOT",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                },
+                {
+                    "start": 59,
+                    "end": 67,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "where there is a user provided Bs2Jpsiphi.decay file and optionally a user-defined Bs2Jpsiphi.config file (described in Sections 3 and 4) in the present working directory.",
+            "section": "Usage",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 48,
+                    "type": "software",
+                    "rawForm": "decay",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                },
+                {
+                    "start": 94,
+                    "end": 101,
+                    "type": "software",
+                    "rawForm": "config",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "Configuration",
+            "section_rank": 4
+        },
+        {
+            "text": "The RapidSim package has been designed to be easily configurable at run time for any decay, with all options relating to the decay configured via a decay-specific configuration file. ",
+            "section": "Configuration",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 13,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "This file is automatically created, with default options, the first occasion a particular decay is generated. ",
+            "section": "Configuration",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Full lists of the available global and particle-specific settings are given in Tables 1 and 2, respectively. ",
+            "section": "Configuration",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 93,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Tables 1 and 2"
+                }
+            ]
+        },
+        {
+            "text": "For most settings, the syntax is <setting> : <option>, where spaces and/or commas may be used to separate multiple options. ",
+            "section": "Configuration",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The param, shape and cut global settings require multiple arguments to be provided, with the following syntax:",
+            "section": "Configuration",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "param : <name> <type> <particles> [TRUE] shape : <file> <hist> <paramX> [<paramY>] cut : <param> <type> <value1> [<value2>]",
+            "section": "Configuration",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "For param, <type> is one of the parameter types defined in Table 3, <particles> is a space separated list of particles to combine to calculate the parameter and the optional TRUE defines the parameter in terms of true four-momenta rather than reconstructed quantities. ",
+            "section": "Configuration",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 66,
+                    "type": "table",
+                    "text": "Table 3"
+                }
+            ]
+        },
+        {
+            "text": "For shape, <file> and <hist> must give the filesystem location and name of a TH1 or TH2 object, and the <param{X,Y}> fields must match the <name> field of defined parameters. ",
+            "section": "Configuration",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "For cut, <param> must match the name of a defined parameter, <type> must be one of min, max, range or veto, and <value1> and <value2> define the cutoff values.  ",
+            "section": "Configuration",
+            "paragraph_rank": 15,
+            "section_rank": 4
+        },
+        {
+            "text": "altMass Adds alternative mass hypotheses for this particle.",
+            "section": "Configuration",
+            "paragraph_rank": 15,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "altMass",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                }
+            ]
+        },
+        {
+            "text": "particle type names Table 3: Types of parameter and their corresponding descriptions.",
+            "section": "Configuration",
+            "paragraph_rank": 16,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 20,
+                    "end": 27,
+                    "type": "table",
+                    "text": "Table 3"
+                }
+            ]
+        },
+        {
+            "text": "Type Description M",
+            "section_rank": 5
+        },
+        {
+            "text": "The invariant mass of the combination of the given particles M2",
+            "section": "Type Description M",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "The squared invariant mass of the combination of the given particles MT",
+            "section": "Type Description M",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "The transverse mass of the combination of the given particles E",
+            "section": "Type Description M",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "The energy of the combination of the given particles ET The transverse energy of the combination of the given particles P",
+            "section": "Type Description M",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The total momentum of the combination of the given particles PX The X momentum of the combination of the given particles PY The Y momentum of the combination of the given particles PZ The Z momentum of the combination of the given particles PT",
+            "section": "Type Description M",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "The transverse momentum of the combination of the given particles eta",
+            "section": "Type Description M",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "The pseudorapidity of the combination phi",
+            "section": "Type Description M",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "The azimuthal angle of the combination y",
+            "section": "Type Description M",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "The rapidity of the combination gamma The relitivistic gamma factor of the combination beta",
+            "section": "Type Description M",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "The velocity of the combination theta",
+            "section": "Type Description M",
+            "paragraph_rank": 26,
+            "section_rank": 5
+        },
+        {
+            "text": "The angle between the first two particles in the rest frame of the combination of the remaining particles e.g. In addition to the decay-specific configuration file. ",
+            "section": "Type Description M",
+            "paragraph_rank": 27,
+            "section_rank": 5
+        },
+        {
+            "text": "Several common configuration files are located in the config/ and rootfiles/ directories such as",
+            "section": "Type Description M",
+            "paragraph_rank": 27,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 60,
+                    "type": "software",
+                    "rawForm": "config",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 the list of defined particle species;",
+            "section": "Type Description M",
+            "paragraph_rank": 28,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 definitions of production kinematics options;",
+            "section": "Type Description M",
+            "paragraph_rank": 29,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 definitions of momentum resolution options.",
+            "section": "Type Description M",
+            "paragraph_rank": 30,
+            "section_rank": 5
+        },
+        {
+            "text": "Further details on the configuration of these latter two features are given in Sections 5.1 and 7.1, respectively.",
+            "section": "Type Description M",
+            "paragraph_rank": 31,
+            "section_rank": 5
+        },
+        {
+            "text": "4 Example:",
+            "section": "Type Description M",
+            "paragraph_rank": 32,
+            "section_rank": 5
+        },
+        {
+            "text": "The decay file consists of a single line, which describes the decay using the following syntax:",
+            "section": "Type Description M",
+            "paragraph_rank": 33,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 particles are named according to config/particles.dat and separated by spaces;",
+            "section": "Type Description M",
+            "paragraph_rank": 34,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 41,
+                    "type": "software",
+                    "rawForm": "config",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 a decay is denoted by ->;",
+            "section": "Type Description M",
+            "paragraph_rank": 35,
+            "section_rank": 5
+        },
+        {
+            "text": "\u2022 subdecays are demarcated by braces {}.",
+            "section": "Type Description M",
+            "paragraph_rank": 36,
+            "section_rank": 5
+        },
+        {
+            "text": "For the B 0 s \u2192 J/\u03c8 \u03c6 decay the Bs2Jpsiphi.decay ASCII file contains the single line",
+            "section": "Type Description M",
+            "paragraph_rank": 37,
+            "section_rank": 5
+        },
+        {
+            "text": "where the particle names are defined in the config/particle.dat file. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "In this example the J/\u03c8 (\u03c6) meson decays to two oppositely charged muons (kaons). ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "The user-defined configuration file (auto-produced the first time a particular decay is generated) is written as: where the @ notation is used to number the particles in the decay file, from left to right within each subdecay. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "Each particle can be given a unique name that is used to name the variables and histograms that are stored in the output data file. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "The effect of finite detector resolution is included through use of the smear keyword, typically only used for final state particles. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "By default, RapidSim includes momentum smearing parameterisations that can be applied to the generated four-vectors for pions, kaons, protons, muons (LHCbGeneric) or electrons (LHCbElectron). ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "It is simple for the user to extend the available resolution parameterisations. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "The altMass keyword tells RapidSim to also compute the four-vector of the considered particle under a particle mass hypothesis that is different to the default mass. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 35,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "Appropriately named variables are added to the output file. ",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5
+        },
+        {
+            "text": "The list of kinematic variables that RapidSim calculates for each of the decays and for each final state particle are defined at the head of the file using the paramsDecaying and paramsStable keywords.",
+            "section": "Type Description M",
+            "paragraph_rank": 38,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 37,
+                    "end": 46,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                }
+            ]
+        },
+        {
+            "text": "5 Heavy quark production",
+            "section": "Type Description M",
+            "paragraph_rank": 39,
+            "section_rank": 5
+        },
+        {
+            "text": "FONLL",
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 5,
+                    "type": "software",
+                    "rawForm": "FONLL",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                }
+            ]
+        },
+        {
+            "text": "In producing a realistic simulation of decays at a hadronic collider, it is important to determine the kinematic distribution of the particles produced. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "RapidSim generates particles following a particle-gun-like approach -only the decaying particle is simulated, not the underlying event. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                }
+            ]
+        },
+        {
+            "text": "This offers a significant time saving, but the kinematic distribution of the generated particles must be defined. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "RapidSim samples histograms generated from fixed-order next-to-leading-logarithm calculations [3] to determine the pseudorapidity, \u03b7, and transverse momentum, p T , of the decaying particle. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 97,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "Example distributions are shown in Figure 1. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 43,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Histograms are included with the current version of RapidSim for the 4\u03c0 production distributions of b-and c-hadrons in pp collisions at a range of centre-of-mass energies. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 61,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s24"
+                }
+            ]
+        },
+        {
+            "text": "The distribution used is configured at run time using the global option energy and the ID of the decaying particle. ",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "If necessary the mother option may be used to override the choice of histogram.",
+            "section": "FONLL",
+            "paragraph_rank": 40,
+            "section_rank": 6
+        },
+        {
+            "text": "Custom production kinematics",
+            "section_rank": 7
+        },
+        {
+            "text": "Additional histograms may be saved to the rootfiles/fonll/ directory. ",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "Each file must contain two TH1 objects named pT and eta describing the differential production cross sections in transverse momentum and pseudorapidity, respectively. ",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "These may be obtained using the web interface provided at the URL in Ref [3]. ",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 73,
+                    "end": 76,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Files using the naming scheme LHC{flavour}{energy}.",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "root may be added without the need to recompile the executable. ",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7
+        },
+        {
+            "text": "Extensions to the naming scheme must be made in the RapidConfig::loadParentKinematics method.",
+            "section": "Custom production kinematics",
+            "paragraph_rank": 41,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 63,
+                    "type": "software",
+                    "rawForm": "RapidConfig",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "Non-phase space distributions",
+            "section_rank": 8
+        },
+        {
+            "text": "By default, RapidSim generates all decays flat across the available phase space, however, in some cases it may be preferable to generate decays according to another distribution. ",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                }
+            ]
+        },
+        {
+            "text": "RapidSim features the option to generate decays according to a one or two dimensional distribution in any defined parameters (see param option in Section 3). ",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "This is implemented via a Monte-Carlo accept/reject algorithm which is used to shape the initially generated phase-space distribution. ",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Note that the requested number of events will be generated within the specified distribution, so inefficient accept/reject functions (such as a Dalitz plot with narrow resonances) will significantly increase the time required to generate each decay. ",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "An example is given in Figure 2. ",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 31,
+                    "type": "figure",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "This option is configured at runtime using the shape global option, e.g. shape : myFile.root myHisto M2 12 M2 23.",
+            "section": "Non-phase space distributions",
+            "paragraph_rank": 42,
+            "section_rank": 8
+        },
+        {
+            "text": "Efficiency",
+            "section_rank": 9
+        },
+        {
+            "text": "RapidSim can account for two different types of efficiency: geometrical acceptance and selection requirements placed on kinematic quantities. ",
+            "section": "Efficiency",
+            "paragraph_rank": 43,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "These are detailed in Sections 6.1 and 6.2, respectively.",
+            "section": "Efficiency",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "Geometrical acceptance",
+            "section_rank": 10
+        },
+        {
+            "text": "A requirement may be placed on the geometry of the decay. ",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "This may be configured via the configuration file at run time from a selection of defined options, however, new options must first be defined at compile time within the RapidAcceptance class. ",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 44,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 169,
+                    "end": 185,
+                    "type": "software",
+                    "rawForm": "RapidAcceptance",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "In the current version of the package, three LHCb-specific options are available in addition to the default:",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 44,
+            "section_rank": 10
+        },
+        {
+            "text": "Any No requirement is applied;",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "MotherIn The decaying particle is required to be within the angular acceptance of the LHCb detector;",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 46,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "MotherIn",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "AllIn All of the final-state particles are required to be within the angular acceptance of the LHCb detector;",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 47,
+            "section_rank": 10
+        },
+        {
+            "text": "AllDownstream All of the final-state particles are required to remain in the acceptance of the LHCb detector downstream of the dipole magnet.",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 48,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 14,
+                    "type": "software",
+                    "rawForm": "AllDownstream",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                }
+            ]
+        },
+        {
+            "text": "The single acceptance requirement is configured using the global option acceptance, e.g. acceptance : Any. ",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 3 shows an example of the distribution of transverse momentum and pseudorapidity for B 0 s mesons with each of the acceptance requirements applied.",
+            "section": "Geometrical acceptance",
+            "paragraph_rank": 49,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Kinematic requirements",
+            "section_rank": 11
+        },
+        {
+            "text": "Selection requirements may be placed on any defined parameter (see param option in Section 3). ",
+            "section": "Kinematic requirements",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "Requirements may be a minimum (min); a maximum (max); a range (range); or an excluded range (veto) and are configured using the global option cut, e.g. cut : pion PT range 1 100. ",
+            "section": "Kinematic requirements",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "An example is shown in Figure 4.",
+            "section": "Kinematic requirements",
+            "paragraph_rank": 50,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 31,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Figure 4"
+                }
+            ]
+        },
+        {
+            "text": "Missing particles",
+            "section_rank": 12
+        },
+        {
+            "text": "In certain decays some of the stable particles are not reconstructed (e.g. neutrinos in semi-leptonic decays or missing particles in partially reconstructed backgrounds). ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "In such cases, it is of interest to reconstruct the mass or momentum of the parent particle excluding the momentum lost to the missing child particle. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "This may be reproduced in RapidSim using the invisible option. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 35,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s32"
+                }
+            ]
+        },
+        {
+            "text": "This option is turned on by default for neutrinos but may also be used for any other particle type. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "This option only affects reconstructed quantities -true quantities will account for the invisible particle. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "An example of this option is shown in Figure 5. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 46,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figure 5"
+                }
+            ]
+        },
+        {
+            "text": "s meson required to be within the LHCb acceptance; ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "(c) the decay products (from B 0 s \u2192 J/\u03c8 (\u2192 \u00b5 + \u00b5 \u2212 )\u03c6(\u2192 K + K \u2212 ) decay) required to be within the LHCb acceptance; and ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "(d) the decay products required to be within the LHCb acceptance downstream of the dipole magnet. ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "nb by default, RapidSim only generates decays in the forward region (1.0 < \u03b7 < 6.0) when using the LHCb geometry.   ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 15,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                }
+            ]
+        },
+        {
+            "text": ": Simulated resolution effects on the distribution of m(K + l + l \u2212 ) for B + mesons decaying to (black) K + \u00b5 + \u00b5 \u2212 and (red) K + e + e \u2212 . ",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "The LHCbGeneric smearing option has been used for the kaon and muons, while the LHCbElectron option (which accounts for Bremsstrahlung) has been used for the electron and positron.",
+            "section": "Missing particles",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "Momentum smearing",
+            "section_rank": 13
+        },
+        {
+            "text": "RapidSim simulates the effect of a finite momentum resolution by smearing the momentum of each stable particle according to a defined resolution function. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                }
+            ]
+        },
+        {
+            "text": "Smearing options are defined in the config/smear/ directory (as described in Section 7.1) and configured for each particle using the smear keyword. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "Resolution functions may be defined either by a Gaussian distribution with a p-dependent (or p T -and \u03b7-dependent) width, or by a series of histograms that describe the resolution in different p ranges. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "The former approach allows the width of the resolution function to vary continuously and is the best option in most cases. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "The predefined LHCbGeneric smearing option uses this approach to model the resolution effects on charged hadrons and muons in the LHCb experiment, based on the calibration documented in Refs. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "[6,7]. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6,"
+                },
+                {
+                    "start": 3,
+                    "end": 5,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "7]"
+                }
+            ]
+        },
+        {
+            "text": "The histogram-based approach allows for asymmetric effects such as Bremsstrahlung to be modelled and is used in the predefined LHCbElectron option, which is based on a modified version of the model given in the supplementary material of Ref. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "[8]. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Examples of these two smearing options are shown in Figure 6. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 60,
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "The AtlasHadron and AtlasMuon options use the momentum resolution calibration from Ref. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "[9] to model the resolution effects as a function of p T and \u03b7 in the ATLAS experiment for hadrons and muons. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[9]"
+                }
+            ]
+        },
+        {
+            "text": "It is assumed that the resolution for hadrons is uniform as a function of p T , which is reasonable for tracks with p T > 1 GeV/c. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 7 shows examples of the distributions of J/\u03c8 K + invariant mass in selected B + \u2192 J/\u03c8 K + decays from the LHCb and ATLAS experiments and the corresponding signal-only distributions generated using RapidSim with the relevant momentum smearing options enabled. ",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 7"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 204,
+                    "end": 213,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "The RapidSim simulation manages to reproduce the mass resolution observed in data.",
+            "section": "Momentum smearing",
+            "paragraph_rank": 52,
+            "section_rank": 13,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 13,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s36"
+                }
+            ]
+        },
+        {
+            "text": "Configuration",
+            "section_rank": 14
+        },
+        {
+            "text": "Each smearing option is defined by a single ASCII configuration file and a single ROOT file containing either a TGraph object (for Gaussian resolution options with a p-dependent width), a TH2 object (for Gaussian resolutions with p T and \u03b7 dependence), or one or more  TH1 objects (for histogram-based options). ",
+            "section": "Configuration",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "The configuration file is formatted as follows:",
+            "section": "Configuration",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The first line gives the path to the associated ROOT file.",
+            "section": "Configuration",
+            "paragraph_rank": 54,
+            "section_rank": 14
+        },
+        {
+            "text": "\u2022 The second line is GAUSS for p-dependent Gaussian smearing options, GAUSSPTETA for p T -and \u03b7-dependent Gaussian smearing options, and HISTS for histogram smearing options.",
+            "section": "Configuration",
+            "paragraph_rank": 55,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 21,
+                    "end": 27,
+                    "type": "software",
+                    "rawForm": "GAUSS",
+                    "resp": "service",
+                    "id": "software-simple-s37"
+                },
+                {
+                    "start": 70,
+                    "end": 81,
+                    "type": "software",
+                    "rawForm": "GAUSSPTETA",
+                    "resp": "service",
+                    "id": "software-simple-s38"
+                },
+                {
+                    "start": 137,
+                    "end": 143,
+                    "type": "software",
+                    "rawForm": "HISTS",
+                    "resp": "service",
+                    "id": "software-simple-s39"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 For Gaussian smearing options, the third line gives the name of the TGraph (TH2) object that gives the resolution width as a function of p (p T and \u03b7).",
+            "section": "Configuration",
+            "paragraph_rank": 56,
+            "section_rank": 14,
+            "entity_spans": [
+                {
+                    "start": 70,
+                    "end": 77,
+                    "type": "software",
+                    "rawForm": "TGraph",
+                    "resp": "service",
+                    "id": "software-simple-s40"
+                }
+            ]
+        },
+        {
+            "text": "\u2022 For histogram smearing options, the third and subsequent lines give the lower edge of a p bin and the name of the TH1 object describing the resolution function in that bin. ",
+            "section": "Configuration",
+            "paragraph_rank": 57,
+            "section_rank": 14
+        },
+        {
+            "text": "An example file is given below.  ",
+            "section": "Configuration",
+            "paragraph_rank": 57,
+            "section_rank": 14
+        },
+        {
+            "text": "30000",
+            "section_rank": 15
+        },
+        {
+            "text": "P4_hist 50000 P5_hist",
+            "section": "30000",
+            "paragraph_rank": 58,
+            "section_rank": 15
+        },
+        {
+            "text": "Particle mis-identification",
+            "section_rank": 16
+        },
+        {
+            "text": "RapidSim can also calculate quantities using an alternative mass hypothesis for one or two particles. ",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s42"
+                }
+            ]
+        },
+        {
+            "text": "This is particularly useful when investigating backgrounds where a particle has been mis-identified. ",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16
+        },
+        {
+            "text": "Multiple alternative mass hypotheses may be defined for each particle using the particle's altMass option (e.g. altMass : K+ mu+ will add both kaon and muon masses as alternative hypotheses). ",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16
+        },
+        {
+            "text": "All parameters will be calculated for all combinations of hypotheses with two or fewer mis-identified particles. ",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16
+        },
+        {
+            "text": "For instance, D 0 \u2192 K \u2212 \u03c0 + with \u03c0 \u2192 \u00b5, \u03c0 \u2192 K and K \u2192 \u03c0 mis-identifications considered will result in a total of five alternative mass hypotheses (K \u2212 \u00b5 + , K + K \u2212 , \u03c0 \u2212 \u03c0 + , \u03c0 \u2212 \u00b5 + and \u03c0 \u2212 K + ). ",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16
+        },
+        {
+            "text": "Figure 8 shows an example mass distribution calculated with mis-identifications of two final state particles.",
+            "section": "Particle mis-identification",
+            "paragraph_rank": 59,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_9",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 17
+        },
+        {
+            "text": "A common task in the analysis of heavy-flavour hadron decays at particle physics experiments is to understand the kinematic properties of the signal and background processes, in particular when determining selection requirements or when describing the invariant mass spectrum of the final state particles. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "RapidSim is a new lightweight application that allows the analyst to quickly generate specific heavy-flavour hadron decays with realistic production kinematic distributions, efficiencies and momentum resolutions. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s43"
+                }
+            ]
+        },
+        {
+            "text": "The specific decay properties and options are controlled via simple user-defined configuration files. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "The production environment, momentum resolutions and desired efficiency are defined via externally provided parameterisations. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "The simple framework allows the user to easily extend the simulation should more detail be required, such as the addition of alternative detector geometries beyond the defaults provided. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "The problem of understanding the shape of hadron decays where one or more of the final state particles are mis-identified is handled in a simple way via a configuration file. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "Altogether, RapidSim packages many aspects of typical particle physics analyses into a simple application that gives users the ability to rapidly generate large samples of decays that can be used to aid their understanding without the need to generate fully simulated decays and the corresponding use of computing and storage resources that it entails. ",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 21,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s44"
+                }
+            ]
+        },
+        {
+            "text": "It is already being utilised in ongoing analyses within the LHCb collaboration.",
+            "section": "Summary",
+            "paragraph_rank": 60,
+            "section_rank": 17
+        },
+        {
+            "text": "\"1 2 1 3\" would give the angle between 1 and 2 in the rest frame of a resonance in m 13 costheta The cosine of theta Mcorr The corrected mass of the combination of the given particles correcting for any invisible particles. ",
+            "paragraph_rank": 61,
+            "section_rank": 18
+        },
+        {
+            "text": "Given by m corr = m 2 + p miss T 2 +p miss T , where m is the reconstructed mass and p miss T is the momentum of the reconstructed particles transverse to the true flight direction of the combination of all given particles.",
+            "paragraph_rank": 61,
+            "section_rank": 18
+        },
+        {
+            "text": "Figure 1 :Figure 2 :",
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 1: Distribution in \u03b7 and p T of ",
+            "section": "Figure 1 :Figure 2 :",
+            "paragraph_rank": 62,
+            "section_rank": 19
+        },
+        {
+            "text": "(a) B 0 s mesons and ",
+            "section": "Figure 1 :Figure 2 :",
+            "paragraph_rank": 62,
+            "section_rank": 19
+        },
+        {
+            "text": "(b) D 0 mesons produced in 7 TeV pp collisions.",
+            "section": "Figure 1 :Figure 2 :",
+            "paragraph_rank": 62,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 3 :",
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 3: Distribution in \u03b7 and p T of B 0 s mesons produced in 7 TeV pp collisions with ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "(a) no acceptance requirement; ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "(b) the B 0 s meson required to be within the LHCb acceptance; ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "(c) the decay products (from B 0 s \u2192 J/\u03c8 (\u2192 \u00b5 + \u00b5 \u2212 )\u03c6(\u2192 K + K \u2212 ) decay) required to be within the LHCb acceptance; and ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "(d) the decay products required to be within the LHCb acceptance downstream of the dipole magnet. ",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20
+        },
+        {
+            "text": "nb by default, RapidSim only generates decays in the forward region (1.0 < \u03b7 < 6.0) when using the LHCb geometry.",
+            "section": "Figure 3 :",
+            "paragraph_rank": 63,
+            "section_rank": 20,
+            "entity_spans": [
+                {
+                    "start": 15,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s45"
+                }
+            ]
+        },
+        {
+            "text": "Figure 4 :",
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 4: Example phase space Dalitz plot (B 0 s \u2192 K 0 S K + \u03c0 \u2212 ) with ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 64,
+            "section_rank": 21
+        },
+        {
+            "text": "(a) no selection requirements and ",
+            "section": "Figure 4 :",
+            "paragraph_rank": 64,
+            "section_rank": 21
+        },
+        {
+            "text": "(b) p T requirements on the kaon and pion to be larger than 1 GeV/c 2 .",
+            "section": "Figure 4 :",
+            "paragraph_rank": 64,
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 5 :",
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 5: Distribution of m(D\u03c0) invariant mass for (black) D 0 \u03c0 + decays where all particles are reconstructed and (red) D * 0 \u03c0 + decays where a neutral pion is missed.",
+            "section": "Figure 5 :",
+            "paragraph_rank": 65,
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 6",
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 6: Simulated resolution effects on the distribution of m(K + l + l \u2212 ) for B + mesons decaying to (black) K + \u00b5 + \u00b5 \u2212 and (red) K + e + e \u2212 . ",
+            "section": "Figure 6",
+            "paragraph_rank": 66,
+            "section_rank": 23
+        },
+        {
+            "text": "The LHCbGeneric smearing option has been used for the kaon and muons, while the LHCbElectron option (which accounts for Bremsstrahlung) has been used for the electron and positron.",
+            "section": "Figure 6",
+            "paragraph_rank": 66,
+            "section_rank": 23
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 7: Distributions of the invariant mass of B + \u2192 J/\u03c8 K + decays in the ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24
+        },
+        {
+            "text": "(a) LHCb[10] and ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 8,
+                    "end": 12,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "(b) ATLAS[11] experiments and those generated by RapidSim for ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24,
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 13,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 49,
+                    "end": 58,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s46"
+                }
+            ]
+        },
+        {
+            "text": "(c) LHCb conditions and ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24
+        },
+        {
+            "text": "(d) ATLAS conditions. ",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24
+        },
+        {
+            "text": "Note the different scales on the abscissas.",
+            "section": "Figure 7 :",
+            "paragraph_rank": 67,
+            "section_rank": 24
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 25
+        },
+        {
+            "text": "Figure 8: Distribution of J/\u03c8 \u03c0 + \u03c0 \u2212 invariant mass for B 0 s \u2192 J/\u03c8 \u03c6 decays where both kaons have been mis-identified as pions.",
+            "section": "Figure 8 :",
+            "paragraph_rank": 68,
+            "section_rank": 25
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 26
+        },
+        {
+            "text": "Global settings configured via the decay configuration file.",
+            "section": "Table 1 :",
+            "paragraph_rank": 69,
+            "section_rank": 26
+        },
+        {
+            "text": "(P, PT, M), M2, MT, E, ET, PX, PY, PZ, eta, phi, rapidity, gamma, beta paramsTwoBody Defines the set of parameters to be added to the histograms/tree for each two-body combination of particles in a 3+-body decay. ",
+            "section": "Table 1 :",
+            "paragraph_rank": 70,
+            "section_rank": 26
+        },
+        {
+            "text": "P, PT, M, (M2), MT, E, ET, PX, PY, PZ, eta, phi, rapidity, gamma, beta paramsThreeBody Defines the set of parameters to be added to the histograms/tree for each three-body combination of particles in a 4+-body decay. ",
+            "section": "Table 1 :",
+            "paragraph_rank": 70,
+            "section_rank": 26
+        },
+        {
+            "text": "P, PT, M, (M2), MT, E, ET, PX, PY, PZ, eta, phi, ",
+            "section": "Table 1 :",
+            "paragraph_rank": 70,
+            "section_rank": 26
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 27
+        },
+        {
+            "text": "Particle settings configured via the decay configuration file.",
+            "section": "Table 2 :",
+            "paragraph_rank": 71,
+            "section_rank": 27
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 29
+        },
+        {
+            "text": "We would like to thank the support of the Science and Technology Facilities Council grants ST/K004646/1 and ST/M004058/1.",
+            "section": "Acknowledgements",
+            "paragraph_rank": 72,
+            "section_rank": 29
+        }
+    ]
+}

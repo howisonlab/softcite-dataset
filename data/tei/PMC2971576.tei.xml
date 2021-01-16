@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">FastPval: a fast and memory efficient program to calculate very low P-values from empirical distribution</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>Oxford University Press (OUP)</publisher>
+				<availability status="unknown"><p>Copyright Oxford University Press (OUP)</p>
+				</availability>
+				<date type="published" when="2010-09-21">September 21, 2010</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mulin</forename><forename type="middle">Jun</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Biochemistry</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pak</forename><forename type="middle">Chung</forename><surname>Sham</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Department of Psychiatry and State Key Laboratory of Cognitive and Brain Sciences</orgName>
+								<orgName type="department" key="dep2">LKS Faculty of Medicine</orgName>
+								<orgName type="institution">The University of Hong Kong</orgName>
+								<address>
+									<addrLine>21 Sassoon Rd</addrLine>
+									<settlement>Pokfulam, Hong Kong SAR</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junwen</forename><surname>Wang</surname></persName>
+							<email>junwen@hku.hk</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Biochemistry</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">FastPval: a fast and memory efficient program to calculate very low P-values from empirical distribution</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Bioinformatics</title>
+						<idno type="ISSN">1367-4803</idno>
+						<idno type="eISSN">1460-2059</idno>
+						<imprint>
+							<publisher>Oxford University Press (OUP)</publisher>
+							<biblScope unit="volume">26</biblScope>
+							<biblScope unit="issue">22</biblScope>
+							<biblScope unit="page" from="2897" to="2899"/>
+							<date type="published" when="2010-09-21">September 21, 2010</date>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1093/bioinformatics/btq540</idno>
+					<idno type="PMID">20861029</idno>
+					<idno type="PMCID">PMC2971576</idno>
+					<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/26/22/2897/16896579/btq540.pdf" />
+					<note type="submission">Received on August 2, 2010; revised on September 7, 2010; accepted on September 16, 2010</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2-SNAPSHOT" ident="GROBID" when="2020-08-13T21:27+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+				<p>Motivation: Resampling methods, such as permutation and bootstrap, have been widely used to generate an empirical distribution for assessing the statistical significance of a measurement. However, to obtain a very low P-value, a large size of resampling is required, where computing speed, memory and storage consumption become bottlenecks, and sometimes become impossible, even on a computer cluster. Results: We have developed a multiple stage P-value calculating program called FastPval that can efficiently calculate very low (up to 10 −9) P-values from a large number of resampled measurements. With only two input files and a few parameter settings from the users, the program can compute P-values from empirical distribution very efficiently, even on a personal computer. When tested on the order of 10 9 resampled data, our method only uses 52.94% the time used by the conventional method, implemented by standard quicksort and binary search algorithms, and consumes only 0.11% of the memory and storage. Furthermore, our method can be applied to extra large datasets that the conventional method fails to calculate. The accuracy of the method was tested on data generated from Normal, Poison and Gumbel distributions and was found to be no different from the exact ranking approach. Availability: The FastPval executable file, the java GUI and source code, and the java web start server with example data and introduction, are available at</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Permutation and bootstrap are resampling procedures to assess the statistical significance of a measurement. They are non-parametric statistical tests that can convert a measurement (score) into an empirical P-value, even when the distribution of the measurements is unknown. Since resampling does not assume known distribution of the data, and biological data are usually complex, it has been widely used in the bioinformatics field, such as transcription factor binding site searching, pathway analysis and genome-wide association studies. * To whom correspondence should be addressed.</p><p>Finding transcription factor binding sites (TFBSs) in the promoter region of a gene is important to understand gene regulation <ref type="bibr" target="#b3">(Zhang et al., 2007)</ref>. TFBS of a particular transcription factor are usually represented by a computational model known as the position weight matrix (PWM) <ref type="bibr" target="#b2">(Pape et al., 2008)</ref>. To search for a putative binding site, we use the PWM to score DNA sequences with a sliding window approach. For each window, we obtain a score. By comparing this score with the distribution of the scores from the background, we can obtain the statistical significance (empirical P-value) of this score. The empirical background score distribution is obtained by scoring a large set of random sequences from the intergenic regions in the genome with the same PWM. We then sort the background scores and save them for later usage. When we convert a new score into a P-value, we load the background into the memory and search for the score. The ranking of the score is then converted to a P-value <ref type="bibr" target="#b0">(Hannenhalli, 2008)</ref>.</p><p>This empirical approach of calculating P-values is very powerful since it does not assume any distribution of the data. However, the significance of the P-value is limited by the size of the background we sample. To obtain a very low P-value, we have to sample a very large dataset from the background. The large dataset causes three limitations: (i) sorting and searching in a large dataset are time consuming; (ii) storage of the sorted background scores requires a large amount of hard disk space; and (iii) processing of the sorted array requires a great deal of memory, which is not usually feasible on a personal computer.</p><p>Efficient methods have been developed to relieve the computational burden resulting from large-scale resampling. For example, <ref type="bibr" target="#b1">Jensen et al. (2009)</ref> developed a Bayesian approach to dynamically assign resamples for multiple testing problems. For microarray expression data, they assume that each gene has a different null distribution, and allocate more resamples to the genes with P-values close to the classification threshold. But for the P-values that are far lower or far higher than the threshold and the decisions that are easy to make, they allocate much fewer resamples than the traditional method. The dynamic resampling allocation strategy has improved the computing efficiency, particularly when the number of tests is large.</p><p>While the above mentioned method deals with the efficiency of multiple tests, assuming each test has a different null distribution, P-value calculation from resampling based on a single test, or multiple tests assuming the same null distribution, is still hampered by computing, memory and storage limitations.</p><p>We have developed an efficient program to calculate the empirical P-value for a single test, or multiple tests assuming the same null distribution. This program separates the background distribution into multiple parts, according to user specified cutoffs. The scores in the less significant part are highly condensed into one table and the P-values are calculated less exactly, while the scores in the more significant part are put into other tables and the P-values are calculated more accurately. Our experiments showed that this algorithm is more time efficient, and uses much less storage and memory. It can be used widely in resampling based P-value calculation, either as standalone software or as a plug-in module.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">METHODS</head><p>For simplicity, here we illustrate our method in a two-stage approach and use the right tail of the distribution to calculate the statistics. In the first stage, we randomly sample a subset N from the original large dataset O. N is usually less than one-hundredth of the size of O, thus saving processing time. We sort N and obtain a cutoff score S c representing the top P portion of N. Both N and P are parameters specified by the users, and are set to N = 100 000 and P = 0.001 by the default. We then scan the original set and put scores greater than S c into our second subset M, and we obtain the maximum score S m in M. The two subsets N and M are sorted, saved, and serve as our two models (M1 and M2). To calculate the P-value for a new score S, we compare S with S c . If S ≤ S c , we will find its P-value in M1. Otherwise we use M2. If S &gt; S m , indicating S is out of our resampling score range, we use theoretical distribution to calculate its P-value or simply set the P-value to 0, at the user's preference. The parameters of two theoretical distributions, normal and extreme value distributions, were obtained from dataset N.</p><p>To evaluate the performance of our method, we compared FastPval with the traditional approach (named Exact) on a linux machine (Intel Xeon CPU E5410 2.33 GHz; 16 G of memory, SuSE linux 10.1). In the 'Exact' approach, we used quicksort and binary search in c programming. FastPval used the same sorting and searching algorithms for M1 and M2.</p><p>To evaluate the accuracy of FastPval, we compared the calculated P-values with the original P-values in three different distributions: Normal, Poisson and Gumbel. For each distribution, we tested the P-values in the −log 10 (P-value) ranged from 0 to 9 (corresponding P-value range from 1 to 10 −9 , exclusively). We took 162 P-values (termed theoretical P-values) evenly distributed in each of the nine ranges ( <ref type="table" target="#tab_0">Supplementary Table S1</ref>). We converted these P-values into scores with the build-in functions in the R platform, using parameters for each distribution as shown in <ref type="table">Supplementary  Table S2</ref>. Under the same parameter setting, we randomly sampled one billion data points. We used FastPval to build models M1 and M2 from these data. Finally, we used FastPval to convert these 162 scores into P-values (termed FastPval P-values) with the models. The −log 10 (FastPval P-values)</p><p>were plotted against the −log 10 (theoretical P-values) on a Log-Log QQ plot. The Kolmogorov-Smirnov test was also used to compare the FastPval P-values with theoretical P-values.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">RESULTS AND DISCUSSION</head><p>As shown in <ref type="table" target="#tab_0">Table 1</ref>, FastPval shows significant improvement over the 'Exact' approach. Tested on 1 billion resampling data, FastPval only used 0.11% of the memory and storage and 52.94% of model building and searching times. When we increased the dataset size to 5 billion, the 'Exact' method failed to load due to the large memory requirement, while our method was able to calculate P-values successfully. FastPval has speed, memory and storage consumption approximately linear to resembling size. The accuracies of FastPval calculated P-values from three different distributions were compared with the theoretical P-values. The results are shown in the form of Log-Log QQ plots ( <ref type="figure">Supplementary Fig. S1a-c)</ref>. In all three tested distributions, the FastPval calculated P-values and the theoretical P-values are highly matched, forming a 45 degree line in the Log-Log QQ plots. The Kolmogorov-Smirnov tests showed the P-value = 1.000 for Normal and Poisson distributions, and 0.998 for Gumbel distribution, indicating that the calculated P-values did not deviate from the original distribution. We therefore conclude that FastPval is accurate for calculating P-values for data from a variety of distributions.</p><p>The Java GUI interface of FastPval is shown in <ref type="figure">Supplementary  Figure S2a</ref>-c. In the 'Method' field, the user can either choose 'FastPval' or the traditional 'Exact' method to calculate P-values. When the resembling size is greater than 10 million, FastPval is the only suitable choice. In the 'Step' field, the user can either 'Generate model', or 'Calculate P-value' or 'Do both'. The 'Generate model' step allows the user to generate M1 and M2 models from the background dataset O; the 'Calculate P-value' step allows the user to calculate P-values for all the scores saved in a text file. The interface changes according to the user's selection. In the 'Generate model' step, the user has to specify the background file and directory to save two models, by clicking on 'Background file' and 'Output folder', respectively. The user also needs to select two parameters, the 'Sampling size' (N) and 'P-value cutoff' (P). The selections of P and N are affected by the balance of accuracy and speed. Bigger Ns and Ps will give more accurate P-values but will be less efficient. We recommend N = 100 000 and P = 0.001. N * P should be within the range of 10 to 1000, preferably 100. After the models are generated, the program will automatically change to the 'Calculate P-value' step, with default model files selected. The user will need to specify the file with scores for P-value calculation, by clicking on 'Sample file'. For scores that are out of the boundary of both models, the user can choose either 'Extreme distribution' or 'Normal distribution' in the 'Assumed distribution' field to calculate the P-value, or simply select 'No distribution' to assign the P-value to 0. The parameters of both distributions were calculated from the fitting of the dataset N.</p><p>The program can be run in a command line mode, which is suitable for large-scale batch processing. We provide both 32-bit and 64-bit executable GUI programs, in both linux and windows platforms. The source code of the program is provided in our companion website.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc>Comparison of FastPval and Exact method in memory, storage consumptions and running time</figDesc><table><row><cell>Resampling size</cell><cell cols="2">Memory(MB)</cell><cell>Storage (MB)</cell><cell></cell><cell cols="2">Running time (s)</cell><cell></cell><cell></cell></row><row><cell>(1 000 000)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">Model building</cell><cell>P-value searching a</cell><cell></cell></row><row><cell></cell><cell>Exact</cell><cell>FastPval</cell><cell>Exact</cell><cell>FastPval b</cell><cell>Exact</cell><cell>FastPval</cell><cell>Exact</cell><cell>FastPval</cell></row><row><cell>1</cell><cell>4</cell><cell>0.39</cell><cell>12.1</cell><cell>1.3 + 0.013</cell><cell>1.10</cell><cell>1.05</cell><cell>0.74 + 2.33</cell><cell>0.08 + 1.53</cell></row><row><cell>10</cell><cell>38</cell><cell>0.39</cell><cell>121.4</cell><cell>1.3 + 0.131</cell><cell>11.21</cell><cell>9.29</cell><cell>7.61 + 29.88</cell><cell>0.09 + 16.07</cell></row><row><cell>100</cell><cell>373</cell><cell>0.78</cell><cell>1200</cell><cell>1.3 + 1.3</cell><cell>116.73</cell><cell>91.46</cell><cell>77.13 + 332.13</cell><cell>0.14 + 249.44</cell></row><row><cell>500</cell><cell>1900</cell><cell>2</cell><cell>5900</cell><cell>1.3 + 6.0</cell><cell>677.58</cell><cell>455.23</cell><cell>380.47 + 1885.12</cell><cell>0.40 + 1297.44</cell></row><row><cell>1000</cell><cell>3700</cell><cell>4</cell><cell>11 900</cell><cell>1.3 + 11.9</cell><cell>1409.61</cell><cell>919.45</cell><cell>761.52 + 4019.77</cell><cell>0.72 + 2530.65</cell></row><row><cell>5000</cell><cell>N/A c</cell><cell>19</cell><cell>59 900</cell><cell>1.3 + 59.8</cell><cell>N/A c</cell><cell>5475.32</cell><cell>N/A c</cell><cell>3.34 + 12885.87</cell></row></table><note>a Model loading + searching time.b Sizes of first model + second model.c Exact method failed to load due to large size of the dataset.</note></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Funding: Internal funds from the CRCG and the Genomic SRT of the University of Hong Kong; GRF 778609M and AoE M-04/04 from the Research Grants Council of Hong Kong.</p><p>Conflict of Interest: none declared.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Eukaryotic transcription factor binding sites--modeling and integrative search methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hannenhalli</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btn198</idno>
+		<idno type="PMID">18426806</idno>
+		<idno type="ark">ark:/67375/HXZ-2K4S3XSD-3</idno>
+		<idno type="istexId">4C97FA3C1198F02D983ABD3DAF93512FD835773E</idno>
+		<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/24/11/1325/478152/btn198.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<title level="j" type="abbrev">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<idno type="ISSNe">1460-2059</idno>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1325" to="1331" />
+			<date type="published" when="2008-04-21" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A Bayesian approach to efficient differential allocation for resampling-based significance testing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shane</forename><forename type="middle">T</forename><surname>Jensen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sameer</forename><surname>Soi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Li-San</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-10-198</idno>
+		<idno type="PMID">19558706</idno>
+		<idno type="PMCID">PMC2718927</idno>
+		<ptr type="open-access" target="https://bmcbioinformatics.biomedcentral.com/track/pdf/10.1186/1471-2105-10-198" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<title level="j" type="abbrev">BMC Bioinformatics</title>
+		<idno type="ISSN">1471-2105</idno>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">198</biblScope>
+			<date type="published" when="2009" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Natural similarity measures between position frequency matrices with an application to clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Utz</forename><forename type="middle">J</forename><surname>Pape</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sven</forename><surname>Rahmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><surname>Vingron</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btm610</idno>
+		<idno type="PMID">18174183</idno>
+		<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/24/3/350/16884111/btm610.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<idno type="ISSNe">1460-2059</idno>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="350" to="357" />
+			<date type="published" when="2008-01-02" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Computing exact P-values for DNA motifs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Tromp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btl662</idno>
+		<idno type="PMID">17237046</idno>
+		<ptr type="open-access" target="https://academic.oup.com/bioinformatics/article-pdf/23/5/531/655889/btl662.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<title level="j" type="abbrev">Bioinformatics</title>
+		<idno type="ISSN">1367-4803</idno>
+		<idno type="ISSNe">1460-2059</idno>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="531" to="537" />
+			<date type="published" when="2007-01-18" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

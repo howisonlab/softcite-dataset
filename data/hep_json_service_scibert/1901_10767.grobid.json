@@ -1,0 +1,1621 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Many particle physics experiments use constant threshold triggers, where the trigger threshold is in an online variable that can be calculated quickly by the trigger module. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Offline data analysis then calculates a more precise offline variable for the same quantity, for example the event energy. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The efficiency curve is a step function in the online variable, but not in the offline variable. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "One typically obtains the shape of the efficiency curve in the offline variable by way of a calibration dataset, where the true rate of events at each value of the offline variable is measured once and compared to the rate observed in the physics dataset. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "For triggers with a fixed threshold condition, it is sometimes possible to obtain the trigger efficiency curve without use of a calibration dataset. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This is useful to verify stability of a calibration over time when calibration data cannot be taken often enough. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "It also makes it possible to use datasets for which no calibration is available. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This paper describes the method and the conditions that must be met for it to be applicable.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "In many particle physics experiments, the data acquisition system (DAQ) monitors the signals from the detector and initiates recording of data when a pre-defined trigger condition is met. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The DAQ has only a short time window in which to determine, based on the detector data, the variables on which the trigger condition is based. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, the decision about when to trigger must be based on an imperfect estimate of the quantity of interest (such as the event energy), which can be calculated with the required speed [1] and without the use of calibration inputs, which are often only determined after a dataset is recorded.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 185,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Consider a situation where the DAQ bases the trigger decision on an online variable x. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Data read-out is triggered whenever x \u03b8 x , so the trigger efficiency in x is a step a e-mail: tina.pollmann@tum.de function ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "(x) = (x \u2212 \u03b8 x ). ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "In offline data analysis, the variable y is calculated based on the same event information, but using more elaborate algorithms and calibration inputs. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "The y variable is therefore a more precise indicator of the trigger quantity. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Of interest for analysis is the trigger efficiency as a function of y, ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "(y).",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "As an example, the DEAP-3600 dark matter detector uses a constant threshold trigger [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 84,
+                    "end": 87,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "Data read-out is triggered whenever the signal intensity from the light detectors, which is related to the event energy, passes a fixed threshold. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "In offline analysis, the signal intensity is converted into the total number of photo electrons, using calibration constants that account for differences in light detector gain between different light detectors, and for changes in gain over time. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "This offline variable measures the event energy more precisely, but near the trigger threshold, the efficiency is no longer a simple step function.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "A number of methods exist to determine (y) by way of a calibration dataset. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "These rely on measuring directly or indirectly the true rate of events at each value of y, so that by comparison with the rate obtained after the trigger, the trigger efficiency can be calculated.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Obtaining a trigger efficiency calibration is not always possible. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The calibration data could be corrupt, it could be impossible to record calibration data due to electronics or physics constraints, or the calibration could drift with time faster than calibration datasets can be taken. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "In such cases, the efficiency curve might still be recovered or verified provided the value of x for each event was recorded or can be obtained offline.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "In the DEAP-3600 detector for example, recording a calibration dataset takes approximately 48hours, so performing regular trigger efficiency calibrations reduces the lifetime of the detector for dark-matter search data. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "The trigger efficiency changes the shape of the spectra used to obtain the energy calibration. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "It also changes the shape of the distributions of certain backgrounds in a pulseshape-discrimination parameter, which cannot be modelled correctly unless a trigger efficiency correction is applied [3]. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 197,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Therefore, monitoring the trigger efficiency on an ongoing basis is crucial to some analysis efforts.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "General principle and illustration of the method",
+            "section_rank": 3
+        },
+        {
+            "text": "A dataset contains the value of x and y for each event. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "For concreteness, we say that these are both variables for the event energy. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "We assume that the events recorded have a continuous spectrum in both x and y in the region relevant to the trigger.",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Consider the histogram of x versus y for many events, I (x, ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "y). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "Because x and y are variables describing the same quantity, they are correlated and the data will form a 'band' in this 2-dimensional space. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "The data has a spectrum in the x parameter, I ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "(x) = \u221e \u2212\u221e I (x, ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "y)dy, and a spectrum in the y parameter",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 10,
+            "section_rank": 3
+        },
+        {
+            "text": "To illustrate how to obtain ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(y) from a dataset, we create data in a toy Monte Carlo (MC) simulation with a spectrum I ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(x) = 10x, a trigger threshold \u03b8 x = 100, and a resolution such that the shape of the y distribution for events of the same x is a skewed Gaussian. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The I (x, ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "y) histogram for the simulated events is shown in Fig. 1a. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 50,
+                    "end": 57,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1a"
+                }
+            ]
+        },
+        {
+            "text": "The functional form of the relation between x and y is not typically known a-priori in real data, and the method developed here does not rely on such knowledge, so we limit ourselves in this section to information that can be obtained from the data. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "This situation will be analysed mathematically in Sect. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "3.2. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Figure 1a shows what the real detector data might look like. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 9,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1a"
+                }
+            ]
+        },
+        {
+            "text": "To obtain the trigger turn-on curve in y, the following steps are taken 1. Normalize the I (x, ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "y) histogram such that I ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(x) = 1 for x \u03b8 x . ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "This can be achieved by dividing each bin (x,y) in the histogram by I ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(x). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "We denote the histogram normalized in x as I x (x, ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "y). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "It is shown in Fig. 1b. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 15,
+                    "end": 22,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1b"
+                }
+            ]
+        },
+        {
+            "text": "After this normalization, I x ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(x) is equal to the efficiency curve ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(x) = (x \u2212 \u03b8). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "2. Now consider the spectrum in y, that is Fig. 2a. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 43,
+                    "end": 50,
+                    "type": "figure",
+                    "text": "Fig. 2a"
+                }
+            ]
+        },
+        {
+            "text": "For values of y where all possible values of x are above the trigger threshold (approximately at y 30 in this example), a constant plateau arises. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "For values of y where some of the possible x values are below the trigger threshold, the spectrum is diminished by that fraction of x values which lies below the threshold. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "3. The height of the plateau is determined by a fit with a straight line (red dashed line in Fig. 2a). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 93,
+                    "end": 100,
+                    "type": "figure",
+                    "text": "Fig. 2a"
+                }
+            ]
+        },
+        {
+            "text": "4. Finally, I x ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "(y) is divided by the plateau height. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The resulting curve, shown in Fig. 2b, is an estimate of the trigger efficiency turn-on function. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 37,
+                    "type": "figure",
+                    "text": "Fig. 2b"
+                }
+            ]
+        },
+        {
+            "text": "Because in the simulation the functional dependence is known, the functional shape of the turn-on curve can be fit to the data. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "This is the blue solid line in Fig. 2a, b.",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 31,
+                    "end": 38,
+                    "type": "figure",
+                    "text": "Fig. 2a"
+                }
+            ]
+        },
+        {
+            "text": "The crucial feature necessary for this method to work is the constant plateau in I x (y). ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "In other words, that step 1 forces the spectrum I x (y) to be uniform. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "A constant plateau arises when I x (y) does not depend on x or y until the trigger threshold is introduced. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "That is,\u00ce x (y) = c where the hat indicates the absence of the trigger and c is a constant plateau height. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Any value in the actual I x (y) histogram not equal to c then indicates the influence of the trigger and the difference c \u2212 I x (y) is proportional to the number of events missing at y due to the trigger efficiency. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "The conditions necessary to obtain a constant plateau will be discussed in Sect. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "5. ",
+            "section": "General principle and illustration of the method",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Validation",
+            "section_rank": 4
+        },
+        {
+            "text": "In the following two sections, we analytically demonstrate the validity of this method for two common resolution functions and discuss the conditions that must be met to obtain a constant plateau region.",
+            "section": "Validation",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Gaussian example",
+            "section_rank": 5
+        },
+        {
+            "text": "In this section, the method of determining the trigger efficiency is discussed mathematically for Gaussian resolution functions. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The offline variable y follows a Gaussian distribution for any given value of x. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "text": "The shape parameters of the Gaussian distribution are functions of x, and the data has some spectrum N (x) 2 :",
+            "section": "Gaussian example",
+            "paragraph_rank": 14,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 108,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "2"
+                }
+            ]
+        },
+        {
+            "text": "Division by N ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "(x) gives I x (x, ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "y) which is by construction already normalized such that I x ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "(x) = 1 above the trigger threshold. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "To obtain I x ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "(y), an assumption must be made about the shape parameters. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "In the simplest case, \u03c3 ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "(x) = \u03c3 and \u03bc",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "(x) = a \u2022 x. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "Thus:",
+            "section": "Gaussian example",
+            "paragraph_rank": 15,
+            "section_rank": 5
+        },
+        {
+            "text": "We temporarily ignore the trigger condition to study the spectrum in y (indicated by the hat).",
+            "section": "Gaussian example",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "We find that the spectrum in y is a constant if no trigger condition is applied. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "Thus, we proved here that the critical condition for the method to work is met, i.e. that for values of y well above the trigger region, I x (y) forms a constant plateau.",
+            "section": "Gaussian example",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "The analytic shape of the turn-on curve can be obtained by including the trigger condition in the integral",
+            "section": "Gaussian example",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "The integral in Eq. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "(5) is formally equal to a convolution of a Gaussian with a step function. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "This curve describes the fraction of events that pass the trigger for each value of y, relative to some plateau height 1 a that is reached for y a\u03b8 x . ",
+            "section": "Gaussian example",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "It can be turned into the trigger turn-on curve by scaling such that the plateau is at 1 ",
+            "section": "Gaussian example",
+            "paragraph_rank": 19,
+            "section_rank": 5
+        },
+        {
+            "text": "This integral cannot be solved analytically. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "The numeric solution for a = 0.2y and b = 0.015y is shown in Fig. 4. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 67,
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "Panel (b) shows that a constant plateau exists and the plateau This method does not produce proper efficiency curves in all situations. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Figures 5 and 6 show situations when it does not work, namely when at least one of the mean or the sigma functions are polynomials of level bigger than 1. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 15,
+                    "type": "figure",
+                    "ref_id": "fig_4",
+                    "text": "Figures 5 and 6"
+                }
+            ]
+        },
+        {
+            "text": "In both figures, the trigger efficiency model from Eq. ",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "(8) is drawn to illustrate the differences.",
+            "section": "Gaussian example",
+            "paragraph_rank": 20,
+            "section_rank": 5
+        },
+        {
+            "text": "Skewed Gaussian example",
+            "section_rank": 6
+        },
+        {
+            "text": "To show that this method does not work only for Gaussian distributions, we repeat the calculation for skewed Gaussian (also called exponentially modified Gaussian (EMG)) resolution functions:  Fig. 7. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 21,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 193,
+                    "end": 199,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Fig. 7"
+                }
+            ]
+        },
+        {
+            "text": "The y-axis projection without the trigger condition is then 3 (see Appendix 1).",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 21,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 60,
+                    "end": 61,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3"
+                },
+                {
+                    "start": 67,
+                    "end": 78,
+                    "type": "bibr",
+                    "text": "Appendix 1)"
+                }
+            ]
+        },
+        {
+            "text": "Again, a constant plateau height is expected in the absence of the trigger.",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 22,
+            "section_rank": 6
+        },
+        {
+            "text": "The analytic shape of the trigger turn-on curve is again obtained by including the trigger condition: 3 The lower integration bound is set at 0 because of the definition of the EMG. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 23,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 103,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3"
+                }
+            ]
+        },
+        {
+            "text": "and dividing by the plateau height Figure 7 shows the EMG model for values of \u03bc = 2y, \u03c3 = 3, and \u03b8 x = 100. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 35,
+                    "end": 43,
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "text": "Figure 7"
+                }
+            ]
+        },
+        {
+            "text": "The turn on curve, Eq. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "(15), is drawn as well. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "Function parameters are taken at the trigger threshold (i.e. this is not a fit). ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "Figure 8 shows the skewed Gaussian example for \u03bc = 0.2y, \u03c3 = 0.015y, and \u03bb = 0.7. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "text": "Figure 8"
+                }
+            ]
+        },
+        {
+            "text": "The efficiency curve again shows a plateau and the shape is described by Eq. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "(15), but here the parameters of the turn-on curve were fit out to \u03bc = 19.8, \u03c3 = 2.0, and \u03bb = 0.705, so the parameters that determine the shape differ slightly from the parameters of the skewed Gaussian at the trigger threshold. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "As previously seen in the Gaussian example, the method fails if \u03bc or \u03c3 are polynomials of order bigger than 1 in y. ",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "It also fails if \u03bb is not constant, though if the dependence of \u03bb on x is not strong, an approximately flat plateau region is obtained.",
+            "section": "Skewed Gaussian example",
+            "paragraph_rank": 24,
+            "section_rank": 6
+        },
+        {
+            "text": "Uncertainties",
+            "section_rank": 7
+        },
+        {
+            "text": "The normalization of the spectrum in x adds correlated uncertainties to the statistical uncertainties of each bin in the I x (y) histogram. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "Then, the plateau level must be fit out, introducing an uncertainty in the 'true' number of events. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "The final efficiency curve or histogram comes with a complicated mixture of correlated and uncorrelated, statistical and systematic uncertainties. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "Furthermore, because the 'true' number of events is only an estimate, the efficiency histogram can have values bigger than 1.",
+            "section": "Uncertainties",
+            "paragraph_rank": 25,
+            "section_rank": 7
+        },
+        {
+            "text": "Some assumptions can be made to simplify the uncertainties. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "The uncertainty on the total number of events in each x bin will always be smaller than the statistical uncertainty on the events in any (x, y) bin. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "Thus, the correlated uncertainties can be neglected in the I x (y) histogram. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "The efficiency histogram can be fit with an analytic function where the maximum value is constrained to 1. ",
+            "section": "Uncertainties",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "Then, confidence regions can be obtained in the usual way by varying the fit parameters within their uncertainties.",
+            "section": "Uncertainties",
+            "paragraph_rank": 26,
+            "section_rank": 7
+        },
+        {
+            "text": "The uncertainty on the plateau height must be minded as a systematic uncertainty.",
+            "section": "Uncertainties",
+            "paragraph_rank": 27,
+            "section_rank": 7
+        },
+        {
+            "text": "Discussion",
+            "section_rank": 8
+        },
+        {
+            "text": "The method introduced here allows an estimation of the trigger efficiency turn-on curve without the use of calibration data. ",
+            "section": "Discussion",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "This method will have a larger uncertainty than a typical efficiency calibration for the same amount of data used. ",
+            "section": "Discussion",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "However, since 'physics' datasets are often much larger than calibration datasets, this method can result in a more precise estimate.",
+            "section": "Discussion",
+            "paragraph_rank": 28,
+            "section_rank": 8
+        },
+        {
+            "text": "The method works if a number of assumptions are true: (1) The trigger bases the trigger decision solely on an online parameter x, and the value of x is known for each event. ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "(2) The trigger curve in x is a step function; that is the efficiency is known to be 0 for x < \u03b8 x and 1 for x \u03b8 x . ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(2)"
+                }
+            ]
+        },
+        {
+            "text": "(3) The existing data covers the full available parameter space in the trigger turn-on region, and far enough into the plateau region to estimate the plateau height. ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "4The distribution of the offline parameter y for events with the same x, I (y; x = const), has the same functional form at all values of x (or at least for all values of x in the critical turn-on region and far enough into the plateau region that the plateau height can be obtained). ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 1,
+                    "ref_id": "formula_4",
+                    "text": "4"
+                }
+            ]
+        },
+        {
+            "text": "(5) The I (x, y) histogram shows a linear dependence of y on x, and the width of the I (y; x = const) distribution is a polynomial of order 1 in x. ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "Non-Gaussian distributions will have additional requirements on the distribution shape parameters. ",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "These do not have to be explicitly determinedif this method produces a flat plateau region, the conditions are met.",
+            "section": "Discussion",
+            "paragraph_rank": 29,
+            "section_rank": 8
+        },
+        {
+            "text": "Condition (1) is typically met in particle physics experiments. ",
+            "section": "Discussion",
+            "paragraph_rank": 30,
+            "section_rank": 8
+        },
+        {
+            "text": "We note that if the trigger variable x is not recorded for each event, it can often by re-constructed by programming an offline analysis algorithm that reproduces the trigger module algorithm.",
+            "section": "Discussion",
+            "paragraph_rank": 30,
+            "section_rank": 8
+        },
+        {
+            "text": "Condition (2) must be met such that the result of this method is in fact a trigger efficiency. ",
+            "section": "Discussion",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "This method determines the efficiency curve of y with regard to x, not the efficiency of y with regard to the actual trigger. ",
+            "section": "Discussion",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "But if the trigger efficiency in x is a step function with values of either 0 or 1, the curve obtained is the trigger efficiency in y. ",
+            "section": "Discussion",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "If the trigger efficiency in x is not a step function, then it must additionally be obtained another way before the trigger efficiency in y can be determined. ",
+            "section": "Discussion",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "A typical situation where this is the case would be one where the trigger is pre-scaled or otherwise known to approach a value different from one.",
+            "section": "Discussion",
+            "paragraph_rank": 31,
+            "section_rank": 8
+        },
+        {
+            "text": "Condition (3) means that the physics data recorded must contain a sufficient number of events with values of x near the trigger threshold. ",
+            "section": "Discussion",
+            "paragraph_rank": 32,
+            "section_rank": 8
+        },
+        {
+            "text": "If it does not, presumably, the trigger turn-on curve is not of interest to begin with.",
+            "section": "Discussion",
+            "paragraph_rank": 32,
+            "section_rank": 8
+        },
+        {
+            "text": "Condition (4) is the only one that is not trivial to verify based just on the physics data. ",
+            "section": "Discussion",
+            "paragraph_rank": 33,
+            "section_rank": 8
+        },
+        {
+            "text": "An unchanging functional form of the I (y; x = const) distribution is a reasonable assumption in most cases, but should if possible be checked using a traditional efficiency calibration approach. ",
+            "section": "Discussion",
+            "paragraph_rank": 33,
+            "section_rank": 8
+        },
+        {
+            "text": "If I (y; x = const) is known analytically, such that the shape of the turn-on curve can be obtained by convolution with a step function, then the shape of the data should be well described by this analytic turn-on curve. ",
+            "section": "Discussion",
+            "paragraph_rank": 33,
+            "section_rank": 8
+        },
+        {
+            "text": "If the shapes do not match, it would be an indication that condition iv) is not met.",
+            "section": "Discussion",
+            "paragraph_rank": 33,
+            "section_rank": 8
+        },
+        {
+            "text": "We showed analytically that this method works for certain forms of Gaussian and skewed Gaussian resolution functions. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "We expect that this method will work for many realistic distributions I (x, ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "y), as long as I (y; x = const) tends to 0 at both tails. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "This can be intuitively understood. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "At the integration borders of y = \u2212\u221e and y = \u221e, the distribution is 0. ",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "x determines where inside the integration region the distribution peaks (through \u03bc = \u03bc",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "(x)), but since the integration goes from minus to plus infinity, the location of the distribution on the y-axis is not relevant.",
+            "section": "Discussion",
+            "paragraph_rank": 34,
+            "section_rank": 8
+        },
+        {
+            "text": "The events used to obtain the trigger efficiency calibration do not need to be signal events. ",
+            "section": "Discussion",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "Taking the DEAP-3600 detector as an example again, events from a high-rate background, the beta decay of 39 Ar, are used to obtain the trigger efficiency calibration.",
+            "section": "Discussion",
+            "paragraph_rank": 35,
+            "section_rank": 8
+        },
+        {
+            "text": "Summary",
+            "section_rank": 9
+        },
+        {
+            "text": "We have presented a method to obtain the trigger efficiency turn-on curve for a physics dataset. ",
+            "section": "Summary",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "This method uses only the physics data itself, that is it does not require calibration data. ",
+            "section": "Summary",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "It is based on several assumptions that are fulfilled for many types of experiments but at least one of which is difficult to verify without a calibration. ",
+            "section": "Summary",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "Therefore, this method is particularly well suited to tracking the efficiency turn-on curve over time. ",
+            "section": "Summary",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "It can be verified against calibration at any point of data recording and, once verified, be used to obtain the trigger efficiency curve over time, for example if calibration parameters drift faster than it is reasonable to record calibrations.",
+            "section": "Summary",
+            "paragraph_rank": 36,
+            "section_rank": 9
+        },
+        {
+            "text": "It can also be used to find out where full efficiency is reached, even if the precise shape of the turn-on is not reliable because the method was not verified. ",
+            "section": "Summary",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "This can be useful when a dataset must be analyzed for which no other calibration is available, to at least find out in which region the recorded data is reliable.",
+            "section": "Summary",
+            "paragraph_rank": 37,
+            "section_rank": 9
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 1 Simulated data using a skewed Gaussian resolution function with \u03bc = 0.2x, \u03c3 = 0.2, and \u03bb = 0.7 (see Eq. ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "(10)). ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "The spectrum is I ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "(x) = 10x. ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "a The I (x, ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "y) distribution as it might be measured in an experiment. ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "b The I x (x, ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "y) distribution, where each bin in I (x, ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "y) is normalized such that I ",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "(x) = 1 for x \u03b8 x",
+            "section": "Fig. 1",
+            "paragraph_rank": 38,
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 2 1 a",
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 2For the same MC data asFig. ",
+            "section": "Fig. 2 1 a",
+            "paragraph_rank": 39,
+            "section_rank": 11
+        },
+        {
+            "text": "1a The I x (y) distribution is fit with a straight line in a region far away from the trigger threshold, and with the analytic description of the turn-on shape, which is known in this case. ",
+            "section": "Fig. 2 1 a",
+            "paragraph_rank": 39,
+            "section_rank": 11
+        },
+        {
+            "text": "b I x (y) scaled by the plateau height results in the trigger efficiency curve (zoomed in compared to panel a) to better show the turn-on region)",
+            "section": "Fig. 2 1 a",
+            "paragraph_rank": 39,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3 illustratesFig. ",
+            "section_rank": 12
+        },
+        {
+            "text": "3 ",
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 3 illustrates Eq. ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "(2) (panel ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "a), Eq. ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "(6) (panel ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "b), and Eq. ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "(8) (panel ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "c). ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "Parameters used are a = 0.2, \u03c3 = 3 and \u03b8 x = 100. ",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "This is not a Monte Carlo simulation; the respective equations are evaluated numerically here.In a more realistic case, both the mean and the width of the y distribution at a given x vary with x: \u03c3 (x) = b \u2022 x and \u03bc(x) = a \u2022 x so that",
+            "section": "Figure 3 illustratesFig. 3",
+            "paragraph_rank": 40,
+            "section_rank": 12
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 4 The Gaussian example with \u03bc = 0.2y and \u03c3 = 0.015y. ",
+            "section": "Fig. 4",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "a x vs y. ",
+            "section": "Fig. 4",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "b The efficiency curve in y",
+            "section": "Fig. 4",
+            "paragraph_rank": 41,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 5",
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 5 The Gaussian example with \u03bc = 0.2y and \u03c3 = 0.07y + 2 \u2022 10 \u22125 y 2 . ",
+            "section": "Fig. 5",
+            "paragraph_rank": 42,
+            "section_rank": 14
+        },
+        {
+            "text": "No constant plateau arises, hence the method is not applicable and b does not represent the trigger efficiency",
+            "section": "Fig. 5",
+            "paragraph_rank": 42,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 6",
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 6 The Gaussian example with \u03bc = 0.2y + 5 \u2022 10 \u22125 y 2 and \u03c3 = 0.015y. ",
+            "section": "Fig. 6",
+            "paragraph_rank": 43,
+            "section_rank": 15
+        },
+        {
+            "text": "No plateau arises, hence the method is not applicable and b does not represent the trigger efficiency",
+            "section": "Fig. 6",
+            "paragraph_rank": 43,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 7",
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 7 Skewed Gaussian example with \u03bc = 0.2y, \u03c3 = 3, and \u03bb = 0.7. ",
+            "section": "Fig. 7",
+            "paragraph_rank": 44,
+            "section_rank": 16
+        },
+        {
+            "text": "a x vs y. ",
+            "section": "Fig. 7",
+            "paragraph_rank": 44,
+            "section_rank": 16
+        },
+        {
+            "text": "b The normalized y profile. ",
+            "section": "Fig. 7",
+            "paragraph_rank": 44,
+            "section_rank": 16
+        },
+        {
+            "text": "Also shown (blue dashed) is a skewed Gaussian convoluted with a step function, and function parameters are taken at the trigger threshold",
+            "section": "Fig. 7",
+            "paragraph_rank": 44,
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 8",
+            "section_rank": 17
+        },
+        {
+            "text": "Fig. 8 Skewed Gaussian example with \u03bc = 0.2y, \u03c3 = 0.015y, and \u03bb = 0.7. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 45,
+            "section_rank": 17
+        },
+        {
+            "text": "a x vs y. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 45,
+            "section_rank": 17
+        },
+        {
+            "text": "b The normalized y profile. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 45,
+            "section_rank": 17
+        },
+        {
+            "text": "Also shown (blue dashed) is a fit to the curve with Eq. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 45,
+            "section_rank": 17
+        },
+        {
+            "text": "(15)",
+            "section": "Fig. 8",
+            "paragraph_rank": 45,
+            "section_rank": 17
+        },
+        {
+            "text": "This assumes that we know that the trigger efficiency tends toward exactly 1. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 46,
+            "section_rank": 17
+        },
+        {
+            "text": "A value different from 1 can be trivially accommodated in the scaling done in the last step.",
+            "section": "Fig. 8",
+            "paragraph_rank": 46,
+            "section_rank": 17
+        },
+        {
+            "text": "We explicitely name the spectrum N ",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "(x) here. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "By integration, we find that I ",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "(x) = I (x, ",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "y)dy = N ",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "(x).",
+            "section": "Fig. 8",
+            "paragraph_rank": 47,
+            "section_rank": 17
+        },
+        {
+            "text": "Data Availability Statement This manuscript has no associated data or the data will not be deposited. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 48,
+            "section_rank": 19
+        },
+        {
+            "text": "[Authors' comment: This work is about a mathematical method, and uses only data generated in a simple toy Monte Carlo simulation.]",
+            "section": "Fig. 8",
+            "paragraph_rank": 48,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 18,
+                    "type": "bibr",
+                    "text": "[Authors' comment:"
+                }
+            ]
+        },
+        {
+            "text": "Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creativecomm ons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. ",
+            "section": "Fig. 8",
+            "paragraph_rank": 49,
+            "section_rank": 19
+        },
+        {
+            "text": "Funded by SCOAP 3 .",
+            "section": "Fig. 8",
+            "paragraph_rank": 49,
+            "section_rank": 19,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 18,
+                    "type": "version",
+                    "rawForm": "3",
+                    "resp": "service",
+                    "id": "#software-simple-s0"
+                }
+            ]
+        },
+        {
+            "text": "Appendix A: The skewed Gaussian",
+            "section_rank": 20
+        },
+        {
+            "text": "The generic skewed Gaussian probability density function (PDF) is",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 50,
+            "section_rank": 20
+        },
+        {
+            "text": "The cummulative distribution function (CDF) is [4] EMG(z; \u03c3, \u03bb) = z 0 emg(z; \u03c3, \u03bb)",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 51,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 54,
+                    "type": "software",
+                    "rawForm": "EMG",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "which in the limit for z \u2192 \u221e is 1.",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 52,
+            "section_rank": 20
+        },
+        {
+            "text": "We are dealing with Eq. ",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 53,
+            "section_rank": 20
+        },
+        {
+            "text": "(11), which is reproduced slightly re-written her\u00ea The profile in y after applying the trigger threshold is given by Eq. ",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 53,
+            "section_rank": 20
+        },
+        {
+            "text": "(A.7) when setting x = \u03b8 x instead of taking the limit.",
+            "section": "Appendix A: The skewed Gaussian",
+            "paragraph_rank": 53,
+            "section_rank": 20
+        }
+    ]
+}

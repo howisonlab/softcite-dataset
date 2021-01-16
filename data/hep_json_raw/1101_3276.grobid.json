@@ -1,0 +1,3289 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Particle IDentification (PID) is fundamental to particle physics experiments. This paper reviews PID strategies and methods used by the large LHC experiments, which provide outstanding examples of the state-of-the-art. The first part focuses on the general design of these experiments with respect to PID and the technologies used. Three PID techniques are discussed in more detail: ionization measurements, time-of-flight measurements and Cherenkov imaging. Four examples of the implementation of these techniques at the LHC are given, together with selections of relevant examples from other experiments and short overviews on new developments. Finally, the Alpha Magnetic Spectrometer (AMS 02) experiment is briefly described as an impressive example of a space-based experiment using a number of familiar PID techniques.",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "In addition to tracking and calorimetry, Particle IDentification (PID) is a crucial aspect of most particle physics experiments. The identification of stable particles is achieved either by analysing the way they interact, or by determining their mass. The difference in interaction is primarily used for lepton and photon identification. A \"traditional\" particle physics experiment already incorporates this method in its conceptual design, as it is discussed in Sect. 1.1. In order to unambiguously identify hadrons, their charge and mass has to be determinded, which is achieved by simultaneous measurements of momentum and velocity. This method is discussed in Sect. 1.2. The four large experiments at the CERN Large Hadron Collider (LHC) [1] and their PID strategies are introduced briefly in Sect. 2. Three methods to determine the mass of a charged particle and examples of their implementation at the LHC experiments are discussed in Sects. 3 (ionization), 4 (time-of-flight) and 5 (Cherenkov radiation imaging). A fourth important method, the detection of transition radiation, is not discussed, since it is the topic of a separate paper in this issue [2]. In Sect. 6 finally the AMS 02 experiment is briefly described as an example for the usage of PID techniques from accelerator-based particle physics experiments in space.",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 743,
+                    "text": "[1]",
+                    "end": 746
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1161,
+                    "text": "[2]",
+                    "end": 1164
+                }
+            ]
+        },
+        {
+            "text": "PID by difference in interaction",
+            "section_rank": 3
+        },
+        {
+            "section": "PID by difference in interaction",
+            "text": "In a \"traditional\" particle physics experiment particles are identified (electrons and muons, their antiparticles and photons), or at least assigned to families (charged or neutral hadrons), by the characteristic signatures they leave in the detector. The experiment is divided into a few main components, as shown in Fig. 1, where each component tests for a specific set of particle properties. These components Figure 1: Components of a \"traditional\" particle physics experiment. Each particle type has its own signature in the detector. For example, if a particle is detected only in the electromagnetic calorimeter, it is fairly certain that it is a photon.",
+            "paragraph_rank": 3,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 318,
+                    "text": "Fig. 1",
+                    "end": 324
+                }
+            ]
+        },
+        {
+            "section": "PID by difference in interaction",
+            "text": "are stacked in layers and the particles go through the layers sequentially from the collision point outwards: first a tracking system, then an electromagnetic (EM) and a hadronic calorimeter and a muon system. All layers are embedded in a magnetic field in order to bend the tracks of charged particles for momentum and charge sign determination.",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Tracking system",
+            "section_rank": 4
+        },
+        {
+            "section": "Tracking system",
+            "text": "The tracking system determines whether the particles are charged. In conjunction with a magnetic field, it measures the sign of the charge and the momentum of the particle. Photons may convert into an electron-positron pair and can in that case be detected in the tracking system. Moreover, charged kaon decays may be detected in a high-resolution tracking system through their characteristic \"kink\" topology: e.g. K \u00b1 \u2192 \u00b5 \u00b1 \u03bd \u00b5 (64%) and K \u00b1 \u2192 \u03c0 \u00b1 \u03c0 0 (21%). The charged parent (kaon) decays into a neutral daughter (not detected) and a charged daughter with the same sign. Therefore, the kaon identification process reduces to the finding of kinks in the tracking system. The kinematics of this kink topology allows to separate kaon decays from the main source of background kinks coming from charged pion decays [3].",
+            "paragraph_rank": 5,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 815,
+                    "text": "[3]",
+                    "end": 818
+                }
+            ]
+        },
+        {
+            "text": "Calorimeters",
+            "section_rank": 5
+        },
+        {
+            "section": "Calorimeters",
+            "text": "Calorimeters detect neutral particles, measure the energy of particles, and determine whether they have electromagnetic or hadronic interactions. EM and hadron calorimetry at the LHC is described in detail in Refs. [4,5]. PID in a calorimeter is a destructive measurement. All particles except muons and neutrinos deposit all their energy in the calorimeter system by production of electromagnetic or hadronic showers. The relative resolution with which the deposited energy is measured is usually parametrised as:",
+            "paragraph_rank": 6,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 215,
+                    "text": "[4,",
+                    "end": 218
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 218,
+                    "text": "5]",
+                    "end": 220
+                }
+            ]
+        },
+        {
+            "section": "Calorimeters",
+            "text": "The first term takes into account the stochastic fluctuations and limits the low energy performance. The second term is due to electronics noise. The third, constant term takes into account detector uniformities and errors in the calibration. This term limits the calorimeter performance at high energies. Fig. 2 shows a comparison of the relative resolutions for the EM and hadronic calorimeters of the different LHC experiments. Calorimeters may be broadly classified into one of two types: sampling calorimeters and homogeneous calorimeters. Sampling calorimeters consist of layers of a dense passive absorber material interleaved with active detector layers. In homogeneous calorimeters on the other hand the absorber also acts as the detection medium.",
+            "paragraph_rank": 7,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 306,
+                    "text": "Fig. 2",
+                    "end": 312
+                }
+            ]
+        },
+        {
+            "section": "Calorimeters",
+            "text": "Photons, electrons and positrons deposit all their energy in the EM calorimeter. Their showers are indistinguishable, but an electron 1 can be identified by the existence of a track in the tracking system that is associated to the shower. In this case the energy deposit must match the momentum measured in the tracking system. Hadrons on the other hand deposit most of their energy in the hadronic calorimeter (part of it is also deposited in the EM calorimeter). However, the individual members of the families of charged and neutral hadrons can not be distinguished in a calorimeter.",
+            "paragraph_rank": 8,
+            "section_rank": 5
+        },
+        {
+            "text": "Muon system",
+            "section_rank": 6
+        },
+        {
+            "section": "Muon system",
+            "text": "Muon systems at the LHC are described in detail in Ref. [6]. The muon differs from the electron only by its mass, which is around a factor 200 larger. As a consequence, the critical energy E c (the energy for which in a given material the rates of energy loss through ionization and bremsstrahlung are equal) is much larger for muons: it is around 400 GeV for muons on copper, while for electrons on copper 2 it is only around 20 MeV. As a consequence, muons do in general not produce electromagnetic showers and can thus be identified easily by their presence in the outermost detectors, as all other charged particles are absorbed in the calorimeter system.",
+            "paragraph_rank": 9,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 56,
+                    "text": "[6]",
+                    "end": 59
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 407,
+                    "text": "2",
+                    "end": 408
+                }
+            ]
+        },
+        {
+            "text": "Other particles",
+            "section_rank": 7
+        },
+        {
+            "section": "Other particles",
+            "text": "Neutrinos do in general not interact in a particle detector of the sort shown in Fig. 1, and therefore escape undetected. However, their presence can often be inferred by the momentum imbalance of the visible particles. In electron-positron colliders it is usually possible to reconstruct the neutrino momentum in all three dimensions and its energy.",
+            "paragraph_rank": 10,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 81,
+                    "text": "Fig. 1",
+                    "end": 87
+                }
+            ]
+        },
+        {
+            "section": "Other particles",
+            "text": "Quark flavor tagging identifies the flavor of the quark that is the origin of a jet. The most important example is B-tagging, the identification of beauty quarks. Hadrons containing beauty quarks can be identified because they have sufficient lifetime to travel a small distance before decaying. The observation of a secondary vertex a small distance away from the collision point indicates their presence. For this the information of a high-precision tracking system around the collision point is used. Such vertex tracking detectors are described in detail in Ref. [7]. Also Tau leptons, with a mean lifetime of 0.29 ps, fly a small distance (about 0.5 mm) before decaying. Again, this is typically seen as a secondary vertex, but without the observation of a jet.",
+            "paragraph_rank": 11,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 567,
+                    "text": "[7]",
+                    "end": 570
+                }
+            ]
+        },
+        {
+            "section": "Other particles",
+            "text": "K 0 S , \u039b and\u039b particles are collectively known as V 0 particles, due to their characteristic decay vertex, where an unobserved neutral strange particle decays into two observed charged daughter particles: e.g. K 0 S \u2192 \u03c0 + \u03c0 \u2212 and \u039b \u2192p \u03c0 \u2212 . V 0 particles can be identified from the kinematics of their positively and negatively charged decay products (see Fig.3) [8]. Figure 3: Armenteros-Podolanski plot from the ALICE experiment using data from \u221a s = 900 GeV proton collisions. The different V 0 particles can be separated using the kinematics of their decay products. The orientation of the decay is described with respect to the momentum vector of the V 0 . p \u00b1 L are the longitudinal momenta of the positively and negatively charged decay products with respect to the V 0 particle's direction. q T represents the transverse component of the momentum of the positive decay product.",
+            "paragraph_rank": 12,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 357,
+                    "text": "Fig.3",
+                    "end": 362
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 364,
+                    "text": "[8]",
+                    "end": 367
+                },
+                {
+                    "type": "figure",
+                    "start": 369,
+                    "text": "Figure 3",
+                    "end": 377
+                }
+            ]
+        },
+        {
+            "text": "PID by mass determination",
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "The three most important charged hadrons (pions, kaons and protons) and their antiparticles have identical interactions in an experimental setup as the one shown in Fig. 1 (charge deposit in the tracking system and hadronic shower in the calorimeter). Moreover, they are all effectively stable. However, their identification can be crucial, in particular for the study of hadronic decays. The possible improvement in the signal-to-background ratio when using PID is demonstrated in Fig. 4, using the example of the \u03c6 \u2192 K + K \u2212 decay.",
+            "paragraph_rank": 13,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 165,
+                    "text": "Fig. 1",
+                    "end": 171
+                },
+                {
+                    "type": "figure",
+                    "start": 482,
+                    "text": "Fig. 4",
+                    "end": 488
+                }
+            ]
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "In B physics, the study of hadrons containing the beauty quark, different decay modes usually exist, and their individual properties can only be studied with an efficient hadron identification, which improves the signal-to-background ratio (most tracks are pions from many sources).",
+            "paragraph_rank": 14,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "PID is equally important in heavy-ion physics. An example is the measurement of open charm (and open beauty), which allows to investigate the mechanisms for the production, propagation and hadronization of heavy quarks in the hot and dense medium produced in the collision of heavy ions. The most promising channel is D 0 \u2192 K \u2212 \u03c0 + . It requires a very efficient PID, due to the small signal-to-background ratio.",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "In order to identify any stable charged particle, including charged hadrons, it is necessary to determine its charge ze and its mass m. The charge sign is obtained from the curvature of the particle's track. Since the mass can not be measured Figure 4: Demonstration of the power of PID by mass determination, using the example of the \u03c6 \u2192 K + K \u2212 decay measured with the LHCb RICH system (preliminary data from \u221a s = 900 GeV p-p collisions [9]). The left image shows the invariant mass obtained from all combinations of pairs of tracks without PID. The right image shows how the \u03c6 meson signal appears when tracks can be identified as kaons.",
+            "paragraph_rank": 16,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 243,
+                    "text": "Figure 4",
+                    "end": 251
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 440,
+                    "text": "[9]",
+                    "end": 443
+                }
+            ]
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "directly, it has to be deduced from other variables. These are in general the momentum p and the velocity \u03b2 = v/c, where one exploits the basic relationship",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "Here c is the speed of light in vacuum and \u03b3 = (1 \u2212 \u03b2 2 ) \u22121/2 is the relativistic Lorentz factor. The resolution in the mass determination is dm m",
+            "paragraph_rank": 18,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "Since in most cases \u03b3 1, the mass resolution is determined mainly by the accuracy of the velocity measurement, rather than the momentum determination.",
+            "paragraph_rank": 19,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "The momentum is obtained by measuring the curvature of the track in the magnetic field. The particle velocity is obtained by means of one of the following methods:",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "1. measurement of the energy deposit by ionization, Each of these methods provide PID not only for charged hadrons, but also for charged leptons. The small obstacle of muons and pions not being well separated due to m \u00b5 \u2248 m \u03c0 can luckily be circumnavigated, since muons can be easily identified by other means. Figure 5: Approximate minimum detector length required to achieve a K/\u03c0 separation of n \u03c3 \u2265 3 \u03c3 with three different PID techniques. For the energy loss technique we assume a gaseous detector. For the TOF technique, the detector length represents the particle flight path over which the time-of-flight is measured. For the Cherenkov technique only the radiator thickness is given. The thicknesses of an expansion gap and of the readout chambers have to be added.",
+            "paragraph_rank": 21,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "The use of these methods is restricted to certain momentum ranges. For a given momentum range, the separation power can be used to quantify the usability of a technique. It defines the significance of the detector response R. If R A and R B are the mean values of such a quantity measured for particles of type A and B, respectively, and \u03c3 A,B is the average of the standard deviations of the measured distributions, then the separation power n \u03c3 is given by",
+            "paragraph_rank": 22,
+            "section_rank": 8
+        },
+        {
+            "section": "PID by mass determination",
+            "text": "A summary of the momentum coverage and required detector lengths using the example of K/\u03c0 separation with the requirement n \u03c3 \u2265 3 is given in Fig. 5. Naturally, when choosing a PID technique, also other features have to be considered besides the separation power. In practice, these often include luminosity and event rates, size and space requirements, accessibility, multiple scattering in the used materials, compatibility with other detector subsystems and geometrical coverage.",
+            "paragraph_rank": 23,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 142,
+                    "text": "Fig. 5",
+                    "end": 148
+                }
+            ]
+        },
+        {
+            "text": "Overview of the large LHC experiments",
+            "section_rank": 9
+        },
+        {
+            "section": "Overview of the large LHC experiments",
+            "text": "The four main LHC experiments are the largest current collider experiments and integrate todays state-of-the-art detector technology, in particular with respect to PID. This section gives an overview on the four experiments, with emphasis on the way the underlying physics program influences the experiment design with respect to PID.",
+            "paragraph_rank": 24,
+            "section_rank": 9
+        },
+        {
+            "text": "ATLAS and CMS",
+            "section_rank": 10
+        },
+        {
+            "section": "ATLAS and CMS",
+            "text": "ATLAS [10] (A Toroidal Large AparatuS) and CMS [11] (Compact Muon Solenoid) are often called \"general purpose\" particle physics experiments, since they aim at uncovering any new phenomena appearing in proton-proton (p-p) collisions at the new energy domain that is now probed at the LHC. The main focus of the experiments is the investigation of the nature of the electroweak symmetry breaking and the search for the Higgs boson. The experimental study of the Higgs mechanism is expected to shed light on the mathematical consistency of the Standard Model (SM) of particle physics at energy scales above \u223c1 TeV. As a matter of fact, various alternatives to the SM foresee new symmetries, new forces, and new constituents. Furthermore, there are high hopes for discoveries that could lead towards a unified theory (supersymmetry, extra dimensions, . . . ).",
+            "paragraph_rank": 25,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 6,
+                    "text": "[10]",
+                    "end": 10
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 47,
+                    "text": "[11]",
+                    "end": 51
+                }
+            ]
+        },
+        {
+            "text": "Requirements",
+            "section_rank": 11
+        },
+        {
+            "section": "Requirements",
+            "text": "The discovery and study of the Higgs boson is the benchmark process that influenced the design of the two experiments. Electrons, muons and photons are important components of its possible physics signatures. Assuming a low mass Higgs boson (m H < 150 GeV/c 2 ), the predominant decay mode into hadrons is difficult to detect due to QCD backgrounds. In that case an important decay channel is H \u2192 \u03b3\u03b3. For masses above 130 GeV, the most promising channel to study the properties of the Higgs boson is H \u2192 ZZ ( * ) \u2192 4 l. It is called \"gold-plated\" in the particular case in which all four leptons are muons, due to the relative ease in detecting muons. The ATLAS and CMS detectors have been optimised to cover the whole spectrum of possible Higgs particle signatures. In summary, these are the requirements:",
+            "paragraph_rank": 26,
+            "section_rank": 11
+        },
+        {
+            "section": "Requirements",
+            "text": "1. large acceptance in pseudo-rapidity 3 and almost full coverage in azimuthal angle (the angle around the beam direction);",
+            "paragraph_rank": 27,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 39,
+                    "text": "3",
+                    "end": 40
+                }
+            ]
+        },
+        {
+            "section": "Requirements",
+            "text": "2. good identification capabilities for isolated high transverse momentum 4 photons and electrons;",
+            "paragraph_rank": 28,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 74,
+                    "text": "4",
+                    "end": 75
+                }
+            ]
+        },
+        {
+            "section": "Requirements",
+            "text": "3. good muon ID and momentum resolution over a wide range of momenta and angles. At highest momenta (1 TeV) a transverse momentum resolution \u03c3 p T /p T of the order 10% is required.",
+            "paragraph_rank": 29,
+            "section_rank": 11
+        },
+        {
+            "section": "Requirements",
+            "text": "To maximize the integrated luminosity for the rare processes that are the main interest of the experiments, proton bunches will be brought to collision every 25 ns. Strong focusing of the beams helps to increase the luminosity to 10 34 cm \u22122 s \u22121 . The consequences are a large number of overlapping events per proton bunch crossing and extreme particle rates. For the experiments these pose major challenges.",
+            "paragraph_rank": 30,
+            "section_rank": 11
+        },
+        {
+            "text": "Setup",
+            "section_rank": 12
+        },
+        {
+            "section": "Setup",
+            "text": "The setup of ATLAS and CMS is in general quite similar, following the \"traditional\" setup as described in Sect. 1.1. However, in the implementation of some of the components quite different choices were made. The main similarities and some differences can be seen in Tab. 1. Schematic images of the two detectors are shown in Figs. 6 and 7.",
+            "paragraph_rank": 31,
+            "section_rank": 12
+        },
+        {
+            "text": "Tracking and muon systems",
+            "section_rank": 13
+        },
+        {
+            "section": "Tracking and muon systems",
+            "text": "As the innermost component, the tracking systems of ATLAS and CMS are embedded in solenoidal magnetic fields of 2 T and 4 T, respectively. In both cases the tracking systems consist of silicon pixel and strip detectors. ATLAS includes also a Transition Radiation Tracker (TRT) based on straw tubes, which provides also electron ID [2].",
+            "paragraph_rank": 32,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 331,
+                    "text": "[2]",
+                    "end": 334
+                }
+            ]
+        },
+        {
+            "section": "Tracking and muon systems",
+            "text": "The global detector dimensions are defined by the large muon spectrometers, which are designed to measure muon momenta with extremely high accuracy [6]. While the muon system of ATLAS is designed to work independently of the inner detector, in CMS the information from the tracking system is in general combined with that from the muon system. The ATLAS muon system uses eight instrumented air-core toroid coils, providing a magnetic field mostly orthogonal to the muon trajectories, while minimising the degradation of resolution due to multiple scattering [10]. For high-precision tracking, the magnets are instrumented with Monitored Drift Tubes (MDT) and, at large pseudo-rapidities, Cathode Strip Chambers (CSC). By measuring muon tracks with a resolution \u226450 \u00b5m, a standalone transverse momentum resolution \u03c3(p T )/p T \u2248 3% is achieved for p T = 100 GeV/c, while at p T = 1 TeV/c it is around 10%. Only below 200 GeV/c the combination of the information from the muon and tracking systems helps, keeping the resolution below 4%. As a separate trigger system and for second coordinate measurement, Resistive Plate Chambers (RPCs) are installed in the barrel, while Thin Gap Chambers (TGCs) are placed in the end-caps, where particle rates are higher.",
+            "paragraph_rank": 33,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 148,
+                    "text": "[6]",
+                    "end": 151
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 558,
+                    "text": "[10]",
+                    "end": 562
+                }
+            ]
+        },
+        {
+            "section": "Tracking and muon systems",
+            "text": "The CMS design relies on the high bending power (12 Tm) and momentum resolution of the tracking system, and uses an iron yoke to increase its magnetic field [11]. With the field parallel to the LHC beam axis, the muon tracks are bent in the transverse plane. The iron yoke is instrumented with aluminum Drift Tubes (DT) in the barrel and CSCs in the end-cap region. Due to the iron yoke, the momentum resolution of the CMS muon system is dominated by the multiple scat- Figure 6: Perspective view of the ATLAS detector [10]. The dimensions are 25 m in height and 44 m in length, the overall weight of the detector is approximately 7000 tonnes.  tering. As a consequence, the requirements on spatial resolution are somewhat looser (\u223c70 \u00b5m) than in ATLAS. The standalone muon momentum resolution is \u03c3(p T )/p T = 9% for p T \u2264 200 GeV/c and 15 to 40% at p T = 1 TeV/c, depending on |\u03b7|. Including the tracking system improves the result by an order of magnitude for low momenta. At 1 TeV the contribution of both measurements together yield a momentum resolution of about 5%. The DT and CSC subsystems can each trigger on muons with large transverse momentum. However, for the full LHC luminosity, faster trigger chambers are needed to associate the detected muons to the right crossing of proton bunches in the LHC. RPCs are used throughout the whole CMS muon system for that purpose.",
+            "paragraph_rank": 34,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 48,
+                    "text": "(12 Tm)",
+                    "end": 55
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 157,
+                    "text": "[11]",
+                    "end": 161
+                },
+                {
+                    "type": "figure",
+                    "start": 470,
+                    "text": "Figure 6",
+                    "end": 478
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 519,
+                    "text": "[10]",
+                    "end": 523
+                }
+            ]
+        },
+        {
+            "text": "Particle identification",
+            "section_rank": 14
+        },
+        {
+            "section": "Particle identification",
+            "text": "Electrons, hadrons and neutral particles are identified in the calorimeter systems, while muons are identified in the large muon systems. The designs of the EM calorimeters and muon systems have been guided by the benchmark processes of Higgs boson decays into two photons or into leptons. The ATLAS EM calorimeter is of sampling type and consists of liquid Argon (LAr) as detection medium and lead (Pb) absorber plates operated in a cryostat at 87 K. The calorimeter depth varies from 22 to 38 X 0 , depending on the pseudo-rapidity range. In beam tests [10] the relative energy resolution after subtraction of the noise term was found to be (\u03c3 E /E) 2 = (0.1/ E (GeV)) 2 +0.007 2 .",
+            "paragraph_rank": 35,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 555,
+                    "text": "[10]",
+                    "end": 559
+                }
+            ]
+        },
+        {
+            "section": "Particle identification",
+            "text": "The CMS EM calorimeter on the other hand is a homogeneous calorimeter made from lead tungstate (PbWO 4 ) crystals with a length that corresponds to around 25 X 0 . The relative energy resolution was measured in beam tests 5 ",
+            "paragraph_rank": 36,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 222,
+                    "text": "5",
+                    "end": 223
+                }
+            ]
+        },
+        {
+            "section": "Particle identification",
+            "text": "The ATLAS hadronic calorimeter is made from a Barrel and two end-cap modules. The barrel part is made from steel and plastic scintillator tiles. The end-caps are made from copper plates and use LAr as active medium. In beam tests of the combined EM and hadronic calorimeter systems the relative energy resolution [10] for pions was found to be (\u03c3 E /E) 2 = (0.52/ E (GeV)) 2 + (0.016/E( GeV)) 2 + 0.03 2 in the barrel 6 and (\u03c3 E /E) 2 \u2248 (0.84/ E (GeV)) 2 in the end-caps. The CMS hadronic calorimeter is made from brass and plastic scintillator tiles. The resulting energy resolution [12] for the combined system of EM and hadronic calorimeters and for pions is (\u03c3 E /E) 2 = (1.12/ E (GeV)) 2 + 0.036 2 .",
+            "paragraph_rank": 37,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 313,
+                    "text": "[10]",
+                    "end": 317
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 418,
+                    "text": "6",
+                    "end": 419
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 584,
+                    "text": "[12]",
+                    "end": 588
+                }
+            ]
+        },
+        {
+            "section": "Particle identification",
+            "text": "The silicon detectors of the ATLAS and CMS tracking systems offer the possibility of hadron ID at low momenta (a few hundred MeV/c) via ionization measurements. For electron ID at momenta up to 25 GeV/c ATLAS also takes into account the information from the TRT, namely large energy deposits by electrons due to transition radiation (for details see Ref. [2]). The aim of ALICE is to study the physics of strongly interacting matter at the resulting extreme energy densities and to study the possible formation of a quarkgluon plasma. Many observables meant to shed light on the evolution of the quarkgluon plasma depend on PID. The most natural example is particle spectra, from which the freeze-out parameters (such as the kinetic and chemical freeze-out temperature and the collective flow velocity) can be extracted. Besides pions, kaons and protons, also resonances such as the \u03c6 meson can be used for such analysis. Actually, any modification in the mass and width of the \u03c6 meson could be a signature for partial chiral symmetry restoration, and thus, creation of a quark-gluon plasma. The \u03c6 resonance is typically identified via its hadronic decay channel \u03c6 \u2192 K + K \u2212 , which makes a good hadron ID important. Leptonic channels are very important as well and thus extremely good lepton ID is needed. ALICE also studies p-p collisions at \u221a s = 7 and 14 TeV. These data are important as a reference for the heavy-ion data. Moreover, due to the very low mo-mentum cut-off (\u223c0.1 GeV/c), ALICE can contribute in physics areas where it complements the other LHC experiments. To name an example, the measurement of charm and beauty cross sections is possible down to very low momenta. Moreover, proton physics at high multiplicities is easily accessible via the multiplicity trigger from the Silicon Pixel Detector (SPD).",
+            "paragraph_rank": 38,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 355,
+                    "text": "[2]",
+                    "end": 358
+                }
+            ]
+        },
+        {
+            "text": "ALICE",
+            "section_rank": 15
+        },
+        {
+            "text": "Requirements",
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "As compared to p-p collisions, the charged track multiplicities in Pb-Pb collisions are extraordinary. At the time of the ALICE Technical Proposal, charged particle densities of up to dN ch /d\u03b7 = 8000 were considered for the LHC center-of-mass energy [14,15,16] . Including secondaries, this would amount to 20 000 tracks in one interaction in the relevant acceptance region. However, first measurements [17] at \u221a s N N = 2.76 TeV yield dN ch /d\u03b7 \u2248 1600. When compared to p-p collisions at the LHC, the produced particles have relatively low momenta: i.e. 99% have a momentum below about 1 GeV/c. Hadrons, electrons, muons and photons may be used as probes in order to explore the strongly interacting matter that is produced in the Pb-Pb collisions. Those probes are inspected by dedicated PID detectors.",
+            "paragraph_rank": 39,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 251,
+                    "text": "[14,",
+                    "end": 255
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 255,
+                    "text": "15,",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 258,
+                    "text": "16]",
+                    "end": 261
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 404,
+                    "text": "[17]",
+                    "end": 408
+                }
+            ]
+        },
+        {
+            "section": "Requirements",
+            "text": "In some cases these detectors may have very limited geometrical acceptance; for some actually not even a coverage of 2 \u03c0 in azimuthal angle is necessary. This is an important difference when compared to general purpose experiments. Nevertheless, large geometrical acceptance remains important for the main tracking devices. In summary, these are the requirements for the ALICE experiment:",
+            "paragraph_rank": 40,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "1. reliable operation in an environment of very large charged track multiplicities;",
+            "paragraph_rank": 41,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "2. precision tracking capabilities at very low momenta (100 MeV/c), but also up to 100 GeV/c; 3. low material budget;",
+            "paragraph_rank": 42,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "4. low magnetic field (0.2 \u2264 B \u2264 0.5 T) in order to be able to track low momentum particles;",
+            "paragraph_rank": 43,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "5. good hadron ID for momenta up to a few GeV/c and electron ID up to 10 GeV/c in the central barrel;",
+            "paragraph_rank": 44,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "6. good muon ID (in the forward region).",
+            "paragraph_rank": 45,
+            "section_rank": 16
+        },
+        {
+            "section": "Requirements",
+            "text": "At LHC energies the total cross-section for Pb-Pb collisions will be of the order of 8 b. At the maximum expected luminosity of 10 27 cm \u22122 s \u22121 this corresponds to an interaction rate of 8 kHz. Only a fraction of these events will be central collisions (collisions with small impact parameter) and the aim is to be able to trigger on at least 200 of such central events per second. For p-p collisions the goal is to be able to read out the experiment at rates of at least 1.4 kHz. Since the specific features of the used detectors (TPC drift time of almost 100 \u00b5s, see Sect. 3.7) makes it a rather slow detector (at least compared to the three other large LHC experiments), the luminosity for p-p collisions has to be limited [15]: at \u223c5 \u00d7 10 30 cm \u22122 s \u22121 , corresponding to an interaction rate of \u223c200 kHz, the integrated luminosity can be maximised for rare processes. With lower luminosity (10 29 cm \u22122 s \u22121 ) statistics for large cross section observables can be collected and global event properties can be studied at optimum detector performance.",
+            "paragraph_rank": 46,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 727,
+                    "text": "[15]",
+                    "end": 731
+                }
+            ]
+        },
+        {
+            "text": "Setup",
+            "section_rank": 17
+        },
+        {
+            "section": "Setup",
+            "text": "The ALICE experimental setup is shown in Fig. 8. ALICE consists of a central barrel part for the measurement of hadrons, leptons and photons, and a forward muon spectrometer. The central part is embedded in a large solenoid magnet that is reused from the L3 experiment at the LEP collider at CERN.",
+            "paragraph_rank": 47,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 41,
+                    "text": "Fig. 8",
+                    "end": 47
+                }
+            ]
+        },
+        {
+            "section": "Setup",
+            "text": "A Time Projection Chamber (TPC) was chosen as the main tracking device in the central barrel, as this is a very high granularity detector capable of satisfying the requirements given in the previous section. The TPC surrounds the Inner Tracking System (ITS) which is optimised for the determination of primary and secondary vertices and for precision tracking of low-momentum particles. As the innermost layer, the Silicon Pixel Detector (SPD) has a key role in the determination of the vertex position. A unique feature of the SPD is its capability to generate a prompt trigger based on a programmable, fast online algorithm. As second and third layers, a Silicon Drift Detector (SDD) and a Silicon Strip Detector (SSD) complete the ITS, with two detection planes each. Finally, on the outside of the TPC, the Transition Radiation Detector (TRD) contributes to the tracking capability and provides electron ID [2].",
+            "paragraph_rank": 48,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 911,
+                    "text": "[2]",
+                    "end": 914
+                }
+            ]
+        },
+        {
+            "text": "Particle identification",
+            "section_rank": 18
+        },
+        {
+            "section": "Particle identification",
+            "text": "The strategy for PID in the barrel of ALICE is described in detail in Ref. [16]. In a first step, all charged particles from the collision are tracked in the ITS, TPC and TRD using parallel Kalman filtering. The PID procedure is then applied to all reconstructed tracks that have been successfully associated to a signal in one of the PID detectors.",
+            "paragraph_rank": 49,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 75,
+                    "text": "[16]",
+                    "end": 79
+                }
+            ]
+        },
+        {
+            "section": "Particle identification",
+            "text": "The TPC, SSD and SDD each provide PID via ionization measurements. The TPC is described in more detail in Sect. 3.7. The TRD is designed for electron ID and is described in Ref. [2]. The time-of-flight (TOF) array provides charged hadron ID and is described in Sect. 4.5.",
+            "paragraph_rank": 50,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 178,
+                    "text": "[2]",
+                    "end": 181
+                }
+            ]
+        },
+        {
+            "section": "Particle identification",
+            "text": "Surrounding the TOF detector, there are three single-arm detectors inside the ALICE solenoid magnet: the Photon Spectrometer (PHOS), the Electro-Magnetic CALorimeter (EMCAL) and an array of RICH counters optimised for High-Momentum Particle IDentification (HMPID, see Sect. 5.3). PHOS is a homogeneous EM calorimeter based on lead tungstate crystals, similar to the ones used by CMS, read out using Avalanche Photodiodes (APD). It covers 100 deg in azimuthal angle and |\u03b7| \u2264 0.12 in pseudo-rapidity. Its thickness corresponds to 20 X 0 . The crystals are kept at a temperature of 248 K to minimize the contribution of noise to the energy resolution, optimizing the response for low energies. In a beam test the relative energy resolution was found to be (\u03c3 E /E) 2 = (0.033/ E (GeV)) 2 + (0.018/E (GeV)) 2 + 0.011 2 . The EMCAL was proposed as a late addition to the ALICE setup, with the primary goal to improve the capabilities of ALICE for jet measurements. The main design criterion was to provide as much EM calorimetry coverage as possible within the constraints of the existing ALICE detector systems. The EMCAL is a sampling calorimeter made from lead absorber plates and scintillators and is positioned opposite in azimuth to the PHOS, covering 107 deg in azimuthal angle and |\u03b7| \u2264 0.7 in pseudo-rapidity. The relative energy resolution of the EMCAL was measured in a test beam and can be parameterised as",
+            "paragraph_rank": 51,
+            "section_rank": 18
+        },
+        {
+            "section": "Particle identification",
+            "text": "The goal of the ALICE muon spectrometer is to study vector mesons containing heavy quarks, such as J/\u03a8, \u03a8 and members of the \u03a5 family via the muonic channel. The muon spectrometer covers only the limited pseudo-rapidity interval 2.5 \u2264 \u03b7 \u2264 4. Closest to the interaction region there is a front absorber to remove hadrons and photons emerging from the collision. Five pairs of high-granularity detector planes form the tracking system within the field of a large dipole magnet. Beyond the magnet is a muon filter (a 120 cm thick iron wall), followed by two pairs of trigger chamber planes (RPCs).",
+            "paragraph_rank": 52,
+            "section_rank": 18
+        },
+        {
+            "text": "LHCb",
+            "section_rank": 19
+        },
+        {
+            "section": "LHCb",
+            "text": "LHCb [18] is dedicated to heavy flavor physics. One particular aim is to look at evidence of new physics in CP violation and rare decays of beauty and charm hadrons. The level of CP violation in the SM can not explain the absence of antimatter in our universe. A new source of CP violation is needed to understand this matter-antimatter asymmetry, implying new physics. Particles associated with new physics could manifest themselves indirectly in beauty or charm meson decays and produce contributions that change the expectations of CP violation phases. They may also generate decay modes forbidden in the SM.",
+            "paragraph_rank": 53,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 5,
+                    "text": "[18]",
+                    "end": 9
+                }
+            ]
+        },
+        {
+            "text": "Requirements",
+            "section_rank": 20
+        },
+        {
+            "section": "Requirements",
+            "text": "A large bb production cross section of the order \u223c500 \u00b5b is expected for p-p collisions at \u221a s = 14 TeV. At high energies, the bb pairs are predominantly produced in a forward or backward cone. Separating pions from kaons in selected B hadron decays is fundamental to the physics goals of LHCb. A good example is the channel B 0 S \u2192 D \u2213 S K \u00b1 , which has to be separated from the background from B 0 S \u2192 D \u2212 S \u03c0 + , which is about 15 times more abundant. Moreover, other final states containing electrons, muons and neutral particles (photons, neutral pions and \u03b7's) have to be distinguishable. The requirements for the LHCb detector can be summarised in this way:",
+            "paragraph_rank": 54,
+            "section_rank": 20
+        },
+        {
+            "section": "Requirements",
+            "text": "1. geometrical acceptance in one forward region (1.9 < \u03b7 < 4.9);",
+            "paragraph_rank": 55,
+            "section_rank": 20
+        },
+        {
+            "text": "good hadron ID;",
+            "section_rank": 21
+        },
+        {
+            "section": "good hadron ID;",
+            "text": "3. good momentum and vertex resolutions and 4. an efficient and flexible trigger system.",
+            "paragraph_rank": 56,
+            "section_rank": 21
+        },
+        {
+            "section": "good hadron ID;",
+            "text": "In order to maximize the probability of a single interaction per beam crossing, the luminosity in the LHCb interaction region may be limited to 2 to 5\u00d710 32 cm 2 s 1 . In these conditions, one year of LHCb running (\u223c10 7 s) corresponds to 2 fb \u22121 of integrated luminosity and about 10 12 bb pairs produced in the region covered by the spectrometer.",
+            "paragraph_rank": 57,
+            "section_rank": 21
+        },
+        {
+            "text": "Setup",
+            "section_rank": 22
+        },
+        {
+            "section": "Setup",
+            "text": "Unlike ATLAS and CMS, LHCb does not have a cylindrical geometry. Rather, it is laid out horizontally along the beam line, as shown in Fig. 9. The tracking system consists of the VErtex LOcator (VELO) and four planar tracking stations: the Tracker Turicensis (TT) upstream of the 4 Tm dipole magnet, and stations T1-T3 downstream of the magnet. VELO and TT use silicon strip detectors. In T1-T3, Figure 9: Schematic view of the LHCb detector [18]. silicon strips are used in the region close to the beam pipe, whereas strawtubes are employed in the outer regions. The VELO makes possible a reconstruction of primary vertices with 10 \u00b5m (60 \u00b5m) precision in the transverse (longitudinal) direction. In this way the displaced secondary vertices, which are a distinctive feature of beauty and charm hadron decays, may be identified. The overall performance of the tracking system enables the reconstruction of the invariant mass of beauty mesons with resolution \u03c3 m \u2248 15 to 20 MeV/c 2 , depending on the channel.",
+            "paragraph_rank": 58,
+            "section_rank": 22,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 134,
+                    "text": "Fig. 9",
+                    "end": 140
+                },
+                {
+                    "type": "figure",
+                    "start": 395,
+                    "text": "Figure 9",
+                    "end": 403
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 441,
+                    "text": "[18]",
+                    "end": 445
+                }
+            ]
+        },
+        {
+            "text": "Particle identification",
+            "section_rank": 23
+        },
+        {
+            "section": "Particle identification",
+            "text": "LHCb in general looks like a slice out of a \"traditional\" experiment as described in Sect. 1.1, apart from the two RICH detectors providing hadron ID. The RICH detectors are described in more detail in Sect. 5.4. An EM calorimeter and a hadron calorimeter provide the identification of electrons, hadrons and neutral particles (photons and \u03c0 0 ) as well as the measurement of their energies and positions. The EM calorimeter is a rectangular wall constructed out of lead plates and scintillator tiles. The total thickness corresponds to 25 X 0 . In a beam test it was found that the relative energy resolution follows (\u03c3 E /E) 2 = (0.094/ E (GeV)) 2 + (0.145/E (GeV)) 2 + 0.0083 2 . The hadronic calorimeter consists of iron and scintillator tiles with a relative energy resolution of (\u03c3 E /E) 2 = (0.69/ E (GeV)) 2 + 0.09 2 , measured with a prototype in a beam test. Finally, the muon system is designed to provide a fast trigger on high momentum muons as well as offline muon indentification for the reconstruction of muonic final states and beauty flavor tagging. It consists of five stations (M1-M5) equipped mainly with Multi Wire Proportional Chambers (MWPCs). For the innermost region of station M1, which has the highest occupancy, Gas Electron Multipliers (GEMs) [19] are used. For a muon PID efficiency of 90% the misidentification rate is only about 1.5%.",
+            "paragraph_rank": 59,
+            "section_rank": 23,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 1273,
+                    "text": "[19]",
+                    "end": 1277
+                }
+            ]
+        },
+        {
+            "text": "Ionization measurements",
+            "section_rank": 24
+        },
+        {
+            "section": "Ionization measurements",
+            "text": "Ionization of matter by charged particles is the primary mechanism underlying most detector technologies. The characteristics of this process, along with the momentum measurement, can be used to identify particles.",
+            "paragraph_rank": 60,
+            "section_rank": 24
+        },
+        {
+            "text": "Energy loss and ionization",
+            "section_rank": 25
+        },
+        {
+            "section": "Energy loss and ionization",
+            "text": "When a fast charged particle passes through matter, it undergoes a series of inelastic Coulomb collisions with the atomic electrons of the material. As a result, the atoms end up in excited or ionised states, while the particle loses small fractions of its kinetic energy. The average energy loss per unit path length dE/dx is transformed into the average number of electron/ion pairs (or electron/hole pairs for semiconductors) N I that are produced along the length x along the particle's trajectory [20]:",
+            "paragraph_rank": 61,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 502,
+                    "text": "[20]",
+                    "end": 506
+                }
+            ]
+        },
+        {
+            "section": "Energy loss and ionization",
+            "text": "where W is the average energy spent for the creation of one electron/ion (electron/hole) pair. W exceeds the ionization energy E I (or the band gap energy E g for a solid) of the material, because some fraction of the energy loss is dissipated by excitation, which does not produce free charge carriers. Typical values of W lie around 30 eV for gases, being constant for incident particles with relativistic velocities (\u03b2 \u2248 1), but increasing for low velocities. For semiconductors the W values are roughly proportional to the band gap energy:",
+            "paragraph_rank": 62,
+            "section_rank": 25
+        },
+        {
+            "section": "Energy loss and ionization",
+            "text": "and are much lower than for gases [21]: e.g. on average 3.6 eV in silicon and 2.85 eV in germanium. Consequently, the ionization yield in semiconductor detectors is much larger than in gaseous devices. The interactions of the charged particle with the atomic electrons can be modeled in terms of two components: primary and secondary interactions. In primary interactions direct processes between the charged particle and atomic electrons lead to excitation or ionization of atoms, while secondary processes involve subsequent interactions. The primary interactions can be characterised by the Rutherford cross-section (with the energy dependence d\u03c3/dE \u221d E \u22122 ) for energies above the highest atomic binding energy, where the atomic structure can be ignored. In this case the particle undergoes elastic scattering on the atomic electrons as if they were free. According to the steeply falling Rutherford spectrum most of the primary electrons emitted in such collisions have low energy. However, a significant probability for producing primary electrons with energies up to the kinematic limit for the energy transfer E max exists. E max is given by",
+            "paragraph_rank": 63,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 34,
+                    "text": "[21]",
+                    "end": 38
+                }
+            ]
+        },
+        {
+            "section": "Energy loss and ionization",
+            "text": "where m e is the electron mass, x = m e /m and m is the mass of the incident particle. In such collisions, characterised by a very small impact parameter, the energy transfered to the electron will be larger than E I (or E g ) and the resulting \u03b4rays or knock-on electrons produce additional ionization in secondary interactions. \u03b4-rays can even leave the sensitive volume of the detector, but a magnetic field may force them to curl up close to the primary charged particle's track. In this case they will contribute to a measurement of the deposited energy.",
+            "paragraph_rank": 64,
+            "section_rank": 25
+        },
+        {
+            "section": "Energy loss and ionization",
+            "text": "In collisions with large impact parameter the atomic electrons receive much less energy, which is used for excitation without the creation of free charges. However, in gases tertiary ionization by collisions of an atom in an excited state with other atoms may be important (Penning ionization) [22].",
+            "paragraph_rank": 65,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 294,
+                    "text": "[22]",
+                    "end": 298
+                }
+            ]
+        },
+        {
+            "text": "Velocity dependence",
+            "section_rank": 26
+        },
+        {
+            "section": "Velocity dependence",
+            "text": "The first calculation for the average energy loss per unit track length based on the quantum mechanical principles of the scattering theory was introduced by Hans Bethe in 1930 and 1932 [24,25]. The well known Bethe-Bloch formula is modified to yield the restricted (average) energy loss by neglecting higher energy \u03b4electrons through the introduction of an upper limit for the energy transfer in a single collision E cut [20]:",
+            "paragraph_rank": 66,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 186,
+                    "text": "[24,",
+                    "end": 190
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 190,
+                    "text": "25]",
+                    "end": 193
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 422,
+                    "text": "[20]",
+                    "end": 426
+                }
+            ]
+        },
+        {
+            "section": "Velocity dependence",
+            "text": "Here ze is the charge of the incident particle and I is the effective excitation energy of the absorber material 7 measured in eV. \u03b4 is the density effect correction to the ionization energy loss, which was calculated for the first time by E. Fermi in 1939 [26]. It is much larger for liquids or solids than for gases and is usually computed using a parameterization by R. M. Sternheimer [23]. Typical values for E cut depend on the strength of the magnetic field and lie in the range 10 to 100 keV. Eq. 8 is valid for electrons and also for heavier particles. In the low energy region (i.e. \u03b2\u03b3 < 0.5) the average energy loss decreases like 1/\u03b2 2 and reaches a broad minimum of ionisation (MIP region) at \u03b2\u03b3 \u2248 4. For larger values of \u03b2\u03b3 the average energy loss begins to rise roughly proportional to log(\u03b2\u03b3) (relativistic rise) with a strength defined by the mean excitation energy I. The rise is reduced at higher momenta by the density effect correction \u03b4. A remaining relativistic rise would be due to (rare) large energy transfers to a few electrons. Since these events are removed in Eq. 8 by the introduction of E cut , the restricted average energy loss approaches a constant value (the Fermi plateau) as \u03b2\u03b3 increases. For solids, due to a stronger density effect, the Fermi plateau is only a few percent above the minimum.",
+            "paragraph_rank": 67,
+            "section_rank": 26,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 257,
+                    "text": "[26]",
+                    "end": 261
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 388,
+                    "text": "[23]",
+                    "end": 392
+                }
+            ]
+        },
+        {
+            "text": "Straggling functions",
+            "section_rank": 27
+        },
+        {
+            "section": "Straggling functions",
+            "text": "For a given particle, the actual value of the energy loss \u2206 over a given path length x is governed by statistical fluctuations which occur in the number of collisions (a Poissonian distribution) and in the energy transferred in each collision (a distribution \u223c1/E 2 ). The resulting distribution of the energy loss F (x, \u2206) is called straggling function. One particular way to calculate this distribution using specific assumptions was introduced by L. Landau in 1944 [27]. However, in particle physics often the name Landau function is used generically to refer to all straggling functions.",
+            "paragraph_rank": 68,
+            "section_rank": 27,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 468,
+                    "text": "[27]",
+                    "end": 472
+                }
+            ]
+        },
+        {
+            "section": "Straggling functions",
+            "text": "The ionization distribution (the distribution of the number of electron/ion or electron/hole pairs N I along the particle path length x) G(x, N I ) can be obtained from F (x, \u2206) by using the relation N I = \u2206/W , assuming that the energy loss is completely deposited in the material (the sensitive volume of the detector). Also G(x, N I ) is called a straggling function.",
+            "paragraph_rank": 69,
+            "section_rank": 27
+        },
+        {
+            "section": "Straggling functions",
+            "text": "The discussion of straggling functions is generally divided into two cases: thick absorbers and thin absorbers. In a thick absorber, with a thickness sufficient to absorb an amount of energy comparable to the particles initial kinetic energy, the straggling function can be approximated by a Gaussian distribution. For thin absorbers, where only a fraction of the kinetic energy is lost through ionizing collisions, the straggling function is always influenced by the possibility of large energy transfers in single collisions. These add a long tail (the Landau tail) to the high energy side, resulting in an asymmetric form with a mean value significantly higher than the most probable value.",
+            "paragraph_rank": 70,
+            "section_rank": 27
+        },
+        {
+            "text": "PID using ionization measurements",
+            "section_rank": 28
+        },
+        {
+            "section": "PID using ionization measurements",
+            "text": "Measurements of the deposited energy \u2206 can be used for PID. Gaseous or solid state counters 8 provide signals with pulse height R proportional to the number of electrons N I liberated in the ionization process along the track length x inside the sensitive volume, and thus proportional to \u2206. To limit deterioration of the resolution due to energy loss fluctuations, in general N R pulse height measurements are performed along the particle track, either in many consecutive thin detectors or in a large number of samples along the particle track in the same detector volume. For sufficiently large N R the shape of the obtained pulse height distribution approaches the one of G(x, N I ). The mean value of the distribution is not a good estimator for the energy deposit \u2206, since it is quite sensitive to the number of counts in the tail, which limits the resolution. A better estimator is derived from the peak of the distribution, which is usually approximated by the truncated mean R a , which is defined as the average over the M lowest values of the pulse height measurements R i :",
+            "paragraph_rank": 71,
+            "section_rank": 28
+        },
+        {
+            "section": "PID using ionization measurements",
+            "text": "Here R i \u2264 R i+1 for i = 1, . . . , n \u2212 1 and M is an integer M = aN R . a is a fraction typically between 0.5 and 0.85. Values of R a follow an almost perfect Gaussian distribution with variance \u03c3 E . From a theoretical point of view it should be possible to achieve better results by using all the information available, i.e. the shape of G(x, N I ). A maximum likelihood fit to all N R ionization measurements along a track or tabulated energy loss distributions may be used. However, in practice they show a performance that is not significantly better [20,28]. Thus usually the truncated mean method is chosen because of its simplicity.",
+            "paragraph_rank": 72,
+            "section_rank": 28,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 557,
+                    "text": "[20,",
+                    "end": 561
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 561,
+                    "text": "28]",
+                    "end": 564
+                }
+            ]
+        },
+        {
+            "section": "PID using ionization measurements",
+            "text": "In practice, only relative values of the deposited energy \u2206 = \u2206(m, \u03b2) are needed to distinguish between different particle species. Because Eq. 8 is not a monotonic function of \u03b2, it is not possible to combine it with Eq. 2 in order to obtain a form m = m(\u2206, p), where p is the momentum of the particle. However, the PID capability becomes obvious by plotting ionization curves \u2206(m, \u03b2) for a number of charged particles. A description of measured ionization curves based on five parameters is given in Ref. [20] and can be used for this purpose. An example is shown in Fig. 10. By simultaneously measuring p and \u2206 for any particle of un- known mass, a point can be drawn on this diagram. The particle is identified when this point can be associated with only one of the curves within the measurement errors. Even in areas where the bands are close, statistical PID methods may be applied.",
+            "paragraph_rank": 73,
+            "section_rank": 28,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 507,
+                    "text": "[20]",
+                    "end": 511
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_8",
+                    "start": 569,
+                    "text": "Fig. 10",
+                    "end": 576
+                }
+            ]
+        },
+        {
+            "text": "Energy resolution and separation power",
+            "section_rank": 29
+        },
+        {
+            "section": "Energy resolution and separation power",
+            "text": "The resolution in the ionization measurement (energy resolution) \u03c3 E is given by the variance of the Gaussian distribution of the truncated mean values and is in general proportional to the energy deposit: \u03c3 E \u221d \u2206. Using Eq. 4, the separation for two particles A and B with different masses but the same momentum can be calculated as",
+            "paragraph_rank": 74,
+            "section_rank": 29
+        },
+        {
+            "section": "Energy resolution and separation power",
+            "text": "The average of the two resolutions \u03c3 A,B = (\u03c3 E,A + \u03c3 E,B )/2 is used. For the purpose of qualitatively discussing the PID capabilities this approximation is sufficient. For alternative ways to describe the resolution of the PID, refer to Ref. [28]. In Fig. 11 typical particle separations are shown for a gaseous detector with an energy resolution of 5%. As expected, hadron identification works well in the low momentum region. In the minimum ionization region, where hadrons carry momenta around a few GeV/c and the ionization curves are very close, it is likely that the method fails to discriminate the particles. In the region of the relativistic rise moderate identification is possible on a statistical basis.",
+            "paragraph_rank": 75,
+            "section_rank": 29,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 244,
+                    "text": "[28]",
+                    "end": 248
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_9",
+                    "start": 253,
+                    "text": "Fig. 11",
+                    "end": 260
+                }
+            ]
+        },
+        {
+            "text": "Errors affecting the resolution",
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "The operational regime of the particle detector used for the ionization measurements must be chosen such that the measured pulse heights R are exactly proportional to the number of electron/ion (electron/hole) pairs N I created by the energy deposit \u2206. The same is true for the signal processing chain. Nevertheless, some effects change the apparent energy deposit and thus limit the energy resolution of the device. They have to be considered on top of the fundamental limit that is given by the statistics of the primary ionization.",
+            "paragraph_rank": 76,
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "\u2022 The ionization signal amplitude is determined by the detector (e.g. gas amplification) and by the electronics. An optimal performance can be achieved only if an energy calibration is carried out in order to determine the absolute gain of each channel with high precision.",
+            "paragraph_rank": 77,
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "\u2022 Overlapping tracks must be eliminated with some safety margin. This can introduce some limit for a high track density environment like heavy-ion collisions or jets, because the number of ionisation measurements N R entering the truncated mean calculation (Eq. 9) can be considerably reduced by this effect.",
+            "paragraph_rank": 78,
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "\u2022 Track independent effects have to be kept under control. For a gaseous device these include the gas density (pressure and temperature) and gas mixture. Electronics effects like noise and baseline shifts have to be taken care of as well.",
+            "paragraph_rank": 79,
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "\u2022 On the level of each track, more effects influence the apparent ionization: the detector geometry together with the track orientation influence the amount of ionization charge per sampling layer and can be corrected for. In a gaseous device, attachment of the drifting electrons decreases the ionization signal and requires a correction, which depends on the drift length z through a constant b: R(z) = R e \u2212bz . A similar decrease of the signal as a function of the drift length can be due to diffusion of the drifting primary electron cloud, and can be corrected for as well.",
+            "paragraph_rank": 80,
+            "section_rank": 30
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "For gaseous detectors, these effects are described in detail in Ref. [20]. An empirical formula exists to estimate the dependence of the energy resolution on the number of measurements N R , on the thickness of the sampling layers x, and on the gas pressure P [31,32]:",
+            "paragraph_rank": 81,
+            "section_rank": 30,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 69,
+                    "text": "[20]",
+                    "end": 73
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 260,
+                    "text": "[31,",
+                    "end": 264
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 264,
+                    "text": "32]",
+                    "end": 267
+                }
+            ]
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "The formula was obtained by fits to measured data and includes optimizations such as the truncated mean method and the ones just described. If the ionization measurements along a track were independent, and if no other error sources like electronics noise existed, the resolution would scale as N \u22120.5",
+            "paragraph_rank": 82,
+            "section_rank": 30
+        },
+        {
+            "text": "R",
+            "section_rank": 31
+        },
+        {
+            "section": "R",
+            "text": ". Moreover, the formula shows that for a fixed total length of a detector x N R , one obtains a better resolution for a finer sampling, provided that the ionization is sufficient in each sampling layer. A comparison of the expected resolutions calculated with Eq. 11 and measured values is given in Ref. [33]. Summaries and examples of performances achieved with gaseous tracking detectors like Drift, Jet or Time Projection Chambers are given in Refs. [20,32]. Typical values are 4.5 to 7.5%. By increasing the gas pressure, the resolution can be significantly improved, e.g. for the PEP TPC an energy resolution of below 3% was achieved at 8.5 bar. However, at higher pressure the relativistic rise is reduced due to the density effect.",
+            "paragraph_rank": 83,
+            "section_rank": 31,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 304,
+                    "text": "[33]",
+                    "end": 308
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 453,
+                    "text": "[20,",
+                    "end": 457
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 457,
+                    "text": "32]",
+                    "end": 460
+                }
+            ]
+        },
+        {
+            "text": "ALICE Time Projection Chamber",
+            "section_rank": 32
+        },
+        {
+            "section": "ALICE Time Projection Chamber",
+            "text": "The ALICE TPC [29,30]  (Fig. 12) is the largest gaseous Time Projection Chamber built so far. A TPC is a remarkable example of a detector performing precise tracking and PID through measurements of the energy deposited through ionization.",
+            "paragraph_rank": 84,
+            "section_rank": 32,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 14,
+                    "text": "[29,",
+                    "end": 18
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 18,
+                    "text": "30]",
+                    "end": 21
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 23,
+                    "text": "(Fig. 12)",
+                    "end": 32
+                }
+            ]
+        },
+        {
+            "section": "ALICE Time Projection Chamber",
+            "text": "Since it is basically just a large volume filled with a gas, a TPC offers a maximum of active volume with a minimum of radiation length. In a collider experiment like ALICE, the field cage of a TPC is typically divided into two halves separated by a planar central electrode made by a thin membrane. The electrons produced by charged particles crossing the field cage drift towards the two end-caps, where readout detectors are mounted. In general, a gated wire grid is installed directly in front of the readout chambers. When the system is triggered, the gate opens, allowing the passage of the ionization electrons, which create charge avalanches in the readout detectors. Closing the gate assures that the ions created in the avalanche process do not enter the drift volume. Measuring the signals induced on adjacent readout pads makes possible an accurate determination of the position by evaluating the center of gravity. Together with accurate measurements of the arrival time (relative to some external reference such as the collision time of the beams) the complete trajectory of all charged particles traversing the TPC can be determined. Due to the little amount of dead volume and the easy pattern recognition (continuous tracks), TPCs are the best tracking devices for high multiplicity environments, e.g. heavy-ion experiments.",
+            "paragraph_rank": 85,
+            "section_rank": 32
+        },
+        {
+            "text": "Field cage and readout chambers",
+            "section_rank": 33
+        },
+        {
+            "section": "Field cage and readout chambers",
+            "text": "The ALICE TPC is a large-volume TPC with overall \"conventional\" lay-out but with nearly all other design parameters pushed towards the limits. A comprehensive description can be found in Ref. [30]. The TPC field cage is a hollow cylinder whose axis is aligned with the LHC beam axis and is parallel to the magnetic field. The active volume has an inner radius of about 85 cm, an outer radius of about 250 cm, and an overall length along the beam direction of 500 cm. The central electrode is charged to 100 kV and provides, together with a voltage dividing network at the surface of the outer and inner cylinder, a precise axial electric field of 400 V/cm. To ensure low diffusion of the drifting electrons and a large ion mobility, Figure 12: 3D view of the TPC field cage [30]. The high voltage electrode is located at the center of the 5 m long drift volume. The two endplates are divided into 18 sectors holding two readout chambers each.",
+            "paragraph_rank": 86,
+            "section_rank": 33,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 192,
+                    "text": "[30]",
+                    "end": 196
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 733,
+                    "text": "Figure 12",
+                    "end": 742
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 774,
+                    "text": "[30]",
+                    "end": 778
+                }
+            ]
+        },
+        {
+            "section": "Field cage and readout chambers",
+            "text": "Ne was chosen as the main component of the counting gas. The gas mixture with 10 % of CO 2 as quencher makes mandatory a very good temperature homogenisation in the drift volume (\u2206T < 0.1 K), in order to guarantee a homogeneous drift velocity. It is operated at atmospheric pressure. Wire chambers with cathode pads are used for the readout of the TPC. An optimization of the design for the expected high track density environment implied rather small pad sizes (4\u00d77.5 mm 2 in the innermost region). As a consequence, the number of pads is large (\u223c560 000; for comparison: the ALEPH TPC had 41 000 pads), and the readout chambers have to be operated at rather high gas gains near 10 4 .",
+            "paragraph_rank": 87,
+            "section_rank": 33
+        },
+        {
+            "text": "Front-end electronics",
+            "section_rank": 34
+        },
+        {
+            "section": "Front-end electronics",
+            "text": "Also for the design of the front-end electronics the key input was the operation in a high track density environment [30]. A signal occupancy as high as 50% can be expected for central Pb-Pb collisions. Due to the large raw data volume (750 MB/event) zero suppression is implemented in the front-end electronics, thus reducing the event sizes to about 300 kB for p-p collisions (no overlying events) and to about 12 MB for Pb-Pb collisions. Signal tail cancellation and baseline correction are performed before the zero suppression in order to preserve the full Figure 13: Measured ionization signals of charged particles as a function of the track rigidity (particle momentum divided by charge number). 11\u00d710 6 events from a data sample recorded with \u221a s = 7 TeV p-p collisions provided by the LHC were analysed. The lines correspond to a parameterization of the Bethe-Bloch curve as described in Ref. [20]. Also heavier nuclei like deuterons and tritium and their anti-particles are found. resolution on the signal features (charge and arrival time). A large dynamic range ensures that the ionization signal of particles can be determined with precision from very low up to high momenta.",
+            "paragraph_rank": 88,
+            "section_rank": 34,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 117,
+                    "text": "[30]",
+                    "end": 121
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 562,
+                    "text": "Figure 13",
+                    "end": 571
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 903,
+                    "text": "[20]",
+                    "end": 907
+                }
+            ]
+        },
+        {
+            "text": "PID performance and outlook",
+            "section_rank": 35
+        },
+        {
+            "section": "PID performance and outlook",
+            "text": "A very good energy calibration is fundamental for an optimal PID performance (see Sect. 3.6). In the ALICE TPC, the amplitude of the ionization signal is determined by the gas amplification and the electronics. The absolute gain of each channel is obtained with high precision by periodically releasing radioactive krypton ( 83 36 Kr) into the TPC gas system and measuring the well known decay pattern (for more details see [30]).",
+            "paragraph_rank": 89,
+            "section_rank": 35,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 325,
+                    "text": "83 36",
+                    "end": 330
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 424,
+                    "text": "[30]",
+                    "end": 428
+                }
+            ]
+        },
+        {
+            "section": "PID performance and outlook",
+            "text": "Inside the TPC, the ionization strength of all tracks is sampled on up to 159 pad rows. The energy resolution is 5% for tracks with the maximum number of signals. Fig. 13 shows the ionization signals from 11 \u00d7 10 6 events from a data sample recorded with \u221a s = 7 TeV p-p collisions provided by the LHC. Clearly the different characteristic bands for various particles including deuterons and tritium are visible for particles and anti-particles, respectively. In order to achieve PID in a certain momentum region, histograms are filled and fitted with multiple Gaussians. An example is shown in Fig. 14. For a given ionization signal in this momentum region one can derive the particle yields, which represent the probabilities for the  Figure 14: Distribution of the difference between the measured ionization signals and the one expected for Kaons for a momentum slice of 50 MeV/c width. The lines are fits, indicating that a sum of four Gaussians represents well the data. The peak centered at zero reflects the abundance of kaons, the other peaks represent other particle species.",
+            "paragraph_rank": 90,
+            "section_rank": 35,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_6",
+                    "start": 163,
+                    "text": "Fig. 13",
+                    "end": 170
+                },
+                {
+                    "type": "figure",
+                    "start": 595,
+                    "text": "Fig. 14",
+                    "end": 602
+                },
+                {
+                    "type": "figure",
+                    "start": 737,
+                    "text": "Figure 14",
+                    "end": 746
+                }
+            ]
+        },
+        {
+            "section": "PID performance and outlook",
+            "text": "particle to be a kaon, proton, pion or electron.",
+            "paragraph_rank": 91,
+            "section_rank": 35
+        },
+        {
+            "section": "PID performance and outlook",
+            "text": "The ALICE TPC is in nearly continuous data taking mode since more than one year, providing tracking and PID information while the LHC delivers p-p collisions at \u221a s = 7 TeV. In November 2010 the first Pb-Pb collisions at \u221a s N N = 2.76 TeV were recorded. The energy resolution of the TPC in these heavy-ion collisions was found to degrade slightly to an average of about 5.3%. This effect is expected due to overlapping signals from neighboring tracks. The energy resolution for the highest multiplicity events falls off by 20% with respect to low multiplicities. Part of the increase is also explained by baseline fluctuations in the electronics due to large hit densities in single channels. These fluctuations can in the future be minimised using the signal tail cancellation and baseline correction features available in the TPC front-end electronics. In the course of the year 2011, higher luminosities will be reached and space charge effects and gating efficiency will have to be accurately evaluated to avoid negative effects on the tracking and ionization sampling.",
+            "paragraph_rank": 92,
+            "section_rank": 35
+        },
+        {
+            "text": "Silicon detectors at LHC",
+            "section_rank": 36
+        },
+        {
+            "section": "Silicon detectors at LHC",
+            "text": "At the LHC, the signal amplitude information of the silicon strip (ALICE, AT-LAS and CMS) and drift (ALICE) detectors of the tracking systems make possible hadron ID via ionization measurements. However, since in solid media due to a stronger density effect the Fermi plateau is only slightly above the minimum, good \u03c0/K (p/K) separation is achievable only up to 450 MeV/c (up to 1 GeV/c). Again, the energy loss is estimated as a truncated mean in order to minimize the influence of Landau fluctuations. In ALICE, the resolution of the measurement in two layers each of silicon strip and drift detectors is about 11%. In the CMS tracking system, the signal amplitudes from ten layers of silicon strip detectors may be used, but a resolution was not known to the author at the time of writing this review.",
+            "paragraph_rank": 93,
+            "section_rank": 36
+        },
+        {
+            "text": "Developments for future TPCs",
+            "section_rank": 37
+        },
+        {
+            "section": "Developments for future TPCs",
+            "text": "A TPC at a future linear collider will very likely be read out by micro-pattern devices like GEMs [19] or MicroMegas [34]. Their advantages are the high rate capability and a low ion feedback. Large TPC protopypes with different readout options were built tested [35]. The conventional readout of the micro-pattern device, with mm-sized cathode pads, may actually be replaced by a digital device with pixel sizes of the order 55 \u00b5m. A family of ASIC chips is particularly suited for this purpose: MEDIPIX [36] and its successor TIMEPIX [37], which records also the time. This kind of setup has been shown to detect tracks of minimum ionizing charged particles (MIPs) with excellent single-electron efficiency and unprecedented spatial resolution. In this way, the cluster counting method may be used to assess the energy deposit through ionization: rather than measuring the deposited charge, the number of primary collision clusters are counted. This avoids the problems related to the fluctuation of the energy transfer in single collisions (see Sects. 3.3 and 3.4) and should provide the ultimate resolution of \u223c2% [38].",
+            "paragraph_rank": 94,
+            "section_rank": 37,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 98,
+                    "text": "[19]",
+                    "end": 102
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 117,
+                    "text": "[34]",
+                    "end": 121
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 263,
+                    "text": "[35]",
+                    "end": 267
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 505,
+                    "text": "[36]",
+                    "end": 509
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 536,
+                    "text": "[37]",
+                    "end": 540
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 1118,
+                    "text": "[38]",
+                    "end": 1122
+                }
+            ]
+        },
+        {
+            "section": "Developments for future TPCs",
+            "text": "Concerning the implementation in a large detector like a TPC, the challenges will include equipping a large active area with the pixelized readout and handling huge amounts of readout channels.",
+            "paragraph_rank": 95,
+            "section_rank": 37
+        },
+        {
+            "text": "Time-of-flight",
+            "section_rank": 38
+        },
+        {
+            "section": "Time-of-flight",
+            "text": "Time-of-flight (TOF) measurements yield the velocity of a charged particle by measuring the particle flight time t over a given distance along the track trajectory L. The particle velocity \u03b2 = v/c = L/tc depends on its mass m and momentum p through",
+            "paragraph_rank": 96,
+            "section_rank": 38
+        },
+        {
+            "section": "Time-of-flight",
+            "text": "Thus, one can calculate the mass m from measurements of L, t and p: ",
+            "paragraph_rank": 97,
+            "section_rank": 38
+        },
+        {
+            "text": "Time resolution and separation power",
+            "section_rank": 39
+        },
+        {
+            "section": "Time resolution and separation power",
+            "text": "With p mc the approximation 1 + (mc/p) 2 \u2248 1 + (mc) 2 /2p 2 can be used, and with Eq. 4 the separation power becomes",
+            "paragraph_rank": 98,
+            "section_rank": 39
+        },
+        {
+            "section": "Time resolution and separation power",
+            "text": "Here \u03c3 T OF is the resolution of the TOF measurement. Misidentification of particles occurs at higher momenta, where the time difference |t A \u2212 t B | becomes comparable to \u03c3 T OF . Assuming a time resolution of 100 ps (60 ps) and requiring a separation of n \u03c3 T OF = 3, the upper limits for the momentum are 2.1 GeV/c (2.7 GeV/c) for K/\u03c0 separation and 3.5 GeV/c (4.5 GeV/c) for K/p separation (see Fig. 15). A lower momentum threshold is defined by the curvature of the tracks in the magnetic field. Assuming a path length L = 3.5 m and a magnetic field of 0.5 T, only particles with a momentum larger than about 300 MeV/c reach the TOF wall.",
+            "paragraph_rank": 99,
+            "section_rank": 39,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_11",
+                    "start": 399,
+                    "text": "Fig. 15",
+                    "end": 406
+                }
+            ]
+        },
+        {
+            "text": "Errors affecting the resolution",
+            "section_rank": 40
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "The mass resolution of a TOF measurement is given by [39]:",
+            "paragraph_rank": 100,
+            "section_rank": 40,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 53,
+                    "text": "[39]",
+                    "end": 57
+                }
+            ]
+        },
+        {
+            "section": "Errors affecting the resolution",
+            "text": "Since in most cases \u03b3 1, the mass resolution is predominantly affected by the accuracies in the time and length measurements, rather than by the accuracy of the momentum determination. In general the track length L and the momentum p can be measured with rather good accuracies in the tracking system (\u03c3 p /p \u2248 1%, \u03c3 L /L \u2248 10 \u22123 ). The time-of-flight t is measured with a certain accuracy \u03c3 T OF by a dedicated detector system. A TOF measurement always consists of two time measurements: t = t 1 \u2212 t 0 . The event start time t 0 is measured with accuracy \u03c3 t 0 . The stop time t 1 > t 0 is measured with accuracy \u03c3 t 1 by the actual TOF detector, usually a large area detector system some distance away from the interaction region. The overall TOF resolution is then given by \u03c3 2 T OF = \u03c3 2 t 0 + \u03c3 2 t 1 .",
+            "paragraph_rank": 101,
+            "section_rank": 40
+        },
+        {
+            "text": "Resistive Plate Chambers for time-of-flight measurements",
+            "section_rank": 41
+        },
+        {
+            "section": "Resistive Plate Chambers for time-of-flight measurements",
+            "text": "In order to optimise a TOF system the resolution \u03c3 T OF has to be improved. In current experiments for subnuclear research, detectors using scintillation (the property of luminescence when excited by ionizing radiation) are very commonly used due to their good time resolution. However, as the experiments have gradually increased in size, and since the readout of scintillator detectors is expensive, the cost per area became an important issue. The Resistive Plate Chamber (RPC) was found to provide a simpler technology at a much lower price. RPCs can be seen as the successor of the metallic Parallel Plate Avalanche Counters, overcoming their disadvantage of being very vulnerable to the destructive energy released by possible discharges or sparks. The electrode plates of RPCs are made from a resistive material, which effectively restricts excessive signals or discharges to a well localised area of the detector. As a side effect, all charges cause a local drop of the electric field in the gas gap and in this spot the detector becomes insensitive to further traversing particles for a time of the order of the relaxation time \u03c4 = \u03c1 \u03b5 0 \u03b5 r , where \u03b5 0 is the dielectric constant and \u03c1 and \u03b5 r are the volume resistivity and the relative permittivity of the resistive material. Even though the remaining counter area is still sensitive to particles, a limit to the overall rate capability is introduced through this effect. In general, accurate time measurements are feasible up to charged particle rates of a few kHz/cm 2 , which is acceptable for many purposes (compare to Sect. 4.7). The RPC design was improved by introducing the concept of multiple gaps (Multi gap Resistive Plate Chamber, MRPC [40]), resulting in an increase of detection efficiency. Reducing the individual gap sizes [41], while at the same time increasing the electric field, resulted in what is called the Timing RPC, a low cost detector with a time resolution comparable to that of scintillators. The space resolution can be chosen by different sizes of the readout strips.",
+            "paragraph_rank": 102,
+            "section_rank": 41,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "start": 1710,
+                    "text": "[40]",
+                    "end": 1714
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 1801,
+                    "text": "[41]",
+                    "end": 1805
+                }
+            ]
+        },
+        {
+            "text": "Detector physics of Resisitive Plate Chambers",
+            "section_rank": 42
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "The physics of avalanches in RPCs is very complex, even though the simple geometry of the device would not suggest so. During the development of large area RPC systems for the LHC experiments, the detector physics of RPCs was therefore studied in detail [42,43,44,45,46,47,48,49]. The good detection efficiency of (single gap) RPCs is explained by the very large gas gain. A very strong space charge effect reduces the avalanche charges by many orders of magnitude. Detailed simulations show that the space charge field inside the avalanches actually reaches the same magnitude as the applied electric field.",
+            "paragraph_rank": 103,
+            "section_rank": 42,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 254,
+                    "text": "[42,",
+                    "end": 258
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 258,
+                    "text": "43,",
+                    "end": 261
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 261,
+                    "text": "44,",
+                    "end": 264
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 264,
+                    "text": "45,",
+                    "end": 267
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 267,
+                    "text": "46,",
+                    "end": 270
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "start": 270,
+                    "text": "47,",
+                    "end": 273
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "start": 273,
+                    "text": "48,",
+                    "end": 276
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 276,
+                    "text": "49]",
+                    "end": 279
+                }
+            ]
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "The very good time resolution of RPCs is due to the strong uniform electric field, which provokes the avalanche process immediately after primary ionization is deposited in the gas volume. As a consequence, the intrinsic detector time resolution (no electronics) is determined by the avalanche statistics, and can be estimated using a simple formula (for one gas gap):",
+            "paragraph_rank": 104,
+            "section_rank": 42
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "Here \u03b1 g and \u03b7 g are the Townsend and attachment coefficients of the gas mixture and v D is the the drift velocity of electrons. Typical operational parameters [42] for Timing RPCs are \u03b1 g = 123 mm \u22121 , \u03b7 g = 10.5 mm \u22121 and v D = 210 \u00b5m ns \u22121 .",
+            "paragraph_rank": 105,
+            "section_rank": 42,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 160,
+                    "text": "[42]",
+                    "end": 164
+                }
+            ]
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "For these values an intrinsic time resolution of \u03c3 Intr = 50 ps is obtained for a single gap. By increasing the number of gaps n, the resolution can be improved, but for small values of n the improvement is not following a simple 1/ \u221a n scaling, because it is dominated by the gap which has the largest signal [42]. For n = 10 gaps a resolution of \u03c3 Intr = 20 ps is feasible.",
+            "paragraph_rank": 106,
+            "section_rank": 42,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 310,
+                    "text": "[42]",
+                    "end": 314
+                }
+            ]
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "The drop of the electric field in the gas gap at high particle rates affects efficiency and time resolution. It may be calculated in a simple way by assuming the particle flux to be a DC current that causes a voltage drop when it passes through the resistive plate. For a single gap of width b the average field reduction is:",
+            "paragraph_rank": 107,
+            "section_rank": 42
+        },
+        {
+            "section": "Detector physics of Resisitive Plate Chambers",
+            "text": "where \u03c1 and a are the volume resistivity and thickness of the resistive electrode material and \u03a6 is the particle flux per area. Q is the avalanche charge, which of course depends itself on the field reduction, and has thus to be found in an iterative procedure. An approximate analytic expression for the field fluctuations around \u2206E is given in Ref. [44].",
+            "paragraph_rank": 108,
+            "section_rank": 42,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "start": 351,
+                    "text": "[44]",
+                    "end": 355
+                }
+            ]
+        },
+        {
+            "text": "ALICE time-of-flight detector",
+            "section_rank": 43
+        },
+        {
+            "section": "ALICE time-of-flight detector",
+            "text": "In specific momentum ranges, the PID signals from the ALICE TPC can not be used to separate kaons, pions and protons, because the ionization curves are very close or overlap (see also Fig. 5). The NA49 and STAR experiments have shown [50,51] how the hadron identification capability may be extended by combining the PID informations from TPC and TOF. Moreover, a reliable identification of electrons is possible up to a few GeV/c in this way, since the hadrons (which for a given momentum are slower) can be eliminated with a cut on the particle velocity. The ALICE TOF detector [52] is based on MRPCs. 91 MRPCs each are assembled into gas tight modules in 18 azimuthal sectors (supermodules) surrounding the ALICE TPC and TRD (see Fig. 8). The supermodules have about 9 m length, covering the pseudo-rapidity interval |\u03b7| < 0.9. More than 150 000 readout pads with size 2.5\u00d73.5 cm 2 cover an area of about 150 m 2 . The gas mixture in the ten 250 \u00b5m thin gas gaps is 90% C 2 H 2 F 4 , 5% C 4 H 10 , 5% SF 6 . A cross-section through one MRPC is shown in Fig. 16.",
+            "paragraph_rank": 109,
+            "section_rank": 43,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 184,
+                    "text": "Fig. 5",
+                    "end": 190
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "start": 234,
+                    "text": "[50,",
+                    "end": 238
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 238,
+                    "text": "51]",
+                    "end": 241
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 732,
+                    "text": "Fig. 8",
+                    "end": 738
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_12",
+                    "start": 1055,
+                    "text": "Fig. 16",
+                    "end": 1062
+                }
+            ]
+        },
+        {
+            "text": "Time resolution",
+            "section_rank": 44
+        },
+        {
+            "section": "Time resolution",
+            "text": "The design goal for the ALICE TOF was to reach a global TOF resolution of \u03c3 T OF \u2248 100 ps. The following contributions have to be considered:",
+            "paragraph_rank": 110,
+            "section_rank": 44
+        },
+        {
+            "section": "Time resolution",
+            "text": "Here \u03c3 t 0 is the uncertainty in the absolute time of the collision, \u03c3 Intr is the intrinsic time resolution of the detector technology (\u223c20 ps) and \u03c3 Elec combines the Figure 17: TOF measurements with a cosmic data sample from the year 2009.",
+            "paragraph_rank": 111,
+            "section_rank": 44,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 169,
+                    "text": "Figure 17",
+                    "end": 178
+                }
+            ]
+        },
+        {
+            "section": "Time resolution",
+            "text": "Since the start and stop time were both measured with the ALICE TOF, the resolution of a single time measurement is obtained from the histogram by dividing its width by \u221a 2. The resulting resolution of 88.5 ps corresponds to \u03c3 t 1 from Eq. 19.",
+            "paragraph_rank": 112,
+            "section_rank": 44
+        },
+        {
+            "section": "Time resolution",
+            "text": "intrinsic time jitter of the amplification electronics (\u223c20 ps) and of the time-todigital conversion (\u223c30 ps). \u03c3 Clock is an uncertainty arising from the distribution of the digital clock from the LHC to the experiment (\u223c15 ps) and through the electronics chain (\u223c10 ps). Finally, a contribution \u03c3 Cal includes all effects that can be parametrised and that are thus accessible to calibration methods in order to be minimised. These are mainly 1. the relative timing of the different channels given by cable lengths (time offset), 2. the influence of the finite rise time of the ampliflying electronics 9 (time slewing) and",
+            "paragraph_rank": 113,
+            "section_rank": 44
+        },
+        {
+            "section": "Time resolution",
+            "text": "3. the influence of the impact position of the particle through signal propagation delays on the pad (time walk).",
+            "paragraph_rank": 114,
+            "section_rank": 44
+        },
+        {
+            "section": "Time resolution",
+            "text": "It is forseen that the contribution \u03c3 Cal can be kept below 30 ps [16]. Already with the limited statistics available from cosmics data samples before the start of the LHC it was possible to reach a value of \u03c3 Cal = 70 ps. The resolution \u03c3 t 1 with this \"intermediate calibration\" (compare to Tab. 2) is shown in Fig. 17.",
+            "paragraph_rank": 115,
+            "section_rank": 44,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 66,
+                    "text": "[16]",
+                    "end": 70
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_5",
+                    "start": 313,
+                    "text": "Fig. 17",
+                    "end": 320
+                }
+            ]
+        },
+        {
+            "section": "Time resolution",
+            "text": "The absolute time of the collision t 0 is fluctuating with respect to the nominal time signal from the LHC according to a Gaussian distribution with a \u03c3 of about 140 ps. This is due to the finite length of the colliding bunches of particles. In ALICE, t 0 is precisely measured by a dedicated detector 10 (T0) [13], which reduces this uncertainty to \u03c3 t 0 = 50 ps. With the much larger statistics that is available from data samples with collisions provided by the LHC, the work now focuses on reducing the contribution \u03c3 Cal . A further improvement can be achieved for high multiplicity Pb-Pb events, where the accuracy of the event start time measurement is expected to improve to \u03c3 t 0 = 10 ps. In that case an overall system resolution \u03c3 T OF = 65 ps is possible (compare to Tab. 2). Fig. 18 shows the correlation between the track momentum measured by the ALICE tracking detectors and the velocity \u03b2 as measured by the TOF system. The data were recorded during the first \u221a s = 7 TeV p-p collisions in 2010 and clearly show two times four bands corresponding to four particle species and their corresponding anti-particles. Data outside these bands indicates errors in the association of tracks to TOF PID signals. A particle is identified when the corresponding point in the diagram of Fig. 18 can be associated with only one theoretical curve (Eq. 12) within the measurement errors. For certain momentum regions histograms are filled and fitted with multiple Gaussians, similar to the procedure described in Sect. 3.7. An example is shown in Fig. 19. For a given TOF measurement one can derive the particle yields, which represent the probabilities for the particle to be a kaon, proton, pion or electron. The power of combining TOF and ionization measurements for PID is demonstrated for in Fig. 20.",
+            "paragraph_rank": 116,
+            "section_rank": 44,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 310,
+                    "text": "[13]",
+                    "end": 314
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 788,
+                    "text": "Fig. 18",
+                    "end": 795
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_7",
+                    "start": 1291,
+                    "text": "Fig. 18",
+                    "end": 1298
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_13",
+                    "start": 1548,
+                    "text": "Fig. 19",
+                    "end": 1555
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 1798,
+                    "text": "Fig. 20",
+                    "end": 1805
+                }
+            ]
+        },
+        {
+            "text": "PID performance and outlook",
+            "section_rank": 45
+        },
+        {
+            "text": "Other TOF detectors",
+            "section_rank": 46
+        },
+        {
+            "section": "Other TOF detectors",
+            "text": "RPCs have found applications in many particle physics experiments in many variations, as can be seen in the proceedings of the RPC workshop series [53,54,55,Figure 18: Velocity \u03b2 = v/c as measured with the ALICE TOF detector as a function of the particle momentum p multiplied with the particle charge number Z for a data sample taken with \u221a s = 7 TeV collisions provided by the LHC in the year 2010. No data is available for momenta 300 MeV/c, since these particles do not reach the detector due to the curvature of their tracks in the magnetic field.  . The STAR experiment has installed a large area (64 m 2 ) TOF system similar to the ALICE TOF in their barrel, surrounding the TPC [59,60]. The modules have six gas gaps of 220 \u00b5m width and are filled with a gas mixture of 95% C 2 H 2 F 4 and 5% i-C 4 H 10 . The STAR experiment also plans to install a Muon Telescope Detector (MTD) based on Timing RPCs to identify muons [61]. The FOPI experiment has upgraded their TOF system in 2007 by installing Multistrip Multigap Resistive Plate Chambers (MMRPCs) with 8 gaps of 220 \u00b5m [62]. For the HADES experiment a similar upgrade of the inner TOF wall is planned for the near future [63].",
+            "paragraph_rank": 117,
+            "section_rank": 46,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b50",
+                    "start": 147,
+                    "text": "[53,",
+                    "end": 151
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b51",
+                    "start": 151,
+                    "text": "54,",
+                    "end": 154
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b52",
+                    "start": 154,
+                    "text": "55,",
+                    "end": 157
+                },
+                {
+                    "type": "bibr",
+                    "start": 157,
+                    "text": "Figure 18",
+                    "end": 166
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b56",
+                    "start": 686,
+                    "text": "[59,",
+                    "end": 690
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b57",
+                    "start": 690,
+                    "text": "60]",
+                    "end": 693
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b58",
+                    "start": 927,
+                    "text": "[61]",
+                    "end": 931
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b59",
+                    "start": 1081,
+                    "text": "[62]",
+                    "end": 1085
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "start": 1183,
+                    "text": "[63]",
+                    "end": 1187
+                }
+            ]
+        },
+        {
+            "text": "Developments for future TOF systems",
+            "section_rank": 47
+        },
+        {
+            "section": "Developments for future TOF systems",
+            "text": "Driven by the environment in which TOF systems are planned to be operated in future experiments, a number of R&D projects currently address the rate limitation of Timing RPCs. The requirements for the TOF wall of the CBM experiment, for example, include a rate capability up to 25 kHz/cm 2 with a time resolution of 80 ps on a large system (120m 2 ) [64]. The effective drop of the operating voltage at larger rates (see Sect. 4.3) can be reduced either by lower electrode resistivity or by thinner electrode plates. Different electrode materials are being explored, including low-resistive phosphate and silicate glass [65,66]. With electrodes made from ceramics the practical feasibility of accurate timing measurements with RPCs Figure 21: Schematic drawing of a TOF counter based on a MCP-PMT [70]. The MCP-PMT actually detects Cherenkov photons emitted in the quartz glass entrance window and has a very good time resolution.",
+            "paragraph_rank": 118,
+            "section_rank": 47,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b61",
+                    "start": 350,
+                    "text": "[64]",
+                    "end": 354
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b62",
+                    "start": 620,
+                    "text": "[65,",
+                    "end": 624
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b63",
+                    "start": 624,
+                    "text": "66]",
+                    "end": 627
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 732,
+                    "text": "Figure 21",
+                    "end": 741
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b67",
+                    "start": 797,
+                    "text": "[70]",
+                    "end": 801
+                }
+            ]
+        },
+        {
+            "section": "Developments for future TOF systems",
+            "text": "at rates up to 500 kHz/cm 2 was established in test beams [67,68].",
+            "paragraph_rank": 119,
+            "section_rank": 47,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b64",
+                    "start": 58,
+                    "text": "[67,",
+                    "end": 62
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b65",
+                    "start": 62,
+                    "text": "68]",
+                    "end": 65
+                }
+            ]
+        },
+        {
+            "section": "Developments for future TOF systems",
+            "text": "TOF measurements with charged particles can also be carried out using Micro-Channel Plate (MCP) Photo Multiplier Tubes (PMTs, see Fig. 21)), which allow time measurements with a few ps precision. The MCP-PMT actually detects Cherenkov photons emitted in the entrance window of the PMT (for details on Cherenkov radiation see Sect. 5) [69]. Time resolutions of \u03c3 t 1 \u2248 6 ps (with an intrinsic resolution of the detector of \u03c3 Intr < 5 ps) were observed in test beams [70,71]. At this scale, the resolution of the measurement of the event start time \u03c3 t 0 becomes dominant and must be minimised as well. It remains to be shown that this technology can be implemented on large surfaces at an affordable price and can thus compete with MRPCs.",
+            "paragraph_rank": 120,
+            "section_rank": 47,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 130,
+                    "text": "Fig. 21",
+                    "end": 137
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b66",
+                    "start": 334,
+                    "text": "[69]",
+                    "end": 338
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b67",
+                    "start": 465,
+                    "text": "[70,",
+                    "end": 469
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b68",
+                    "start": 469,
+                    "text": "71]",
+                    "end": 472
+                }
+            ]
+        },
+        {
+            "text": "Cherenkov imaging",
+            "section_rank": 48
+        },
+        {
+            "section": "Cherenkov imaging",
+            "text": "In 1958 P. A.Cerenkov, I. Y. Tamm and I. M. Frank were awarded with the Nobel Prize in physics for the discovery and interpretation of the Cherenkov effect. Cherenkov radiation is a shock wave resulting from a charged particle moving through a material faster than the velocity of light in the material. The Cherenkov radiation propagates with a characteristic angle with respect to the particle track \u0398 C , that depends on the particle velocity:",
+            "paragraph_rank": 121,
+            "section_rank": 48
+        },
+        {
+            "section": "Cherenkov imaging",
+            "text": "where n is the refractive index of the material. In general, the refractive index varies with the photon energy: n = n(E) (chromatic dispersion). Since | cos(\u0398 C )| \u2264 1, Cherenkov radiation is only emitted above a threshold velocity \u03b2 t = 1/n and \u03b3 t = 1/(1 \u2212 \u03b2 2 t ) 1/2 . In general, Cherenkov detectors contain two main elements: a radiator through which charged particles pass (a transparent dielectric medium) and a photon detector. The number of photoelectrons (N p.e. ) detected in a given device can be approximated as [23] ",
+            "paragraph_rank": 122,
+            "section_rank": 48,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 527,
+                    "text": "[23]",
+                    "end": 531
+                }
+            ]
+        },
+        {
+            "section": "Cherenkov imaging",
+            "text": "where L is the path length of the particles through the radiator, ze is the particle charge and N 0 is a quantity called the quality factor or figure of merit. As Cherenkov radiation is a weak source of photons, the light transmission, collection and detection must be as efficient as possible. These parameters are contained in N 0 , as well as the photon collection and detection efficiencies of the photon detector. Typical values of N 0 are between 30 and 180 cm \u22121 . Three different types of Cherenkov counters can be distinguished:",
+            "paragraph_rank": 123,
+            "section_rank": 48
+        },
+        {
+            "section": "Cherenkov imaging",
+            "text": "1. Threshold counters measure the intensity of the Cherenkov radiation and are used to detect particles with velocities exceeding the threshold \u03b2 t . A rough estimate of the particle's velocity above the threshold is given by the pulse height measured in the photon detector.",
+            "paragraph_rank": 124,
+            "section_rank": 48
+        },
+        {
+            "text": "2.",
+            "section_rank": 49
+        },
+        {
+            "section": "2.",
+            "text": "Differential counters focus only Cherenkov photons with a certain emission angle onto the detector and in this way detect particles in a narrow interval of velocities.",
+            "paragraph_rank": 125,
+            "section_rank": 49
+        },
+        {
+            "section": "2.",
+            "text": "3. Imaging Cherenkov detectors make maximum use of the available information (Cherenkov angle and number of photons) and can be divided in two main categories: RICH (Ring Imaging CHerenkov) and DIRC (Detection of Internally Reflected Cherenkov light) devices.",
+            "paragraph_rank": 126,
+            "section_rank": 49
+        },
+        {
+            "section": "2.",
+            "text": "In this paper the focus lies on RICH devices, since the detectors used at the LHC experiments and discussed here all fall into this category.",
+            "paragraph_rank": 127,
+            "section_rank": 49
+        },
+        {
+            "text": "Cherenkov ring imaging",
+            "section_rank": 50
+        },
+        {
+            "section": "Cherenkov ring imaging",
+            "text": "RICH detectors resolve the ring shaped image of the focused Cherenkov radiation. From the knowledge of the particle momentum p and Cherenkov angle \u0398 C a determination of the mass of the charged particle is possible. Combining Eqs. 12 and 20 yields",
+            "paragraph_rank": 128,
+            "section_rank": 50
+        },
+        {
+            "section": "Cherenkov ring imaging",
+            "text": "In a RICH device, the Cherenkov radiation is emitted in the radiator and collected by a photon detector, usually after being transmitted by optical means. The first RICH was developed by A. Roberts in 1960 [72]. The particular design was limited by small angular acceptance and surface area and by low quantum and single electron counting efficiencies. These problems were overcome by J. Seguinot et al. in 1977 [73]: A wire chamber was converted into an efficient single photon detector by adding a photosensitive molecule into the gas mixture and replacing one of the cathode planes by a wire mesh and a UV transparent window.",
+            "paragraph_rank": 129,
+            "section_rank": 50,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b69",
+                    "start": 206,
+                    "text": "[72]",
+                    "end": 210
+                },
+                {
+                    "type": "bibr",
+                    "start": 388,
+                    "text": "Seguinot et al. in 1977 [73]",
+                    "end": 416
+                }
+            ]
+        },
+        {
+            "text": "Radiator",
+            "section_rank": 51
+        },
+        {
+            "section": "Radiator",
+            "text": "A RICH detector is designed to measure velocities in a specified momentum range by using a Cherenkov radiator with refractive index n chosen such that the Cherenkov angle varies with velocity, from threshold to the highest anticipated momentum. The thickness L of the radiator is adjusted in order to assure a sufficient number of photoelectrons for the given momentum range (see Eq. 21). Two common RICH designs can be distinguished, according to the value of n:",
+            "paragraph_rank": 130,
+            "section_rank": 51
+        },
+        {
+            "section": "Radiator",
+            "text": "1. If a dense medium (large n) is used, only a thin radiator layer (\u223c1 cm) is required to emit a sufficient number of Cherenkov photons. The photon detector is located some distance away behind the radiator (expansion gap, usually about 5 to 10 cm), allowing the light cone to expand and form the characteristic ring-shaped image. A detector designed in such a way is called proximity-focusing (i.e., the focusing is achieved by limiting the emission region of the radiation). An example is shown in Fig. 22.",
+            "paragraph_rank": 131,
+            "section_rank": 51,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 500,
+                    "text": "Fig. 22",
+                    "end": 507
+                }
+            ]
+        },
+        {
+            "section": "Radiator",
+            "text": "2. If a gaseous medium (n \u2248 1) is used, particles have to pass a thicker layer ( 50 cm) in order to emit a sufficient number of Cherenkov photons. In general, fluorocarbon gases are chosen because they have a low chromatic dispersion (i.e. n does not depend strongly on the photon energy). The light is focused by spherical or parabolic mirrors onto the photon detectors where ring-shaped images are formed. An example is shown in Fig. 24.",
+            "paragraph_rank": 132,
+            "section_rank": 51,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 431,
+                    "text": "Fig. 24",
+                    "end": 438
+                }
+            ]
+        },
+        {
+            "text": "Optics",
+            "section_rank": 52
+        },
+        {
+            "section": "Optics",
+            "text": "The quality of the optics of a RICH system influences the precision in the Cherenkov angle measurement and the figure of merit N 0 . Mirrors should have high reflectivity to avoid photon loss. Traditional constructions use a glass substrate with coating of Al for the reflective surface and MgF 2 or SiO 2 for protection. Such mirrors achieve values for the reflectivity of \u223c90%. For applications where a minimum of material budget is required, mirrors based on carbon fibre or Be substrates are used (see e.g. [74] and [75]).",
+            "paragraph_rank": 133,
+            "section_rank": 52,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b71",
+                    "start": 511,
+                    "text": "[74]",
+                    "end": 515
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b72",
+                    "start": 520,
+                    "text": "[75]",
+                    "end": 524
+                }
+            ]
+        },
+        {
+            "text": "Photon detection",
+            "section_rank": 53
+        },
+        {
+            "section": "Photon detection",
+            "text": "Cherenkov photons are converted to photoelectrons in photocathodes, typically made from CsI or bialkali with low work functions. The photon detection efficiency for a given photon detector is the product of the quantum efficiency (the probability that an incident photon produces a photoelectron, typically 20 to 30%) and the collection efficiency (the efficiency for detecting the photoelectron, typically 80 to 90%). Photon detectors for RICH systems generally fall in two categories: wire chambers with CsI coated cathode pads or detectors based on vacuum tubes with bialkali photocathodes. Examples of both categories are described in the following (Sects. 5.3 and 5.4). Low noise is a general requirement to ensure the detection of single photoelectrons. Recently also the readout speed of the devices became increasingly important in order to cope with the highest event rates.",
+            "paragraph_rank": 134,
+            "section_rank": 53
+        },
+        {
+            "text": "Pattern recognition",
+            "section_rank": 54
+        },
+        {
+            "section": "Pattern recognition",
+            "text": "In the busy environment of hadronic collisions (such as at the LHC) many tracks may pass through the detector, which leads to overlapping rings. The assignment of photon hits to rings and the association of rings to tracks requires pattern recognition. Most approaches rely on the use of the particle track prolonged from the tracking system to seed the ring search. After transformation through the optics of the RICH, the track will lie inside the ring. For RICH designs where the track is known to always point through the ring center the ring search is actually quite simple and corresponds to the search for a peak in the number of photon hits versus radius from the track. In any case, the ring search efficiency needs to be studied in detail using Monte Carlo methods.",
+            "paragraph_rank": 135,
+            "section_rank": 54
+        },
+        {
+            "text": "Angular resolution and separation power",
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "The particle velocity \u03b2 can be calculated from the reconstructed Cherenkov angle according to Eq. 20. The resolution of the velocity measurement is given by [23,76] \u03c3",
+            "paragraph_rank": 136,
+            "section_rank": 55,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 157,
+                    "text": "[23,",
+                    "end": 161
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b73",
+                    "start": 161,
+                    "text": "76]",
+                    "end": 164
+                }
+            ]
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "where \u03c3 \u0398 C is the resolution of the Cherenkov angle measurement. In practical counters \u03c3 \u0398 C varies between about 0.1 and 5 mrad depending on the size, radiator material and length, and on the photon detector. The Cherenkov angle is determined by N p.e. measurements of the angles of emission of the single Cherenkov photons. With the average angular resolution for the angle measurement for the single photoelectron \u03c3 \u0398 i , the total resolution becomes",
+            "paragraph_rank": 137,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "The term \u03c3 Glob combines all contributions that are independent of the single photoelectron measurement. These include misalignment of the photon detector modules, the resolution deterioration due to multiple scattering and background hits and errors in the calculation of the reconstructed track parameters. For the single photoelectron angular resolution, the following contributions have to be considered:",
+            "paragraph_rank": 138,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "where 1. \u03c3 EP is the geometrical error related to the emission point. For proximityfocusing devices the emission point is not known, and all photons are in general treated as if emitted at one point of the track through the radiator. This leads to some smearing of the reconstructed angle. Also for other designs the geometry of the optics (e.g. the tilting of the focusing mirror) can lead to a dependence of the image of a Cherenkov photon on its emission point on the track.",
+            "paragraph_rank": 139,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "2. \u03c3 Chro is the error due to the chromatic dispersion of the radiators. Cherenkov photons are emitted with a distribution of wavelengths. Since the refractive index varies with wavelength, the Cherenkov angle is also spread.",
+            "paragraph_rank": 140,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "3. \u03c3 Det is the error introduced by the finite granularity of the detector (e.g. pixel or pad size), which limits the precision.",
+            "paragraph_rank": 141,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "These contributions depend on the signal-to-noise ratio (detector gain) and can be a function of the impact angles of the track with respect to the detector surface.",
+            "paragraph_rank": 142,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "Assuming two particles of momentum p and mass m A and m B , respectively, then the Cherenkov angles \u0398 C,A and \u0398 C,B are measured. The resolution \u03c3 \u0398 C determines the momentum range over which the two particles can be separated, since the Cherenkov angle saturates and thus the ring radii get closer. Using Eq. 4, the separation power can be calculated as",
+            "paragraph_rank": 143,
+            "section_rank": 55
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "For velocities \u03b2 \u2248 1 well above threshold \u03b2 t , the separation power can be approximated as [23] n",
+            "paragraph_rank": 144,
+            "section_rank": 55,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 92,
+                    "text": "[23]",
+                    "end": 96
+                }
+            ]
+        },
+        {
+            "section": "Angular resolution and separation power",
+            "text": "Note the similarity to the formula for the separation power using the TOF technique (Eq. 15). In the case of a RICH there is however an additional factor of 1/ \u221a n 2 \u2212 1, which allows to adjust the detector configuration in order to achieve the desired momentum coverage. Together with Eqs. 21 and 24 it is clear that the best separation is achievable by designing counters able to detect the maximum number of photons (large N 0 ) with the best single photoelectron angular resolution (small \u03c3 \u0398 i ).",
+            "paragraph_rank": 145,
+            "section_rank": 55
+        },
+        {
+            "text": "ALICE HMPID detector",
+            "section_rank": 56
+        },
+        {
+            "section": "ALICE HMPID detector",
+            "text": "The ALICE High-Momentum Particle IDentificaton (HMPID) [77] was designed to enhance the PID capabilities of the ALICE experiment. The HMPID is a RICH system optimised to extend the useful range for K/\u03c0 and K/p discrimination up to 3 GeV/c and 5 GeV/c, respectively. Moreover, light nuclei (alpha particles, deuterons, tritium) can be identified. The HMPID is a single-arm array with a   [13]. Right image: example ring as seen by the HMPID. The ring has a radius of the order 10 cm, but its shape is distorted due to the impact angle of the particle.",
+            "paragraph_rank": 146,
+            "section_rank": 56,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b74",
+                    "start": 55,
+                    "text": "[77]",
+                    "end": 59
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 387,
+                    "text": "[13]",
+                    "end": 391
+                }
+            ]
+        },
+        {
+            "section": "ALICE HMPID detector",
+            "text": "reduced geometrical acceptance of |\u03b7| < 0.6 in pseudo-rapidity and 1.2",
+            "paragraph_rank": 147,
+            "section_rank": 56
+        },
+        {
+            "section": "ALICE HMPID detector",
+            "text": "The detector is based on proximity-focusing RICH counters and consists of an array of seven identical modules of about 1.5 \u00d7 1.5 m 2 each.",
+            "paragraph_rank": 148,
+            "section_rank": 56
+        },
+        {
+            "text": "Radiator",
+            "section_rank": 57
+        },
+        {
+            "section": "Radiator",
+            "text": "In each module, the radiator is a 1.5 cm thick layer of C 6 F 14 liquid (perfluorohexane) with an index of refraction of n \u2248 1.3 at \u03bb = 175 nm. The material has a low chromaticity, keeping small the corresponding term in the angular resolution. The expansion gap has 8 cm thickness.",
+            "paragraph_rank": 149,
+            "section_rank": 57
+        },
+        {
+            "text": "Photon detector",
+            "section_rank": 58
+        },
+        {
+            "section": "Photon detector",
+            "text": "Cherenkov photons are detected by wire chambers with a thin layer (300 nm) of CsI deposited onto the cathode pad plane. CsI is a stable alkali halide crystal with high quantum efficiency of 25% at a wavelength of 175 nm [78,79]. The total size of the photosensitive area is 11 m 2 , making the HMPID the largest scale application of the CsI technique so far. The expansion gap and wire chambers are filled with CH 4 at atmospheric pressure. The size of the cathod pads is 8 \u00d7 8.4 mm 2 .",
+            "paragraph_rank": 150,
+            "section_rank": 58,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b75",
+                    "start": 220,
+                    "text": "[78,",
+                    "end": 224
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b76",
+                    "start": 224,
+                    "text": "79]",
+                    "end": 227
+                }
+            ]
+        },
+        {
+            "text": "Performance and outlook",
+            "section_rank": 59
+        },
+        {
+            "section": "Performance and outlook",
+            "text": "The identification of charged particles with known momenta in the HMPID requires their tracks to be extrapolated from the central tracking devices (ITS, TPC and TRD) and associated with an ionization cluster in the HMPID. For the particular setup of a proximity-focusing RICH, the shape of the ring is determined by the incident angle of the particle track (see Fig. 22), which makes the Cherenkov angle reconstruction quite complex. With a single photoelectron angular resolution \u03c3 \u0398 i 12 mrad for perpendicular tracks [80], the resolution in the reconstruction of the Cherenkov angle is \u03c3 \u0398 C \u2248 3.5 mrad (for perpendicular tracks and for \u03b2 \u2248 1). Figure 23: Dependence of the Cherenkov angle measured by the ALICE HMPID on the particle momentum. The lines are the theoretical curves calculated using Eq. with the refractive index n = 1.3. No data is available for momenta below about 600 MeV/c, because only particles with higher momenta reach the detector.",
+            "paragraph_rank": 151,
+            "section_rank": 59,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 362,
+                    "text": "Fig. 22",
+                    "end": 369
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b77",
+                    "start": 520,
+                    "text": "[80]",
+                    "end": 524
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 648,
+                    "text": "Figure 23",
+                    "end": 657
+                }
+            ]
+        },
+        {
+            "section": "Performance and outlook",
+            "text": "Measured Cherenkov angles for different particles as a function of momentum are shown in Fig. 23. In the high multiplicity environment of Pb-Pb collisions the detection of Cherenkov rings is more challenging and the angular resolution is slightly worse. However, at the time of writing this article no quantitative results from the first heavy-ion data taking period (November 2010) were available to the author yet. In order to extend the PID range up to around 30 GeV/c, it was proposed to add a Very High Momentum PID (VHMPID) detector to ALICE [81]. The physics requirements have driven the choice towards a RICH detector using a C 4 F 10 gaseous radiator (n = 1.0014) with length L = 80 cm in a focusing configuration using a spherical mirror.",
+            "paragraph_rank": 152,
+            "section_rank": 59,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 89,
+                    "text": "Fig. 23",
+                    "end": 96
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b78",
+                    "start": 548,
+                    "text": "[81]",
+                    "end": 552
+                }
+            ]
+        },
+        {
+            "text": "LHCb RICH",
+            "section_rank": 60
+        },
+        {
+            "section": "LHCb RICH",
+            "text": "The LHCb experiment was introduced in Sect. 2.3. Important for the underlying physics goals is a K/\u03c0 separation in the momentum range 2 p 100 GeV/c, which is achieved by two RICH detectors [18,82,83]. RICH1 and RICH2 are both characterised by a design that places the photodetectors outside the acceptance of the LHCb spectrometer in order to limit the degradation of the resolution of the tracking systems due to interaction with the detector material. A set of spherical and flat mirrors projects the Cherenkov light onto the detector plane. The spherical mirrors are placed inside the spectrometer acceptance and special care was taken to minimise the fraction of radiation length while at the same time ensuring the mechanical integrity of the optics. The spherical mirror of RICH1 is made from carbon fibre, with thickness corresponding to only about 0, 01 X 0 . The schematic layout of RICH1 is shown in Fig. 24.",
+            "paragraph_rank": 153,
+            "section_rank": 60,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 189,
+                    "text": "[18,",
+                    "end": 193
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b79",
+                    "start": 193,
+                    "text": "82,",
+                    "end": 196
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b80",
+                    "start": 196,
+                    "text": "83]",
+                    "end": 199
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 910,
+                    "text": "Fig. 24",
+                    "end": 917
+                }
+            ]
+        },
+        {
+            "text": "Radiators",
+            "section_rank": 61
+        },
+        {
+            "section": "Radiators",
+            "text": "In both detectors gaseous radiators are used. In RICH1 a second, denser radiator made from silica aerogel 11 is installed in addition. Together the three radiators cover the large momentum range that is required. The parameters of the three radiators are summarised in Tab. 3. The Cherenkov angles for the three different materials and for different particles as a function of the momentum are shown in Fig. 25.",
+            "paragraph_rank": 154,
+            "section_rank": 61,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 106,
+                    "text": "11",
+                    "end": 108
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 403,
+                    "text": "Fig. 25",
+                    "end": 410
+                }
+            ]
+        },
+        {
+            "text": "Photon detectors",
+            "section_rank": 62
+        },
+        {
+            "section": "Photon detectors",
+            "text": "For the photon detectors the requirements are very demanding: they should be sensitive to single photons with high efficiency, cover a large area (about 4 m 2 ) with a granularity of about 2.5 \u00d7 2.5 mm 2 , and have readout fast enough to match the LHC bunch-crossing separation of 25 ns. LHCb chose Hybrid Photon Detectors (HPD) [86], which combine the photon sensitivity of vacuum PMTs with the excellent spatial and energy resolutions of silicon sensors. The conversion of the photoelectrons takes place in the quartz window with bialkali photocathode and they are then accelerated through a potential difference of about 20 kV and detected by a silicon pixel chip. HPDs are sensitive to single photons in the wavelength range from 200 to 600 nm with a quantum efficiency of about 31%. About 65% of the detection plane is covered with read out pixels. The photoelectron trajectories are deformed by the magnetic field of the large LHCb dipole magnet. This effect can be corrected by comparing reproducible light-spot patterns, that are illuminated onto the photon detector plane, with magnetic field on and off.",
+            "paragraph_rank": 155,
+            "section_rank": 62,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b83",
+                    "start": 329,
+                    "text": "[86]",
+                    "end": 333
+                }
+            ]
+        },
+        {
+            "text": "Performance",
+            "section_rank": 63
+        },
+        {
+            "section": "Performance",
+            "text": "A typical (simulated) LHCb event in the RICH1 detector is shown in Fig. 26. The expected single photoelectron angular resolutions are given in Tab. 3. After the first alignment carried out with data from p-p collisions, the achieved resolutions are already approaching those values [87]. For the aerogel radiator, the refractive index was found to change from its initial value of n = 1.03 to n = 1.037 in the experiment, which is probably explained by absorption of C 4 F 10 , since the aerogel material is not sealed from the gas volume. As a consequence, the measured photon yield and angular resolution are slightly worse than expected. Using the expected values, the separation power n \u03c3 \u0398 C can be calculated for all three radiator materials according to Eq. 26. The results are shown in Fig. 27.",
+            "paragraph_rank": 156,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 67,
+                    "text": "Fig. 26",
+                    "end": 74
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b84",
+                    "start": 282,
+                    "text": "[87]",
+                    "end": 286
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 794,
+                    "text": "Fig. 27",
+                    "end": 801
+                }
+            ]
+        },
+        {
+            "section": "Performance",
+            "text": "Particle identification with the LHCb RICH system uses a global pattern recognition and maximum likelihood method. All found tracks in the event and all three radiators are considered simultaneously and the observed pattern of hit pixels in the RICH photodetectors is matched to that expected from the reconstructed tracks under a given set of particle hypotheses. The likelihood is maximised by varying the particle hypotheses of each track to be an electron, muon, pion, kaon or proton. In this way efficient K/\u03c0 separation is achieved with high purity [18]: the average efficiency for kaon ID for momenta between 2 and 100 GeV/c is at the level of 90%, with a corresponding average pion misidentification rate below 5%.   Figure 26: Typical, simulated LHCb event in the RICH1 detector [18]. The data from the two photodetector planes are drawn in the upper and lower halves.",
+            "paragraph_rank": 157,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 555,
+                    "text": "[18]",
+                    "end": 559
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 725,
+                    "text": "Figure 26",
+                    "end": 734
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 788,
+                    "text": "[18]",
+                    "end": 792
+                }
+            ]
+        },
+        {
+            "section": "Performance",
+            "text": "LiF as solid radiator and wire chambers with TEA as photosensitive component is installed [100].",
+            "paragraph_rank": 158,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b97",
+                    "start": 90,
+                    "text": "[100]",
+                    "end": 95
+                }
+            ]
+        },
+        {
+            "section": "Performance",
+            "text": "\u2022 The RICH of the HADES experiment employs a gaseous (C 4 F 10 ) radiator and a gaseous photon detector with CsI converter and acts as a hadron blind trigger device [101].",
+            "paragraph_rank": 159,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b98",
+                    "start": 165,
+                    "text": "[101]",
+                    "end": 170
+                }
+            ]
+        },
+        {
+            "section": "Performance",
+            "text": "\u2022 The Hadron Blind Detector (HBD) of the PHENIX experiment is built for electron ID. It uses a gaseous radiator (CF 4 ) and as photon detector three layers of Gas Electron Multipliers (GEM) with CsI coating on the first layer [102].",
+            "paragraph_rank": 160,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b99",
+                    "start": 226,
+                    "text": "[102]",
+                    "end": 231
+                }
+            ]
+        },
+        {
+            "section": "Performance",
+            "text": "\u2022 The DIRC of the BaBar experiment [103] uses 4.9 m long, rectangular bars made from synthetic fused silica (average refractive index n \u2248 1.473) as Cherenkov radiator and light guide. The photons are focussed by a \"pinhole\" and the image is expanded through a standoff region filled with 6000 l of purified water onto an array of PMTs placed at a distance of about 1.2 m from the bar end.",
+            "paragraph_rank": 161,
+            "section_rank": 63,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b100",
+                    "start": 35,
+                    "text": "[103]",
+                    "end": 40
+                }
+            ]
+        },
+        {
+            "text": "Developments for future RICH detectors",
+            "section_rank": 64
+        },
+        {
+            "section": "Developments for future RICH detectors",
+            "text": "The Cherenkov counters of the BaBar and Belle spectrometers have contributed significantly to the recent advances in flavor physics. In both cases, upgrades are planned to further improve the performance and to allow them to work at higher event and background rates. The LHCb collaboration is planning to upgrade the detector around the year 2016, following first data taking phase [104]. The upgrade strategy involves increasing the design luminosity by a factor of 10 to about 2 \u00d7 10 33 cm \u22122 s \u22121 . In that case the full experiment is read out at 40 MHz (currently 1 MHz). As a consequence the HPDs need to be replaced with a faster technology. There are a few promising candidates, however, here the developments in the wide area of photon detectors are not discussed. A summary is given for example in Refs. [105,106].",
+            "paragraph_rank": 162,
+            "section_rank": 64,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b101",
+                    "start": 383,
+                    "text": "[104]",
+                    "end": 388
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b102",
+                    "start": 814,
+                    "text": "[105,",
+                    "end": 819
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b103",
+                    "start": 819,
+                    "text": "106]",
+                    "end": 823
+                }
+            ]
+        },
+        {
+            "text": "Proximity-focusing aerogel RICH",
+            "section_rank": 65
+        },
+        {
+            "section": "Proximity-focusing aerogel RICH",
+            "text": "The drawback of the proximity-focusing RICH technology is that for thicker radiators (needed to increase the number of photons) the emission point uncertainty (\u03c3 EP in Eq. 25) leads to a degradation of the single photon resolution. This limitation can be overcome by using a radiator made from several layers of aerogel with refractive indices gradually increasing, as is shown in Fig. 28. The corresponding Cherenkov rings are overlapping on the photon detector, which leads to an optimised angular resolution. Such a proximity-focusing RICH with inhomogeneous aerogel radiator is proposed for the endcap region of the upgraded Belle spectrometer [108,109]. Figure 28: Schematic view of a proximity-focusing RICH with an inhomogeneous aerogel radiator in the focusing configuration. Cherenkov photons from the different radiator layers overlap, thus minimising the error in the angular resolution due to the uncertainly in the emission point [107].",
+            "paragraph_rank": 163,
+            "section_rank": 65,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 381,
+                    "text": "Fig. 28",
+                    "end": 388
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b105",
+                    "start": 648,
+                    "text": "[108,",
+                    "end": 653
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b106",
+                    "start": 653,
+                    "text": "109]",
+                    "end": 657
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 659,
+                    "text": "Figure 28",
+                    "end": 668
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b104",
+                    "start": 943,
+                    "text": "[107]",
+                    "end": 948
+                }
+            ]
+        },
+        {
+            "section": "Proximity-focusing aerogel RICH",
+            "text": "Figure 29: Schematic side view of a TOP counter [110]. Cherenkov photons are guided to the photon detector by total internal reflections. The difference in the propagation time for two particle types (here kaons and pions) is due to the emission angle of the Cherenkov radiation and can be used to enhance PID information.",
+            "paragraph_rank": 164,
+            "section_rank": 65,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b107",
+                    "start": 48,
+                    "text": "[110]",
+                    "end": 53
+                }
+            ]
+        },
+        {
+            "text": "Time-of-propagation counters",
+            "section_rank": 66
+        },
+        {
+            "section": "Time-of-propagation counters",
+            "text": "For the barrel region of the upgraded Belle spectrometer, a Time-of-propagation (TOP) counter is being studied [110,111]. Here the two dimensional information of a Cherenkov ring image is represented by the time-of-arrival and impact position of the photons at the quartz bar exit window of a DIRC (see Fig.29). The construction is more compact than a DIRC, since the large expansion volume is not needed. A similar concept combining TOF and RICH techniques, named TORCH, was proposed for the LHCb upgrade as a possible solution for the identification of low momentum hadrons (p < 10 GeV/c) [112]. It uses a large quartz plate to produce Cherenkov light and identifies the particles by measuring the photon arrival times. Figure 30: Schematic view of the AMS 02 spectrometer [113].",
+            "paragraph_rank": 165,
+            "section_rank": 66,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b107",
+                    "start": 111,
+                    "text": "[110,",
+                    "end": 116
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b108",
+                    "start": 116,
+                    "text": "111]",
+                    "end": 120
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 303,
+                    "text": "Fig.29",
+                    "end": 309
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b109",
+                    "start": 591,
+                    "text": "[112]",
+                    "end": 596
+                },
+                {
+                    "type": "figure",
+                    "start": 722,
+                    "text": "Figure 30",
+                    "end": 731
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b110",
+                    "start": 775,
+                    "text": "[113]",
+                    "end": 780
+                }
+            ]
+        },
+        {
+            "text": "PID in space",
+            "section_rank": 67
+        },
+        {
+            "section": "PID in space",
+            "text": "Non-accelerator experiments have become increasingly important in particle physics. An impressive example of a space-based experiment using a number of familiar PID techniques is the Alpha Magnetic Spectrometer (AMS 02 [113], see Fig. 30). The purposes of the experiment are to search for cosmic antimatter and dark matter and to study the composition and energy spectrum of the primary cosmic rays. The AMS 02 is set for installation on the International Space Station (ISS). It will be transported in the cargo bay of the space shuttle on its final mission, scheduled for 2011. The experiment will be attached to the outside of the space station and gather data that will be sent to a ground station for analysis. The AMS 02 experiment is a state-of-the-art particle physics detector in space. The initial design included a superconducting magnet (0.9 T), which was however recently replaced by a permanent magnet (0.14 T) which allows the experiment to remain operational for the entire lifetime of the ISS (up to 18 years). The setup further includes a high-precision, double sided silicon strip detector and 4 dedicated PID devices: a TRD for electron ID (straw tubes filled with a mixture of Xe and CO 2 and fleece radiators), a proximity-focusing RICH with an aerogel radiator (n = 1.03) for determination of the particle velocities and charges 12 , a TOF detector (four planes of plastic scintillators) providing velocity determination and a fast trigger, and a sampling EM calorimeter (lead absorber plates and scintillating fibres). The whole system provides identification of particles and isotopes up to iron.",
+            "paragraph_rank": 166,
+            "section_rank": 67,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b110",
+                    "start": 219,
+                    "text": "[113]",
+                    "end": 224
+                },
+                {
+                    "type": "figure",
+                    "start": 230,
+                    "text": "Fig. 30",
+                    "end": 237
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1352,
+                    "text": "12",
+                    "end": 1354
+                }
+            ]
+        },
+        {
+            "text": "Summary and outlook",
+            "section_rank": 68
+        },
+        {
+            "section": "Summary and outlook",
+            "text": "Particle identification (PID) is an important ingredient to particle physics experiments. Short-lived particles are reconstructed from their decay vertex and/or decay products. Some long-lived particles (leptons and photons) can be identified from the signatures they leave in the different layers of a typical experiment. Distinguishing the different long-lived charged hadrons (pions, kaons and protons) is more challenging, but often their identification is crucial, e.g. for precision measurements of rare processes with high statistics. Usually dedicated detectors are required for the task, which are based on the determination of the particle's mass by simultaneous measurements of momentum p and velocity \u03b2 = v/c. The velocity is obtained by one of four techniques: measurement of the energy deposited through ionization, measurement of the time-of-flight, imaging of Cherenkov radiation or detection of transition radiation (transition radiation is not covered by this review). An illustrative comparison of the methods is shown in Fig. 5. The Cherenkov imaging method is the most flexible, as it allows to tune the response of the detector by varying the refractive index (and the length of the radiator), and makes accessible also very high momenta (>100 GeV/c). The Cherenkov and time-offlight techniques can be used to close the gap in momentum in the MIP region, where PID by ionization measurements is not possible. All techniques are very well understood, with detectors being of the second, third or fourth generation, but the use and sophistication is still increasing as new generation detectors are built.",
+            "paragraph_rank": 167,
+            "section_rank": 68,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 1041,
+                    "text": "Fig. 5",
+                    "end": 1047
+                }
+            ]
+        },
+        {
+            "section": "Summary and outlook",
+            "text": "At the LHC, PID is one of the main challenges. Different concepts are followed: the two specialised experiments, ALICE for heavy-ion collisions and LHCb for B physics, make use of specific techniques adapted to their physics program. In both cases PID at low transverse momentum (but high total momentum in the case of LHCb) is important. ALICE actually uses all existing PID techniques. The general purpose detectors on the other hand, ATLAS and CMS, follow the traditional setup of a particle physics experiment: a tracking system, EM and hadron calorimeters and a muon system arranged in layers, with large acceptance for the identification of charged hadrons, photons and leptons. For their physics program, the challenges for precision calorimetry and precision muon detection are extremely high. Here the two experiments are actually following complementary approaches, but it can be expected that they are very competitive. All four experiments are very well advanced with the detector calibration. They have started to record data as the LHC began delivering p-p collisions in the year 2009. In the course of the year 2010, the increasing luminosity allowed real stress tests of the systems. At the end of that year also the first heavy-ion collisions were recorded by ALICE, ATLAS and CMS.",
+            "paragraph_rank": 168,
+            "section_rank": 68
+        },
+        {
+            "text": "5. 3 . 1",
+            "section_rank": 69
+        },
+        {
+            "section": "5. 3 . 1",
+            "text": "Radiator . . . . . . . . . . . . . . . . . . . . . . . . . . . 44 5.3.2 Photon detector . . . . . . . . . . . . . . . . . . . . . . . 44 5.3.3 Performance and outlook . . . . . . . . . . . . . . . . . . 44 5.4 LHCb RICH . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45 5.4.1 Radiators . . . . . . . . . . . . . . . . . . . . . . . . . . 46 5.4.2 Photon detectors . . . . . . . . . . . . . . . . . . . . . . 46 5.4.3 Performance . . . . . . . . . . . . . . . . . . . . . . . . 47 5.5 Other Cherenkov detectors . . . . . . . . . . . . . . . . . . . . . 49 5.6 Developments for future RICH detectors . . . . . . . . . . . . . . 50 5.6.1 Proximity-focusing aerogel RICH . . . . . . . . . . . . . 50 5.6.2 Time-of-propagation counters . . . . . . . . . . . . . . . 51",
+            "paragraph_rank": 169,
+            "section_rank": 69
+        },
+        {
+            "text": "photons",
+            "paragraph_rank": 170,
+            "section_rank": 70
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 71
+        },
+        {
+            "section": "Figure 2 :",
+            "text": "Figure 2: Comparison of the relative energy resolutions (as given by Eq. 1) of the different EM calorimeters (left image) and hadronic calorimeters (right image) at the LHC experiments. The values of the parameters a, b and c were in all cases determined by fits to the data from beam tests and are given in the descriptions of the different experiments in Sects. 2.1, 2.2 and 2.3. In case of the ATLAS and CMS hadronic calorimeters the resolutions of the whole systems combining EM and hadronic calorimeters are shown.",
+            "paragraph_rank": 171,
+            "section_rank": 71
+        },
+        {
+            "text": "2 .",
+            "section_rank": 72
+        },
+        {
+            "section": "2 .",
+            "text": "time-of-flight (TOF) measurements, 3. detection of Cherenkov radiation or 4. detection of transition radiation.",
+            "paragraph_rank": 172,
+            "section_rank": 72
+        },
+        {
+            "text": "Figure 7 :",
+            "section_rank": 73
+        },
+        {
+            "section": "Figure 7 :",
+            "text": "Figure 7: Perspective view of the CMS detector[11]. The dimensions are 14.6 m in height and 21.6 m in length. The overall weight is approximately 12 500 tonnes.",
+            "paragraph_rank": 173,
+            "section_rank": 73,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 46,
+                    "text": "[11]",
+                    "end": 50
+                }
+            ]
+        },
+        {
+            "text": "ALICE [ 13 ]",
+            "section_rank": 74
+        },
+        {
+            "section": "ALICE [ 13 ]",
+            "text": "(A Large Ion Collider Experiment) is the dedicated heavy-ion experiment at the LHC. The LHC can collide lead (Pb) nuclei at center-of mass energies of \u221a s N N = 2.76 and 5.5 TeV. This leap to up to 28 times beyond what is presently accessible will open up a new regime in the experimental study of nuclear matter.",
+            "paragraph_rank": 174,
+            "section_rank": 74
+        },
+        {
+            "text": "Figure 8 :",
+            "section_rank": 75
+        },
+        {
+            "section": "Figure 8 :",
+            "text": "Figure 8: Perspective view of the ALICE detector[13]. The dimensions are 16 m in height and 26 m in length. The overall weight is approximately 10 000 tonnes.",
+            "paragraph_rank": 175,
+            "section_rank": 75,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 48,
+                    "text": "[13]",
+                    "end": 52
+                }
+            ]
+        },
+        {
+            "text": "Figure 10 :",
+            "section_rank": 76
+        },
+        {
+            "section": "Figure 10 :",
+            "text": "Figure 10: Typical curves of the ionization signal as a function of particle momentum for a number of known charged particles. A parameterization like the one suggested in Ref.[20] was used to calculate the curves.",
+            "paragraph_rank": 176,
+            "section_rank": 76,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 176,
+                    "text": "[20]",
+                    "end": 180
+                }
+            ]
+        },
+        {
+            "text": "Figure 11 :",
+            "section_rank": 77
+        },
+        {
+            "section": "Figure 11 :",
+            "text": "Figure 11: Typical separation power achievable with ionization measurements in a gaseous detector. The ionization curves fromFig. 10were used together with an assumed energy resolution of 5%.",
+            "paragraph_rank": 177,
+            "section_rank": 77
+        },
+        {
+            "text": "Figure 15 :",
+            "section_rank": 78
+        },
+        {
+            "section": "Figure 15 :",
+            "text": "Figure 15: Particle separation with TOF measurements for three different system time resolutions (\u03c3 T OF = 60, 80 and 100 ps) and for a track length L = 3.5 m. Infinitely good precisions on momentum and track length measurements are assumed.",
+            "paragraph_rank": 178,
+            "section_rank": 78
+        },
+        {
+            "text": "Figure 16 :",
+            "section_rank": 79
+        },
+        {
+            "section": "Figure 16 :",
+            "text": "Figure 16: Cross-section of an ALICE MRPC[13].",
+            "paragraph_rank": 179,
+            "section_rank": 79,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 41,
+                    "text": "[13]",
+                    "end": 45
+                }
+            ]
+        },
+        {
+            "text": "Figure 19 :",
+            "section_rank": 80
+        },
+        {
+            "section": "Figure 19 :",
+            "text": "Figure 19: Histogram of the TOF signal for a given momentum window of 100 MeV/c width. The data sample was recorded with \u221a s = 900 GeV p-p collisions provided by the LHC. The lines are fits to the data, indicating that a sum of three Gaussians well represents the data.",
+            "paragraph_rank": 180,
+            "section_rank": 80
+        },
+        {
+            "text": "Figure 20 :",
+            "section_rank": 81
+        },
+        {
+            "section": "Figure 20 :",
+            "text": "Figure 20: Demonstration of ALICE's PID capabilities by combining the ionization measurements in the TPC and the mass calculated using the TOF signal. Electrons, pions, kaons and protons are clearly visible in a wide momentum range. The data sample was recorded with \u221a s = 900 GeV p-p collisions provided by the LHC.",
+            "paragraph_rank": 181,
+            "section_rank": 81
+        },
+        {
+            "text": "Figure 22 :",
+            "section_rank": 82
+        },
+        {
+            "section": "Figure 22 :",
+            "text": "Figure 22: Left image: schematic layout of an ALICE HMPID module, showing radiator, expansion gap and photon detector[13]. Right image: example ring as seen by the HMPID. The ring has a radius of the order 10 cm, but its shape is distorted due to the impact angle of the particle.",
+            "paragraph_rank": 182,
+            "section_rank": 82,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 117,
+                    "text": "[13]",
+                    "end": 121
+                }
+            ]
+        },
+        {
+            "text": "Figure 24 :",
+            "section_rank": 83
+        },
+        {
+            "section": "Figure 24 :",
+            "text": "Photon Detectors",
+            "paragraph_rank": 183,
+            "section_rank": 83
+        },
+        {
+            "text": "Figure 25 :",
+            "section_rank": 84
+        },
+        {
+            "section": "Figure 25 :",
+            "text": "Figure 25: Cherenkov angles as a function of momentum for different particle species and for the three different values of the refractive index n corresponding to the three radiator materials used in the LHCb RICH setup.",
+            "paragraph_rank": 184,
+            "section_rank": 84
+        },
+        {
+            "text": "Table 1 :",
+            "section_rank": 85
+        },
+        {
+            "section": "Table 1 :",
+            "text": "Overview on the technologies chosen for the ATLAS and CMS tracking systems, EM and hadronic calorimeters and muon systems. Their acceptances in pseudo-rapidity \u03b7 are given as well. Abbreviations are explained in the text.",
+            "paragraph_rank": 185,
+            "section_rank": 85
+        },
+        {
+            "text": "Table 2 :",
+            "section_rank": 86
+        },
+        {
+            "section": "Table 2 :",
+            "text": "Overall TOF resolution together with the two main contributions \u03c3 t 0 and \u03c3 Cal .",
+            "paragraph_rank": 186,
+            "section_rank": 86
+        },
+        {
+            "text": "Table 3 :",
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "Some parameters of the LHCb RICH detectors. The measured single photoelectron angular resolutions[87] are for the preliminary alignment available from the first data sample with p-p collisions at \u221a s = 7 TeV.",
+            "paragraph_rank": 187,
+            "section_rank": 87,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b84",
+                    "start": 97,
+                    "text": "[87]",
+                    "end": 101
+                }
+            ]
+        },
+        {
+            "section": "Table 3 :",
+            "text": "The term \"electron\" can sometimes refer to both \"electron\" and \"positron\" in this article. The usage should be clear from the context. The same is true for the muon and its anti-particle.",
+            "paragraph_rank": 188,
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "For electrons an approximation for the critical energy is given by Ec = 800 Z+1.2 MeV, where Z is the charge number of the material.",
+            "paragraph_rank": 189,
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "The pseudo-rapidity is defined as \u03b7 = \u2212 ln[tan(\u0398/2)], where \u0398 is the polar angle between the charged particle direction and the beam axis.4 The transverse component of the momentum is the one in the plane that is perpendicular to the beam direction.",
+            "paragraph_rank": 190,
+            "section_rank": 87,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 138,
+                    "text": "4",
+                    "end": 139
+                }
+            ]
+        },
+        {
+            "section": "Table 3 :",
+            "text": "The measurement was done for electrons, requiring their impact point to lie in the center of the 3 \u00d7 3 crystals used to evaluate the energy deposit. Without this requirement the relative resolution is slightly worse but still meeting the design goal of better than 0.5% for E > 100 GeV[11].6 For the barrel hadron calorimeter standalone the relative energy resolution for pions is (\u03c3E/E) 2 = (0.564/ E (GeV)) 2 + 0.055 2 .",
+            "paragraph_rank": 191,
+            "section_rank": 87,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 285,
+                    "text": "[11]",
+                    "end": 289
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 290,
+                    "text": "6",
+                    "end": 291
+                }
+            ]
+        },
+        {
+            "section": "Table 3 :",
+            "text": "For elements the excitation energy (in eV) can be approximately calculated as I \u223c 13.5 Z for Z \u2264 14 and I \u223c 10 Z for Z > 14, where Z is the atomic number of the absorber material. A graphical presentation of measured values is given in Ref.[23].",
+            "paragraph_rank": 192,
+            "section_rank": 87,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 240,
+                    "text": "[23]",
+                    "end": 244
+                }
+            ]
+        },
+        {
+            "section": "Table 3 :",
+            "text": "In a typical particle physics experiment the counters used for ionization measurements are the same devices that also provide the spatial coordinates for the momentum measurement.",
+            "paragraph_rank": 193,
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "In the ALICE TOF front-end electronics the channel-to-channel time slewing corrections are measured by a Time-Over-Threshold circuit, which provides a time width approximately proportional to the signal charge.",
+            "paragraph_rank": 194,
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "Alternatively, the information from the TOF detector itself can be used to determine t0 in events with at least three tracks with an associated TOF signal by means of a combinatorial algorithm.",
+            "paragraph_rank": 195,
+            "section_rank": 87
+        },
+        {
+            "section": "Table 3 :",
+            "text": "Silica aerogel provides refractive indices that range between about 1.0026 and 1.26[84,85], closing the gap between gases (n \u2248 1) and liquids/solids (n 1.3).",
+            "paragraph_rank": 196,
+            "section_rank": 87,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b81",
+                    "start": 83,
+                    "text": "[84,",
+                    "end": 87
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b82",
+                    "start": 87,
+                    "text": "85]",
+                    "end": 90
+                }
+            ]
+        },
+        {
+            "section": "Table 3 :",
+            "text": "In the RICH the charge of the incident particle is found by measuring the number of photoelectrons using Eq. 21.",
+            "paragraph_rank": 197,
+            "section_rank": 87
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 89
+        },
+        {
+            "section": "Acknowledgements",
+            "text": "Thanks to D. Di Bari, R. Forty, A. Kalweit, C. Matteuzzi, L. Molnar, R. Nania, F. Noferini, R. Preghenella and G. Scioli for useful discussions and for providing figures. I am grateful to C. Garabatos, W. Riegler, J. Thomas, D. Vranic and C. Zampolli for carefully reading and commenting draft versions of the paper.",
+            "paragraph_rank": 198,
+            "section_rank": 89
+        },
+        {
+            "text": "Other Cherenkov detectors",
+            "section_rank": 91
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "Cherenkov counters have found applications in many particle physics experiments in many different configurations, as is documented in the proceedings of the RICH workshop series [88,89,90,91,92,93,94]. To demonstrate this variety, here a selection of other Cherenkov detectors ouside the LHC is given.",
+            "paragraph_rank": 199,
+            "section_rank": 91,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b85",
+                    "start": 178,
+                    "text": "[88,",
+                    "end": 182
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b86",
+                    "start": 182,
+                    "text": "89,",
+                    "end": 185
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b87",
+                    "start": 185,
+                    "text": "90,",
+                    "end": 188
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b88",
+                    "start": 188,
+                    "text": "91,",
+                    "end": 191
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b89",
+                    "start": 191,
+                    "text": "92,",
+                    "end": 194
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b90",
+                    "start": 194,
+                    "text": "93,",
+                    "end": 197
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b91",
+                    "start": 197,
+                    "text": "94]",
+                    "end": 200
+                }
+            ]
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "\u2022 A RICH with a 16 m long He (n = 0.000035) radiator, 8 m focal length mirrors and wire chambers with triethylamine (TEA) as photosensitive component was used in a spectrometer at FNAL [95,96] and provided K/\u03c0 separation up to 200 GeV/c.",
+            "paragraph_rank": 200,
+            "section_rank": 91,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b92",
+                    "start": 185,
+                    "text": "[95,",
+                    "end": 189
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b93",
+                    "start": 189,
+                    "text": "96]",
+                    "end": 192
+                }
+            ]
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "\u2022 The HERA-B collaboration showed that a RICH with gaseous (C 4 F 10 ) radiator and multianode PMT readout can be safely operated at high track densities, and no degradation of performance was observed in five years of operation [97].",
+            "paragraph_rank": 201,
+            "section_rank": 91,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b94",
+                    "start": 229,
+                    "text": "[97]",
+                    "end": 233
+                }
+            ]
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "\u2022 The central region of the RICH of the COMPASS experiment was upgraded by replacing the wire chamber based photon detector with multianode PMTs very similar to the ones employed in the HERA-B experiment [98].",
+            "paragraph_rank": 202,
+            "section_rank": 91,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b95",
+                    "start": 204,
+                    "text": "[98]",
+                    "end": 208
+                }
+            ]
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "\u2022 In the Belle spectrometer a Cherenkov counter based on an aerogel radiator and fine mesh PMT readout is used in a threshold configuration [99]: The refractive index is chosen such that pions emit Cherenkov radiation while kaons stay below threshold.",
+            "paragraph_rank": 203,
+            "section_rank": 91,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b96",
+                    "start": 140,
+                    "text": "[99]",
+                    "end": 144
+                }
+            ]
+        },
+        {
+            "section": "Other Cherenkov detectors",
+            "text": "\u2022 At the CLEO-III experiment a proximity-focusing RICH counter based on",
+            "paragraph_rank": 204,
+            "section_rank": 91
+        }
+    ]
+}

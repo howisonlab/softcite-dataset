@@ -1,0 +1,1272 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "With the steady increase in the precision of flavour physics measurements collected during LHC Run 2, the LHCb experiment requires simulated data samples of larger and larger sizes to study the detector response in detail. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The simulation of the detector response is the main contribution to the time needed to simulate full events. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This time scales linearly with the particle multiplicity. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Of the dozens of particles present in the simulation only the few participating in the signal decay under study are of interest, while all remaining particles mainly affect the resolutions and efficiencies of the detector. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This paper presents a novel development for the LHCb simulation software which re-uses the rest of the event from previously simulated events. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "This approach achieves an order of magnitude increase in speed and the same quality compared to the nominal simulation.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "A common challenge in many measurements performed in high-energy physics is the necessity to understand the effects of the detector response on the physics parameters of interest. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "This response is driven by resolution effects that distort the true distribution of a quantity and by inefficiencies that are introduced by either an imperfect reconstruction in the detector or a deliberate event selection, resulting in an unknown number of true events for a given number of reconstructed events. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The extraction of an unbiased estimate of the physics parameter of interest requires the correction of these effects. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "However, due to increasing complexity of the detectors employed and the challenging experimental conditions -especially at a hadron collider -the only feasible solution is the generation of Monte Carlo (MC) events and the simulation of their detector response to study the evolution from the generated to the reconstructed and selected objects. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In the era of the Large Hadron Collider, the simulation of the a e-mail: dominik.muller@cern.ch large event samples occupies a considerable fraction of the overall computing resources available. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, measures to decrease the time required to simulate an event are crucial to fully exploit the large datasets recorded by the detectors. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In fact, recent measurements hinting at tensions with respect to the predictions of the Standard Model of elementary particle physics have systematic uncertainties that are dominated by the insufficient amount of simulated data [1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 228,
+                    "end": 231,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "Therefore, fast simulation options are necessary to further improve measurements such as these.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "This paper presents a fast simulation approach that is applicable if the signal process is a decay of a heavy particle, e.g.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "It retains the same quality as the nominal full simulation while reaching increases in speed of an order of magnitude. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "In Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "2, the ReDecay approach is presented while Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "3 focuses on the correct treatment of correlations arising in this approach. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Lastly, Sect. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "4 discusses the experience with applying the approach within the LHCb collaboration. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "While the approach is applicable in all experiments which study the type of final state as defined above, the LHCb experiment is used as an example throughout this paper for illustrative purposes.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "The ReDecay approach",
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s2"
+                }
+            ]
+        },
+        {
+            "text": "In each simulated proton-proton collision, hundreds of particles are typically generated and tracked through a simulation of the detector, most of the time based on the Geant4 toolkit [2,3]. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 187,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2,"
+                },
+                {
+                    "start": 187,
+                    "end": 189,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 169,
+                    "end": 176,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "Generally, the time needed to create an MC event for LHC experiments is dominated by the detector transport, accounting for 95-99% of the total time, which is proportional to the number of particles that need to be tracked. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "In the case that the intended measurement studies decays of heavy particles to exclusive final states with individual children being reconstructed for each particle, all long lived particles in the event can be split into two distinct groups: the particles that participate in the signal process and all remaining particles where the latter group is henceforth referred to as the rest of the event (ROE). ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "As the final state of the signal process is usually comprised of only a few particles, most particles in the event are part of the ROE and hence the majority of the computing time per event is spent on the simulation of particles that are never explicitly looked at. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Ideally, this situation should be inverted and most of the computing resources should be spent on simulating the signal decays themselves. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "However, simply simulating the signal process without any contributions from the ROE results in a much lower occupancy of the detector. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "This lower occupancy in turn leads to a significant mis-modelling of the detector response compared to the real detector: resolution effects are underestimated while reconstruction efficiencies are overestimated.",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "In the ReDecay approach, problems with simulating only the signal process are mitigated by re-using the ROE multiple times instead of generating a new one for every event. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 7,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 7,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                }
+            ]
+        },
+        {
+            "text": "The signal particle is kept identical in all sets of events that use the same ROE, to preserve correlations, but is independently decayed each time. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "To be more precise, in each redecayed event, the origin vertex and kinematics of the signal particle are identical, while the decay time and thus decay vertex as well as the final state particle kinematics are different. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "The following procedure is applied:",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "1. A full MC event including the signal decay is generated. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "2. Before the generated particles are passed through the detector simulation, the signal and its decay products are removed from the event and the origin-vertex position and momentum of the signal particle are stored. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "3. The remaining ROE is simulated as usual and the entire output, the information on the true particles and the energy deposits in the detector, are kept. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "4. A signal decay is generated and simulated using the stored origin vertex position and momentum. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "5. The persisted ROE and the signal decay are merged and written out to disk as a full event. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "6. The steps 4 and 5 are repeated N ReDecay times, where N ReDecay is a fixed number that is the same for all events.",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 36,
+                    "end": 43,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                },
+                {
+                    "start": 59,
+                    "end": 67,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "An ROE and a signal decay associated to form a complete event according to the procedure above are digitised simultaneously. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "This ensures that simulated energy deposits that stem from particles in the ROE can interfere with the deposits produced by the signal decay products, as is the case in the standard method to simulate events. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Different complete events, for example obtained combining the same ROE with different signal decays, are themselves digitised independently. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "This further implies that each event obtained could have been produced by chance in a nominal simulation as ReDecay just reorders the already factorised approach: hadrons are decayed independently and the quasi-stable tracks are propagated through the detector individually. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 116,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "Therefore, the efficiencies and resolutions are, by construction, identical to those found in a nominal simulation. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Furthermore, with increasing N ReDecay , the average time per created event becomes more and more dominated by the time required to simulate the detector response for the signal particle and its decay products compared to the simulation of the particles from the ROE. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 31,
+                    "end": 39,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s8"
+                }
+            ]
+        },
+        {
+            "text": "However, an attentive reader will have noticed that different events stemming from the same original event are correlated, e.g. they all have -bar resolution effects -the same signal kinematics. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "The magnitude of these correlations will also depend on the studied observables and the following section attempts to quantify the strength of the correlations. ",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3
+        },
+        {
+            "text": "Additionally, it presents a method to take them into account in an analysis using simulated samples that have been generated following the ReDecay approach.",
+            "section": "The ReDecay approach",
+            "paragraph_rank": 9,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 139,
+                    "end": 147,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s9"
+                }
+            ]
+        },
+        {
+            "text": "The statistical treatment",
+            "section_rank": 4
+        },
+        {
+            "text": "Re-using the ROE multiple times and leaving the kinematics of the signal particle unchanged yields correlated events.",
+            "section": "The statistical treatment",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "text": "Considering the signal decay D 0 \u2192 K \u2212 \u03c0 + as an example large correlations are expected for the transverse momentum of the D 0 as the decaying particle's kinematics are invariant in all redecayed events. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "On the other hand, quantities computed to evaluate, for example, the performance of the track reconstruction for the K \u2212 meson tracks will be uncorrelated as those are based on the hits produced by the K \u2212 meson traversing the detector that are regenerated in every redecayed event. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Additionally, many observables are constrained by the fixed D 0 kinematics but have a certain amount of freedom in each redecayed event such as the transverse momentum of the K \u2212 . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "In the following, a simple example is used to develop methods to quantify the degree of correlation between different events and to discuss methods to take the correlations into account. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Suppose x is a random variable, which is sampled in a two stage process: first, a random number x is sampled from a normal distribution N (0, \u03c3 1 ) with mean zero and width \u03c3 1 . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "Subsequently, a value for x is then obtained by sampling one number from a normal distribution N (x , \u03c3 2 ) with width \u03c3 2 that is centered at x . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": "The resulting x is then distributed according to the convolution of the two normal distributions,",
+            "section": "The statistical treatment",
+            "paragraph_rank": 11,
+            "section_rank": 4
+        },
+        {
+            "text": ". ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "In the nominal case, a new x is sampled for every x, while a procedure equivalent to the ReDecay approach is achieved by sampling N ReDecay values for x from the same x . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 89,
+                    "end": 97,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s10"
+                },
+                {
+                    "start": 132,
+                    "end": 140,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s11"
+                }
+            ]
+        },
+        {
+            "text": "Modifying the procedure for the generation of x in this way does not alter the final distribution and thus both approaches provide random numbers that can be used to obtain a histogram following the expected shape given by the convolution of the two normal distributions. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "However, the latter approach introduces correlations between different x values, which is visible in Fig. 1 as these correlations lead to an underestimate of the uncertainties when the values of x are filled into a histogram using uncertainties equal to \u221a N where N is the number of entries in the bin of the nominal distribution. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 12,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 107,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "One possibility to quantify the correlation between different entries in a sequence of random numbers is given by the autocorrelation of the random number x:",
+            "section": "The statistical treatment",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "text": "where N is the total number of entries, \u03bc is the mean (zero in this example) and \u03c3 is the standard deviation ( \u03c3 2 1 + \u03c3 2 2 here) of the random numbers x. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The autocorrelation itself is typically studied as a function of an integer offset \u03c4 , where \u03c4 = 0 is the trivial case with R(0) = 1. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Example autocorrelations as a function of \u03c4 are given in Fig. 1 for multiple combinations of values for \u03c3 1 and \u03c3 2 with different ratios of \u03c3 2 /\u03c3 1 . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 63,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "As expected, the autocorrelation decreases both as a function of the offset \u03c4 as well as with increasing values for the ratio \u03c3 2 /\u03c3 1 . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "While the former is simply caused by a decreasing overlap between the blocks of x from the same x , the latter is a result of larger values of the ratio \u03c3 2 /\u03c3 1 corresponding to a greater amount of freedom in the random process for the generation of x despite using the same x . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "In summary, events are correlated though the amount of correlation depends on the studied observable. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "This explains the effect seen in the pulls where the approximation of \u221a N for the uncertainties breaks down in the presence of large correlations, when \u03c3 2 /\u03c3 1 is small. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "In the following, an alternative approach will be discussed to obtain the statistical uncertainty in the presence of such correlations. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "The effect of the correlations highly depends on how the sample is used and which variables are of interest and hence deriving a general, analytical solution is difficult if not impossible. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "In use cases where the variables of interest are sufficiently independent in every redecayed event (corresponding to a large \u03c3 2 /\u03c3 1 in the example above) even ignoring the correlations altogether can be a valid approach. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Nonetheless, a general solution is provided by bootstrapping [4], which is a method for generating pseudo-samples by resampling. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "These pseudosamples can then be used to estimate the variance of complex estimators, for which analytic solutions are impractical.",
+            "section": "The statistical treatment",
+            "paragraph_rank": 13,
+            "section_rank": 4
+        },
+        {
+            "text": "Starting from a sample with N entries, a pseudo-sample can be obtained according to the following procedure: first, a new total number of events N is randomly drawn from a Poisson distribution of mean N . ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Then, entries are randomly drawn with replacement from the original sample N times to fill the pseudo-sample. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "As sampling with replacement is employed, the obtained pseudo-sample can contain some entries of the original sample multiple times while others are not present in the pseudo-sample at all. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "Unfortunately, this cannot directly be applied to the ReDecay samples because it assumes statistically independent entries. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 54,
+                    "end": 62,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s12"
+                }
+            ]
+        },
+        {
+            "text": "In the study of time series, data points ordered in time where each data point can depend on the previous points, different extensions of the bootstrapping algorithm have been developed to preserve the correlations in the pseudo-samples [5]. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 237,
+                    "end": 240,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "A common approach is the so-called block bootstrapping where the sample is divided into blocks. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "In order to capture the correlations arising in the ReDecay approach, a block is naturally given by all events using the same ROE (or the same x in the example above). ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 60,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s13"
+                }
+            ]
+        },
+        {
+            "text": "To obtain a pseudo-sample, the bootstrapping procedure above is slightly modified: instead of sampling N individual entries from the original sample, entire blocks are drawn with replacement and all entries constituting a drawn block are filled into the pseudo-sample until the pseudo-sample has reached a size of N entries. ",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4
+        },
+        {
+            "text": "From these pseudo-samples, derived quantities, e.g. the covariance matrix for the bins in the histogram in Fig. 1 (right), can be obtained and utilised to include the correlations in an analysis.",
+            "section": "The statistical treatment",
+            "paragraph_rank": 14,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 107,
+                    "end": 121,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1 (right)"
+                }
+            ]
+        },
+        {
+            "text": "Implementation and experience in LHCb",
+            "section_rank": 5
+        },
+        {
+            "text": "While the idea of ReDecay is applicable in different experiments, the actual implementation strongly depends on the simulation framework and no general solution can be provided. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 15,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 18,
+                    "end": 26,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s14"
+                }
+            ]
+        },
+        {
+            "text": "Nonetheless, this section discusses the experiences gained when introducing the ReDecay approach to the LHCb software and which can be transferred to other experiments.",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 15,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 80,
+                    "end": 88,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s15"
+                },
+                {
+                    "start": 104,
+                    "end": 109,
+                    "type": "software",
+                    "rawForm": "LHCb",
+                    "resp": "service",
+                    "id": "software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "In the most commonly used procedure to simulate events in LHCb, pp collisions are generated with the Pythia 8.1 [6,7] generator using a specific LHCb configuration similar to the one described in Ref. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6,"
+                },
+                {
+                    "start": 115,
+                    "end": 117,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "7]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 112,
+                    "type": "version",
+                    "rawForm": "8.1",
+                    "resp": "service",
+                    "id": "#software-simple-s16"
+                }
+            ]
+        },
+        {
+            "text": "[8]. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 3,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "Decays of particles are described by EvtGen [9] in which final-state radiation is generated with Photos [10]. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 44,
+                    "end": 47,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 104,
+                    "end": 108,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 37,
+                    "end": 44,
+                    "type": "software",
+                    "rawForm": "EvtGen",
+                    "resp": "service",
+                    "id": "software-simple-s17"
+                }
+            ]
+        },
+        {
+            "text": "The implementation of the interaction of the generated particles with the detector, and its response, uses the Geant4 toolkit. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 111,
+                    "end": 118,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "service",
+                    "id": "software-simple-s18"
+                }
+            ]
+        },
+        {
+            "text": "The steering of the different steps in the simulation of an event uses interfaces to external generators and to the Geant4 toolkit. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 116,
+                    "end": 123,
+                    "type": "software",
+                    "rawForm": "Geant4",
+                    "resp": "service",
+                    "id": "software-simple-s19"
+                }
+            ]
+        },
+        {
+            "text": "It is handled by Gauss [11], the LHCb simulation software built on top of the Gaudi [12,13] framework.",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 16,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 23,
+                    "end": 27,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 84,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12,"
+                },
+                {
+                    "start": 88,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "13]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 17,
+                    "end": 23,
+                    "type": "software",
+                    "rawForm": "Gauss",
+                    "resp": "service",
+                    "id": "software-simple-s20"
+                },
+                {
+                    "start": 78,
+                    "end": 84,
+                    "type": "software",
+                    "rawForm": "Gaudi",
+                    "resp": "service",
+                    "id": "software-simple-s21"
+                }
+            ]
+        },
+        {
+            "text": "The ReDecay algorithm has been implemented as a package within the Gauss framework, deployed in the LHCb production system and already used in several large Monte Carlo sample productions. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 12,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s22"
+                },
+                {
+                    "start": 67,
+                    "end": 73,
+                    "type": "software",
+                    "rawForm": "Gauss",
+                    "resp": "service",
+                    "id": "software-simple-s23"
+                }
+            ]
+        },
+        {
+            "text": "In general, a speed-up by a factor of 10-20 is observed with the exact factor depending on the simulated conditions of the Large Hadron Collider and the complexity of the signal event. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "This factor is reached with a number of redecays per original event of N ReDecay = 100. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 73,
+                    "end": 80,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s24"
+                }
+            ]
+        },
+        {
+            "text": "In this configuration, and depending on the simulated decay, around 95% of the total time required to create the sample is spent on the simulation of the detector response of the products of the studied decay. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "Hence, increasing the number of redecays further would have little to no impact on the speed. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "Due to the correlations between different simulated events using the same ROE as described above, ReDecay samples are typically used to obtain efficiency descriptions as a function of final state variables with high granularity. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 98,
+                    "end": 106,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s25"
+                }
+            ]
+        },
+        {
+            "text": "For example, the use of the ReDecay method is ideal to study variables describing multi-body decays, since these variables are largely independent between all ReDecay events. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 28,
+                    "end": 36,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s26"
+                },
+                {
+                    "start": 159,
+                    "end": 166,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s27"
+                }
+            ]
+        },
+        {
+            "text": "An example for this is given in Fig. 2, which compares some distributions for D 0 \u2192 K \u2212 K + \u03c0 + \u03c0 \u2212 decays between a ReDe- Fig. 2 Comparison of a ReDecay sample with a nominally produced sample of D 0 \u2192 K \u2212 K + \u03c0 + \u03c0 \u2212 decays. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 32,
+                    "end": 38,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                },
+                {
+                    "start": 123,
+                    "end": 129,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 146,
+                    "end": 153,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s28"
+                }
+            ]
+        },
+        {
+            "text": "Shown are the invariant mass squared of the kaon pair (left) and pion pair (right) which are both inde-pendent of the kinematics of the decaying particle. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "Displayed uncertainties are computed assuming independent events. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "There is no sign of the effects caused by correlated events as seen in Fig. 1 (right) cay and a nominally simulated sample. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 71,
+                    "end": 85,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Fig. 1 (right)"
+                }
+            ]
+        },
+        {
+            "text": "Despite ignoring the correlations and using uncertainties computed as \u221a N , sensible pull distributions with a width compatible with one are observed.",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 17,
+            "section_rank": 5
+        },
+        {
+            "text": "In the case where the variables of interest are not obviously independent between different ReDecay events, the degree of correlation is difficult to predict and the only solution is the actual creation of a test sample. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "While the increase in speed when using ReDecay is substantial, the time to produce events is still not negligible and creating a test sample of sufficient size can quickly overwhelm the resources available for an individual analyst. ",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 18,
+            "section_rank": 5
+        },
+        {
+            "text": "To this end and in collaboration with the respective developers, the ReDecay approach has been added to the RapidSim [14] generator to enable the fast production of simplified simulation samples to judge the degree of correlation before committing the resources for the production of a large ReDecay sample.",
+            "section": "Implementation and experience in LHCb",
+            "paragraph_rank": 18,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 108,
+                    "end": 117,
+                    "type": "software",
+                    "rawForm": "RapidSim",
+                    "resp": "service",
+                    "id": "software-simple-s29"
+                }
+            ]
+        },
+        {
+            "text": "Summary",
+            "section_rank": 6
+        },
+        {
+            "text": "The paper presents developments of a fast simulation option applicable to analyses of signal particle decays that occur after the hadronisation phase. ",
+            "section": "Summary",
+            "paragraph_rank": 19,
+            "section_rank": 6
+        },
+        {
+            "text": "An overall increase in speed by a factor of 10-20 is observed. ",
+            "section": "Summary",
+            "paragraph_rank": 19,
+            "section_rank": 6
+        },
+        {
+            "text": "Furthermore, this paper discusses procedures to handle the correlations that can arise between different events if necessary. ",
+            "section": "Summary",
+            "paragraph_rank": 19,
+            "section_rank": 6
+        },
+        {
+            "text": "ReDecay has already enabled the production of large simulated samples for current measurements at LHCb [15].",
+            "section": "Summary",
+            "paragraph_rank": 19,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 103,
+                    "end": 107,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s30"
+                }
+            ]
+        },
+        {
+            "text": "With the upgrade of the LHCb detector for the third run of the Large Hadron Collider, the detector will collect a substantially larger amount of data. ",
+            "section": "Summary",
+            "paragraph_rank": 20,
+            "section_rank": 6
+        },
+        {
+            "text": "ReDecay is becoming a crucial fast simulation option to extract high precision physics results from this data.",
+            "section": "Summary",
+            "paragraph_rank": 20,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s31"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 7
+        },
+        {
+            "text": "Fig. 1Illustration of the correlations between events produced with the ReDecay method, using N ReDecay = 100: (left) autocorrelation function R(\u03c4 ) for different values of the ratios of widths of the probability density functions, \u03c3 2 /\u03c3 1 and (right) comparison of normalised distributions of a variable x generated with the ReDecay method and a standard generation method (nominal) for \u03c3 1 = 5 and \u03c3 2 = 1. ",
+            "section": "Fig. 1",
+            "paragraph_rank": 21,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 72,
+                    "end": 80,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s32"
+                },
+                {
+                    "start": 96,
+                    "end": 103,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s33"
+                },
+                {
+                    "start": 327,
+                    "end": 335,
+                    "type": "software",
+                    "rawForm": "ReDecay",
+                    "resp": "service",
+                    "id": "software-simple-s34"
+                }
+            ]
+        },
+        {
+            "text": "The bottom part of the right plot shows the pull distribution of the difference in each",
+            "section": "Fig. 1",
+            "paragraph_rank": 21,
+            "section_rank": 7
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 9
+        },
+        {
+            "text": "We acknowledge all our LHCb collaborators who have contributed to the results presented in this paper. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "Specifically, we thank Patrick Robbe, Michal Kreps and Mark Whitehead for their editorial help preparing this document. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "We acknowledge support from the Science and Technology Facilities Council (United Kingdom) and the computing resources that are provided by CERN, IN2P3 (France), KIT and DESY (Germany), INFN (Italy), SURF (The Netherlands), PIC (Spain), GridPP (United Kingdom), RRCKI and Yandex LLC (Russia), CSCS (Switzerland), IFIN-HH (Romania), CBPF (Brazil), PL-GRID (Poland) and OSC (USA). ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 347,
+                    "end": 355,
+                    "type": "software",
+                    "rawForm": "PL-GRID",
+                    "resp": "service",
+                    "id": "software-simple-s35"
+                }
+            ]
+        },
+        {
+            "text": "We are indebted to the communities behind the multiple open-source software packages on which we depend.",
+            "section": "Acknowledgements",
+            "paragraph_rank": 22,
+            "section_rank": 9
+        },
+        {
+            "text": "Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creativecomm ons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 23,
+            "section_rank": 9
+        },
+        {
+            "text": "Funded by SCOAP 3 .",
+            "section": "Acknowledgements",
+            "paragraph_rank": 23,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 18,
+                    "type": "version",
+                    "rawForm": "3",
+                    "resp": "service",
+                    "id": "#software-simple-s35"
+                }
+            ]
+        }
+    ]
+}

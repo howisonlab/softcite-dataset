@@ -1,4 +1,4 @@
-FROM rocker/tidyverse
+FROM rocker/binder
 
 RUN apt-get update && apt-get install -y \
     libpython3-dev \
@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-pytest \
     python3-setuptools \
-    vim
+    vim \
+    less
 
 
 RUN install2.r --error \

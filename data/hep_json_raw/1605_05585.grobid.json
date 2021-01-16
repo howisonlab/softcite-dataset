@@ -1,0 +1,888 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "Over the past years, the interpretation of measurements in the context of effective field theories has attracted much attention in the field of particle physics. We present a tool for interpreting sets of measurements in such models using a Bayesian ansatz by calculating the posterior probabilities of the corresponding free parameters numerically. An example is given, in which top-quark measurements are used to constrain anomalous couplings at the W tb-vertex.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "With the recent start of the Run-2 of the LHC, searches for physics beyond the Standard Model (BSM) will reach unprecedented sensitivity. The LHC's increased centre-of-mass energy opens a new kinematic regime and enhances the direct production cross section of heavy, yet unknown, particles-if they exist. It is a good time for bump hunters.",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "section": "Introduction",
+            "text": "On the other hand, it is not obvious that the mass scale of such new particles is anywhere near the energy which can be reached by current, or even future, accelerators. However, in contrast to the direct production of heavy particles, their impact on observables accessible at current collider experiments can be probed indirectly in the context of effective field theories. Such theories extend the Standard Model (SM) Lagrangian by terms allowed in quantum field theory and which share the gauge symmetries of the SM. These terms contain one or several effective operators and corresponding coefficients, often referred to as Wilson coefficients, which de-fine the individual strength of these operators. Depending on the type of operator, the additional terms in the Lagrangian can have an impact on different observables, which, in turn, can be compared to a set of corresponding measurements. Comparisons of SM predictions and observations can be used to constrain the Wilson coefficients by propagation of uncertainty. The strategy to indirectly infer on the parameters of a physics model, may it be an effective model or a full model, has proven to be successful in a variety of applications, e.g. in the field of flavor physics [1], super-symmetry [2], or electroweak precision measurements [3]. This paper describes a generic tool, the EFTfitter, for performing such interpretations in the context of user-defined physics models and formulating them in terms of Bayesian reasoning. Emphasis is placed on the statistical treatment of the combination of measurements correlated by their uncertainties as well as on often overlooked issues in interpretations, such as the necessity to consider model-specific efficiency and acceptance corrections for the measurements, or the presence of physical constraints on observables and parameters. An example is given for the case of an effective field theory in the top-quark sector, which is an active field of research. This example is motivated by the wealth of experimental data delivered by the Tevatron and LHC experiments and the increasing precision of measurements involving top quarks. Also from a theoretical perspective, the interpretation of top-quark measurements is attractive: recent calculations, e.g. predictions of the cross section of top-quark pair production [4,5,6], reach next-to-next-to-leading order (NNLO) precision in perturbative QCD. A historical example for the interpretation of experimental data in the context of top quarks is the successful prediction of the top-quark mass from electroweak precision measurements, see, e.g., Ref. [7]. This paper is organised as follows. Section 2 describes the statistical procedure of combining several measurements, while their interpretation is discussed in Section 3. The numerical implementation of the EFTfitter is introduced in Section 4, and an example for interpretations in the field of top-quark physics is given in Section 5. The paper is concluded in Section 6.",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 1237,
+                    "text": "[1]",
+                    "end": 1240
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1257,
+                    "text": "[2]",
+                    "end": 1260
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 1300,
+                    "text": "[3]",
+                    "end": 1303
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 2331,
+                    "text": "[4,",
+                    "end": 2334
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 2334,
+                    "text": "5,",
+                    "end": 2336
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 2336,
+                    "text": "6]",
+                    "end": 2338
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 2616,
+                    "text": "[7]",
+                    "end": 2619
+                }
+            ]
+        },
+        {
+            "text": "Combination of measurements",
+            "section_rank": 3
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "In Bayesian reasoning, inference of the free parameters \u03bb of a model M is based on the posterior probability of those parameters given a data set x, p(\u03bb|x). It is calculated using the equation of Bayes and Laplace [8],",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 214,
+                    "text": "[8]",
+                    "end": 217
+                }
+            ]
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "where p(x|\u03bb) is the probability of the data, or likelihood, and p(\u03bb) is the prior probability of the parameters \u03bb. In Bayesian literature, the normalisation constant in the denominator,",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "is often referred to as the evidence. In the following, we distinguish two types of models: i) those for which the parameters can be directly measured from the data, and ii) those for which this is not the case. Models of type ii) typically predict values of physical quantities, or observables, y, which depend on the parameters of the model, \u03bb, so that y = y(\u03bb). For example, the predicted cross sections in scattering processes depend on the couplings and masses of the particles described by physics models. These couplings and masses are often not predicted by the models themselves, in which case they are free parameters. Couplings, e.g., can often only be estimated indirectly from the measurements of cross sections and other observables. This case will be discussed further in Section 3. On the other hand, models of type i) are often used for the plain combination of measurements in which the physical quantities themselves, e.g. cross sections, angular distributions or branching ratios, are interpreted as model parameters, i.e., y = \u03bb. We will discuss this case in the following.",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Combination of measurements",
+            "section_rank": 4
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "Following the notation of Ref. [9], we assume to have N observables, y i (i = 1, . . . , N ), which are estimated based on n measurements, x i (i = 1, . . . , n). Each quantity y i is measured n i \u2265 1 times, so that n = N i=1 n i \u2265 N . We adopt the common assumption that the likelihood terms in Eqn. (1), p(x|y), have a multivariate Gaussian shape, and that the uncertainties of the measurements of x i can be correlated. The elements of the symmetric and positive-semidefinite covariance matrix are",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 31,
+                    "text": "[9]",
+                    "end": 34
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 301,
+                    "text": "(1)",
+                    "end": 304
+                }
+            ]
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "Assuming M different sources of uncertainty, the covariance matrix can be decomposed into contributions from each source,",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "The likelihood can then be expressed as",
+            "paragraph_rank": 10,
+            "section_rank": 4
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "where the elements U ij of the n \u00d7 N -matrix U are unity if x i is a measurement of the observable y j , and zero otherwise. The best linear unbiased estimator (BLUE) [9, 10] can be found by minimising the expression in Eqn. 5, while an estimator in the Bayesian approach is constructed by inserting Eqn. (5) into the RHS of Eqn. (1), and by specifying prior probabilities for the parameters. The prior probabilities can include physical constraints, e.g. the requirements that cross-sections can only take positive values or that branching ratios lie between zero and one. Prior knowledge can also come from auxiliary measurements or theoretical considerations. It is worth noting that combined estimates of physical quantities based on individual posterior probabilities need to be cleaned from the corresponding prior probabilities, i.e. the prior information about a parameter should only be included once in the overall combination. It should also be noted that prior probabilities, and in particular physical constraints, can lead to a strong non-Gaussian shape of the resulting posterior probability distribution, even if the input measurements are assumed to be described by Gaussian probability densities.",
+            "paragraph_rank": 11,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "ref_id": "formula_4",
+                    "start": 225,
+                    "text": "5",
+                    "end": 226
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 305,
+                    "text": "(5)",
+                    "end": 308
+                }
+            ]
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "Typical estimators are the set of parameters which maximise the posterior probability, the mean values of the posterior probability distribution, or the set of parameters which maximise the marginal probabilities,",
+            "paragraph_rank": 12,
+            "section_rank": 4
+        },
+        {
+            "section": "Combination of measurements",
+            "text": "For uniform prior probabilities, and in the absence of further constraints, the global mode of the posterior corresponds to the BLUE solution [10]. The uncertainty on y i can be defined as the central interval containing 68% probability, the set of smallest intervals containing 68% probability or simply the standard deviation of the marginalised posterior. These three measures are equal for Gaussian distributions. Similarly, simultaneous estimates of the uncertainties on y i and y j can be obtained by the two-dimensional contours of the smallest intervals containing, e.g., 39% or 68% probability. 1 Upper and lower limits on y i are typically set by calculating the 90% or 95% quantiles of the corresponding marginal posterior distribution.",
+            "paragraph_rank": 13,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 142,
+                    "text": "[10]",
+                    "end": 146
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 604,
+                    "text": "1",
+                    "end": 605
+                }
+            ]
+        },
+        {
+            "text": "Uncertainties of the correlation",
+            "section_rank": 5
+        },
+        {
+            "section": "Uncertainties of the correlation",
+            "text": "Although it is often straightforward to obtain estimates of the quantities y and of their uncertainties, it is not trivial to quantify the correlation induced by the different sources of uncertainties. If, e.g., sources of systematic uncertainty have an impact on several of those measurements, the correlation is often assumed to be extreme (\u03c1 = \u00b11). On the other hand, correlated statistical uncertainties caused by partially overlapping data sets are often estimated using pseudo data: two measurements, x i and x j , are obtained from common sets of simulated data and the linear correlation coefficient",
+            "paragraph_rank": 14,
+            "section_rank": 5
+        },
+        {
+            "section": "Uncertainties of the correlation",
+            "text": "between the estimates is calculated. Here, \u03c3 i and \u03c3 j are the standard deviations of x i and x j , respectively. If no reliable estimate of the correlation is possible, one can associate correlation coefficients with nuisance parameters \u03bd and choose suitable prior probabilities for these parameters. Necessary requirements for the priors are that the correlation coefficients are constrained to be in the interval [\u22121, +1], and that the covariance matrix remains positive-semidefinite for all possible values of \u03bd. They should, however, parameterise the prior knowledge about the correlation, e.g. by restricting the correlation coefficients to be positive or by favouring mild correlations. Depending on the problem, it can be difficult to formulate such priors analytically. In particular, it is advisable to not allow values resulting in correlation coefficients of \u03c1 = \u00b11 for the entries of the total covariance matrix as those might lead to numerical instabilities. Prior probabilities for covariance matrices are proposed in the literature, see e.g. Refs. [12,13,14]. The covariance matrix M, and thus the likelihood, are then functions of \u03bd, so that p(x|y, \u03bd). The prior probability can be factorised, p(y, \u03bd) = p(y) \u2022 p(\u03bd), if y and \u03bd are assumed to be independent, which is typically the case. In order to obtain a function depending only on y alone, all nuisance parameters are integrated out,",
+            "paragraph_rank": 15,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1064,
+                    "text": "[12,",
+                    "end": 1068
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 1068,
+                    "text": "13,",
+                    "end": 1071
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 1071,
+                    "text": "14]",
+                    "end": 1074
+                }
+            ]
+        },
+        {
+            "section": "Uncertainties of the correlation",
+            "text": "and the estimates of y are obtained as before from the resulting marginal posterior probabilities.",
+            "paragraph_rank": 16,
+            "section_rank": 5
+        },
+        {
+            "text": "Propagation of uncertainty",
+            "section_rank": 6
+        },
+        {
+            "section": "Propagation of uncertainty",
+            "text": "In cases where the probability density for a quantity f (y) is needed, the uncertainty on y needs to be propagated to f . For Gaussian posterior probabilities, the propagation of uncertainty is often done using the wellknown rules for uncertainty propagation. These imply that the function f can be linearised in y and that the posterior probability for the quantity of interest also has a Gaussian shape. Since this is not always the case, and since the posterior of the combination does not have to be a Gaussian due to the additional prior information, we instead propose to use a numerical evaluation of the uncertainty: if it is possible to sample from the posterior distribution p(y|x), one can calculate the target quantity f (y) for each sampled point. The obtained frequency distribution for f converges to the posterior probability distribution p(f |x) in the large sample limit. As discussed in Section 4, such sampling can be done on-the-fly when using Markov Chain Monte Carlo (MCMC).",
+            "paragraph_rank": 17,
+            "section_rank": 6
+        },
+        {
+            "text": "Ranking the impact of individual measurements",
+            "section_rank": 7
+        },
+        {
+            "section": "Ranking the impact of individual measurements",
+            "text": "One is often interested in how much a single measurement contributes to a combination. In BLUE averages, the contributions are added linearly using weights: the larger the weight, the more important the measurement. Although counter-intuitive at first sight, these weights can also take negative values, induced by strong negative correlations, see e.g. the discussion in Refs. [9,10]. There are several ways to estimate the impact of individual measurements in a combination. For the approach discussed here, we propose to repeat the combination while removing one measurement from the combination at a time. The measurements can then be ranked according to the resulting increase in uncertainty compared to the uncertainty of the overall combination. For combinations with two (n) physical quantities, the area (volume) of the smallest contour (hypersphere) covering, e.g., 68.3% of the posterior probability, can be used as a rank indicator. The motivation for this choice is to answer the question how the combination would change if a particular measurement had not been considered in the combination.",
+            "paragraph_rank": 18,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 378,
+                    "text": "[9,",
+                    "end": 381
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 381,
+                    "text": "10]",
+                    "end": 384
+                }
+            ]
+        },
+        {
+            "section": "Ranking the impact of individual measurements",
+            "text": "Regardless of the choice of rank indicator, the estimators themselves, their uncertainties and the correlations between the physical quantities should be monitored during this procedure. Note that the uncertainty can also decrease if particular measurements are removed, as in the case of outliers.",
+            "paragraph_rank": 19,
+            "section_rank": 7
+        },
+        {
+            "text": "Ranking the impact of individual sources of uncertainty",
+            "section_rank": 8
+        },
+        {
+            "section": "Ranking the impact of individual sources of uncertainty",
+            "text": "The situation is similar when one aims to rank the sources of uncertainties in order of their importance. We propose to repeat the combination while removing one source of uncertainty from the combination at a time. The sources of uncertainty can then be ranked according to the resulting decrease of uncertainty compared to the uncertainty of the overall combination. The rank indicator can be extended to n-dimensional problems. From a practical point of view, this approach allows answering the question which source of uncertainty is most important to improve in future iterations of the measurements.",
+            "paragraph_rank": 20,
+            "section_rank": 8
+        },
+        {
+            "text": "Interpretation of measurements in physics models",
+            "section_rank": 9
+        },
+        {
+            "section": "Interpretation of measurements in physics models",
+            "text": "Estimating the parameter values \u03bb of a complex physics model M based on (the combination of) measurements and the subsequent propagation of uncertainties is an inverse problem which is often ill-posed and in most cases difficult to solve. We propose here to re-formulate the problem discussed in the previous section in the following way: instead of directly identifying the observables with the fit parameters, we instead fit the free parameters of the physics model under study based on the relation between the observables and the parameters. If the model predicts observables y i for each set of parameter values \u03bb, y i = y i (\u03bb), these are then compared to the measurements x i using a multivariate Gaussian model. The same formalism as in Section 2.1 can be used to estimate \u03bb for a given data set. The likelihood of the model is",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "section": "Interpretation of measurements in physics models",
+            "text": "where p(y|\u03bb) = \u03b4(y \u2212 y(\u03bb)). It is worth noting that one has to formulate prior probabilities in terms of the model parameters and not in terms of the measurements themselves. Physical constraints can be incorporated into the model predictions, 'external knowledge' can be viewed as an additional measurement. 2 Using the same framework also helps to include measurements and physical quantities in the analysis which would otherwise be combined separately, e.g. by a working group concerned with cross sections and another one interested in angular distributions. However, due to common sources of systematic uncertainties and overlapping data sets, the posterior probability of the two measurements shows a correlation-a fact that needs to be considered in the global fit to a physics model.",
+            "paragraph_rank": 22,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 309,
+                    "text": "2",
+                    "end": 310
+                }
+            ]
+        },
+        {
+            "text": "Implementation",
+            "section_rank": 10
+        },
+        {
+            "section": "Implementation",
+            "text": "The EFTfitter 3 builds on the Bayesian Analysis Toolkit (BAT) [15] which is a software package written in C++ that allows the implementation of statistical models and the inference on their free parameters. 4 Several numerical algorithms can be used to perform the combination and interpretation steps introduced in this paper: marginal distributions can be calculated using, for example, Markov Chain Monte Carlo, while global optimisation can be done using the Minuit implementation of ROOT [16].",
+            "paragraph_rank": 23,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 62,
+                    "text": "[15]",
+                    "end": 66
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 207,
+                    "text": "4",
+                    "end": 208
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 493,
+                    "text": "[16]",
+                    "end": 497
+                }
+            ]
+        },
+        {
+            "text": "Definition of a model and observables",
+            "section_rank": 11
+        },
+        {
+            "section": "Definition of a model and observables",
+            "text": "The key component of the EFTfitter is the user's definition of a model. It is simply characterised by a set of free parameters, e.g. couplings and masses, and by the predictions of observables as a function of the model's parameters. Note that the model is not automatically derived from a user-defined Lagrangian and it is thus not constrained to a particular class of models. As a consequence, however, the predictions from the model are not required to be consistent, and it is the user's responsibility to formulate a meaningful set of predictions. Of course, interfaces to more complex software tools can be included in the model. 2 It is a virtue of the Bayesian formalism that an update of knowledge is trivially obtained by defining results from previous measurements or other considerations as prior probabilities of a new measurement. 3 The code is available at https://github.com/ tudo-physik-e4/EFTfitterRelease and includes the code for the example discussed in this paper. 4 The BAT code is available at http://mppmu.mpg.de/bat/.",
+            "paragraph_rank": 24,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 636,
+                    "text": "2",
+                    "end": 637
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 845,
+                    "text": "3",
+                    "end": 846
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "start": 987,
+                    "text": "4",
+                    "end": 988
+                }
+            ]
+        },
+        {
+            "text": "Input",
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "The input to the EFTfitter is a set of measurements including a break-down of the uncertainties into several categories, e.g. statistical uncertainties and different sources of systematic uncertainties. In addition, the correlation between the measurements for each category of uncertainty needs to be provided.",
+            "paragraph_rank": 25,
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "It is worth noting that the different measurements need to be unified in a sense that the sources of uncertainties are treated in the same categories throughout all measurements, e.g. uncertainties related to the reconstruction of objects in a collider experiment should have one or more well-defined categories: uncertainties on the luminosity, efficiencies or acceptances should each have their own categories, etc.",
+            "paragraph_rank": 26,
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "The measurements can be any measurable quantity, most commonly a cross section, a mass or a branching ratio. It can also be an unfolded spectrum, in which case each bin is treated as an individual measurement and the full unfolding matrix is needed as an input. The unfolding matrix provides the acceptances and efficiencies, which can be treated consistently in the EFTfitter as described in Sec. 4.3.",
+            "paragraph_rank": 27,
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "All of these inputs are provided in a configuration file in xml format. The file contains information about the number of observables, the number of measurements of these observables, the number of uncertainty categories and the number of nuisance parameters to be used in the fit. The allowed range for each observable has to be provided. For each measurement, the name of the observable, its measured value as well as its uncertainty in each uncertainty category have to be provided as well. Furthermore, measurements can be omitted from the fit by flagging them as inactive. The correlation matrix is provided in the same configuration file. The correlation coefficients between measurements can be treated as nuisance parameters in the fit. For each nuisance parameter, the measurements that the correlation coefficient refers to as well as its prior probability have to be specified.",
+            "paragraph_rank": 28,
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "Apart from the measurements, the user needs to specify prior probability densities for each model parameter. These can be chosen freely, e.g. uniform, Gaussian or exponentially decreasing functions. Physical boundaries for parameters and observables are addressed by the definition of the prior probabilities and the predictions for observables, respectively. A second configuration file in xml format is used to specify the prior probability densities for the parameters, their minimum and maximum values, as well as their SM predictions.",
+            "paragraph_rank": 29,
+            "section_rank": 12
+        },
+        {
+            "section": "Input",
+            "text": "Sometimes it is necessary to include external input in a combination, e.g. measurements from low-energy observables, b-physics or cosmology. These can either be treated as additional measurements or as priors on the parameters, depending on the type of information provided. In both cases, it is usually difficult to estimate the correlation between the different inputs and the user should carefully consider whether the choice of correlation made has a strong effect on the interpretation of the data.",
+            "paragraph_rank": 30,
+            "section_rank": 12
+        },
+        {
+            "text": "Treatment of acceptance and efficiency corrections",
+            "section_rank": 13
+        },
+        {
+            "section": "Treatment of acceptance and efficiency corrections",
+            "text": "A problem often encountered when measurements are interpreted in terms of BSM contributions, is that the acceptances and efficiencies may be different for different BSM processes, while measurements are mostly performed assuming the acceptances and efficiencies of SM processes. An example is the measurement of the cross section for the pair production of a particle, which in BSM scenarios might also be produced from an additional resonance decay. The acceptance times efficiency for the BSM process may be different than for the SM process if the measurement requires a minimum momentum for the final-state particles. These requirements may be more frequently fulfilled in the BSM scenario if the resonance has a very high mass. It is also clear that the acceptance and efficiency may depend on the parameters of the BSM theory, such as the mass of the resonance in this example.",
+            "paragraph_rank": 31,
+            "section_rank": 13
+        },
+        {
+            "section": "Treatment of acceptance and efficiency corrections",
+            "text": "The EFTfitter addresses this problem by separating observables, measurements and parameters, so that the acceptance and efficiency can be corrected for when comparing the prediction for the observables with the measurements. For the SM process, this acceptance and efficiency correction is equal to unity, but for BSM models, the correction may differ from one and it is, in general, a function of the parameters of the theory.",
+            "paragraph_rank": 32,
+            "section_rank": 13
+        },
+        {
+            "text": "Output",
+            "section_rank": 14
+        },
+        {
+            "section": "Output",
+            "text": "A brief summary of the fit results is provided in a text file, while four figure files are provided for a more detailed analysis of the fit results. In one figure file, all one-dimensional and two-dimensional marginalised distributions of the fitted parameters are saved. In two figure files, the estimated correlation matrix of the parameters and a comparison of the prior and posterior probability density functions for the different parameters are shown, respectively. A last figure file shows the relations between the parameters of the model and the observables as defined by the underlying model. An additional text file provides the post-fit ranking of the measurements determined as described in Sections 2.4 and 2.5.",
+            "paragraph_rank": 33,
+            "section_rank": 14
+        },
+        {
+            "text": "Structure of the implementation",
+            "section_rank": 15
+        },
+        {
+            "section": "Structure of the implementation",
+            "text": "The code is structured such that a new folder needs to be created for a specific analysis. Folders are provided for the example discussed in this paper (Sec. 5) as well as a blank example a user can start from. Each such folder contains a subfolder for the input configuration files and an empty folder for the result files. It also contains a rather generic run file which holds the main function for the run executable. The model specific details, such as the relation between the parameters and the observables, the acceptance and efficiency correction etc. are implemented in a class inheriting from BCMVCPhysicsModel. In this class, it is necessary to provide in particular a concrete implementation of the virtual method CalculateObservable(...). The code is then compiled using a Makefile, which is provided. A README file contains further details for users to get started.",
+            "paragraph_rank": 34,
+            "section_rank": 15
+        },
+        {
+            "text": "An example for effective field theory involving top quarks",
+            "section_rank": 16
+        },
+        {
+            "section": "An example for effective field theory involving top quarks",
+            "text": "As an example for applications of the EFTfitter, we discuss the constraints on anomalous top-quark couplings from two sets of observables: the measurement of the polarisation of W -bosons produced in top-quark decays and the measurements of the t-channel topand antitop-quark cross sections. Similar cases have been discussed in Refs. [17,18,19,20,21,22,23,24,25]. The concrete model we use is that of Ref. [17], where the Lagrangian describing the W tb-vertex does not only include a purely left-handed coupling with relative strength V L , but also a right-handed vector coupling with strength V R as well as left-and right-handed tensor couplings g L and g R . The generalised Lagrangian then takes the form",
+            "paragraph_rank": 35,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 335,
+                    "text": "[17,",
+                    "end": 339
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 339,
+                    "text": "18,",
+                    "end": 342
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 342,
+                    "text": "19,",
+                    "end": 345
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 345,
+                    "text": "20,",
+                    "end": 348
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 348,
+                    "text": "21,",
+                    "end": 351
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 351,
+                    "text": "22,",
+                    "end": 354
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 354,
+                    "text": "23,",
+                    "end": 357
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 357,
+                    "text": "24,",
+                    "end": 360
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 360,
+                    "text": "25]",
+                    "end": 363
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 407,
+                    "text": "[17]",
+                    "end": 411
+                }
+            ]
+        },
+        {
+            "section": "An example for effective field theory involving top quarks",
+            "text": "where g is the weak coupling constant, P L and P R are left-and right-handed projection operators and M W is the mass of the W -boson. In the SM, the left-handed coupling strength is given by V L = |V tb | 2 \u2248 1, while the three other coupling strengths are V R = g L = g R = 0.",
+            "paragraph_rank": 36,
+            "section_rank": 16
+        },
+        {
+            "section": "An example for effective field theory involving top quarks",
+            "text": "The physical model defined by the Lagrangian in Eqn. (8) has four free parameters:",
+            "paragraph_rank": 37,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 53,
+                    "text": "(8)",
+                    "end": 56
+                }
+            ]
+        },
+        {
+            "section": "An example for effective field theory involving top quarks",
+            "text": "For simplicity, we assume these parameters to be real.",
+            "paragraph_rank": 38,
+            "section_rank": 16
+        },
+        {
+            "text": "Observables and predictions",
+            "section_rank": 17
+        },
+        {
+            "section": "Observables and predictions",
+            "text": "The observables described in the following are calculated based on Refs. [17,18,26]. The masses of the top quark, the W -boson and the bottom quark are assumed to be 172.5 GeV, 80.4 GeV and 4.8 GeV, respectively.",
+            "paragraph_rank": 39,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 73,
+                    "text": "[17,",
+                    "end": 77
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 77,
+                    "text": "18,",
+                    "end": 80
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 80,
+                    "text": "26]",
+                    "end": 83
+                }
+            ]
+        },
+        {
+            "section": "Observables and predictions",
+            "text": "The W -bosons produced in top-quark decays can be left-handed, right-handed and longitudinally polarised. The fraction of events with either of these polarisations are f L , f R and f 0 , and often referred to as helicity fractions. At NNLO accuracy in the strong coupling, these fractions are predicted to be f L = 0.311 \u00b1 0.005, f R = 0.0017 \u00b1 0.0001 and f 0 = 0.687 \u00b1 0.005 in the SM [27]. Assuming the Lagrangian defined in Eqn. (8), these fractions are functions of the four coupling strengths. As an example, Fig. 1 shows the predicted fraction of left-handed W -bosons as a function of any of the couplings in the range [\u22121, +1], while keeping the other three couplings fixed to their SM values. While the variation of V R and g L results in variations of f L from about 15% to a maximum of roughly 30% at V R = 0 and g L = 0, g R has a stronger impact. The value of f L ranges from 0% to about 70% with a minimum at approximately g R = 0.5. As expected, there is no dependence of the helicity fractions on V L . Since the sum of the three fractions is unity, only two of the three, f L and f 0 , are considered as well as their correlation.",
+            "paragraph_rank": 40,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 387,
+                    "text": "[27]",
+                    "end": 391
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 515,
+                    "text": "Fig. 1",
+                    "end": 521
+                }
+            ]
+        },
+        {
+            "section": "Observables and predictions",
+            "text": "Similarly, the cross sections for single top-and antitop-quark production in the t-channel at a centreof-mass-energy of \u221a s = 7 TeV are predicted in the SM to be \u03c3 t = 41.9 +1.8 \u22120.8 pb and \u03c3t = 22.7 +0.9 \u22121.0 pb at NNLO accuracy in the strong coupling [28]. As an example, the single top-quark cross section as a function of the four coupling strengths is illustrated in Fig. 2, again fixing the other couplings to their SM values for each of the curves. All four couplings change the predicted cross section resulting in values of \u03c3 t between 0 pb and 140 pb, where a minimum can be found at coupling values of about 0.",
+            "paragraph_rank": 41,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 173,
+                    "text": "+1.8",
+                    "end": 177
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 253,
+                    "text": "[28]",
+                    "end": 257
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 372,
+                    "text": "Fig. 2",
+                    "end": 378
+                }
+            ]
+        },
+        {
+            "text": "Measurements and assumptions",
+            "section_rank": 18
+        },
+        {
+            "section": "Measurements and assumptions",
+            "text": "The measurements of the W -boson polarisation and the t-channel cross sections considered in this example are taken from Refs. [29] and [30], respectively. The uncertainties on these measurements are assumed to be derived from multivariate Gaussian distributions. The  The correlation between the measurements of f L and f 0 is quoted in the reference as \u03c1(f L , f 0 ) = \u22120.95. We assume that there is no correlation between the helicity and cross-section measurements. This simplifying assumption is made because the measurements are performed by two different experiments and because the event selections for the two measurements are orthogonal. Common sources of systematic uncertainty, e.g. from LHC machine settings or the modelling of top quarks in Monte Carlo generators, could lead to a small correlation, however. Furthermore, we assume that the correlation between the measurements of top-and antitop-quark cross sections is mild, but not negligible, and we thus choose \u03c1(\u03c3 t , \u03c3t) = +0.50. Although the event selections are again orthogonalthe leptons selected differ by the sign of their electric charge-common sources of systematic uncertainty have a similar impact on both measurement, e.g. uncertainties on the jet-energy and lepton-momentum scales or the Monte Carlo generator uncertainties. The total uncertainties and the full correlation matrix used are shown in Tab. 1. Table 1 Total uncertainties and the correlation matrix of the helicity fraction and t-channel cross section measurements.",
+            "paragraph_rank": 42,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "start": 127,
+                    "text": "[29]",
+                    "end": 131
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "start": 136,
+                    "text": "[30]",
+                    "end": 140
+                },
+                {
+                    "type": "table",
+                    "start": 1390,
+                    "text": "Table 1",
+                    "end": 1397
+                }
+            ]
+        },
+        {
+            "section": "Measurements and assumptions",
+            "text": "Uncertainty f L f 0 \u03c3 t \u03c3t f L 0.031 1.00 -0.95 0.00 0.00 f 0 0.045 -0.95 1.00 0.00 0.00 \u03c3 t 6 pb 0.00 0.00 1.00 0.50 \u03c3t 3 pb 0.00 0.00 0.50 1.00",
+            "paragraph_rank": 43,
+            "section_rank": 18
+        },
+        {
+            "section": "Measurements and assumptions",
+            "text": "The efficiency times acceptance of the measured tchannel cross section depends on the anomalous couplings assumed because they have an impact on the kinematic distributions of the final-state particles. Since its evaluation would require further studies including simulations of the detector setup and a repetition of the analysis procedure, they are not considered in this example. In general, these corrections should be provided by the experimental collaborations as such an evaluation often requires access to unpublished material. As described in Section 4.3, the EFTfitter code is prepared to include such correlations.",
+            "paragraph_rank": 44,
+            "section_rank": 18
+        },
+        {
+            "text": "Interpretation of measurements",
+            "section_rank": 19
+        },
+        {
+            "section": "Interpretation of measurements",
+            "text": "We assume no prior knowledge on the values of the four coupling strengths, i.e. we choose the prior probability density for each coupling to be uniform. The values of g L and g R are limited to a range [\u22121, 1], the values of V L and V R are constrained to be within [\u22121.5, 1.5]. These ranges are motivated by the fact that larger anomalous couplings would have been observed by previous measurements.",
+            "paragraph_rank": 45,
+            "section_rank": 19
+        },
+        {
+            "section": "Interpretation of measurements",
+            "text": "For the first interpretation, we assume SM values for the vector couplings, i.e., we assume V L = 1 and V R = 0. Taking all four measurements and their correlations into account, Figure 3 shows the contours of the smallest areas containing 68.3% and 95.5% probability in the two-dimensional plane of g R vs. g L . In comparison, the dark and coloured lines indicate these contours if only the measurements of the W -helicity or of the Fig. 3 Contours of the smallest areas containing 68.3%, 95.5% and 99.7% posterior probability in the (g L , g R )-plane. The filled areas consider all four measurements, while the open ones take into account only two measurements. Also indicated is the SM prediction. t-channel cross sections are considered. While the measurement of the W -helicity alone constrains two separate regions in (g L , g R )-space, one centred around the SM prediction of (0, 0) and another, smaller one around (0, 0.8), the measurement of the t-channel cross sections has less constraining power, but excludes the second region. Using all four measurements thus reduces the available parameter space for anomalous couplings by excluding the second region and, if only marginally, by reducing the area of the first region.",
+            "paragraph_rank": 46,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 179,
+                    "text": "Figure 3",
+                    "end": 187
+                },
+                {
+                    "type": "figure",
+                    "start": 435,
+                    "text": "Fig. 3",
+                    "end": 441
+                }
+            ]
+        },
+        {
+            "section": "Interpretation of measurements",
+            "text": "The relative importance of each of the four measurements is illustrated in Tab. 2, which shows a ranking based on the relative increase of the area within the 68.3% contour if individual measurements are ignored. This is compared to a ranking based on the uncertainties of the one-dimensional marginal distributions. As expected from Fig. 3, the measurements of the W -helicity have a larger impact on the constraints than the t-channel measurements. It is worth noting, however, that the ranking only addresses the size of the uncertainties, but not the topology of the contours, i.e. the appearance of a second, disconnected allowed region. The small negative values associated with the measurement of \u03c3 t can be explained by the fact that the measured value is furthest away from the SM prediction in comparison to the other three measurements.",
+            "paragraph_rank": 47,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 334,
+                    "text": "Fig. 3",
+                    "end": 340
+                }
+            ]
+        },
+        {
+            "section": "Interpretation of measurements",
+            "text": "As an example, we test the impact of the correlation between \u03c3 t and \u03c3t on the estimate of g R . Fig. 4 shows the one-dimensional marginal posterior probability for g R as a function of the linear correlation coefficient in the range [\u22120.99, 0.99]. While the 68.3%, 95.5% and 99.7% intervals do not vary significantly for values of \u03c1 in the range [\u22120.6, 0.6], they become smaller by up Table 2 Relative increase of the area contained in the 68.3% posterior probability contour when removing one measurement at a time. Also indicated is the rank.  Fig. 4 Contours of the smallest areas containing 68.3%, 95.5% and 99.7% posterior probability for g R as a function of the linear correlation coefficient \u03c1 between the measurements of \u03c3 t and \u03c3t.",
+            "paragraph_rank": 48,
+            "section_rank": 19,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 97,
+                    "text": "Fig. 4",
+                    "end": 103
+                },
+                {
+                    "type": "table",
+                    "start": 386,
+                    "text": "Table 2",
+                    "end": 393
+                },
+                {
+                    "type": "figure",
+                    "start": 547,
+                    "text": "Fig. 4",
+                    "end": 553
+                }
+            ]
+        },
+        {
+            "text": "Measurement Relative increase [",
+            "section_rank": 20
+        },
+        {
+            "section": "Measurement Relative increase [",
+            "text": "to a factor of two for large, negative values and they become slightly larger for large, positive values. Also, the median is shifted towards smaller values of g R in both extreme cases.",
+            "paragraph_rank": 49,
+            "section_rank": 20
+        },
+        {
+            "section": "Measurement Relative increase [",
+            "text": "Instead of fixing the correlation coefficient between the two cross section measurements, one can also assign an uncertainty to that correlation. Assuming a Gaussian prior on the corresponding nuisance parameter with a mean value of 0.5 and a standard deviation of 0.1, the uncertainty on g L and g R does not change significantly. This is expected from Fig. 4 because the correlation does not have a significant impact in this case.",
+            "paragraph_rank": 50,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 354,
+                    "text": "Fig. 4",
+                    "end": 360
+                }
+            ]
+        },
+        {
+            "section": "Measurement Relative increase [",
+            "text": "For the second interpretation, we assume all four couplings to be free parameters of the fit. As an example, Figs. 5, Fig. 6 and Fig. 7 show the marginal posterior distributions in the (V L , V R )-plane, in the (V L , g R )-plane, and in the (g L , g R )-plane, respectively. All three distributions have highly non-Gaussian shapes and some show disconnected regions. In each of the projections, the local mode is consistent with the predictions of the SM and the absence of anomalous couplings.  The global mode is found at V L = 1.02, V R = \u22120.06, g L = 0.03, and g R = \u22120.01. Since the smallest four-dimensional hypervolume containing 68.3% posterior probability is strongly non-Gaussian in shape and features several disconnected subsets, one-dimensional measures, such as the standard deviation or smallest intervals, are rendered useless. Fig. 7 Marginal posterior distributions in the (g L , g R )-plane when all four parameters are left free in the fit and all four measurements are considered.",
+            "paragraph_rank": 51,
+            "section_rank": 20,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 118,
+                    "text": "Fig. 6",
+                    "end": 124
+                },
+                {
+                    "type": "figure",
+                    "start": 129,
+                    "text": "Fig. 7",
+                    "end": 135
+                },
+                {
+                    "type": "figure",
+                    "start": 846,
+                    "text": "Fig. 7",
+                    "end": 852
+                }
+            ]
+        },
+        {
+            "text": "Conclusions",
+            "section_rank": 21
+        },
+        {
+            "section": "Conclusions",
+            "text": "We have presented a tool for interpreting measurements in the context of effective field theories. This EFTfitter allows implementing a user-defined model, either directly or via interfaces to other software tools, including predictions of observables based on the free parameters of the model. Measurements of these observables are then combined and used to constrain the free parameters. A variety of features of the EFTfitter helps to quantify and visualise the results. An example in the field of top-quark physics was shown, for which anomalous couplings of the W tb-vertex were constrained based on measurements of the W -boson helicity fractions and the single-top t-channel cross sections.",
+            "paragraph_rank": 52,
+            "section_rank": 21
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 22
+        },
+        {
+            "section": "Fig. 1",
+            "text": "Fig. 1 Fraction of left-handed W -bosons from top-quark decays as a function of anomalous couplings. The asterisk indicates the SM values.",
+            "paragraph_rank": 53,
+            "section_rank": 22
+        },
+        {
+            "text": "Fig. 2",
+            "section_rank": 23
+        },
+        {
+            "section": "Fig. 2",
+            "text": "Fig. 2 Cross section for t-channel single top-quark production as a function of anomalous couplings. The asterisk indicates the SM values.",
+            "paragraph_rank": 54,
+            "section_rank": 23
+        },
+        {
+            "text": "Fig. 5",
+            "section_rank": 24
+        },
+        {
+            "section": "Fig. 5",
+            "text": "Fig. 5 Marginal posterior distributions in the (V L , V R )-plane when all four parameters are left free in the fit and all four measurements are considered.",
+            "paragraph_rank": 55,
+            "section_rank": 24
+        },
+        {
+            "text": "Fig. 6",
+            "section_rank": 25
+        },
+        {
+            "section": "Fig. 6",
+            "text": "Fig. 6Marginal posterior distributions in the (V L , g R )-plane when all four parameters are left free in the fit and all four measurements are considered.",
+            "paragraph_rank": 56,
+            "section_rank": 25
+        },
+        {
+            "section": "Fig. 6",
+            "text": "The classical one-sigma contour contains 39% probability while the 68% contour is typically shown in the field of particle physics[11].",
+            "paragraph_rank": 57,
+            "section_rank": 25,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "start": 130,
+                    "text": "[11]",
+                    "end": 134
+                }
+            ]
+        },
+        {
+            "section": "Fig. 6",
+            "text": "Acknowledgements The authors would like to thank Fabian Bach, Kathrin Becker, Dominic Hirschb\u00fchl and Mikolaj Misiak for their help and for the fruitful discussions. In particular, the authors would like to thank Fabian Bach for providing the code for the single-top cross sections. N.C. acknowledges the support of FCT-Portugal through the contract IF/00050/2013/CP1172/CT0002.",
+            "paragraph_rank": 58,
+            "section_rank": 27
+        }
+    ]
+}

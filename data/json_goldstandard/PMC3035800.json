@@ -1,0 +1,2634 @@
+{
+    "id": "b27b28bf20",
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "Motivation: Cell tracking is an important method to quantitatively analyze time-lapse microscopy data. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
+        },
+        {
+            "text": "While numerous methods and tools exist for tracking cells in 2D time-lapse images, only few and very application-specific tracking tools are available for 3D timelapse images, which is of high relevance in immunoimaging, in particular for studying the motility of microglia in vivo. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
+        },
+        {
+            "text": "Results: We introduce a novel algorithm for tracking cells in 3D time-lapse microscopy data, based on computing cosegmentations between component trees representing individual time frames using the so-called tree-assignments. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
+        },
+        {
+            "text": "For the first time, our method allows to track microglia in three dimensional confocal time-lapse microscopy images. ",
+            "paragraph_rank": 2,
+            "section_rank": 0
+        },
+        {
+            "text": "We also evaluate our method on synthetically generated data, demonstrating that our algorithm is robust even in the presence of different types of inhomogeneous background noise.",
+            "paragraph_rank": 2,
+            "section_rank": 0
+        }
+    ],
+    "body_text": [
+        {
+            "text": "To the best of our knowledge, our approach is the first that can identify and track microglia in live cell imaging time series. ",
+            "section_rank": 1
+        },
+        {
+            "text": "In most cases, obtaining reliable trajectories still requires manual post-processing of the output. ",
+            "section_rank": 1
+        },
+        {
+            "text": "The most notorious difficulties certainly are the complex morphology-their deformation patterns, irregular shapes and interaction with the surrounding-as well as the unspecificity of the fluorescent markers available. ",
+            "section_rank": 1
+        },
+        {
+            "text": "In this light, our approach constitutes significant progress in the sense that it has sufficient sensitivity to separate microglia form their surrounding. ",
+            "section_rank": 1
+        },
+        {
+            "text": "Yet, a fully automated approach remains a major and certainly non-trivial challenge. ",
+            "section_rank": 1
+        },
+        {
+            "text": "A first step in this direction might be the combination with level-set based approaches as utilized for 2D cellBottom: quantitative comparison of trajectories obtained by ct3d and the active contour approach from Chan and Vese (2001). ",
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 213,
+                    "end": 233,
+                    "type": "bibr",
+                    "text": "Chan and Vese (2001)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 171,
+                    "end": 175,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-36",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "In general, ct3d could identify the annotated cells in all time frames (columns # Frames). ",
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 12,
+                    "end": 16,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-37",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "The root mean square distance to the annotated trajectory measures a fraction of the diameter of the annotated cell (columns cell and RMS), while the Chan-Vese algorithm missed varying numbers of cells or failed completely (last column). ",
+            "section_rank": 1
+        },
+        {
+            "text": "For the Chan-Vese results, a parameter set was optimized for dataset ",
+            "section_rank": 1
+        },
+        {
+            "text": "(a). ",
+            "section_rank": 1
+        },
+        {
+            "text": "This parameter set (\u00b5 = 1, \u03bd = .5, \u03bb 1 = .2, \u03bb 2 = 5) was also applied to datasets ",
+            "section_rank": 1
+        },
+        {
+            "text": "(b) to ",
+            "section_rank": 1
+        },
+        {
+            "text": "(d). ",
+            "section_rank": 1
+        },
+        {
+            "text": "While for dataset ",
+            "section_rank": 1
+        },
+        {
+            "text": "(a), the result is comparable to ct3d, the annotated cell was identified in only 29 out of 49 time frames in ",
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 37,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator23",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-38",
+                    "cert": "0.9"
+                }
+            ]
+        },
+        {
+            "text": "(b). ",
+            "section_rank": 1
+        },
+        {
+            "text": "In datasets ",
+            "section_rank": 1
+        },
+        {
+            "text": "(c) and ",
+            "section_rank": 1
+        },
+        {
+            "text": "(d), the annotated cell could not be identified at all using these parameters. ",
+            "section_rank": 1
+        },
+        {
+            "text": "See Supplementary Figure tracking by Nath et al. (2006) that might yield more accurate cell boundaries in some cases. ",
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 24,
+                    "type": "figure",
+                    "text": "Figure"
+                },
+                {
+                    "start": 37,
+                    "end": 55,
+                    "type": "bibr",
+                    "text": "Nath et al. (2006)"
+                }
+            ]
+        },
+        {
+            "text": "Yet, ct3d promises to be a key tool for further studying open questions regarding microglia, such as to determine if and how glia and microglia share the task of finding and removing apoptotic neurons from the vertebrate brain (Peri and N\u00fcsslein-Volhard, 2008).",
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 227,
+                    "end": 260,
+                    "type": "bibr",
+                    "text": "(Peri and N\u00fcsslein-Volhard, 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 5,
+                    "end": 9,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-39",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Capturing the motility of cells using time-lapse microscopy has become an important approach to understanding processes such as the cell cycle (Harder et al., 2009), neuronal division and migration (Norden et al., 2009), immune response (Cahalan and Parker, 2008) or the development of cancer (Ianzini et al., 2009). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 143,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "(Harder et al., 2009)"
+                },
+                {
+                    "start": 198,
+                    "end": 219,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "(Norden et al., 2009)"
+                },
+                {
+                    "start": 237,
+                    "end": 263,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(Cahalan and Parker, 2008)"
+                },
+                {
+                    "start": 293,
+                    "end": 315,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "(Ianzini et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "Based on phase-contrast, confocal or two-photon microscopy, such live cell imaging protocols are now commonly established and corresponding equipment is commonly available. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "This has triggered the need for computational methods to quantitatively analyze timelapse microscopy data. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "In this context, identifying individual cells and tracking their identities over time is one of the basic ingredients for computational analysis. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "Hence, cell tracking algorithms have attracted considerable attention in recent years (Meijering et al., 2006;Miura, 2005). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 110,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "(Meijering et al., 2006;"
+                },
+                {
+                    "start": 110,
+                    "end": 122,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "Miura, 2005)"
+                }
+            ]
+        },
+        {
+            "text": "Here, we introduce a novel algorithm for cell tracking that allows to track cells, in particular zebrafish microglia, in 3D two-photon image sequences over time.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "The majority of cell tracking algorithms, as surveyed by Meijering et al. (2006) or Miura (2005), deals with cell tracking in 2D over time. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "Meijering et al. (2006)"
+                },
+                {
+                    "start": 84,
+                    "end": 96,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "Miura (2005)"
+                }
+            ]
+        },
+        {
+            "text": "Methods range from linking cells identified in individual frames using different segmentation approaches to active-contour (Dufour et al., 2005;Sacan et al., 2008;Shen et al., 2006) or level-set algorithms (Dzyubachyk et al., 2008;Li et al., 2008b;Mukherjee et al., 2004;Nath et al., 2006). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 123,
+                    "end": 144,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Dufour et al., 2005;"
+                },
+                {
+                    "start": 144,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "Sacan et al., 2008;"
+                },
+                {
+                    "start": 163,
+                    "end": 181,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "Shen et al., 2006)"
+                },
+                {
+                    "start": 206,
+                    "end": 231,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "(Dzyubachyk et al., 2008;"
+                },
+                {
+                    "start": 231,
+                    "end": 248,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "Li et al., 2008b;"
+                },
+                {
+                    "start": 248,
+                    "end": 271,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "Mukherjee et al., 2004;"
+                },
+                {
+                    "start": 271,
+                    "end": 289,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "Nath et al., 2006)"
+                }
+            ]
+        },
+        {
+            "text": "The challenges imposed by the nature of the images to be analyzed lie in phenomena such as cell divisions (Al-Kofahi et al., 2006;Li et al., 2008a), cells entering or leaving the displayed area, or a large number of cells that needs to be tracked simultaneously. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 130,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(Al-Kofahi et al., 2006;"
+                },
+                {
+                    "start": 130,
+                    "end": 147,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "Li et al., 2008a)"
+                }
+            ]
+        },
+        {
+            "text": "In addition, cell tracking is often complicated by background inhomogeneity, for instance due to uneven illumination (Leong et al., 2003), and cells touching each other. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(Leong et al., 2003)"
+                }
+            ]
+        },
+        {
+            "text": "While these issues have been addressed extensively for tracking cells in 2D, surprisingly few approaches have addressed cell tracking in 3D. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "Besides naive thresholding approaches, there are only few advanced approaches, such as the active-contour based method proposed by Dufour et al. (2005). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 131,
+                    "end": 151,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "Dufour et al. (2005)"
+                }
+            ]
+        },
+        {
+            "text": "Recently, several authors (Jaensch et al., 2010;Kerekes et al., 2009) proposed reliable methods for tracking centrosomes in Caenorhabditise legans embryos. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 26,
+                    "end": 48,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "(Jaensch et al., 2010;"
+                },
+                {
+                    "start": 48,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "Kerekes et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "Yet, these approaches are tailored toward tracking small, bright and circular objects which e.g. resemble a Gaussian spot of a specific size. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "Such assumptions, however, are not satisfied by the complex and highly variable shapes of microglia under consideration here. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "Cell tracking is also relevant in the context of tracking cell populations in vitro, which has attracted considerable attention recently (House et al., 2009;Ong et al., 2010;Padfield et al., 2009).",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 137,
+                    "end": 157,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "(House et al., 2009;"
+                },
+                {
+                    "start": 157,
+                    "end": 174,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "Ong et al., 2010;"
+                },
+                {
+                    "start": 174,
+                    "end": 196,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "Padfield et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "The lack of methods for tracking cells in 3D has been reported as a limiting factor, for instance in the context of immunoimaging (Cahalan and Parker, 2008). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 130,
+                    "end": 156,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(Cahalan and Parker, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Despite the well-established protocol to capture microglia, innate immune cells in the central nervous system, in 3D using two-photon microscopy following the seminal works by Nimmerjahn et al. (2005) and Davalos et al. (2005), motility analysis has been performed by (and limited to) manual estimations derived from 2D projections (Davalos et al., 2008) in the numerous studies following these protocols. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 176,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "Nimmerjahn et al. (2005)"
+                },
+                {
+                    "start": 205,
+                    "end": 226,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "Davalos et al. (2005)"
+                },
+                {
+                    "start": 332,
+                    "end": 354,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "(Davalos et al., 2008)"
+                }
+            ]
+        },
+        {
+            "text": "In fact, tracking microglia cells is complicated by several aspects. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "Microglia tightly contact specific brain structures in their resting state (Wake et al., 2009), often making it difficult to clearly separate them from their surrounding Fig. 1. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 94,
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "text": "(Wake et al., 2009)"
+                },
+                {
+                    "start": 170,
+                    "end": 176,
+                    "type": "figure",
+                    "text": "Fig. 1"
+                }
+            ]
+        },
+        {
+            "text": "3D motion patterns of two microglia in vivo reconstructed using ct3d. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "The red and green areas indicate initial positions of the two microglia. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "While the red cell remains in resting state, the green cell is activated through an induced injury and migrates along a trajectory (orange line, trajectory obtained by ct3d; blue line, trajectory obtained from manual annotation) toward a site of injury (purple dot); see Supplementary Video 1 for a rendered animation of the same data.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "tissue. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
+        },
+        {
+            "text": "Furthermore, the extension and retraction of the so-called microglia processes makes it practically impossible to separate them from other cells or surrounding tissues in a 2D projection. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
+        },
+        {
+            "text": "As we demonstrate in this study, cosegmentation-based cell tracking may overcome these difficulties and allows to reliably track microglia in 3D, both in resting state and when moving in activated state, as displayed in Figure 1.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 220,
+                    "end": 228,
+                    "type": "figure",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "From an algorithmic point of view, our method can be seen as a broad generalization of thresholding methods. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1
+        },
+        {
+            "text": "Otsu's early and still commonly used approach (Otsu, 1975) picks a cut-off intensity based on the gray-value histogram of an image, considering pixel intensities below this threshold as background and pixels exceeding the threshold intensity as foreground. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 46,
+                    "end": 57,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "(Otsu, 1975"
+                }
+            ]
+        },
+        {
+            "text": "To deal with background inhomogeneities and objects of varying intensities, different approaches such as locally adaptive thresholding (Kim and Park, 2005) have been developed. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 135,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "(Kim and Park, 2005)"
+                }
+            ]
+        },
+        {
+            "text": "Our approach utilizes a highly systematic way of picking local thresholds in a hierarchical representation of all possible thresholds of an image, the socalled component tree (Jones, 1999;Najman and Couprie, 2004). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 175,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "(Jones, 1999;"
+                },
+                {
+                    "start": 188,
+                    "end": 213,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "Najman and Couprie, 2004)"
+                }
+            ]
+        },
+        {
+            "text": "In order to pick local thresholds in the component tree, we compare the component trees of consecutive time frames by solving the so-called tree assignment problem, a natural generalization of bipartite matchings and the associated assignment problem. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1
+        },
+        {
+            "text": "Comparing component trees by computing tree assignments yields a cosegmentation of two images; for cell tracking, cosegmentations between two time frames in a video sequence are of particular relevance.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1
+        },
+        {
+            "text": "While the term cosegmentation has been coined by Rother et al. (2006), our approach significantly differs from their approach, which is based on comparing histograms. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 49,
+                    "end": 69,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "Rother et al. (2006)"
+                }
+            ]
+        },
+        {
+            "text": "On the contrary, our approach is morphological in the sense that it attempts to identify overlapping regions in two images by finding an optimal tree assignment.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 8,
+            "section_rank": 1
+        },
+        {
+            "text": "Using cosegmentation has potential further applications in location proteomics beyond the cell tracking problem investigated in this article. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1
+        },
+        {
+            "text": "Tree assignments as a generalization of bipartite matchings were introduced and applied by the last author recently (Mosig et al., 2009), and were recently shown to be computationally hard in general (Canzar, Elbassioni and Klau, personal communication, 2010). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 116,
+                    "end": 136,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "(Mosig et al., 2009)"
+                },
+                {
+                    "start": 200,
+                    "end": 259,
+                    "type": "bibr",
+                    "text": "(Canzar, Elbassioni and Klau, personal communication, 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Applying tree assignments to component trees for obtaining cosegmentations is a novel contribution in this work. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1
+        },
+        {
+            "text": "In fact, cosegmentations promise to be useful in other bioimaging (and eventually image processing) applications beyond cell tracking. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1
+        },
+        {
+            "text": "One straightforward application where cosegmentation is of high relevance are protein colocalization studies. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1
+        },
+        {
+            "text": "Studying colocalization has recently become of relevance through the availability of corresponding two-or multi-label fluorescence microscopy (Schubert et al., 2006;Zinchuk and Zinchuk, 2008) or in situ hybridization (Boettiger and Levine, 2009;Carson et al., 2009) techniques.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 9,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 142,
+                    "end": 165,
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "text": "(Schubert et al., 2006;"
+                },
+                {
+                    "start": 165,
+                    "end": 191,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "Zinchuk and Zinchuk, 2008)"
+                },
+                {
+                    "start": 217,
+                    "end": 245,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Boettiger and Levine, 2009;"
+                },
+                {
+                    "start": 245,
+                    "end": 265,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "Carson et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "We implemented our algorithm in the publicly available ct3d software package, which is accompanied by the at3d graphical user interface. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 10,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "start": 55,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-1",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 106,
+                    "end": 110,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-2",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "In terms of applying our algorithm, this article focuses on evaluating the performance of our cosegmentation-based approach for 3D cell tracking, leaving colocalization studies as a future direction. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 10,
+            "section_rank": 1
+        },
+        {
+            "text": "Cell tracking performance is evaluated both on two-photon live cell imaging data displaying zebrafish microglia in vivo, and on synthetically generated data that allow to determine the algorithm's accuracy based on the ground truth the synthetic data were generated from.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 10,
+            "section_rank": 1
+        },
+        {
+            "text": "METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Computational methods",
+            "section_rank": 3
+        },
+        {
+            "text": "Our algorithm is based on representing each image F 1 ,...,F N by its component tree (Jones, 1999). ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 98,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "(Jones, 1999)"
+                }
+            ]
+        },
+        {
+            "text": "The component tree of an image I is obtained by considering the connected components of the thresholded versions I \u03b8 of I under all possible thresholds \u03b8. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The set of all connected components under all thresholds is obviously hierarchically ordered by subset inclusion. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "This hierarchical order defines the component tree, which can be computed in linear time (Najman and Couprie, 2004). ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "(Najman and Couprie, 2004)"
+                }
+            ]
+        },
+        {
+            "text": "For examples of 1D images and their component trees refer to Figure 2. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 69,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "Figure 3 illustrates the basic steps of our cell tracking algorithm. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The outline of the algorithm is as follows: we start with computing and pruning component trees for each time frame. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Then, tree assignments between each pair of consecutive component trees are computed. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The tree assignments can be turned into segmentations of the original images. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "This produces two segmentations of each image, requiring computation of a consensus segmentation. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "The resulting unique segmentation of each image then requires a standard bipartite matching between consecutive time frames to track cell identities over time. ",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Details of the individual steps are provided in the following paragraphs.",
+            "section": "Computational methods",
+            "paragraph_rank": 11,
+            "section_rank": 3
+        },
+        {
+            "text": "Computing and pruning component trees: for efficiently computing component trees, we relied on established algorithms based on a unionfind data structure (Najman and Couprie, 2004). ",
+            "section": "Computational methods",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 154,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "(Najman and Couprie, 2004)"
+                }
+            ]
+        },
+        {
+            "text": "In order to reduce the size and the complexity of the component tree, we apply a pruning procedure to these trees. ",
+            "section": "Computational methods",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "Pruning is a crucial ingredient of our algorithm, as running tree assignments on the complete component trees would be computationally too demanding. ",
+            "section": "Computational methods",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "The goal of pruning is thus to eliminate as many vertices as possible, keeping only those that reflect the relevant structures of the underlying image. ",
+            "section": "Computational methods",
+            "paragraph_rank": 12,
+            "section_rank": 3
+        },
+        {
+            "text": "This is conceptually closely related to the ideas behind component filters (Salembier and Serra, 1995).",
+            "section": "Computational methods",
+            "paragraph_rank": 12,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 75,
+                    "end": 102,
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "text": "(Salembier and Serra, 1995)"
+                }
+            ]
+        },
+        {
+            "text": "In a first pruning step, we eliminate all vertices that represent a connected component of size less than \u03b8 min or exceeding \u03b8 max , where \u03b8 min ,\u03b8 max are parameters specified by the user. ",
+            "section": "Computational methods",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "In a typical microscopy setting, loose upper and lower bounds on the size of the cells to be tracked are usually easy to estimate. ",
+            "section": "Computational methods",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "In practice, these parameters can be chosen quite loosely, with the ratio \u03b8 max /\u03b8 min equal to 10 or larger.",
+            "section": "Computational methods",
+            "paragraph_rank": 13,
+            "section_rank": 3
+        },
+        {
+            "text": "In a second pruning step, we eliminate all vertices in T i that do not occur immediately before or immediately after a branch in the original tree (excluding leaves), as indicated in Figure 2. ",
+            "section": "Computational methods",
+            "paragraph_rank": 14,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 183,
+                    "end": 191,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "As this might eventually delete relevant vertices, we introduce a single node cutoff parameter \u03c3, and keep every vertex v with only one child vertex w, if the symmetric difference between the areas associated with v and w comprises more than \u03c3 many pixels. ",
+            "section": "Computational methods",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "As a rule of thumb, choosing \u03c3<\u03b8 min /2 is a good choice, which automatically limits the error rate to 50% in the worst case. ",
+            "section": "Computational methods",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "For better worstcase guarantees, a smaller fraction of \u03b8 min can be chosen. ",
+            "section": "Computational methods",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "Note that all results presented in this work were obtained using \u03c3 = 200.",
+            "section": "Computational methods",
+            "paragraph_rank": 14,
+            "section_rank": 3
+        },
+        {
+            "text": "We consider the size cutoffs \u03b8 min and \u03b8 max as parameters derived from rough estimates on the expected size of the cells to be identified. ",
+            "section": "Computational methods",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "The main purpose is to eliminate vertices that result from noise in the input images, where such size cutoffs are known as grain filters (Vincent, 1993) as a specific type of connected operators. ",
+            "section": "Computational methods",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 137,
+                    "end": 152,
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "text": "(Vincent, 1993)"
+                }
+            ]
+        },
+        {
+            "text": "The expected size of noise components can be derived using random graph theory (Coupier et al., 2005). ",
+            "section": "Computational methods",
+            "paragraph_rank": 15,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 79,
+                    "end": 101,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "(Coupier et al., 2005)"
+                }
+            ]
+        },
+        {
+            "text": "As this is currently understood only for 2D images, we treat \u03b8 min as a user specified parameter.",
+            "section": "Computational methods",
+            "paragraph_rank": 15,
+            "section_rank": 3
+        },
+        {
+            "text": "Tree assignments: to obtain cosegmentations of the image pairs F i and F i+1 , we compute a tree-assignment between the corresponding component trees T i and T i+1 . ",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "As illustrated in Figure 2, a tree assignment A i associates vertices (i.e. connected components) in T i with vertices in T i+1 . ",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 18,
+                    "end": 26,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "As each assignment identifies a component in T i and a component in T i+1 as a putative cell, no ancestor or descendant of the matched vertices may be part of a valid tree-assignment-otherwise, some area in an image would be occupied by two cells. ",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "If two assignments involve no overlapping components, we will also refer to them as compatible. ",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "Naturally, valid tree-assignments can be identified as pairwise compatible assignments. ",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "More precisely, as the quality Algorithm cosegmentation-track",
+            "section": "Computational methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "pruning parameters \u03b8 min ,\u03b8 max , singlenode cutoff \u03c3.",
+            "section": "Computational methods",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "\u2022 Output:",
+            "section": "Computational methods",
+            "paragraph_rank": 18,
+            "section_rank": 3
+        },
+        {
+            "text": "(1) Compute component tree",
+            "section": "Computational methods",
+            "paragraph_rank": 19,
+            "section_rank": 3
+        },
+        {
+            "text": "(2) Prune T i to obtain T i using \u03b8 min ,\u03b8 max ,\u03c3.",
+            "section": "Computational methods",
+            "paragraph_rank": 20,
+            "section_rank": 3
+        },
+        {
+            "text": "(3) For each i \u2208[1 :",
+            "section": "Computational methods",
+            "paragraph_rank": 21,
+            "section_rank": 3
+        },
+        {
+            "text": "(4) Use A i and A i+1 to obtain two segmentations of image F i ; compute consensus segmentation S i from these two.",
+            "section": "Computational methods",
+            "paragraph_rank": 22,
+            "section_rank": 3
+        },
+        {
+            "text": "(5) For each i \u2208[1 : N \u22121], compute a maximum-weighted bipartite matching between the segments in S i and S i+1 .",
+            "section": "Computational methods",
+            "paragraph_rank": 23,
+            "section_rank": 3
+        },
+        {
+            "text": "(6) Assign random color to each segment in S 1 to obtain S 1 . ",
+            "section": "Computational methods",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "In S i+1 , assign the same color to the segment as the one matched in S i . ",
+            "section": "Computational methods",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "of an assignment X a,b can be weighted by the relative overlap \u03c9 a,b of the associated components, we aim to find maximum-weighted sets of pairwise compatible assignments. ",
+            "section": "Computational methods",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "Finding maximum weighted pairwise compatible assignments naturally translates into an integer linear program by introducing a binary indicator variable X a,b for each possible assignment between vertices a and b. ",
+            "section": "Computational methods",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "The linear program is established by introducing one constraint for each rootleaf path in each of the two trees; the sum of all variables involving any vertex along the path must be constraint to at most 1.",
+            "section": "Computational methods",
+            "paragraph_rank": 24,
+            "section_rank": 3
+        },
+        {
+            "text": "Weights for tree assignments: an important role is taken by the weights \u03c9 a,b . ",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "A straightforward choice is the 'relative overlap' between the corresponding areas \u03b3",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "(a) and \u03b4",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "(b), i.e. This score is also known as the Jaccard-Index or the Tanimoto Score. ",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "An important observation is that these weights are restricted to the interval [0,1]. ",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "For the solution of the tree assignment, this means that in a sense also the number of segments identified will be maximized. ",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "For weighting schemes yielding unbounded values over the real numbers, large and very highly scored segments might 'overshadow' many small good assignments in the solution.",
+            "section": "Computational methods",
+            "paragraph_rank": 25,
+            "section_rank": 3
+        },
+        {
+            "text": "For computing all weights between any pair of vertices in two given trees, we implemented a fast algorithm utilizing the fact that 0-weighted vertex pairs do not require a variable in the linear program, along with the property that \u03c9 a,b = 0 implies \u03c9 a ,b = 0 for all descendants a of a and b of b. ",
+            "section": "Computational methods",
+            "paragraph_rank": 26,
+            "section_rank": 3
+        },
+        {
+            "text": "This leads to a speedup of an order of magnitude compared to a naive way of computing all pairwise weights.",
+            "section": "Computational methods",
+            "paragraph_rank": 26,
+            "section_rank": 3
+        },
+        {
+            "text": "Turning tree assignments into cosegmentations:",
+            "section": "Computational methods",
+            "paragraph_rank": 27,
+            "section_rank": 3
+        },
+        {
+            "text": "} is a tree assignment between the component trees of two images I and J. Then, the areas \u03b3(a 1 ),...,\u03b3(a K ) refer to pairwise disjoint segments in I, and can hence be considered as a segmentation of I. Correspondingly, the areas \u03b4(b 1 ),...,\u03b4(b K ) induce a segmentation of J; note that the segments \u03b3(a i ) and \u03b4(b j ) necessarily overlap, as they require a non-zero weight to be included in an optimal tree-assignment.",
+            "section": "Computational methods",
+            "paragraph_rank": 28,
+            "section_rank": 3
+        },
+        {
+            "text": "Consensus segmentation and bipartite matching: when determining a segmentation of frame i, we are confronted with two competing options; one segmentation P i resulting from the cosegmentation of frames i\u22121 and i, the other one, Q i , from the cosegmentation of frames i and i+1. ",
+            "section": "Computational methods",
+            "paragraph_rank": 29,
+            "section_rank": 3
+        },
+        {
+            "text": "We resolve this by computing a consensus segmentation. ",
+            "section": "Computational methods",
+            "paragraph_rank": 29,
+            "section_rank": 3
+        },
+        {
+            "text": "We generally use P i as the starting point of a consensus segmentation. ",
+            "section": "Computational methods",
+            "paragraph_rank": 29,
+            "section_rank": 3
+        },
+        {
+            "text": "Any segment in Q i that does not overlap with any segment P i is supplement to P i to obtain the consensus segmentation P i . ",
+            "section": "Computational methods",
+            "paragraph_rank": 29,
+            "section_rank": 3
+        },
+        {
+            "text": "This ensures that cells entering the scene in frame i can be identified in frame i (rather than frame i+1).",
+            "section": "Computational methods",
+            "paragraph_rank": 29,
+            "section_rank": 3
+        },
+        {
+            "text": "Filtering results: as for most segmentation and tracking approaches, the results obtained from the steps described above has a tendency toward overdetection, i.e. detecting segments that result from image noise rather than cells. ",
+            "section": "Computational methods",
+            "paragraph_rank": 30,
+            "section_rank": 3
+        },
+        {
+            "text": "To filter out those segments, we utilize life span filtering, i.e. we filter out all cells whose identity can be traced across less than a certain minimum number of frames. ",
+            "section": "Computational methods",
+            "paragraph_rank": 30,
+            "section_rank": 3
+        },
+        {
+            "text": "This cell filter, along with several other ways to eliminate cells with unsuitable size or volume features, follows corresponding features of the Celltrack software (Sacan et al., 2008) for 2D cell tracking; forct3d, they are implemented in the graphical user interface of the at3d tool shown in Figure 4.",
+            "section": "Computational methods",
+            "paragraph_rank": 30,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 165,
+                    "end": 185,
+                    "type": "bibr",
+                    "text": "(Sacan et al., 2008)"
+                },
+                {
+                    "start": 296,
+                    "end": 304,
+                    "type": "figure",
+                    "text": "Figure 4"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 146,
+                    "end": 155,
+                    "type": "software",
+                    "rawForm": "Celltrack",
+                    "resp": "#annotator23",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-3",
+                    "cert": "0.9"
+                },
+                {
+                    "start": 211,
+                    "end": 215,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-4",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 277,
+                    "end": 281,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-5",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Comparison with other approaches",
+            "section_rank": 4
+        },
+        {
+            "text": "While a quantitative comparison with other methods is subject of Section 3, there are noteworthy commonalities and differences with other approaches on a qualitative level as summarized below:",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 31,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 Locally adaptive thresholding: deriving a segmentation from identifying vertices in a component tree can be seen as a way of locally adaptive thresholding; rather than determining local thresholds in precomputed regions of interest as in Kim and Park (2005) or windows of fixed size, every component represented in the component tree is eligible to define a local threshold. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 32,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 240,
+                    "end": 259,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "Kim and Park (2005)"
+                }
+            ]
+        },
+        {
+            "text": "Fig. 4. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 32,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "Screenshot of at3d, which is designed for exploring cell tracking results and extracting motility parameters. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "It also supports features for correcting overdetection and oversegmentation. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "Cells can be selected and removed either individually or by filtering based on different criteria such as size or life span.",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 32,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 Absence of a global background model: in contrast to both thresholding and level-set methods, in particular active-contour approaches, our approach does not involve any assumptions regarding the distribution of the background intensities. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 33,
+            "section_rank": 4
+        },
+        {
+            "text": "This is particularly useful in the presence of background inhomogeneity.",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 33,
+            "section_rank": 4
+        },
+        {
+            "text": "\u2022 Alternative matching schemes: one class of cell tracking approaches is based on computing bipartite matchings between segmentations of individual time frames. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 34,
+            "section_rank": 4
+        },
+        {
+            "text": "As bipartite matchings may not capture events such as cell division or cell fusion, recent works such as Padfield et al. (2009) introduced alternative matching schemes that are more flexible. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 34,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 105,
+                    "end": 127,
+                    "type": "bibr",
+                    "text": "Padfield et al. (2009)"
+                }
+            ]
+        },
+        {
+            "text": "Truly generalizing bipartite matchings, tree assignments can be seen as such alternative matching scheme. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 34,
+            "section_rank": 4
+        },
+        {
+            "text": "They are particularly interesting for cell tracking, as they may capture events such as cell division, cell fusion or cells entering the scene. ",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 34,
+            "section_rank": 4
+        },
+        {
+            "text": "See Supplementary Video 4 for synthetic data displaying a simplistic simulation of a cell division tracked by ct3d.",
+            "section": "Comparison with other approaches",
+            "paragraph_rank": 34,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "start": 110,
+                    "end": 114,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "id": "b27b28bf20-software-simple-6",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Implementation",
+            "section_rank": 5
+        },
+        {
+            "text": "We implemented component trees, tree-assignments and the complete cell tracking algorithm, in C++ using lp_solve 1 for solving both the tree assignment and the weighted bipartite matching (integer) linear programs, all of which is compiled in the ct3d command line tool. ",
+            "section": "Implementation",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 104,
+                    "end": 112,
+                    "type": "software",
+                    "rawForm": "lp_solve",
+                    "resp": "#annotator23",
+                    "used": true,
+                    "id": "b27b28bf20-software-3",
+                    "cert": "0.7"
+                },
+                {
+                    "start": 113,
+                    "end": 114,
+                    "type": "version",
+                    "rawForm": "1",
+                    "resp": "#curator",
+                    "id": "#b27b28bf20-software-3"
+                },
+                {
+                    "start": 247,
+                    "end": 251,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-9",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Cell tracking results can be further explored using at3d, which allows the user to select and extract specific cells identified by the cell tracking procedure, and derive their motility parameters such as velocity and deformation. ",
+            "section": "Implementation",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 52,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-10",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "The at3d tool is implemented using the qt framework for graphical user interfaces. ",
+            "section": "Implementation",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 8,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-11",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 39,
+                    "end": 41,
+                    "type": "software",
+                    "rawForm": "qt",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-12",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Input and output of image series is designed to be compatible with other visualization software, most notably v3d (Peng et al., 2010) for producing rendered visualizations of the output.",
+            "section": "Implementation",
+            "paragraph_rank": 35,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 114,
+                    "end": 133,
+                    "type": "bibr",
+                    "text": "(Peng et al., 2010)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 110,
+                    "end": 113,
+                    "type": "software",
+                    "rawForm": "v3d",
+                    "resp": "#annotator22",
+                    "id": "b27b28bf20-software-simple-13",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Experimental materials and methods",
+            "section_rank": 6
+        },
+        {
+            "text": "3D time-lapse, two-photon microscopy imaging of zebrafish microglia was performed as follows: Zebrafish preparation. ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "Zebrafish Tg(ApoE:egfp), in which microglia express EGFP (Peri and N\u00fcsslein-Volhard, 2008), were maintained in the National Zebrafish Resources of China (NZRC, Shanghai, China) with an automatic fish housing system (ESEN, Beijing, China) at 28 \u2022 C. Embryos were raised at 28.5 \u2022 C under a 14/10 h light-dark cycle in 10% Hanks solution, which consists of (in mM) 140 NaCl, 5.4 KCl, 0.25 Na2HPO 4 , 0.44 KH 2 PO 4 , 1.3 CaCl 2 , 1.0 MgSO 4 and 4.2 NaHCO 3 (pH 7.2). ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 57,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "(Peri and N\u00fcsslein-Volhard, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "They were staged as previously described (Kimmel et al., 1995). ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 62,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Kimmel et al., 1995)"
+                }
+            ]
+        },
+        {
+            "text": "Zebrafish handling procedures were approved by Institute of Neuroscience, Shanghai Institutes for Biological Sciences, Chinese Academy of Sciences. ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "Time-lapse imaging: for in vivo imaging, zebrafish larvae at 5-7 days post-fertilization (dpf) were first anesthetized with Hanks solution containing 0.02% tricaine methanesulfonate (MS222) and embedded in 1.5% lowmelting point agarose. ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "Time-lapse images of microglia were captured, via a 40\u00d7 water objective mounted on a two-photon microscope with 900 nm (Prairie) or a Nikon A1R confocal microscope with 488 nm. ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "Z-stack images, which covered the whole area of microglia in the optic tectum, were collected every 2 min at a section thickness of 1 \u00b5m. ",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "Each frame (512\u00d7512 pixels, 14 to 34 Z-stack images) was averaged four times.",
+            "section": "Experimental materials and methods",
+            "paragraph_rank": 36,
+            "section_rank": 6
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 7
+        },
+        {
+            "text": "We evaluated our algorithm on two types of data. ",
+            "section": "RESULTS",
+            "paragraph_rank": 37,
+            "section_rank": 7
+        },
+        {
+            "text": "First, we applied it to an in vivo time-lapse sequence of 3D two-photon images of zebrafish midbrain, displaying the motility of microglia; second, we applied ct3d to synthetically generated data for quantifying the accuracy of our cell tracking results.",
+            "section": "RESULTS",
+            "paragraph_rank": 37,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 159,
+                    "end": 163,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-14",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Evalutation on in vivo data was accomplished by comparison with manually annotated trajectories of specific microglia in three datasets. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "Note that manual annotation is limited to trajectories, whereas boundaries of the cell volumes are almost impossible to obtain in 3D, beside systematic problems with manual annotations (Huth et al., 2010). ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 185,
+                    "end": 204,
+                    "type": "bibr",
+                    "text": "(Huth et al., 2010)"
+                }
+            ]
+        },
+        {
+            "text": "Hence, we additionally created synthetic ground truth data to further evaluate the performance of our method. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "We followed the procedure used in Dufour et al. (2005), generating (noise perturbed) elliptical objects of average intensity I o above Poisson distributed background noise of intensity I b . ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 54,
+                    "type": "bibr",
+                    "text": "Dufour et al. (2005)"
+                }
+            ]
+        },
+        {
+            "text": "In addition to the procedure from Dufour et al. (2005), we created perturbed images with different types of background inhomogeneities, as shown in Figure 5: in a second set of data, we introduced a multiplicative vignetting effect to the data, following the vignetting model by Kang and Weiss (2000) under different focal lengths f and off-axis illumination parameters \u03b1. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 34,
+                    "end": 54,
+                    "type": "bibr",
+                    "text": "Dufour et al. (2005)"
+                },
+                {
+                    "start": 148,
+                    "end": 156,
+                    "type": "figure",
+                    "text": "Figure 5"
+                },
+                {
+                    "start": 279,
+                    "end": 300,
+                    "type": "bibr",
+                    "text": "Kang and Weiss (2000)"
+                }
+            ]
+        },
+        {
+            "text": "In a third set of data, we introduced an additive linear gradient along the x-axis of different slopes \u03b2. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "Each time series consists of 20 time frames, each of size 200\u00d7200\u00d740 pixels. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7
+        },
+        {
+            "text": "On these data, we ran ct3d with size cutoffs \u03b8 min = 500 and \u03b8 max = 5000, and a single-node cutoff of 200 pixels. ",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 22,
+                    "end": 26,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-15",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "In the resulting sequences, all cells whose identity could be traced through the complete sequence were kept, while all other cells were discarded using the at3d tool.",
+            "section": "RESULTS",
+            "paragraph_rank": 38,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 157,
+                    "end": 161,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-16",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Evaluation on synthetic data",
+            "section_rank": 8
+        },
+        {
+            "text": "Our results on the synthetically generated image sequences are summarized in Table 1 and indicate that ct3d is highly robust against different types and intensities of background inhomogeneities. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 39,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 84,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 103,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-17",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "The results suggest that ct3d has a tendency to identify components slightly (about 10%) larger than the actual objects, as can also be seen in the sample output in Supplementary Video 3. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 39,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 25,
+                    "end": 29,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-18",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "This is a natural consequence of pruning the component trees, where the vertex that would perfectly represent an object is unlikely to be part of the pruned tree. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 39,
+            "section_rank": 8
+        },
+        {
+            "text": "This effect can be reduced by smaller choice for the single-node cutoff parameter \u03c3 at the cost of higher computation time.",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 39,
+            "section_rank": 8
+        },
+        {
+            "text": "Running times varied between roughly 4 and 6 min, with an average of 303.42 s, for completely tracking one dataset. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "text": "The Fig. 5. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 10,
+                    "type": "figure",
+                    "text": "Fig. 5"
+                }
+            ]
+        },
+        {
+            "text": "Sections of synthetically generated images-Left: 2D section (top) of an image perturbed background vignetting following the Kang-Weiss model (Kang and Weiss, 2000). ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 141,
+                    "end": 163,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "(Kang and Weiss, 2000)"
+                }
+            ]
+        },
+        {
+            "text": "The dashed box indicates the position of the 1D section displayed in the lower part. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "text": "Right: same setting with the background perturbed by an additive linear gradient. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "text": "In both instances, ct3d yields reliable tracking results (see Table 1). ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 69,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "majority of running time was spent on constructing the component trees and computing the overlap weights (14.23 s on average per time frame), whereas each tree assignment required less than one second on average; the pruned component trees typically comprised a few dozens of vertices.",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 40,
+            "section_rank": 8
+        },
+        {
+            "text": "As a reference algorithm to compare against the performance ofct3d, we computed a segmentation of each time frame using the active contour approach by Chan and Vese (2001), 2 which is a wellestablished and state-of-the-art representative of the large family of level set methods. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 151,
+                    "end": 171,
+                    "type": "bibr",
+                    "text": "Chan and Vese (2001)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 62,
+                    "end": 66,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-20",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "As shown in Table 1, this method works highly accurate in the absence of background inhomogeneity while getting less reliable with increasing levels of background inhomogeneity, as can be expected due to the involvement of a global background model. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 19,
+                    "type": "table",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Figure 6 shows a result obtained from our tracking algorithm on a time series of microglia images measured as described above. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 6"
+                }
+            ]
+        },
+        {
+            "text": "We reduced resolution by half, so that the resulting width and height varied between 146 and 250 pixels, while the depth ranged between 14 and 66 layers for each time frame; each time series comprised 30-80 time frames. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8
+        },
+        {
+            "text": "Gray scale resolution was reduced from 16 bit to 8 bit. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8
+        },
+        {
+            "text": "We applied ct3d using parameters \u03b8 min = 200, \u03b8 max = 10 000 and a single-node cutoff of 200 pixels; the resulting pruned component trees contained 69 vertices on average, ranging between 40 and 168 vertices. ",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 11,
+                    "end": 15,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-21",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "Running times varied between roughly 2 and 10 min, with 471 s on average.",
+            "section": "Evaluation on synthetic data",
+            "paragraph_rank": 41,
+            "section_rank": 8
+        },
+        {
+            "text": "Tracking microglia in vivo",
+            "section_rank": 9
+        },
+        {
+            "text": "Under the given experimental protocol, the phenomenon of overdetection, i.e. the recognition of segments that are not microglia, is inevitable. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "This is due to the limited specificity of the apoE-GFP gene, which is also expressed in cells other than microglia in the surrounding tissue, often at comparably high levels as in microglia. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Yet, ct3d identifies microglia as segments that can be visually distinguished from non-microglia segments by a human observer due to their characteristic shape or motion patterns. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The To assess the quality of tracking results, we derived the number of identified cells, the voxel recall, i.e. what percentage of all ground truth object voxels was recovered in the tracking result, as well as the error rate defined as the ratio between the cardinality of the symmetric difference between tracking result and ground truth and the total number of voxels in the ground truth dataset. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Left columns: each dataset displayed three cells with different intensities I o above different levels of noise I b , displaying different types of background inhomogeneities (see text). ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Middle columns: the three cells were correctly recovered under all settings by ct3d. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Right columns: segmentation using the active contour approach by Chan and Vese (2001) is highly reliable in the absence of background inhomogeneity. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 65,
+                    "end": 85,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "Chan and Vese (2001)"
+                }
+            ]
+        },
+        {
+            "text": "With increasing level of inhomogeneity, voxel recall decreases, while the error rate increases. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Supplementary Figure 1 displays some of the results summarized here.",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 42,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 22,
+                    "type": "figure",
+                    "text": "Supplementary Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "graphical user interface of the at3d tool (see Fig. 4) allows to manually eliminate false positive cells from tracking results by different filtering and visual selection functions similar to those provided by Celltrack for 2D time-lapse sequences. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 53,
+                    "type": "figure",
+                    "text": "Fig. 4"
+                }
+            ]
+        },
+        {
+            "text": "The at3d tool also allows to manually correct for the occasionally observed events of oversegmentation, i.e. one microglia being recognized as two segments. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "We used at3d to eliminate non-microglia from all six datasets and correct oversegmentation in individual frames. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "We were able to reconstruct trajectories of all relevant microglia that can be visually identified in the original datasets; only one dataset was affected by a sudden 'frameshift', i.e. the sample changing its distance to the camera in the z direction, leading to interrupted trajectories at the corresponding time frame. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "In few other cases, the trajectory of a microglia was interrupted in individual frames, which we could correct using at3d. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9
+        },
+        {
+            "text": "Examples of the final results are given in Supplementary Videos 1 and 2.",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 43,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 43,
+                    "end": 71,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Supplementary Videos 1 and 2"
+                }
+            ]
+        },
+        {
+            "text": "In order to quantitatively evaluate the quality of ct3d results on in vivo microglia data, we compared ct3d trajectories with manual annotations. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 51,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-29",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 103,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator23",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-30",
+                    "cert": "0.9"
+                }
+            ]
+        },
+        {
+            "text": "To this end, we selected four microglia from four different datasets and annotated their trajectories manually using the 3D polyline markup feature of the v3d software. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 155,
+                    "end": 158,
+                    "type": "software",
+                    "rawForm": "v3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-31",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "The root mean square distance between the ct3d and the manual trajectories turned out to be 2.9 voxels, 5.5 voxels, 2.6 voxels and 5.4 voxels, respectively, in the four different datasets. ",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 44,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 42,
+                    "end": 46,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-32",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "These deviations can be considered relatively small in relation to the cell diameters, which were measured as 22.8, 22, 19.6 and 44.3 voxels, respectively.",
+            "section": "Tracking microglia in vivo",
+            "paragraph_rank": 44,
+            "section_rank": 9
+        },
+        {
+            "text": "DISCUSSION",
+            "section_rank": 10
+        },
+        {
+            "text": "We have presented a novel approach to tracking cells in 3D time-lapse microscopy image sequences, based on the concepts of component trees and cosegmentation. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "We demonstrate that this approach is robust against the numerous challenges imposed by images measured in an in vivo environment, and allows to identify microglia and their motion patterns in zebrafish neural tissue when combined with the at3d annotation tool. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 239,
+                    "end": 243,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-33",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "In a quantitative evaluation, we show that our approach is robust against different types of background inhomogeneities. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "This suggests that ct3d andat3d are potentially useful for in vivo imaging studies investigating other aspects than just microglia motility. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "start": 19,
+                    "end": 23,
+                    "type": "software",
+                    "rawForm": "ct3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-34",
+                    "cert": "1.0"
+                },
+                {
+                    "start": 27,
+                    "end": 31,
+                    "type": "software",
+                    "rawForm": "at3d",
+                    "resp": "#annotator22",
+                    "used": true,
+                    "id": "b27b28bf20-software-simple-35",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "In its current formulation, our cosegmentation approach relies on the assumption that the area occupied by an object overlaps between two consecutive time points. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10
+        },
+        {
+            "text": "While this may not be satisfied in all cell tracking problems [e.g. when tracking centrosomes (Jaensch et al., 2010)], it is a reasonable assumption for many immunoimaging-related studies.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 45,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 94,
+                    "end": 116,
+                    "type": "bibr",
+                    "text": "(Jaensch et al., 2010)"
+                }
+            ]
+        },
+        {
+            "text": "To the best of our knowledge, our approach is the first that can identify and track microglia in live cell imaging time series. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "In most cases, obtaining reliable trajectories still requires manual post-processing of the output. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The most notorious difficulties certainly are the complex morphology-their deformation patterns, irregular shapes and interaction with the surrounding-as well as the unspecificity of the fluorescent markers available. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "In this light, our approach constitutes significant progress in the sense that it has sufficient sensitivity to separate microglia form their surrounding. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "Yet, a fully automated approach remains a major and certainly non-trivial challenge. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "A first step in this direction might be the combination with level-set based approaches as utilized for 2D cell  Chan and Vese (2001). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 133,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "Chan and Vese (2001)"
+                }
+            ]
+        },
+        {
+            "text": "In general, ct3d could identify the annotated cells in all time frames (columns # Frames). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "The root mean square distance to the annotated trajectory measures a fraction of the diameter of the annotated cell (columns cell and RMS), while the Chan-Vese algorithm missed varying numbers of cells or failed completely (last column). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "For the Chan-Vese results, a parameter set was optimized for dataset ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(a). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "This parameter set (\u00b5 = 1, \u03bd = .5, \u03bb 1 = .2, \u03bb 2 = 5) was also applied to datasets ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(b) to ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(d). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "While for dataset ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(a), the result is comparable to ct3d, the annotated cell was identified in only 29 out of 49 time frames in ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(b). ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "In datasets ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(c) and ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "(d), the annotated cell could not be identified at all using these parameters. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10
+        },
+        {
+            "text": "See Supplementary Figure S2 for further illustrations.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 46,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 4,
+                    "end": 27,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Supplementary Figure S2"
+                }
+            ]
+        },
+        {
+            "text": "tracking by Nath et al. (2006) that might yield more accurate cell boundaries in some cases. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 47,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 12,
+                    "end": 30,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "Nath et al. (2006)"
+                }
+            ]
+        },
+        {
+            "text": "Yet, ct3d promises to be a key tool for further studying open questions regarding microglia, such as to determine if and how glia and microglia share the task of finding and removing apoptotic neurons from the vertebrate brain (Peri and N\u00fcsslein-Volhard, 2008).",
+            "section": "DISCUSSION",
+            "paragraph_rank": 47,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 227,
+                    "end": 260,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "(Peri and N\u00fcsslein-Volhard, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Beside the direct relevance for in vivo time-lapse microscopy, our study indicates that our morphological approach to cosegmentation is both practical and of relevance in bioimaging. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 48,
+            "section_rank": 10
+        },
+        {
+            "text": "Consequentially, it appears a natural approach to apply cosegmentation to protein colocalization studies, which have attracted considerable attention in recent years following the availability of two-or multi-label fluorescence microscopy (Zinchuk and Zinchuk, 2008).",
+            "section": "DISCUSSION",
+            "paragraph_rank": 48,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 239,
+                    "end": 266,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "(Zinchuk and Zinchuk, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Another major experience that can be drawn from our work is the obvious potential of component trees and the closely connected theory of component filters in bioimaging. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "While component filters are well known to leave relevant gradients unchanged, recent work such as the results by Coupier et al. (2005) allow to assign a statistical significance to components observed in an image. ",
+            "section": "DISCUSSION",
+            "paragraph_rank": 49,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 113,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "Coupier et al. (2005)"
+                }
+            ]
+        },
+        {
+            "text": "Such concepts might be particularly useful when combining component trees with cosegmentation for judging the relevance of colocalized segments observed when comparing two component trees.",
+            "section": "DISCUSSION",
+            "paragraph_rank": 49,
+            "section_rank": 10
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 11
+        },
+        {
+            "text": "Tree assignment of two (pruned) component trees for two 1D images I and J. Vertices not eliminated by the second pruning step are indicated by circles. ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "All other non-branching vertices are eliminated in the pruning step. ",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "The tree assignment indicated by the dashed arrows is A ={(a,c),(b,d),(e,f )} with a weight of w a,c +w b,d +w e,f .",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 3 .",
+            "section_rank": 12
+        },
+        {
+            "text": "Overview of complete cell tracking algorithm.",
+            "section": "Fig. 3 .",
+            "paragraph_rank": 51,
+            "section_rank": 12
+        },
+        {
+            "text": "\u03c9 a,b := |\u03b3",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "(a)\u2229\u03b4",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "(b)|/|\u03b3",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "(a)\u222a\u03b4",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "(b)|.",
+            "paragraph_rank": 52,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 6 .",
+            "section_rank": 14
+        },
+        {
+            "text": "Top: visualization of trajectories obtained by manual annotation (blue lines) with trajectories obtained using ct3d (orange lines) for microglia in activated state, see ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "(a) and ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "(b), as well as resting state, see ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "(c) and ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "(d). ",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "Bottom: quantitative comparison of trajectories obtained by ct3d and the active contour approach from",
+            "section": "Fig. 6 .",
+            "paragraph_rank": 53,
+            "section_rank": 14
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 15
+        },
+        {
+            "text": "Tracking results for synthetic data",
+            "section": "Table 1 .",
+            "paragraph_rank": 54,
+            "section_rank": 15
+        },
+        {
+            "text": "http://lpsolve.sourceforge.net/5.5/.",
+            "section": "Table 1 .",
+            "paragraph_rank": 56,
+            "section_rank": 15
+        },
+        {
+            "text": "Results were computed for parameters \u00b5 = 1, \u03bd = 0.7, \u03bb 1 = 1, \u03bb 2 = 2, t = 0.8 running 100 iterations.",
+            "section": "Table 1 .",
+            "paragraph_rank": 57,
+            "section_rank": 15
+        },
+        {
+            "text": "ACKNOWLEDGEMENTS",
+            "section_rank": 17
+        },
+        {
+            "text": "We are grateful to Dr. F. Peri for providing transgenic zebrafish line Tg(ApoE:EGFP). ",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 58,
+            "section_rank": 17
+        },
+        {
+            "text": "We acknowledge helpful remarks by Dr K. Palaniappan on implementing the level set function of the Chan-Vese method.",
+            "section": "ACKNOWLEDGEMENTS",
+            "paragraph_rank": 58,
+            "section_rank": 17
+        }
+    ]
+}

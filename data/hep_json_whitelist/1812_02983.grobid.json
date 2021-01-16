@@ -1,0 +1,1183 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "HIPSTER (Heavily Ionising Particle Standard Toolkit for Event Recognition)",
+            "section_rank": 1
+        },
+        {
+            "text": "is an open source Python package designed to facilitate the use of TensorFlow in a high energy physics analysis context. ",
+            "section": "HIPSTER (Heavily Ionising Particle Standard Toolkit for Event Recognition)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "The core functionality of the software is presented, with images from the MoEDAL experiment Nuclear Track Detectors (NTDs) serving as an example dataset. ",
+            "section": "HIPSTER (Heavily Ionising Particle Standard Toolkit for Event Recognition)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Convolutional neural networks are selected as the classification algorithm for this dataset and the process of training a variety of models with different hyper-parameters is detailed. ",
+            "section": "HIPSTER (Heavily Ionising Particle Standard Toolkit for Event Recognition)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        },
+        {
+            "text": "Next the results are shown for the MoEDAL problem demonstrating the rich information output by HIPSTER that enables the user to probe the performance of their model in detail.",
+            "section": "HIPSTER (Heavily Ionising Particle Standard Toolkit for Event Recognition)",
+            "paragraph_rank": 1,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "Machine learning has evolved as a field over many years, with the Fisher Discriminant [1] from 1936 forming the basis of the perceptron [2] an early neural network style model from 1958. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 89,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                },
+                {
+                    "start": 136,
+                    "end": 139,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ]
+        },
+        {
+            "text": "In particle physics machine learning has been used as a tool since the 1990s [3] in some form or another, mostly for solving classification problems. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ]
+        },
+        {
+            "text": "Boosted decision trees emerged as the favourite algorithm for this task and though these algorithms are still competitive with many more modern techniques the recent explosion of so-called deep learning presents new options. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "The rise of deep learning as a field of research has been met with adoption of its techniques within many other areas, which has in turn led to a large increase in the number of open source machine learning frameworks available. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "It has also led to a diversification in the number of applications of machine learning algoritms that are no longer limited to solving classification or regression problems. ",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "Importantly from the perspective of particle physics many of these tools are developed and maintained by teams that are very well funded, typically leading to a faster pace of development and quality of documentation than could be afforded in our field.",
+            "section": "Introduction",
+            "paragraph_rank": 2,
+            "section_rank": 2
+        },
+        {
+            "text": "We present HIPSTER as a means of interfacing with these modern machine learning tools. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "HIPSTER is a wrapper around TensorFlow [4] and also offers a number of features that facilitate its easier use. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 39,
+                    "end": 42,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "These features largely rely on the NumPy package for numerical Python [5]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 70,
+                    "end": 73,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 35,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "NumPy",
+                    "resp": "whitelist",
+                    "id": "software-simple-w0"
+                },
+                {
+                    "start": 41,
+                    "end": 48,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w1"
+                },
+                {
+                    "start": 63,
+                    "end": 69,
+                    "type": "software",
+                    "rawForm": "Python",
+                    "resp": "whitelist",
+                    "id": "software-simple-w2"
+                }
+            ]
+        },
+        {
+            "text": "Functionality is designed with the data analysis of nuclear track detectors (NTDs) in mind, specifically those deployed at the MoEDAL experiment [6] at the Large Hadron Collider (LHC) [7], however there also exists minimal functionality for more traditional high energy physics problems, for example the Higgs Kaggle Challenge [8]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 145,
+                    "end": 148,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                },
+                {
+                    "start": 184,
+                    "end": 187,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[7]"
+                },
+                {
+                    "start": 327,
+                    "end": 330,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "The design philsophy of HIPSTER is to learn as much from the field of machine learning research as possible whilst keeping interfaces to particle physics specific software such as ROOT [9] separate from the core code. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 185,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 163,
+                    "end": 171,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w3"
+                },
+                {
+                    "start": 180,
+                    "end": 184,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "Section 2 will outline the core functionality of the package as well as several modular interfaces to external packages, and will be followed by examples from the MoEDAL NTD analysis in Section 3.",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "entity_spans": [
+                {
+                    "start": 53,
+                    "end": 60,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w5"
+                }
+            ]
+        },
+        {
+            "text": "Features of the HIPSTER library",
+            "section_rank": 3
+        },
+        {
+            "text": "One significant feature of HIPSTER is to build deep learning models from a user supplied configuration. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "In this sense the library serves as an interface to other machine learning tools. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "Two models, the multi-layer perceptron (MLP) and convolutional neural network (CNN), will be detailed in the following subsections. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 4,
+            "section_rank": 3
+        },
+        {
+            "text": "There are far more extensive libraries in existence such as Keras [10] that allow users to build models using a TensorFlow back-end, however HIPSTER was designed with the MoEDAL NTD analysis in mind.",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 4,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 66,
+                    "end": 70,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[10]"
+                }
+            ]
+        },
+        {
+            "text": "The NTD analysis relies heavily on the processing of images. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The interfaces to CNN types models are therefore the most complete in the library. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "The interfaces to both the CNNs and other models are implemented with best practice procedure from the deep learning community in mind. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 5,
+            "section_rank": 3
+        },
+        {
+            "text": "Specific elements of the package that may be different to traditional image processing include the functionality to keep track of geometric features specific to the analysis of NTDs, namely the multiple layers of an NTD and the different sides of those layers.",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 5,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "start": 25,
+                    "end": 32,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w6"
+                }
+            ]
+        },
+        {
+            "text": "There are also some more general tools that have been adopted for instance TensorBoard. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "TensorBoard is a suite of tools used to debug and diagnose the performance of a models built in TensorFlow, HIPSTER models automatically include the necessary summary operations to ensure that the training can be easily visualised. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Figure 1 shows an example of the kind of information that one can view in TensorBoard after training a model with HIPSTER. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 6,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "A model instantiated in HIPSTER will output the required files to view the TensorBoard output automatically, whereas by using TensorFlow in its original form one would have to manually call the necessary functions in their model in order to output the correct information. ",
+            "section": "Features of the HIPSTER library",
+            "paragraph_rank": 6,
+            "section_rank": 3
+        },
+        {
+            "text": "Multi-layer perceptrons",
+            "section_rank": 4
+        },
+        {
+            "text": "Multi-layer perceptrons are models that fit the structure outlined in figure 2. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "The architecture of MLP models is defined by a number hyper-parameters, for example the number of hidden layers in the network or the number of nodes each layer contains. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "In general when the number",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 7,
+            "section_rank": 4
+        },
+        {
+            "text": "Hidden Layer Outputs of hidden layers is larger than two the network could be referred to as a deep neural network with no specific distiction between a neural network (NN) and a deep neural network (DNN). ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "When every node in a given layer is connected to every node in the layers adjacent to it the network may also be described as a fully connected network (FCN). ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Furthermore feedfoward NNs are models in which the graph of nodes has no loops, that is to say data flows exclusively through the graph in one directions, forward. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Developed in the 1980s, Recurrent NNs [11][12][13] are NNs that where nodes such that loops are formed, specifically Long Short-Term Memory (LSTM) NNs [14] have recently gained popularity in particle physics [3], though they are not included in HIPSTER currently there are plans for these models to be included in the future. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 38,
+                    "end": 42,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[11]"
+                },
+                {
+                    "start": 42,
+                    "end": 46,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[12]"
+                },
+                {
+                    "start": 46,
+                    "end": 50,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[13]"
+                },
+                {
+                    "start": 151,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[14]"
+                },
+                {
+                    "start": 208,
+                    "end": 211,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "software",
+                    "rawForm": "Term",
+                    "resp": "whitelist",
+                    "id": "software-simple-w7"
+                }
+            ]
+        },
+        {
+            "text": "In HIPSTER MLPs of arbitrary size can be created by calling DNN with options specifying the network inputs, number of predictive classes and the network architecture. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Additionally one may pick from a number of different activation functions and choose whether or not to use dropout [15], a technique to prevent neural networks from overfitting. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 119,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "Two example functions exist MLP2 and MLP5 which demonstrate the functionality of the DNN function. ",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "The options of MLP models are interfaced by the MLPTrainingOptions class which keeps track of all of the relevant parameters and allows them be altered at the desire of the user.",
+            "section": "Multi-layer perceptrons",
+            "paragraph_rank": 8,
+            "section_rank": 4
+        },
+        {
+            "text": "Convolutional Neural Networks",
+            "section_rank": 5
+        },
+        {
+            "text": "Convolutional Neural Networks [16,17] are models following the structure shown in figure 3, where the grey blocked marked \"CONV\" indicate the application of kernel convolutions. ",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 34,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "[16,"
+                },
+                {
+                    "start": 34,
+                    "end": 37,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "17]"
+                }
+            ]
+        },
+        {
+            "text": "Kernel convolutions are the process by which a filter (kernel), traditionally designed by hand to achieve a desired effect, is convolved with the pixels of an image or more generally the numbers in an array. ",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5,
+            "entity_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "software",
+                    "rawForm": "Kernel",
+                    "resp": "whitelist",
+                    "id": "software-simple-w8"
+                }
+            ]
+        },
+        {
+            "text": "In image processing the output of a kernel convolution may change the original image leaving behind a map of specific features contained in the original, for example marking the edges of objects with white pixels and turning the remainder of the image black. ",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "In deep learning the values in the kernel are treated as train-able weights analogous to those in a node of a MLP. ",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "As can be seen in the schematic the output of several layers of kernel convolutions serves as the input to a FCN, these two parts can be broadly recognised as serving the purposes of feature extraction and classification respectively. ",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "In general the classifier part of the network is optional and there are an increasing number of network architectures that have emerged that have no fully connected layers, for instance encoder-decoder",
+            "section": "Convolutional Neural Networks",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "text": "Input image",
+            "section_rank": 6
+        },
+        {
+            "text": "Inputs to FCN Figure 3: The structure of a basic convolutional neural network. ",
+            "section": "Input image",
+            "paragraph_rank": 10,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 14,
+                    "end": 22,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "Decreasing size of convolutional layers indicates sub-sampling (e.g. maxpool). ",
+            "section": "Input image",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "Red, green and blue layers could match their corresponding layers of an RBG image or represent any layer in an arbitrary voxel structure.",
+            "section": "Input image",
+            "paragraph_rank": 10,
+            "section_rank": 6
+        },
+        {
+            "text": "networks [18], whilst these are not currently available in HIPSTER efforts to include this functionality in a release are on-going. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 9,
+                    "end": 13,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "CNN models can be created in HIPSTER with the CNN function which acts like the DNN function with a different set of options. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "Currently the type of convolutional layer supported is tf.nn.conv2d, the TensorFlow two dimensional convolution operation. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "In addition the software currently assumes that a layer of sub-sampling e.g. maxpooling will follow each convolutional layer. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "start": 16,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w9"
+                }
+            ]
+        },
+        {
+            "text": "In practice one may wish to forgo sub-sampling if an image is already small or simply to experiment with different network architectures. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "Whilst this achievable by taking the trivial sub-sample in the step where sub-sampling is assumed, in future more flexibility will be included with regards to specifying the order of the layers and their types. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "Fully connected layers can be added to the end of the network with the same implementation as a DNN style network. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "In order to match the size of the final layer of the feature extraction part of the network to the input size of the classification portion a function get_FCinputNodes exists. ",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "The options for a CNN are interfaced by the CNNTrainingOptions class which is analogous to MLPTrainingOptions.",
+            "section": "Input image",
+            "paragraph_rank": 11,
+            "section_rank": 6
+        },
+        {
+            "text": "General Features",
+            "section_rank": 7
+        },
+        {
+            "text": "As well as the classes for handling model options and functions for implementing DNN and CNN models HIPSTER comes with a number of other tools that assist in the building, training and evaluation of machine learning models. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "A few of these are highlighted here. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "In order to facilitate easier training of DNNs TrainDeepNetwork exists as a one line call to build and train a deep network. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "Model building for both DNNs and CNNs is made easier with the use of reconfigure and auto-configure functions that can be called after a check is carried out on a set of training options to verify is they would build a valid network or not. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "An example of such a check is ensuring that the sub-sampling layer in a CNN does not fail due to input array size being too small, this would be automatically detected by the options class. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "Several types of model evaluation are available within the package. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 59,
+                    "end": 66,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w10"
+                }
+            ]
+        },
+        {
+            "text": "Inbuilt support for TensorBoard allows the user to view many useful metrics in their web-browser. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "This includes the evolution of the accuracy and loss of a model over time as well as more complex information. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "The response of the learned filters can be viewed directly for a subset of the training data for CNN type models. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "TensorBoard support includes Embedding Projector functionality that allows the user to visualise high dimensional data interactively, though the meaning of these embeddings is highly dependent on the problem being tackled. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "The aforementioned tools are useful for diagnosing the behaviour of a model during training. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "HIPSTER is also capable of outputting information that helps to determine the success of a model once trained. ",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "The most commonly used of these metrics is the receiving operator characteristic curve (ROC curve) and the area under the curve (AUC).",
+            "section": "General Features",
+            "paragraph_rank": 12,
+            "section_rank": 7
+        },
+        {
+            "text": "Example application",
+            "section_rank": 8
+        },
+        {
+            "text": "The MoEDAL experiment [6] coniststs of a number of detectors designed to probe for beyond the standard model (BSM) physics. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 22,
+                    "end": 25,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "One such method is an array of Nuclear Track Detectors (NTDs) each element of which consists of a number of alternating layers of CR39 and Makrofol polymer kept in an aluminium housing. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "This array is sensitive to highly ionising particles that cause breaks in the intra-molecular bonds as they pass through the bulk of the polymer. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "The breaks in these chains of molecules cause erosion of material when exposed to a hot sodium hydroxide solution to be accelerated. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "The effect is that the otherwise uniform loss of material across the surfuce of a polymer sheet is increased in the local area surrounding the past trajectory of the particle, forming what is known as an etch pit as in figure 4. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 219,
+                    "end": 227,
+                    "type": "figure",
+                    "text": "figure 4"
+                }
+            ]
+        },
+        {
+            "text": "The signatures that the experiment searches for are when these areas of damage are aligned across a number of layers from the same module indicating that a highly ionising particle penetrated the stack. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "After being exposed to the LHC conditions the NTDs are scanned to form a dataset of images. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "The search for etch pits within these images is a fundamental task is the analysis of MoEDAL NTD data. ",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "It is this search that has largely informed the design of the HIPSTER.",
+            "section": "Example application",
+            "paragraph_rank": 13,
+            "section_rank": 8
+        },
+        {
+            "text": "From the top-down view etch pits appear as an elipse in general or a circle in the special case where the particle trajectory was normal to the polymer surface.",
+            "section": "Example application",
+            "paragraph_rank": 14,
+            "section_rank": 8
+        },
+        {
+            "text": "Searching for elipse like shapes in an image is the zeroth order approximation around which the algorithms implemented in HIPSTER were chosen. ",
+            "section": "Example application",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Convolutional neural networks have been used to analyse a small dataset of NTD images as a means to test the software, labels for example were gathered using the Zooniverse platform for citizen science. ",
+            "section": "Example application",
+            "paragraph_rank": 15,
+            "section_rank": 8,
+            "entity_spans": [
+                {
+                    "start": 109,
+                    "end": 117,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w11"
+                },
+                {
+                    "start": 162,
+                    "end": 172,
+                    "type": "software",
+                    "rawForm": "Zooniverse",
+                    "resp": "whitelist",
+                    "id": "software-simple-w12"
+                }
+            ]
+        },
+        {
+            "text": "The dataset reflects very early versions of the etching process and scanning techniques, it also is very low in statistics with only several hundred labelled examples of about 40 \u00d7 40 pixels each. ",
+            "section": "Example application",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "Despite a suboptimal dataset the CNN was able to achieve 80% accuracy, although the variance of this result on more data, were it available, is expected to be high due to the small training set. ",
+            "section": "Example application",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "The advances in the etching and scanning techniques are expected to yield much improved results in terms of accuracy and variance.",
+            "section": "Example application",
+            "paragraph_rank": 15,
+            "section_rank": 8
+        },
+        {
+            "text": "For the results reported only a single side of each piece of polymer was considered, however the HIPSTER library is equipped to deal specifically with the case in which both sides are considered (as well as accounting for relationships between different layers in the stack). ",
+            "section": "Example application",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "A full analysis is expected to be completed by the MoEDAL collaboration in the future in which these extra details will be considered, making full use of the HIPSTER library. ",
+            "section": "Example application",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "In the minimal example presented tweaking of model configurations between training sessions was made easier with the use of HIPSTER. ",
+            "section": "Example application",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "In particular due to a benchmarking mode in hipster that outputs training meta-data in a particular structure for each training. ",
+            "section": "Example application",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "This data includes TensorFlow checkpoint files to restore the model, the files necessary for viewing the Ten-sorBoard output, as well as some replicated information from TensorBoard output to simple text files (to make easier automating the process of evaluating many models at once), for example model accuracy, time to train, whether or not early termination was invoked and the hyper-parameter configuration of the trained model.",
+            "section": "Example application",
+            "paragraph_rank": 16,
+            "section_rank": 8
+        },
+        {
+            "text": "Availability and the future",
+            "section_rank": 9
+        },
+        {
+            "text": "This article is based on the a pre-release version of the HIPSTER library, which is currently not available for installation by the general public. ",
+            "section": "Availability and the future",
+            "paragraph_rank": 17,
+            "section_rank": 9
+        },
+        {
+            "text": "There are plans to make the library available on the Python Package Index in the future. ",
+            "section": "Availability and the future",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 53,
+                    "end": 59,
+                    "type": "software",
+                    "rawForm": "Python",
+                    "resp": "whitelist",
+                    "id": "software-simple-w13"
+                },
+                {
+                    "start": 60,
+                    "end": 67,
+                    "type": "software",
+                    "rawForm": "Package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w14"
+                }
+            ]
+        },
+        {
+            "text": "The current dependencies of the software are as follows: TensorFlow [4], NumPy [5], Pillow [19] and matplotlib [20]. ",
+            "section": "Availability and the future",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 71,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                },
+                {
+                    "start": 79,
+                    "end": 82,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                },
+                {
+                    "start": 91,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[19]"
+                },
+                {
+                    "start": 111,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[20]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 32,
+                    "end": 40,
+                    "type": "software",
+                    "rawForm": "software",
+                    "resp": "whitelist",
+                    "id": "software-simple-w15"
+                },
+                {
+                    "start": 73,
+                    "end": 78,
+                    "type": "software",
+                    "rawForm": "NumPy",
+                    "resp": "whitelist",
+                    "id": "software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "Features interfacing with ROOT are dependent on the ROOT package for data analysis [9] and those interfacing with data from LabVIEW are dependent on the npTDMS [21] package.",
+            "section": "Availability and the future",
+            "paragraph_rank": 17,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 83,
+                    "end": 86,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[9]"
+                },
+                {
+                    "start": 160,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[21]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 26,
+                    "end": 30,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w17"
+                },
+                {
+                    "start": 52,
+                    "end": 56,
+                    "type": "software",
+                    "rawForm": "ROOT",
+                    "resp": "whitelist",
+                    "id": "software-simple-w18"
+                },
+                {
+                    "start": 57,
+                    "end": 64,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w19"
+                },
+                {
+                    "start": 124,
+                    "end": 131,
+                    "type": "software",
+                    "rawForm": "LabVIEW",
+                    "resp": "whitelist",
+                    "id": "software-simple-w20"
+                },
+                {
+                    "start": 165,
+                    "end": 172,
+                    "type": "software",
+                    "rawForm": "package",
+                    "resp": "whitelist",
+                    "id": "software-simple-w21"
+                }
+            ]
+        },
+        {
+            "text": "As the MoEDAL NTD analysis continues HIPSTER will also evolve to meet the needs of the group, this will define the priorities of the development team going forward. ",
+            "section": "Availability and the future",
+            "paragraph_rank": 18,
+            "section_rank": 9
+        },
+        {
+            "text": "Nevertheless the developers also seek to add implementations of popular machine learning algorithms as already eluded to even if they have no immediate relation to the MoEDAL NTD analysis. ",
+            "section": "Availability and the future",
+            "paragraph_rank": 18,
+            "section_rank": 9
+        },
+        {
+            "text": "There is also an interest to enable HIPSTER to wrap around Keras models as these models can be imported to TMVA [22] which then makes them compatible with large analysis frameworks such as those used on the ATLAS and CMS collaborations.",
+            "section": "Availability and the future",
+            "paragraph_rank": 18,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 116,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[22]"
+                }
+            ]
+        },
+        {
+            "text": "This publication uses data generated via the Zooniverse.org platform, development of which is funded by generous support, including a Global Impact Award from Google, and by a grant from the Alfred P. Sloan Foundation.",
+            "section": "Availability and the future",
+            "paragraph_rank": 19,
+            "section_rank": 9,
+            "entity_spans": [
+                {
+                    "start": 45,
+                    "end": 55,
+                    "type": "software",
+                    "rawForm": "Zooniverse",
+                    "resp": "whitelist",
+                    "id": "software-simple-w22"
+                },
+                {
+                    "start": 159,
+                    "end": 165,
+                    "type": "software",
+                    "rawForm": "Google",
+                    "resp": "whitelist",
+                    "id": "software-simple-w23"
+                },
+                {
+                    "start": 191,
+                    "end": 197,
+                    "type": "software",
+                    "rawForm": "Alfred",
+                    "resp": "whitelist",
+                    "id": "software-simple-w24"
+                },
+                {
+                    "start": 207,
+                    "end": 217,
+                    "type": "software",
+                    "rawForm": "Foundation",
+                    "resp": "whitelist",
+                    "id": "software-simple-w25"
+                }
+            ]
+        },
+        {
+            "text": "Figure 1 :",
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 1: A screen capture of the TensorBoard output from a model trained in HIPSTER on simulated NTD data, viewed in a web browser.",
+            "section": "Figure 1 :",
+            "paragraph_rank": 20,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 2 :",
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 2: A basic neural network containing an input layer of d nodes corresponding to data of dimensionality d, a hidden layer of m hidden units h i and an output layer of K predictive units y i .",
+            "section": "Figure 2 :",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "t 1 Post-etched surface Etched for time t 2 > t 1 Figure 4 :",
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 4: Sketch of cross sectional view of a polymer sheet at different stages of the etching process.",
+            "section": "t 1 Post-etched surface Etched for time t 2 > t 1 Figure 4 :",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "Figure 5 :",
+            "section_rank": 13
+        },
+        {
+            "text": "Figure 5: Twelve images taken from the training dataset in the example application. ",
+            "section": "Figure 5 :",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "The network was trained to classify whether or not an image contained an etch pit.",
+            "section": "Figure 5 :",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "EPJ Web of Conferences 214, 06027 (2019) https://doi.org/10.1051/epjconf/201921406027 CHEP 2018",
+            "section": "Figure 5 :",
+            "paragraph_rank": 24,
+            "section_rank": 13
+        },
+        {
+            "text": "EPJ Web of Conferences 214, 06027 (2019) https://doi.org/10.1051/epjconf/201921406027",
+            "section": "Figure 5 :",
+            "paragraph_rank": 25,
+            "section_rank": 13
+        },
+        {
+            "text": "This authors would specifically like to thank the following University of Alabama undergraduate students Zach Buckley, Sarah Deutsch, Thomas (Hank) Richards, Cameron Roberts, Andie Wall and Alex Watts, for their work in labelling data.",
+            "section_rank": 15
+        },
+        {
+            "text": "The authors would like to thank the Nvidia corporation for providing hardware that was used to carry out this research.",
+            "section": "This authors would specifically like to thank the following University of Alabama undergraduate students Zach Buckley, Sarah Deutsch, Thomas (Hank) Richards, Cameron Roberts, Andie Wall and Alex Watts, for their work in labelling data.",
+            "paragraph_rank": 26,
+            "section_rank": 15
+        },
+        {
+            "text": "The authors would like to thank the Science and Technology Facilities Council (UK) for providing funding for this research.",
+            "section": "This authors would specifically like to thank the following University of Alabama undergraduate students Zach Buckley, Sarah Deutsch, Thomas (Hank) Richards, Cameron Roberts, Andie Wall and Alex Watts, for their work in labelling data.",
+            "paragraph_rank": 27,
+            "section_rank": 15
+        }
+    ]
+}

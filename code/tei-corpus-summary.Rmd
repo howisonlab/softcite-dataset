@@ -1,0 +1,362 @@
+---
+title: "TEI Corpus Summary"
+author: "Fan Du"
+date: "5/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(xml2)
+library(ggplot2)
+library(janitor)
+library(kableExtra)
+library(wesanderson)
+
+tei_doc <- read_xml("https://raw.githubusercontent.com/ourresearch/software-mentions/master/resources/dataset/software/corpus/softcite_corpus.tei.xml") %>% xml_ns_strip()
+```
+
+As of June 8, 2020, the softcite TEI corpus contains: 
+
+* 4,971 articles, 2,300 paragraphs, and 1,078 non-matched quotes
+* 3,544 articles with zero mentions, and 1,427 articles with one or more software mentions
+  * Among 1,427 articles with mentions, 1,240 have annotated paragraphs matched with PDF; 483 articles have non-matched quotes; 297 have both matched annotations and non-matched quotes.
+  * All the 1,240 articles with annotated paragraphs are reviewed by curators during the consistency improvement.
+* 2,521 PMC articles and 2,450 econ articles
+* 4,400 articles are annotated once. 571 articles are annotated by multiple annotators. 
+* 1,242 articles are reviewed by curators and passed the scripted consistency check.
+* 5,169 software entities and 3,166 software attributes annotated. 8,335 annotations in total.
+* 1,171 annotations manually edited during the consistency check
+
+
+```{r, eval=F}
+# xml_find_num(tei_doc, xpath="count(//fileDesc[@xml:id])")
+# 4,971 articles in tei_doc
+# xml_find_num(tei_doc, xpath="count(//TEI[@subtype='pmc'])")
+# 2,521 PMC articles in tei_doc
+# xml_find_num(tei_doc, xpath="count(//TEI[@subtype='econ'])")
+# 2,450 econ articles in tei_doc
+
+# xml_find_num(tei_doc, xpath="count(//p)")
+# 2,300 paragraphs in tei_doc
+# xml_find_num(tei_doc, xpath="count(//ab)")
+# 1,078 non-matched quotes in tei_doc
+# xml_find_num(tei_doc, xpath="count(//body[not(node())])")
+# 3,544 articles with zero mentions
+# xml_find_num(tei_doc, xpath="count(//body[.//text()])")
+# 1,427 articles with mentions
+# xml_find_num(tei_doc, xpath="count(//body[./p/text()])")
+# 1,240 articles with annotated paragraphs
+# xml_find_num(tei_doc, xpath="count(//body[./ab/text()])")
+# 483 articles with non-matched annotated quotes
+# xml_find_num(tei_doc, xpath="count(//body[./ab/text() and ./p/text()])")
+# 297 articles with both annotated paragraphs and non-matched quotes
+
+# xml_find_num(tei_doc, xpath="count(//rs[@type='software'])")
+# 5,169 annotations of software entity
+# xml_find_num(tei_doc, xpath="count(//rs)")
+# 8,335 annotations in total
+# which means 3,166 annotations of software attributes
+
+# xml_find_num(tei_doc, xpath="count(//rs[@type='software' and @resp='#curator'])")
+# 740 annotations of software entity edited by curator
+# xml_find_num(tei_doc, xpath="count(//rs[@resp='#curator'])")
+# 1,171 annotations edited by curator in total
+
+```
+
+```{r, include=F}
+# library(VennDiagram)
+# draw.pairwise.venn(1245,484,297,category=c("articles with matched mentions", "articles with non-matched mentions"), lty = rep("blank", 2), fill = c("light blue", "pink"), alpha = rep(0.5, 2), cat.pos = c(0,0), cat.dist = rep(0.025, 2), scaled = FALSE)
+```
+
+
+```{r, include==F}
+# xml_find_num(tei_doc, xpath="count(//textClass)")
+# 4,971 articles have </textClass> 
+
+# xml_find_all(tei_doc, xpath="//TEI[not(.//profileDesc)]")
+
+# xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#unique_annotator'])")
+# 4,400 single annotated articles
+# xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#multiple_annotator'])")
+# 571 multiple annotated articles
+# xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#with_reconciliation'])")
+# so actually no one in this class
+# xml_find_num(tei_doc, xpath="count(//textClass/catRef[@target='#with_reconciliation_and_scripts'])")
+# 1,242 articles with reconciliation and scripts (all the articles with software mentions)
+
+```
+
+
+```{r, include=F}
+articles <- xml_find_all(tei_doc, xpath="//fileDesc[@xml:id]") %>% xml_attrs %>% unlist()
+
+unique_annotator <- xml_find_all(tei_doc, xpath="//textClass/catRef[@target='#unique_annotator']/../../../fileDesc/@xml:id") %>% as_list %>% unlist() 
+
+# multiple_annotator <- xml_find_all(tei_doc, xpath="//textClass/catRef[@target='#multiple_annotator']/../../../fileDesc/@xml:id") %>% as_list %>% unlist()
+
+pmc_article <- xml_find_all(tei_doc, xpath="//TEI[@subtype='pmc']//fileDesc/@xml:id") %>% as_list %>% unlist()
+
+
+rs <- tei_doc %>% 
+  xml_find_all(xpath="//rs") 
+
+annotations <- tibble(rs_txt = xml_text(rs), rs_attrs = xml_attrs(rs)) %>% 
+  unnest_wider(rs_attrs) %>% 
+  mutate(corresp = str_sub(corresp, 2, -1)) %>% 
+  separate(corresp, into = c("article", "drop1", "drop2"), sep = "-", remove = F) %>% 
+  select(-drop1, -drop2) %>% 
+  mutate(id = if_else(is.na(id), corresp, id)) %>% 
+  select(-corresp) %>% 
+  mutate(article = replace_na(str_extract(id, "^(.+)(?=-software)")))
+
+#annotations %>% pull(id...4) %>% unique
+```
+
+**1. Manually edited annotations during consistency check:**
+
+```{r}
+annotations %>% 
+  filter(!is.na(resp)) %>% 
+  mutate(edited_during_review = if_else(resp == "#curator", T, F)) %>% 
+  tabyl(edited_during_review) %>% 
+  adorn_totals("row") %>% 
+  adorn_pct_formatting() %>% 
+  kable() %>% kable_styling()
+
+```
+
+**2. If the mentioned software was used:**
+
+```{r}
+annotations %>% 
+  filter(type == "software") %>% 
+  mutate(software_was_used = replace_na(subtype, "not_used")) %>% 
+  mutate(article_set=if_else(article %in% pmc_article, "pmc_article","econ_article")) %>% 
+  tabyl(software_was_used, article_set) %>% 
+  adorn_totals(c("row","col")) %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  kable() %>% kable_styling()
+
+# mentions %>% 
+#   filter(type == "software") %>% 
+#   mutate(software_was_used = replace_na(subtype, "not_used")) %>% 
+#   group_by(software_was_used) %>% 
+#   summarise(n = n_distinct(id)) %>% 
+#   ggplot(aes(x="", y=n, fill=software_was_used)) +
+#   geom_bar(stat="identity") +
+#   coord_polar("y", start=0) +
+#   theme(axis.title.x = element_blank(),
+#   axis.title.y = element_blank(),
+#   panel.border = element_blank(),
+#   panel.grid=element_blank(),
+#   axis.ticks = element_blank(),
+#   axis.text = element_blank()) +
+#   #geom_text(aes(label=n_article), hjust=2)
+#   scale_fill_manual(values=c("#E69F00", "#56B4E9")) +
+#   labs(title="How many software mentioned was used?")
+
+annotations %>% 
+  filter(type == "software") %>% 
+  mutate(software_was_used = replace_na(subtype, "not_used")) %>% 
+  mutate(article_set=if_else(article %in% pmc_article, "pmc_article","econ_article")) %>% 
+  group_by(software_was_used, article_set) %>% 
+  summarise(n = n_distinct(id)) %>% 
+  ggplot(aes(x=article_set, y=n, fill=software_was_used)) +
+  geom_bar(stat="identity") + 
+  scale_fill_manual(values=wes_palette("Darjeeling2"))
+```
+
+
+```{r, include=F}
+mentions <- annotations %>% 
+  mutate(row = row_number()) %>% ungroup() %>% 
+  pivot_wider(names_from = "type", values_from = "rs_txt") %>% 
+  select(-row) %>% 
+  mutate(article_set=if_else(article %in% pmc_article, "pmc", "econ")) 
+
+software <- mentions %>% filter(!is.na(software)) %>% 
+  select(-publisher, -version, -url)
+publisher <- mentions %>% filter(!is.na(publisher)) %>% 
+  select(-software, -version, -url)
+version <- mentions %>% filter(!is.na(version)) %>% 
+  select(-software, -publisher, -url)
+url <- mentions %>% filter(!is.na(url)) %>% 
+  select(-software, -publisher, -version)
+
+software_mentions <- software %>% 
+  left_join(version) %>% 
+  left_join(publisher) %>% 
+  left_join(url)
+
+
+articles <- articles %>%
+  tibble::enframe(name = NULL) %>%
+  rename(article=value) %>% 
+  mutate(annotated_status = if_else(articles %in% unique_annotator, "single_annotated", "multiple_annotated")) %>% 
+  mutate(article_set =if_else(articles %in% pmc_article, "pmc", "econ"))
+```
+
+
+**3: How was software mentioned?**
+
+Note: The Venn diagram is not ideal because software mentioned with more than two attributes are very rare. Tried several ways and this is the best I can get so far. I think the issue is inherent in the data (but the data is ground truth so software is really rarely mentioned with additional information.)
+The relative size of diferent sets is referable but the overlapping between sets do not reflect patterns in the data.
+
+```{r, warning=F, message=F}
+annotations %>% 
+  mutate(article_set=if_else(article %in% pmc_article, "pmc_article","econ_article")) %>% 
+  tabyl(type,article_set) %>% 
+  adorn_totals(c("row","col")) %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>% 
+  kable() %>% 
+  kable_styling()
+
+library(venneuler)
+vd <- venneuler(c(A=5210,B=1367,C=215,D=1606,"A&B"=1367,"A&C"=215,"A&D"=1606, 
+                    "A&B&C"=1,"A&B&D"=12,"A&C&D"=2))
+vd$labels <- c("software\n5210","publisher\n1367","url\n215","version\n1606")
+plot(vd)
+```
+
+
+**4: How many articles were multiply annotated?**
+
+```{r}
+articles %>% 
+  tabyl(annotated_status, article_set) %>% 
+  adorn_totals(c("row","col")) %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting() %>%
+  adorn_ns() %>% 
+  kable() %>% kable_styling()
+
+# articles %>% 
+#   group_by(annotated_status) %>% 
+#   summarise(n_article = n_distinct(article)) %>% 
+#   ggplot(aes(x="", y=n_article, fill=annotated_status)) +
+#   geom_bar(stat="identity") +
+#   coord_polar("y", start=0) +
+#   theme(axis.title.x = element_blank(),
+#   axis.title.y = element_blank(),
+#   panel.border = element_blank(),
+#   panel.grid=element_blank(),
+#   axis.ticks = element_blank(),
+#   axis.text = element_blank()) +
+#   #geom_text(aes(label=n_article), hjust=2)
+#   scale_fill_manual(values=wes_palette("Chevalier1"))
+
+articles %>% 
+  group_by(annotated_status, article_set) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  ggplot(aes(x=article_set, y=n_article, fill=annotated_status)) +
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=wes_palette("Royal1"))
+```
+
+**5: The top 10 mentioned software entities**
+
+```{r}
+software %>% 
+  group_by(software) %>% 
+  summarise(n_mention = n_distinct(id)) %>% 
+  arrange(desc(n_mention)) %>% head(10) %>% 
+  kable() %>% kable_styling()
+```
+
+**Top 10 software mentioned in PMC articles:**
+
+```{r}
+software %>% 
+  filter(article_set=="pmc") %>% 
+  group_by(software) %>% 
+  summarise(n_mention = n_distinct(id)) %>% 
+  arrange(desc(n_mention)) %>% head(10) %>% 
+  kable() %>% kable_styling()
+```
+
+**Top 10 software mentioned in econ articles:**
+```{r}
+software %>% 
+  filter(article_set=="econ") %>% 
+  group_by(software) %>% 
+  summarise(n_mention = n_distinct(id)) %>% 
+  arrange(desc(n_mention)) %>% head(10) %>% 
+  kable() %>% kable_styling()
+```
+
+
+**6. Distribution of mention counts across articles:**
+
+**In all the articles:**
+
+```{r}
+software_mentions %>% 
+  group_by(article) %>% 
+  summarise(n_software=n_distinct(id)) %>% 
+  group_by(n_software) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  mutate(mention_count=case_when(
+    n_software <= 10 ~ "(0, 10]",
+    n_software > 10 & n_software <= 25 ~ "(10, 25]",
+    n_software > 25 & n_software <= 50 ~ "(25, 50]",
+    n_software > 50 & n_software <= 75 ~ "(50, 75]",
+    n_software > 75  ~ "(75, 300)")) %>% 
+  group_by(mention_count) %>% 
+  summarise(article_count = sum(n_article)) %>% 
+  adorn_totals("row") %>% 
+  knitr::kable() %>% 
+  kable_styling(full_width = F)
+
+software %>% 
+  group_by(article) %>% 
+  summarise(n_software=n_distinct(id)) %>% 
+  group_by(n_software) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  ggplot(aes(x=n_software,y=n_article)) +
+  geom_point() +
+  scale_y_log10() +
+  scale_fill_manual(values=wes_palette("Zissou1")) +
+  labs(title="Distribution of mention counts in articles", x="Number of software mentions", y="Number of articles") 
+```
+
+**In different article sets:**
+
+```{r}
+software_mentions %>% 
+  group_by(article, article_set) %>% 
+  summarise(n_software=n_distinct(id)) %>% 
+  group_by(n_software, article_set) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  mutate(mention_count=case_when(n_software <= 10 ~ "(0, 10]",
+    n_software > 10 & n_software <= 25 ~ "(10, 25]",
+    n_software > 25 & n_software <= 50 ~ "(25, 50]",
+    n_software > 50 & n_software <= 75 ~ "(50, 75]",
+    n_software > 75  ~ "(75, 300)")) %>% 
+  group_by(mention_count, article_set) %>% 
+  summarise(article_count = sum(n_article)) %>% 
+  pivot_wider(names_from = article_set, values_from = article_count) %>% 
+  adorn_totals("row") %>% 
+  knitr::kable() %>% 
+  kable_styling(full_width = F)
+
+software_mentions %>% 
+  group_by(article, article_set) %>% 
+  summarise(n_software=n_distinct(id)) %>% 
+  group_by(n_software, article_set) %>% 
+  summarise(n_article = n_distinct(article)) %>% 
+  ggplot(aes(x=n_software, y=n_article, color=article_set)) +
+  geom_point() +
+  scale_y_log10() +
+  labs(title="Distribution of mention counts in articles across different article sets", x="Number of software mentions", y="Number of articles") +
+  scale_color_manual(values = wes_palette("Darjeeling1"))
+```
+
+

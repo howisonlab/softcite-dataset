@@ -1,0 +1,2241 @@
+{
+    "level": "sentence",
+    "abstract": [
+        {
+            "text": "The full event interpretation is presented: a new exclusive tagging algorithm used by the high-energy physics experiment Belle II. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The experimental setup of Belle II allows the precise measurement of otherwise inaccessible B meson decay modes. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The Full Event Interpretation algorithm enables many of these measurements. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The algorithm relies on machine learning to automatically identify plausible B meson decay chains based on the data recorded by the detector. ",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Compared to similar algorithms employed by previous experiments, the Full Event Interpretation provides a greater efficiency, yielding a larger effective sample size usable in the measurement.",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 2
+        },
+        {
+            "text": "The Belle II experiment is located at the SuperKEKB electron-positron collider in Tsukuba, Japan, and was commissioned in 2018. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The experiment is designed to perform a wide range of high-precision measurements in all fields of heavy flavor physics, in particular it will investigate the decay of B mesons [1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 177,
+                    "end": 180,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "For this purpose, the experiment is expected to record about 40 billion collision events each containing an \u03a5(4S) resonance, which at least 96% of the time decays into exactly two B mesons (a BB pair). ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "Each B meson decays via various intermediate states into a set of final-state particles, which are considered stable in the Belle II detector. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "In general, charged final-state particles are reconstructed as tracks in the central drift chamber and in the inner silicon-based vertex detectors, whereas neutral final-state particles are reconstructed as energy depositions (called clusters) in the electromagnetic calorimeter. ",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2
+        },
+        {
+            "text": "The entire experimental setup of the detector and the collider is described in more detail in Dole\u017eal and Uno [1].",
+            "section": "Introduction",
+            "paragraph_rank": 3,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 110,
+                    "end": 113,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "[1]"
+                }
+            ]
+        },
+        {
+            "text": "The measurement of the branching fraction of rare decays like B \u2192 , B \u2192 K or B \u2192 l , with undetectable neutrinos in their final states, is challenging. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "However, the second B meson in each event can be used to constrain the allowed decay chains. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "This general idea is known as tagging. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Conceptually, each \u03a5(4S) event is divided into two sides: the signal-side containing the tracks and clusters compatible with the assumed signal B sig decay the physicist is interested in, e.g., a rare decay like B \u2192 ; and the tag-side containing the remaining tracks and clusters compatible with an arbitrary B tag meson decay. ",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2
+        },
+        {
+            "text": "Figure 1 depicts this situation.",
+            "section": "Introduction",
+            "paragraph_rank": 4,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "The initial four momentum of the produced \u03a5(4S) resonance is precisely known and no additional particles are produced in this primary interaction. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Therefore, because of the relevant quantum numbers conservation, knowledge about the properties of the tag-side B tag meson allows one to recover information about the signal-side B sig meson which would otherwise be inaccessible. ",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Most importantly, all reconstructed tracks and clusters which are not assigned to the B tag mesons must be compatible with the signal decay of interest.",
+            "section": "Introduction",
+            "paragraph_rank": 5,
+            "section_rank": 2
+        },
+        {
+            "text": "Ideally, a full reconstruction of the entire event has to take all reconstructed tracks and clusters into account to attain a correct interpretation of the measured data. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "The Full Event Interpretation (FEI) algorithm presented in this article is a new exclusive tagging algorithm developed for the Belle II experiment, embedded in the Belle II Analysis Software Framework (basf2) [2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 209,
+                    "end": 212,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "[2]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 164,
+                    "end": 182,
+                    "type": "software",
+                    "rawForm": "Belle II Analysis",
+                    "resp": "service",
+                    "id": "software-simple-s1"
+                }
+            ]
+        },
+        {
+            "text": "The FEI automatically constructs plausible B tag meson decay chains compatible with the observed tracks and clusters, and calculates for each decay chain the probability of it correctly describing the true process using gradient-boosted decision trees. ",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "\"Exclusive\" refers to the reconstruction of a particle (here the B tag ) assuming an explicit decay channel.",
+            "section": "Introduction",
+            "paragraph_rank": 6,
+            "section_rank": 2
+        },
+        {
+            "text": "Consequently, exclusive tagging reconstructs the B tag independently of the B sig using either hadronic or semileptonic B meson decay channels. ",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "The decay chain of the B tag is explicitly reconstructed and therefore the assignment of tracks and clusters to the tag-side and signal-side is known.",
+            "section": "Introduction",
+            "paragraph_rank": 7,
+            "section_rank": 2
+        },
+        {
+            "text": "In the case of a measurement of an exclusive branching fraction like B sig \u2192 , the entire decay chain of the \u03a5(4S) is known. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "As a consequence, all tracks and clusters measured by the detector should be already accounted for. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "In particular, the requirement of no additional tracks, besides the ones used for the reconstruction of the \u03a5(4S) , is an extremely powerful and efficient way to remove most reducible 1 backgrounds. ",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "This requirement is called the completeness constraint throughout this text.",
+            "section": "Introduction",
+            "paragraph_rank": 8,
+            "section_rank": 2
+        },
+        {
+            "text": "In the case of a measurement of an inclusive branching fraction like B sig \u2192 X u l , all remaining tracks and clusters, besides the ones used for the lepton l and the B tag meson, are identified with the X u system. ",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, the branching fraction can be determined without explicitly assuming a decay chain for the X u system.",
+            "section": "Introduction",
+            "paragraph_rank": 9,
+            "section_rank": 2
+        },
+        {
+            "text": "The performance of an exclusive tagging algorithm depends on the tagging efficiency (i.e., the fraction of \u03a5(4S) events which can be tagged), the tag-side efficiency (i.e., the fraction of \u03a5(4S) events with a correct tag) and on the quality of the recovered information, which determines the tag-side purity (i.e., the fraction of the tagged \u03a5(4S) events with a correct tag) of the tagged events.",
+            "section": "Introduction",
+            "paragraph_rank": 10,
+            "section_rank": 2
+        },
+        {
+            "text": "The exclusive tag typically provides a pure sample (i.e., purities up to 90% are possible). ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "But, this approach suffers from a low tag-side efficiency, just a few percent, since only a tiny fraction of the B decays can be explicitly reconstructed due to the large amount of possible decay channels and their high multiplicity. ",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "The imperfect reconstruction efficiency of tracks and clusters further degrades the efficiency.",
+            "section": "Introduction",
+            "paragraph_rank": 11,
+            "section_rank": 2
+        },
+        {
+            "text": "Both the quality of the recovered information and the systematic uncertainties depend on the decay channel of the B tag , therefore we distinguish further between hadronic and semileptonic exclusive tagging.",
+            "section": "Introduction",
+            "paragraph_rank": 12,
+            "section_rank": 2
+        },
+        {
+            "text": "Hadronic tagging considers only hadronic B decay chains for the tag-side [3, Section 7.4.1]. ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, the four momentum of the B tag is well-known and the tagged sample is very pure. ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "A typical hadronic B decay has a branching fraction of \ue23b(10 \u22123 ) . ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "As a consequence, hadronic tagging suffers from a low tag-side efficiency and can only be applied to a tiny fraction of the recorded events. ",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Large combinatorics of high-multiplicity decay channels further complicate the reconstruction and require tight selection criteria.",
+            "section": "Introduction",
+            "paragraph_rank": 13,
+            "section_rank": 2
+        },
+        {
+            "text": "Semileptonic tagging considers only semileptonic B \u2192 Dl and B \u2192 D * l decay channels [3,Section 7.4.2]. ",
+            "section": "Introduction",
+            "paragraph_rank": 14,
+            "section_rank": 2,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 88,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 88,
+                    "end": 102,
+                    "type": "bibr",
+                    "text": "Section 7.4.2]"
+                }
+            ]
+        },
+        {
+            "text": "Due to the presence of a high-momentum lepton, these decay channels can be easily identified and the semileptonic tagging usually yields a higher tag-side efficiency compared to hadronic tagging due to the large semileptonic branching fractions. ",
+            "section": "Introduction",
+            "paragraph_rank": 14,
+            "section_rank": 2
+        },
+        {
+            "text": "On the other hand, the semileptonic tag will miss kinematic information due to the neutrino in the final state of the decay. ",
+            "section": "Introduction",
+            "paragraph_rank": 14,
+            "section_rank": 2
+        },
+        {
+            "text": "Hence, the sample is not as pure as in the hadronic case.",
+            "section": "Introduction",
+            "paragraph_rank": 14,
+            "section_rank": 2
+        },
+        {
+            "text": "To conclude, the FEI provides a hadronic and semileptonic tag for B \u00b1 and B 0 mesons. ",
+            "section": "Introduction",
+            "paragraph_rank": 15,
+            "section_rank": 2
+        },
+        {
+            "text": "This enables the measurement of exclusive decays with several neutrinos and . ",
+            "section": "Introduction",
+            "paragraph_rank": 15,
+            "section_rank": 2
+        },
+        {
+            "text": "The two sides overlap spatially in the detector, therefore the assignment of a measured track to one of the sides is not known a priori inclusive decays. ",
+            "section": "Introduction",
+            "paragraph_rank": 15,
+            "section_rank": 2
+        },
+        {
+            "text": "In both cases, the FEI provides an explicit tag-side decay chain with an associated probability.",
+            "section": "Introduction",
+            "paragraph_rank": 15,
+            "section_rank": 2
+        },
+        {
+            "text": "Methods",
+            "section_rank": 3
+        },
+        {
+            "text": "The FEI algorithm follows a hierarchical approach with six stages, visualized in Fig. 2. ",
+            "section": "Methods",
+            "paragraph_rank": 16,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 81,
+                    "end": 87,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "Final-state particle candidates are constructed using the reconstructed tracks and clusters, and combined to intermediate particles until the final B candidates are formed. ",
+            "section": "Methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "The probability of each candidate to be correct is estimated by a multivariate classifier. ",
+            "section": "Methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "A multivariate classifier maps a set of input features (e.g., the four momentum or the vertex position) to a real-valued output, which can be interpreted as a probability estimate. ",
+            "section": "Methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "The multivariate classifiers are constructed by optimizing a loss function (e.g., the misclassification rate) on Monte Carlo simulated \u03a5(4S) events and are described later in detail.",
+            "section": "Methods",
+            "paragraph_rank": 16,
+            "section_rank": 3
+        },
+        {
+            "text": "All steps in the algorithm are configurable. ",
+            "section": "Methods",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "Therefore, the decay channels used, the cuts employed, the choice of the input features, and hyper-parameters of the multivariate classifiers depend on the configuration. ",
+            "section": "Methods",
+            "paragraph_rank": 17,
+            "section_rank": 3
+        },
+        {
+            "text": "A more detailed description of the algorithm and the default configuration can be found in Keck [4] and in the following we give a brief overview over the key aspects of the algorithm.",
+            "section": "Methods",
+            "paragraph_rank": 17,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 91,
+                    "end": 99,
+                    "type": "bibr",
+                    "text": "Keck [4]"
+                }
+            ]
+        },
+        {
+            "text": "Combination of Candidates",
+            "section_rank": 4
+        },
+        {
+            "text": "Charged final-state particle candidates are created from tracks assuming different particle hypotheses. ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Neutral finalstate particle candidates are created from clusters and displaced vertices constructed by oppositely charged tracks.",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 18,
+            "section_rank": 4
+        },
+        {
+            "text": "Each candidate can be correct (signal) or wrong (background). ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "For instance, a track used to create a + candidate can originate from a pion traversing the detector (signal), from a kaon traversing the detector (background) or originates from a random combination of hits from beam background (also background).",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 19,
+            "section_rank": 4
+        },
+        {
+            "text": "All candidates available at this stage are combined to intermediate particle candidates in the subsequent stages, until candidates for the desired B mesons are created. ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "Each intermediate particle has multiple possible decay channels, which can be used to create valid candidates. ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "For instance, a B \u2212 candidate can be created by combining a D 0 and a \u2212 candidate, or by combining a D 0 , a \u2212 and a 0 candidate. ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "The D 0 candidate could be created from a K \u2212 and a + , or from a K 0 s and a 0 . ",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "The FEI reconstructs more than 100 explicit decay channels, leading to \ue23b(10000) distinct decay chains.",
+            "section": "Combination of Candidates",
+            "paragraph_rank": 20,
+            "section_rank": 4
+        },
+        {
+            "text": "Multivariate Classification",
+            "section_rank": 5
+        },
+        {
+            "text": "The FEI employs multivariate classifiers to estimate the probability of each candidate to be correct, which can be used to discriminate correctly identified candidates from background. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "For each final-state particle and for each decay channel of an intermediate particle, a multivariate classifier is trained which estimates the signal probability that the candidate is correct. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 21,
+            "section_rank": 5
+        },
+        {
+            "text": "To use all available information at each stage, a network of multivariate classifiers is built, following the hierarchical structure in Fig. 2.",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 21,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 136,
+                    "end": 142,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "For instance, the classifier for the decay of B \u2212 \u2192 D 0 \u2212 would use the signal probability of the D 0 and \u2212 candidates, as input features to estimate the signal probability of the B \u2212 candidate created by combining the aforementioned D 0 and \u2212 candidates. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "Additional input features of the classifiers are the kinematic and vertex fit information of the candidate and its daughters. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "The multivariate classifiers used by the FEI are trained on Monte Carlo simulated events. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "The training is fully automatized and distributed using a map reduce approach [5]. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 81,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "[5]"
+                }
+            ]
+        },
+        {
+            "text": "Monte Carlo simulated data used to train the FEI is partitioned. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "At each reconstruction stage, the partitioned data is distributed to nodes where the reconstruction is performed and training datasets are produced (the mapping stage). ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "The reduction stage consists of merging the training datasets and training multivariate classifiers with these training datasets.",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 22,
+            "section_rank": 5
+        },
+        {
+            "text": "The available information flows from the data provided by the detector through the intermediate candidates into the final B meson candidates, yielding a single number which can be used to distinguish correctly from incorrectly identified B tag mesons. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "The process is visualized in Fig. 2. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 23,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 29,
+                    "end": 35,
+                    "type": "figure",
+                    "text": "Fig. 2"
+                }
+            ]
+        },
+        {
+            "text": "This allows one to tune the trade-off between tag-side efficiency and tag-side purity of the algorithm by requiring a minimal",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 23,
+            "section_rank": 5
+        },
+        {
+            "text": "Schematic overview of the FEI. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "The algorithm operates on objects identified by the reconstruction software of the Belle II detectors: charged tracks, neutral clusters and displaced vertices. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "In six distinct stages, these basics objects are interpreted as final-state particles ( e + , + ,",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 24,
+            "section_rank": 5
+        },
+        {
+            "text": "and finally form the tag-side B mesons signal probability. ",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "By contrast, most exclusive measurements by Belle, which used the previous FRalgorithm, chose a working point near the maximum tag-side efficiency as described in \"Previous work\" section.",
+            "section": "Multivariate Classification",
+            "paragraph_rank": 25,
+            "section_rank": 5
+        },
+        {
+            "text": "Combinatorics",
+            "section_rank": 6
+        },
+        {
+            "text": "It is not feasible to consider all possible B meson candidates created by all possible combinations. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "The amount of possible combinations scales with the factorial in the number of tracks and clusters. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "This problem is known as combinatorics in high-energy physics. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "Furthermore, it is not worthwhile to consider all possible B meson candidates, because all of them are wrong except for two in the best-case scenario.",
+            "section": "Combinatorics",
+            "paragraph_rank": 26,
+            "section_rank": 6
+        },
+        {
+            "text": "The FEI uses two sets of the so-called cuts. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "A cut is a criterion that a candidate has to fulfill to be considered further. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "For instance, one could demand that the beam-constrained mass of the B meson candidate is near the nominal mass 5.28 GeV of a B meson particle, or that a + candidate has a high muon particle identification likelihood, which combines sub-detector information to identify muons.",
+            "section": "Combinatorics",
+            "paragraph_rank": 27,
+            "section_rank": 6
+        },
+        {
+            "text": "Directly after the creation of the candidate (either from a track/cluster, or by combining other candidates), but before the application of the multivariate classifier, the FEI uses loose and fast pre-cuts to remove wrongly identified candidates (background), without losing signal. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "The main purpose of these cuts is to save computing time and to reduce the memory consumption. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "These pre-cuts are applied separately for each decay channel.",
+            "section": "Combinatorics",
+            "paragraph_rank": 28,
+            "section_rank": 6
+        },
+        {
+            "text": "At first, a very loose fixed cut is applied on a quantity which is fast to calculate, e.g., the energy for photons, the invariant mass for D mesons, the energy released in the decay for D * mesons, or the beam-constrained mass for hadronic B mesons. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Second, the remaining candidates are ranked according to a quantity, which is fast to calculate (usually the same quantity as above is used here). ",
+            "section": "Combinatorics",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Only the n (usually between 10 and 20) best candidates in each decay channel are further considered, the others are discarded. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "This best candidate selection ensures that each decay channel and each event receives roughly the same amount of computing time.",
+            "section": "Combinatorics",
+            "paragraph_rank": 29,
+            "section_rank": 6
+        },
+        {
+            "text": "Next, the computationally expensive parts of the reconstruction are performed on each candidate: the matching of the reconstructed candidates to the generated particles (in case of simulated events), the vertex fitting, and the multivariate classification.",
+            "section": "Combinatorics",
+            "paragraph_rank": 30,
+            "section_rank": 6
+        },
+        {
+            "text": "After the multivariate classifiers have estimated the signal probability of each candidate, the candidates of different decay channels can be compared. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 31,
+            "section_rank": 6
+        },
+        {
+            "text": "Here the FEI uses tighter post-cuts to aggressively remove incorrectly reconstructed candidates using all the available information. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 31,
+            "section_rank": 6
+        },
+        {
+            "text": "The main purpose of these cuts is to restrict the number of candidates per particle to a manageable number.",
+            "section": "Combinatorics",
+            "paragraph_rank": 31,
+            "section_rank": 6
+        },
+        {
+            "text": "At first, there is a loose fixed cut on the signal probability, to remove unreasonable candidates. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "text": "Second, the remaining candidates are ranked according to their signal probability. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "text": "Only the m (usually between 10 and 20) best candidates of the particle (i.e., over all decay channels) are further considered, the others are discarded. ",
+            "section": "Combinatorics",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "text": "This best candidate selection ensures that the amount of candidates produced in the next stage is reasonably low and can be handled by the computing system.",
+            "section": "Combinatorics",
+            "paragraph_rank": 32,
+            "section_rank": 6
+        },
+        {
+            "text": "Performance",
+            "section_rank": 7
+        },
+        {
+            "text": "Applying the FEI to \ue23b(1 billion) events is a CPU-intensive task. ",
+            "section": "Performance",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "An optimized runtime and a small memory footprint are key for a practical application and to save computing resources. ",
+            "section": "Performance",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "The FEI spends most CPU time on vertex fitting (38%), particle combination (27%), and classifier inference (15%). ",
+            "section": "Performance",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "All three tasks have been carefully optimized.",
+            "section": "Performance",
+            "paragraph_rank": 33,
+            "section_rank": 7
+        },
+        {
+            "text": "The FEI uses only a fast and simple unconstrained vertex fit during the reconstruction, and feeds the calculated information into its multivariate classifiers. ",
+            "section": "Performance",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "text": "The user can refit the whole decay chain of the final B candidates, including mass and/or interaction point profile constraints if desired. ",
+            "section": "Performance",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "text": "A dedicated fitter (called FastFit) based on a Kalman Filter [6] was implemented for the FEI, which requires drastically less computing time than the default implementation used by Belle II and yields very similar results. ",
+            "section": "Performance",
+            "paragraph_rank": 34,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "[6]"
+                }
+            ]
+        },
+        {
+            "text": "Due to this fitter, an overall speedup of the FEI of 2.74 was observed. ",
+            "section": "Performance",
+            "paragraph_rank": 34,
+            "section_rank": 7
+        },
+        {
+            "text": "The FastFit code is licensed under GPLv3 and available on GitHub [7].",
+            "section": "Performance",
+            "paragraph_rank": 34,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "start": 58,
+                    "end": 65,
+                    "type": "software",
+                    "rawForm": "GitHub",
+                    "resp": "service",
+                    "id": "software-simple-s3"
+                }
+            ]
+        },
+        {
+            "text": "As explained in \"Combinatorics\" section, the number of candidates which have to be processed scales as the factorial of the multiplicity of the channel. ",
+            "section": "Performance",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "In previous approaches, the runtime and the maximum memory consumption was dominated by a few high-multiplicity events and tight cuts had to be applied to high-multiplicity channels. ",
+            "section": "Performance",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "By contrast, the FEI addresses the combinatorics problem by performing best candidate selections during the reconstruction of the decay chain instead of fixed cuts. ",
+            "section": "Performance",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "As a consequence, for each event and each decay channel, the FEI processes the same number of candidates in vertex fitting and classifier inference, i.e., consumes similar amounts of CPU time. ",
+            "section": "Performance",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "Moreover, the maximum memory consumption is limited due to the fixed number of best candidates per event, which is a key requirement for using the computing infrastructure.",
+            "section": "Performance",
+            "paragraph_rank": 35,
+            "section_rank": 7
+        },
+        {
+            "text": "Finally, the FEI uses FastBDT [8], a gradient-boosted decision tree (BDT) implementation, as its default multivariate classification algorithm. ",
+            "section": "Performance",
+            "paragraph_rank": 36,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 30,
+                    "end": 33,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "[8]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm was originally designed for the FEI to speed up the training and application phase. ",
+            "section": "Performance",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "text": "Compared to other popular BDT implementations such as those provided by TMVA [9], SKLearn [10] and XGBoost [11], it originally improved the execution time by more than one order of magnitude, both in training and application. ",
+            "section": "Performance",
+            "paragraph_rank": 36,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 77,
+                    "end": 80,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "[9]"
+                },
+                {
+                    "start": 90,
+                    "end": 94,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "[10]"
+                },
+                {
+                    "start": 107,
+                    "end": 111,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "[11]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 82,
+                    "end": 90,
+                    "type": "software",
+                    "rawForm": "SKLearn",
+                    "resp": "service",
+                    "id": "software-simple-s4"
+                },
+                {
+                    "start": 99,
+                    "end": 107,
+                    "type": "software",
+                    "rawForm": "XGBoost",
+                    "resp": "service",
+                    "id": "software-simple-s5"
+                }
+            ]
+        },
+        {
+            "text": "In addition, an improved classification quality was observed. ",
+            "section": "Performance",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "text": "Most of the time when using FastBDT is spent during the extraction of the necessary features, therefore no further significant speedups can be achieved by employing a different method.",
+            "section": "Performance",
+            "paragraph_rank": 36,
+            "section_rank": 7
+        },
+        {
+            "text": "Automatic Reporting",
+            "section_rank": 8
+        },
+        {
+            "text": "The FEI includes an automatic reporting system called Full Event Interpretation Report (FEIR).",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 37,
+            "section_rank": 8
+        },
+        {
+            "text": "The FEIR contains efficiencies and purities for all particles and decay channels at different points during the reconstruction. ",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Individual reports containing control plots for each multivariate classifier and input variables are also automatically created. ",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Control plots include receiver operating characteristics (ROC) curves, which show the tag-side efficiency against purity. ",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Additionally, for each classifier, the purity is plotted as a function of classifier output, to check for a linear relationship as this confirms the classifier output can be treated as a probability. ",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "This built-in monitoring capability upgrades the FEI from a black-box to a white-box algorithm, which the user can understand and inspect on all levels of reconstruction.",
+            "section": "Automatic Reporting",
+            "paragraph_rank": 38,
+            "section_rank": 8
+        },
+        {
+            "text": "Previous Work",
+            "section_rank": 9
+        },
+        {
+            "text": "Previous experiments have already developed and successfully employed tagging algorithms. ",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "To compare the algorithms, the maximal achievable tag-side efficiency is of particular interest, because it is directly related to the signal selection efficiency of the measurement. ",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "On the other hand, the achievable tag-side purity is only of limited use, because the achievable final purity of the final selection used for the measurement is dominated by the completeness constraint. ",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Hence, most of the incorrect tags can be easily discarded and the final purity depends strongly on the considered signal decay channel. ",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "Moreover, signal-side independent ROC curves are not available for most of the previously employed algorithms. ",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "The area under the ROC curve allows one to compare the performance of the tagging algorithms.",
+            "section": "Previous Work",
+            "paragraph_rank": 39,
+            "section_rank": 9
+        },
+        {
+            "text": "The BaBar experiment [12] used the Semi-Exclusive B reconstruction (SER) algorithm for hadronic tagging [3, Section 7.4.1.1]. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 25,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "[12]"
+                }
+            ]
+        },
+        {
+            "text": "The algorithm used exclusive D and D * mesons candidates as a seed, and combined those with up to five charmless hadrons to form a B tag without assuming an exclusive B decay mode. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The tag-side efficiency and tag-side purity of each B decay chain was extracted by fitting the beam-constrained mass [3, Section 7.1.1.2] spectrum of the constructed B tag meson candidates. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The beamconstrained mass is defined as M bc = \u221a E 2 beam \u2215c 4 \u2212 p 2 B \u2215c 2 where p B denotes the three momentum of the reconstructed B meson candidate and E beam denotes half of the centre-ofmass energy of the colliding electron-positron pair. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The maximum hadronic tag-side efficiency achieved by this algorithm was 0.2% for B 0B0 and 0.4% for B + B \u2212 , with a tag-side purity around 30%. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The tag-side purity could be further increased by rejecting B meson candidates from low-purity decay chains. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The semileptonic tag was usually constructed by combining an exclusive D or D * meson with a lepton. ",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The maximum semileptonic tag-side efficiency was typically 0.3% for B 0B0 and 0.6% for B + B \u2212 with an unknown tag-side purity.",
+            "section": "Previous Work",
+            "paragraph_rank": 40,
+            "section_rank": 9
+        },
+        {
+            "text": "The Belle experiment [13] used the so-called Full Reconstruction (FR) algorithm [14] for hadronic tagging [3, Section 7.4.1.2]. ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 21,
+                    "end": 25,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "[13]"
+                },
+                {
+                    "start": 80,
+                    "end": 84,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "The FRintroduced an hierarchical approach, which is still used by its successor and is presented in this article (see \"Methods\" section). ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "The tagside efficiency and tag-side purity was extracted by fitting the beam-constrained mass spectrum of the constructed B tag meson candidates. ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "The maximum hadronic tag-side efficiency achieved by this algorithm was 0.18% for B 0B0 and 0.28% for B + B \u2212 , with a tag-side purity around 10%. ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "Multivariate classifiers [15] were used to estimate the signal probability of each candidate. ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 25,
+                    "end": 29,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "[15]"
+                }
+            ]
+        },
+        {
+            "text": "The tag-side purity could be further increased by requiring a minimal signal probability. ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "Variants of the FR were used for semileptonic tagging (see [16,17]). ",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 59,
+                    "end": 63,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[16,"
+                },
+                {
+                    "start": 63,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "17]"
+                }
+            ]
+        },
+        {
+            "text": "The maximum semileptonic tag-side efficiency was 0.31% for B 0B0 and 0.34% for B + B \u2212 , with a typical tagside purity of 5%.",
+            "section": "Previous Work",
+            "paragraph_rank": 41,
+            "section_rank": 9
+        },
+        {
+            "text": "Compared to the previously employed algorithms, the FEI provides a greater tagging and tag-side efficiency, with a equal or better tag-side purity. ",
+            "section": "Previous Work",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The improvements with respect to the FR can be attributed equally to the additional decay channels and the new candidate selection criteria. ",
+            "section": "Previous Work",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "The reported maximum tag-side efficiencies for the previously used exclusive tagging algorithms are summarized in \"Results\" section, Table 1. ",
+            "section": "Previous Work",
+            "paragraph_rank": 42,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "start": 133,
+                    "end": 140,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "The stated efficiencies are not directly comparable due to different selection criteria, e.g., a threshold on the beam-constrained mass or the deviation of the nominal energy from the reconstructed energy E = E beam \u2212 E B with E B denoting the energy of the B candidate, best candidate selections, or cuts on the event shape used to suppress background from non-\u03a5(4S) events.",
+            "section": "Previous Work",
+            "paragraph_rank": 42,
+            "section_rank": 9
+        },
+        {
+            "text": "Results",
+            "section_rank": 10
+        },
+        {
+            "text": "The FEI algorithm was developed for the Belle II experiment. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "To quantify the improvements with respect to the previously used FR algorithm, the FEI is applied to data recorded by the Belle experiment. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "Simulated events and recorded data from the Belle experiment are converted into the new Belle II data format [4,Chapter 2]. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 109,
+                    "end": 112,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 112,
+                    "end": 122,
+                    "type": "bibr",
+                    "text": "Chapter 2]"
+                }
+            ]
+        },
+        {
+            "text": "This conversion tool was used to validate the entire Belle II analysis software and will be described in a separate publication [18]. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 128,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "[18]"
+                }
+            ]
+        },
+        {
+            "text": "The remainder of this article focuses on the results obtained for the hadronic tag on data recorded by the Belle experiment. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "The results for the semileptonic tag and for Belle II are based on simulated events and are only summarized briefly. ",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10
+        },
+        {
+            "text": "A detailed validation of the entire algorithm can be found in Keck [4,Chapter 4].",
+            "section": "Results",
+            "paragraph_rank": 43,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 62,
+                    "end": 70,
+                    "type": "bibr",
+                    "text": "Keck [4,"
+                },
+                {
+                    "start": 70,
+                    "end": 80,
+                    "type": "bibr",
+                    "text": "Chapter 4]"
+                }
+            ]
+        },
+        {
+            "text": "Hadronic Tag",
+            "section_rank": 11
+        },
+        {
+            "text": "The performance of the hadronic tag provided by the FEI using simulated and recorded Belle events is studied and compared to the previously used FRalgorithm.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 44,
+            "section_rank": 11
+        },
+        {
+            "text": "At first, the considered decay channels of the FEI are restricted to the set of hadronic decay channels used by the FR. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 45,
+            "section_rank": 11
+        },
+        {
+            "text": "The performance of the FEI to the FR are compared using the same hardware and the same simulated charged (neutral) BB Belle events. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 45,
+            "section_rank": 11
+        },
+        {
+            "text": "The FEI required 33% less computing time and achieved a maximum tag-side efficiency of 0.53% (0.33%) on simulated events, which is significantly higher than the previously reported tag-side efficiencies (see \"Previous work\" section ). ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 45,
+            "section_rank": 11
+        },
+        {
+            "text": "The increase in the maximum tag-side efficiency is due to the improved candidate selection criteria, in particular the best candidate selections.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 45,
+            "section_rank": 11
+        },
+        {
+            "text": "Second, all decay channels of the FEI are used, including the 38 additional hadronic decay channels. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "The performance of the FEI to the FR using the same hardware and the same simulated charged (neutral) Belle events are then compared. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "The FEI required 48% more computing time and achieved a maximum tag-side efficiency of 0.76% (0.46%) on simulated events. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "The further increase in the maximum tag-side efficiency is due to the additional decay channels.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 46,
+            "section_rank": 11
+        },
+        {
+            "text": "As mentioned before, the maximum tag-side efficiency is an important performance indicator for exclusive measurements, which can employ the completeness constraint to achieve a high final purity. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 47,
+            "section_rank": 11
+        },
+        {
+            "text": "The achieved maximum tag-side efficiencies are summarized in Table 1.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 47,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 61,
+                    "end": 68,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "To validate the results for the hadronic tag obtained from the simulation study, we conducted exclusive measurements of ten different semileptonic B decay channels using the full \u03a5(4S) dataset recorded by Belle. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "The branching fractions of the considered semileptonic decay channels are well-known from independent untagged measurements. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "The branching fraction of those well-known decay channels is measured using the hadronic tag, taking into account all known disagreements between simulation and data, e.g., in the particle identification performance and the track reconstruction efficiency. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "We assume that the remaining disagreement between simulation and data is caused by the tag-side. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "Therefore, the ratio of the measured and the expected branching fraction is proportional to the ratio of the tag-side efficiency on recorded data and simulated events. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "Our assumption is supported by the compatibility of the extracted ratios within their uncertainties. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "Figure 3 summarizes the results for the ten decay channels. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The ratios averaged over all control channels for the charged and neutral B tag mesons are where the first uncertainty is statistical and the second systematic. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "The systematic uncertainties arises from the signalside, e.g., through uncertainties on the particle identification performance or the track reconstruction efficiency.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 48,
+            "section_rank": 11
+        },
+        {
+            "text": "A detailed description of the control measurements, including results for each tag and control channel, can be found in Schwab [19]. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 49,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 127,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "A similar study was conducted in the past for the FR by Sibidanov et al. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "[20], yielding a similar overall ratio of comb. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 49,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "text": "[20]"
+                }
+            ]
+        },
+        {
+            "text": "= 0.75 \u00b1 0.03 . ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "The rather large discrepancy between simulated events and recorded data is caused by the uncertainty on the branching fractions and decay models of the simulated B decay channels used for the tag-side and the large number of multivariate classifiers involved in the process.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 49,
+            "section_rank": 11
+        },
+        {
+            "text": "The uncertainty on the tag-side efficiency of the FEI is one of the most important systematic uncertainties in the measurement of branching fractions of rare decays. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "The tag-side efficiency can be corrected using the extracted ratios. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "It is possible to apply this correction as a function of the tag-side decay channel and signal probability. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "A measurement which uses the ratios to correct the tag-side efficiency is performed relative to the considered calibration decay channels. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "The systematic uncertainty of the correction is given by the uncertainty of the ratios. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "To compare the hadronic tag provided by the FEI and the FRin a well-defined manner, which is independent of the signal-side, both algorithms are applied to the same set of ten million events. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "These events are randomly sampled from the full \u03a5(4S) dataset of 772 million events recorded by the Belle experiment. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "After the tag-side reconstruction, only B meson candidates are kept, which fulfill cuts on the beam-constrained mass of M bc > 5.24 GeV and on the deviation of the reconstructed energy from the nominal energy of \u22120.15 GeV < E < 0.1 GeV calculated on the candidate. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "In addition, a best candidate selection is performed, taking the B meson candidate with the highest signal probability in each event.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 50,
+            "section_rank": 11
+        },
+        {
+            "text": "The same cuts on the beam-constrained mass M bc > 5.24 GeV and the deviation of the reconstructed energy from the nominal energy \u22120.15 GeV < E < 0.1 GeV were applied and only the best (i.e., the highest signal probability) B meson candidate in each event was used.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 51,
+            "section_rank": 11
+        },
+        {
+            "text": "From this dataset, we determined the tag-side efficiency and tag-side purity for different cuts on the signal probability. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11
+        },
+        {
+            "text": "We followed the procedure established in previous publications [3,Chapter 7.1]. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 63,
+                    "end": 66,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "[3,"
+                },
+                {
+                    "start": 66,
+                    "end": 78,
+                    "type": "bibr",
+                    "text": "Chapter 7.1]"
+                }
+            ]
+        },
+        {
+            "text": "For different cuts on the signal probability, extended unbinned maximum likelihood fits of the beam-constrained mass spectrum are performed. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11
+        },
+        {
+            "text": "The signal peak consisting of correct B tag mesons is modeled with a Crystal Ball function [21], whereas the background is described using an ARGUS function [22]. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 91,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "[21]"
+                },
+                {
+                    "start": 157,
+                    "end": 161,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "[22]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 142,
+                    "end": 148,
+                    "type": "software",
+                    "rawForm": "ARGUS",
+                    "resp": "service",
+                    "id": "software-simple-s6"
+                }
+            ]
+        },
+        {
+            "text": "The Gaussian mean of the Crystal Ball function was fixed to the B meson mass and its power law exponent was fixed to m = 4 based on the expected shape obtained from Monte Carlo simulations. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11
+        },
+        {
+            "text": "The location and the width of the ARGUS were fixed using the known kinematic end point of the spectrum. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11,
+            "entity_spans": [
+                {
+                    "start": 34,
+                    "end": 39,
+                    "type": "software",
+                    "rawForm": "ARGUS",
+                    "resp": "service",
+                    "id": "software-simple-s7"
+                }
+            ]
+        },
+        {
+            "text": "All other parameters: the normalization of both functions, the width of the Crystal Ball, and the remaining shape parameters of both functions were adjusted by the fit. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11
+        },
+        {
+            "text": "The tag-side efficiency and tag-side purity are determined in a window of 5.27 GeV < M bc < 5.29 GeV using the fitted yields of the signal and background component.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 52,
+            "section_rank": 11
+        },
+        {
+            "text": "In addition, we checked for a potential peaking combinatorial background component, which would bias the results. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 53,
+            "section_rank": 11
+        },
+        {
+            "text": "This test was done using ten million events recorded 60 MeV below the \u03a5(4S) resonance. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 53,
+            "section_rank": 11
+        },
+        {
+            "text": "This dataset does not contain B mesons, hence no signal is expected. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 53,
+            "section_rank": 11
+        },
+        {
+            "text": "The fitted signal yields were compatible with zero.",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 53,
+            "section_rank": 11
+        },
+        {
+            "text": "The resulting ROC curves are shown in Figs. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "4 and 5 for charged and neutral B tag mesons, respectively. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "The FEI exhibits a larger overall tag-side efficiency compared to the FR. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "We observe a slightly better performance for the FR than reported in Feindt et al. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "[14]. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 4,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "[14]"
+                }
+            ]
+        },
+        {
+            "text": "Both algorithms perform equally well when requiring a high tag-side purity. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "We suspect this is because there are only a finite number of cleanly identifiable B tag meson candidates and both algorithms identify them with similar performance. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "The results for tag-side purities above 70% cannot be extracted reliably and depend strongly on the chosen signal or background fit model. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "For practical applications, the low tag-side purity regions is of particular interest for exclusive measurements. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "The beam-constrained mass distributions corresponding to the low-purity region with about 15% tag-side purity and the high-purity region with approximatively 80% tag-side purity are shown in Figs. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "6 and 7, respectively, for the charged B tag .",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 54,
+            "section_rank": 11
+        },
+        {
+            "text": "The maximum tag-side efficiency on recorded data is not determinable by this method, as the fits are restricted to the best B tag candidates. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 55,
+            "section_rank": 11
+        },
+        {
+            "text": "However, a significant contribution to the improvement of the FEI compared to the FRis the increased number of provided candidates per event. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 55,
+            "section_rank": 11
+        },
+        {
+            "text": "A physics measurement will benefit from these additional tag-side candidates by first combining them with potential signalside candidates, applying the completeness constraint (i.e., = Ndata/Nmc Fig. 3 The ratios calculated by measuring ten semileptonic decay channels on converted Belle data using the hadronic tag. The procedure is described in Schwab [19]  requiring no additional tracks in the event), and performing the best B tag candidate selection as the final step of the selection procedure. ",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 55,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 195,
+                    "end": 201,
+                    "type": "figure",
+                    "text": "Fig. 3"
+                },
+                {
+                    "start": 354,
+                    "end": 358,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "[19]"
+                }
+            ]
+        },
+        {
+            "text": "This procedure was successfully used by several measurements to validate the expected improvements on recorded data: [4,19,23].",
+            "section": "Hadronic Tag",
+            "paragraph_rank": 55,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 117,
+                    "end": 120,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 120,
+                    "end": 123,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "19,"
+                },
+                {
+                    "start": 123,
+                    "end": 126,
+                    "type": "bibr",
+                    "text": "23]"
+                }
+            ]
+        },
+        {
+            "text": "Semileptonic Tag",
+            "section_rank": 12
+        },
+        {
+            "text": "The performance of the semileptonic tag provided by the FEI is studied using simulated Belle events. ",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12
+        },
+        {
+            "text": "The maximum tag-side efficiencies are summarized in Table 1. ",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 52,
+                    "end": 59,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ]
+        },
+        {
+            "text": "Receiver operating characteristics extracted from simulated events can be found in Keck [4]. ",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 88,
+                    "end": 91,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "The results obtained from simulated events, and the fact that the hadronic and semileptonic tag only share five out of six reconstruction stages, indicate a significant increase in the maximum tag-side efficiency. ",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12
+        },
+        {
+            "text": "The semileptonic tag was successfully used by Keck [4] to determine the branching fraction of B \u2192 on the full \u03a5(4S) dataset recorded by the Belle experiment, with a smaller relative statistical uncertainty than obtained previously. ",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 46,
+                    "end": 54,
+                    "type": "bibr",
+                    "text": "Keck [4]"
+                }
+            ]
+        },
+        {
+            "text": "However, no studies with well-known calibration channels as described in Kronenbitter [24] and no signal-side independent determination of the ROCs as described in Kirchgessner [16], are available yet.",
+            "section": "Semileptonic Tag",
+            "paragraph_rank": 56,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 86,
+                    "end": 90,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "[24]"
+                },
+                {
+                    "start": 177,
+                    "end": 181,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "[16]"
+                }
+            ]
+        },
+        {
+            "text": "Outlook for Belle II",
+            "section_rank": 13
+        },
+        {
+            "text": "As the Belle II reconstruction software is still being optimized and no large recorded experimental data set was available at the time of writing, hence the final tag-side efficiency cannot be determined reliably for Belle II at this point. ",
+            "section": "Outlook for Belle II",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "Preliminary results can be found in [4] which indicate a worse overall performance. ",
+            "section": "Outlook for Belle II",
+            "paragraph_rank": 57,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 36,
+                    "end": 39,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "This is likely due to the increased beam background caused by the higher luminosity of the collider, which does lead to additional tracks and neutral energy depositions. ",
+            "section": "Outlook for Belle II",
+            "paragraph_rank": 57,
+            "section_rank": 13
+        },
+        {
+            "text": "This additional detector activity is not yet fully rejected by the Belle II reconstruction algorithms [4] and future improvements are likely possible.",
+            "section": "Outlook for Belle II",
+            "paragraph_rank": 57,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 102,
+                    "end": 105,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4]"
+                }
+            ]
+        },
+        {
+            "text": "Discussion",
+            "section_rank": 14
+        },
+        {
+            "text": "The multivariate classifiers used by the FEI are trained on Monte Carlo simulated events. ",
+            "section": "Discussion",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "Depending on the training procedure and the type of events provided to the training, the multivariate classifiers of the FEI are optimized for different objectives.",
+            "section": "Discussion",
+            "paragraph_rank": 58,
+            "section_rank": 14
+        },
+        {
+            "text": "In this article, we presented a so-called generic adaption of the FEI. ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "The generic refers to that the FEI was trained independently of any specific signal-side using 180 million simulated \u03a5(4S) events. ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "This setup optimizes the tag-side efficiency of a \"generic\" \u03a5(4S). ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "Other versions of the FEI exist which optimize the tagside efficiency of specific signal events like B \u2192 . ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "The so-called specific FEI is trained on the remaining tracks and clusters after a potential signal B meson was already identified. ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "The training uses simulated \u03a5(4S) events and simulated signal events. ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "As a consequence, the classifiers can be specifically trained to identify correctly reconstructed B tag mesons for signal events and can focus on reducing non-trivial background which is not discarded by the completeness constraint. ",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14
+        },
+        {
+            "text": "The specific FEI was first introduced as a proof of concept by Keck [25] and used in Metzner [23].",
+            "section": "Discussion",
+            "paragraph_rank": 59,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "start": 68,
+                    "end": 72,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "[25]"
+                },
+                {
+                    "start": 93,
+                    "end": 97,
+                    "type": "bibr",
+                    "text": "[23]"
+                }
+            ]
+        },
+        {
+            "text": "Roughly half of the improvements with respect to the previous algorithm can be attributed to the additionally considered decay channels. ",
+            "section": "Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 14
+        },
+        {
+            "text": "Future extensions are currently investigated which use semileptonic D meson decays, baryonic decays and decays including K 0 L particles. ",
+            "section": "Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 14
+        },
+        {
+            "text": "It should also be noted that the FEI algorithm can be applied, with little modification, to the \u03a5(4S) resonance. ",
+            "section": "Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 14
+        },
+        {
+            "text": "This resonance decays into a pair of B mesons. ",
+            "section": "Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 14
+        },
+        {
+            "text": "The powerful completeness constraint can still be applied in this situation.",
+            "section": "Discussion",
+            "paragraph_rank": 60,
+            "section_rank": 14
+        },
+        {
+            "text": "Conclusion",
+            "section_rank": 15
+        },
+        {
+            "text": "The Full Event Interpretation is a new exclusive tagging algorithm developed for the Belle II experiment that will be used to measure a wide range of decays with a minimum of detectable information. ",
+            "section": "Conclusion",
+            "paragraph_rank": 61,
+            "section_rank": 15
+        },
+        {
+            "text": "The algorithm exploits the unique setup of B factories and significantly improves the tag-side efficiency compared to its predecessor algorithms.",
+            "section": "Conclusion",
+            "paragraph_rank": 61,
+            "section_rank": 15
+        },
+        {
+            "text": "The tag-side efficiency for hadronically tagged B mesons was validated and calibrated using Belle data. ",
+            "section": "Conclusion",
+            "paragraph_rank": 62,
+            "section_rank": 15
+        },
+        {
+            "text": "Furthermore, the hadronic and the semileptonic tag provided by FEI have already been used in several validation measurements [4,19,26] using the full \u03a5(4S) dataset recorded by the Belle experiment. ",
+            "section": "Conclusion",
+            "paragraph_rank": 62,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "start": 125,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "[4,"
+                },
+                {
+                    "start": 128,
+                    "end": 131,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "19,"
+                },
+                {
+                    "start": 131,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "26]"
+                }
+            ]
+        },
+        {
+            "text": "Similar studies and measurements for Belle II are anticipated as soon as the experiment records a sufficient amount of collision events.",
+            "section": "Conclusion",
+            "paragraph_rank": 62,
+            "section_rank": 15
+        },
+        {
+            "text": "There are several ways that the FEI algorithm could be further refined and applied to so far unexplored applications. ",
+            "section": "Conclusion",
+            "paragraph_rank": 63,
+            "section_rank": 15
+        },
+        {
+            "text": "These will provide an exciting and fruitful area of future research.",
+            "section": "Conclusion",
+            "paragraph_rank": 63,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 1",
+            "section_rank": 16
+        },
+        {
+            "text": "Fig. 1Schematic overview of a \u03a5(4S) decay: (Left) a common tagside decay B \u2212 tag \u2192 D 0 (\u2192 K 0 s (\u2192 \u2212 + ) \u2212 + ) \u2212 and (right) a typical signal-side decay B + sig \u2192 + (\u2192 +\u0304) . ",
+            "section": "Fig. 1",
+            "paragraph_rank": 64,
+            "section_rank": 16
+        },
+        {
+            "text": "The two sides overlap spatially in the detector, therefore the assignment of a measured track to one of the sides is not known a priori",
+            "section": "Fig. 1",
+            "paragraph_rank": 64,
+            "section_rank": 16
+        },
+        {
+            "text": "charged = 0.74 +0.014 \u22120.013 \u00b1 0.050 neutral = 0.86 +0.045 \u22120.050 \u00b1 0.054,",
+            "paragraph_rank": 65,
+            "section_rank": 17
+        },
+        {
+            "text": "Fig. 4",
+            "section_rank": 18
+        },
+        {
+            "text": "Fig. 4Receiver operating characteristic of charged B tag mesons extracted from a fit of the beam-constrained mass on converted Belle data. ",
+            "section": "Fig. 4",
+            "paragraph_rank": 66,
+            "section_rank": 18
+        },
+        {
+            "text": "The FEI outperforms the FR algorithms performance at low and high purity",
+            "section": "Fig. 4",
+            "paragraph_rank": 66,
+            "section_rank": 18
+        },
+        {
+            "text": "Fig. 5 Fig. 6 Fig. 7",
+            "section_rank": 19
+        },
+        {
+            "text": "Fig. 5 Receiver operating characteristic of neutral B tag mesons extracted from a fit of the beam-constrained mass on converted Belle data. ",
+            "section": "Fig. 5 Fig. 6 Fig. 7",
+            "paragraph_rank": 67,
+            "section_rank": 19
+        },
+        {
+            "text": "The FEI outperforms the FR algorithms performance at low and intermediate purity. ",
+            "section": "Fig. 5 Fig. 6 Fig. 7",
+            "paragraph_rank": 67,
+            "section_rank": 19
+        },
+        {
+            "text": "At high purity, the tag-side efficiency cannot be extracted reliably",
+            "section": "Fig. 5 Fig. 6 Fig. 7",
+            "paragraph_rank": 67,
+            "section_rank": 19
+        },
+        {
+            "text": "(",
+            "section_rank": 20
+        },
+        {
+            "text": "( * ) B ( * ) and B 0 s",
+            "section": "(",
+            "paragraph_rank": 68,
+            "section_rank": 20
+        },
+        {
+            "text": "Table 1",
+            "section_rank": 21
+        },
+        {
+            "text": "Summary of the maximum tag-side efficiency of the Full Event Interpretation and for the previously used exclusive tagging algorithmsFor the FEI simulated data from the last official Monte Carlo campaign of the Belle experiment were used. ",
+            "section": "Table 1",
+            "paragraph_rank": 69,
+            "section_rank": 21
+        },
+        {
+            "text": "The maximum tag-side efficiency on recorded data is lower (see \"Hadronic tag\" section). ",
+            "section": "Table 1",
+            "paragraph_rank": 69,
+            "section_rank": 21
+        },
+        {
+            "text": "The numbers for the older algorithms (see \"Previous work\" section), are not directly comparable due to different selection criteria, like best candidate selections and selections to suppress non-\u03a5(4S) events",
+            "section": "Table 1",
+            "paragraph_rank": 69,
+            "section_rank": 21
+        },
+        {
+            "text": "Page 2 of 10",
+            "section": "Table 1",
+            "paragraph_rank": 70,
+            "section_rank": 21
+        },
+        {
+            "text": "Reducible background has distinct final-state products from the signal.",
+            "section": "Table 1",
+            "paragraph_rank": 71,
+            "section_rank": 21
+        },
+        {
+            "text": "Acknowledgements",
+            "section_rank": 23
+        },
+        {
+            "text": "We thank the KEKB accelerator group, the Belle collaboration, and the Belle II collaboration for the provided data and infrastructure. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 72,
+            "section_rank": 23
+        },
+        {
+            "text": "This research was supported by: the Federal Ministry of Education and Research of Germany (BMBF), the German Research Foundation (DFG), the Doctoral School \"Karlsruhe School of Elementary and Astroparticle Physics: Science and Technology\" funded by the German Research Foundation (DFG), and the DFG-funded Research Training Group \"GRK 1694: Elementary Particle Physics at Highest Energy and highest Precision\". ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 72,
+            "section_rank": 23
+        },
+        {
+            "text": "F.B. and W.S. are supported by DFG Emmy-Noether Grant No. ",
+            "section": "Acknowledgements",
+            "paragraph_rank": 72,
+            "section_rank": 23
+        },
+        {
+            "text": "BE 6075/1-1",
+            "section": "Acknowledgements",
+            "paragraph_rank": 72,
+            "section_rank": 23
+        },
+        {
+            "text": "Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creat iveco mmons .org/licen ses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made.",
+            "section": "Acknowledgements",
+            "paragraph_rank": 73,
+            "section_rank": 23
+        }
+    ]
+}

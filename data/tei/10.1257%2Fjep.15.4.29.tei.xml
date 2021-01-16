@@ -1,0 +1,2346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Semiparametric Censored Regression Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher>American Economic Association</publisher>
+				<availability status="unknown"><p>Copyright American Economic Association</p>
+				</availability>
+				<date type="published" when="2001-11">2001-11</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenneth</forename><forename type="middle">Y</forename><surname>Chay</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Economics</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Berkeley</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Economics</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Berkeley</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Economics</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Berkeley</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Economics</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Berkeley</settlement>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Semiparametric Censored Regression Models</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Journal of Economic Perspectives</title>
+						<title level="j" type="abbrev">Journal of Economic Perspectives</title>
+						<idno type="ISSN">0895-3309</idno>
+						<imprint>
+							<publisher>American Economic Association</publisher>
+							<biblScope unit="volume">15</biblScope>
+							<biblScope unit="issue">4</biblScope>
+							<biblScope unit="page" from="29" to="42"/>
+							<date type="published" when="2001-11" />
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1257/jep.15.4.29</idno>
+					<ptr type="open-access" target="https://www.aeaweb.org/articles/pdf/doi/10.1257/jep.15.4.29" />
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2-SNAPSHOT" ident="GROBID" when="2020-08-14T00:36+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+				<p>regression model is censored when the recorded data on the dependent variable cuts off outside a certain range with multiple observations at the endpoints of that range. When the data are censored, variation in the observed dependent variable will understate the effect of the regressors on the &quot;true&quot; dependent variable. As a result, standard ordinary least squares regression using censored data will typically result in coefficient estimates that are biased toward zero. Traditional statistical analysis uses maximum likelihood or related procedures to deal with the problem of censored data. However, the validity of such methods requires correct specification of the error distribution, which can be problematic in practice. In the past two decades, a number of semiparametric alternatives for dealing with censored data have been proposed. In a semiparametric approach, part of the functional form of the model-usually the regression function-is parametrically specified by the researcher based upon plausible assumptions, while the rest of the model is not parameterized. 1 While the theoretical literature has produced several semiparametric estimators for the censored data model, published applications of these estimators to empirical problems in economics have lagged far behind. This paper reviews the intuition and computation of a handful of semiparametric estimators proposed for the censored regression model. The various estimators are used to examine changes in black-white earnings inequality during the 1 In this issue, the paper by DiNardo and Tobias offers further discussion of nonparametric and semiparametric analysis.</p>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>1960s, around the time of the passage of the Civil Rights Act of 1964, based on longitudinal Social Security Administration (SSA) earnings records. These earnings records are censored at the taxable maximum; that is, anyone earning more than the maximum that was taxable under Social Security is recorded as having earned at the maximum. Thus, above the maximum, the data on earnings do not accurately reflect actual earnings. Ordinary least squares analysis of these data implies little convergence in the earnings of black and white workers during the 1960s. On the other hand, the estimates from the semiparametric models that account for censoring suggest that significant black-white earnings convergence did occur after 1964. Comparisons of the results from parametric and semiparametric procedures help pinpoint sources of misspecification in the parametric approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Censored Regression Models and Estimators</head><p>The Social Security Administration data set that we analyze suffers from the simplest form of data censoring, interval censoring, for which the values of the "true" dependent variable, y*, are observed only if they fall within some known, often one-sided, interval <ref type="bibr">[a, b]</ref>. Otherwise, the closest endpoint of the interval is observed instead of y*. <ref type="bibr" target="#b15">Tobin (1958)</ref> used this model to analyze consumer expenditures on automobiles, with a ϭ 0 and b ϭ ϱ, and economists generally refer to regression models with nonnegativity constraints as Tobit models. Other typical applications of these censored regression models are to right-censored data, where a ϭ Ϫϱ and b represents a maximum recordable value for the dependent variable. Such models arise for top-coded data, where sufficiently large values of the true variable y* are recorded as "at least equal to b." In our primary empirical application, the dependent variable, the logarithm of annual earnings, is "top-coded," or censored from above, with b equal to the logarithm of the maximum annual earnings subject to Social Security taxes in a given year. Algebraically, the model for the observed dependent variable y under interval censoring is y ϭ ͭ a if xЈ␤ ϩ Ͻ a, b</p><p>if xЈ␤ ϩ Ͼ b, xЈ␤ ϩ otherwise, where y is the observed value of the dependent variable, x is a vector of observed explanatory variables, ␤ is a vector of unknown regression coefficients to be estimated, is an unobserved error term, and a and b are the censoring interval endpoints. While the true dependent variable y* satisfies a standard linear regression model, the observed variable y clearly does not when y* lies outside <ref type="bibr">[a, b]</ref>. Because y does not vary with the regressors x when it is censored (unlike the true variable y*), standard least squares regression will underestimate the magnitude of the regression slope coefficients.</p><p>If the distribution of the error terms given the regressors has a known parametric form-for example, normally distributed and homoskedastic errors-it is straightforward to derive and maximize the likelihood function. This provides a consistent and approximately normal estimator of the regression coefficients ␤ (see, for example, <ref type="bibr">Amemiya, 1985, chapter 10)</ref>. However, in many empirical problems, the distribution of the errors is not known or is subject to heteroskedasticity of unknown form. In such cases, the maximum likelihood estimator will not provide a consistent estimate <ref type="bibr" target="#b1">(Goldberger, 1983;</ref><ref type="bibr" target="#b0">Arabmazar and</ref><ref type="bibr" target="#b0">Schmidt, 1981, 1982)</ref>. Also, for censored panel data with fixed effects-that is, censored data with repeated observations on individuals over time and intercept terms that are allowed to vary freely across individuals-maximum likelihood estimation methods will generally be inconsistent even when the parametric form of the conditional error distribution is correctly specified <ref type="bibr" target="#b3">(Honoré, 1992)</ref>.</p><p>Thus, it is important to develop estimation methods that provide consistent estimates for censored data even when the error distribution is nonnormal or heteroskedastic. Here, we focus on describing three particular semiparametric estimators for the censored regression model, with acronyms CLAD, SCLS and ICLAD. All three estimators can be computed by alternating between a "recensoring" step, in which the data are "trimmed" (using the current parameter estimates) to compensate for the censoring problem, and a "regression" step using the trimmed data to obtain coefficient estimates. More complete algebraic derivations and discussions of the various alternatives are available in <ref type="bibr">Powell (1994, section 5.3)</ref>. Further details on large-sample properties and standard error formulae can be found in the cited references.</p><p>The censored least absolute deviations (CLAD) estimation method was proposed by <ref type="bibr" target="#b11">Powell (1984)</ref>. For the linear model, the method of least absolute deviations obtains regression coefficient estimates by minimizing the sum of absolute residuals. It is a generalization of the sample median to the regression context just as least squares is a generalization of the sample mean to the linear model. If the true dependent variable y* were observed, then its median would be the regression function xЈ␤ under the condition that the errors have a zero median. Least absolute deviations could then be used to estimate the unknown coefficients.</p><p>When the dependent variable y is censored, its median is unaffected by the censoring if the regression function xЈ␤ is in the uncensored region (that is, if xЈ␤ is in the interval <ref type="bibr">[a, b]</ref>). However, if the regression function xЈ␤ is below the lower threshold a (or above the upper threshold b), then more than 50 percent of the distribution will "pile up" at a (or b). In this case, the median of y is that interval endpoint, which does not depend on xЈ␤. Thus, computation of the CLAD estimator alternates between deleting observations with estimates of the regression function xЈ␤ that are outside the uncensored region [a, b] (the "recensoring" step) and estimating the regression coefficients by applying least absolute deviations to the remaining observations (the "regression" step), as described by Buchinsky (1994). <ref type="bibr" target="#b17">2</ref> The symmetrically censored least squares (SCLS) estimation method, proposed by <ref type="bibr" target="#b13">Powell (1986b)</ref>, is based on a "symmetric trimming" idea. For simplicity, suppose that a ϭ Ϫϱ, so that the data are "top-coded" at b (as in our empirical application), and assume that the true dependent variable y* is symmetrically distributed around the regression function xЈ␤. Due to the censoring, the observed dependent variable y has an asymmetric distribution, since its upper tail is "piled up" at the censoring point b. This situation is illustrated in <ref type="figure" target="#fig_0">Figure 1</ref>. However, symmetry can be restored by "symmetrically censoring" the dependent variable y from below at the point 2xЈ␤ Ϫ b. Now the regression function is equidistant from both censoring points. Since this new "recensored" dependent variable is symmetrically distributed around the regression function, the regression coefficients can be estimated by least squares. Iterating between this "symmetric censoring" of the dependent variable using the current estimates (which drops observations with values of the regression function above b) and least squares estimation of the regression coefficients using the "symmetrically trimmed" data yields the SCLS estimator.</p><p>Finally, the identically censored least absolute deviations (ICLAD) and identically censored least squares (ICLS) estimation methods were proposed by <ref type="bibr" target="#b3">Honoré and Powell (1994)</ref>. The motivation for these estimators is similar to the "symmetric trimming" idea used to derive the SCLS estimator, but involves recensoring the dependent variable for pairs of observations so that their density functions have the same shape. Suppose that the dependent variables for two observations, y 1 and y 2 , are censored from above at b, as depicted in <ref type="figure">Figure 2</ref>. While the shape of the densities for these two observations would be the same in the absence of censoring, the censored densities have different shapes. Also, the distances from the regression functions, xЈ 1 ␤ and xЈ 2 ␤, to the censoring point b are different.</p><p>However, the second observation y 2 , which has the smaller regression function xЈ 2 ␤, can be artificially "recensored" at the point</p><formula xml:id="formula_0">xЈ 2 ␤ Ϫ xЈ 1 ␤ ϩ b ϵ ⌬xЈ␤ ϩ b.</formula><p>The resulting "identically censored" density for y 2 will have the same shape as the density for y 1 . Further, the difference between the two identically censored variables will be symmetrically distributed around the difference in their regression functions, ⌬xЈ␤. As a result, the regression coefficients can be estimated by finding the value of ␤ that minimizes the sum of absolute (ICLAD) or squared (ICLS) differences of the "identically censored" residuals across all distinct pairs of observations. As with the estimators discussed above, the ICLS and ICLAD estimators can be calculated by repeated application of linear least squares or least absolute deviations regression programs. <ref type="bibr" target="#b18">3</ref> Honoré (1992) originally proposed the concept behind the ICLAD and ICLS estimators for censored panel data with individual-specific intercepts (also known as "fixed effects"). Instead of identically censoring observations for pairs of individuals, the approach can be applied to pairs of observations across time periods for </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 2</head><p>Densities of y 1 and y 2 and "Identically Censored" Densities each individual. Differencing the identically censored observations for a fixed individual eliminates the fixed effect, just as time differences eliminate fixed effects in the standard linear panel data model. In fact, this approach yields consistent estimates even when correctly specified maximum likelihood would not.</p><p>Each of these estimation procedures imposes a particular assumption on the underlying error distribution. The SCLS estimator is based on the assumption that the error terms are symmetrically distributed around zero, which implies that their median (and mean) is zero. While compatible with the traditional assumption of normally distributed and homoskedastic errors, the symmetry assumption is less restrictive and provides consistent estimates when these parametric conditions fail to hold. However, it is stronger than the "zero median" restriction exploited by the CLAD estimator, which permits nonnormal, heteroskedastic and asymmetric errors. The ICLAD and ICLS estimators assume that the error terms are identically (but not necessarily symmetrically) distributed, ruling out heteroskedasticity, but permitting asymmetry of the error distribution. <ref type="bibr" target="#b19">4</ref> As with the choice of regressors, it is ultimately up to the empirical researcher to determine which assumption is most plausible for the particular application. In practice, though, computation of several parametric and semiparametric estimators provides a useful guide to the sensitivity of the results to the identifying assumptions, either through casual comparison of the coefficient estimates and standard errors or more formal specification tests of the kind described by <ref type="bibr" target="#b9">Newey (1987)</ref>. In other words, the different estimation approaches give the researcher additional ways to "cut the data" to see which results are robust to alternative specifications.</p><p>The interval censored regression model is a special case of the more general censored selection model, in which the dependent variable y is generated as</p><formula xml:id="formula_1">y ϭ d ϫ ͑xЈ␤ ϩ ͒,</formula><p>where d is an observable binary ("dummy") variable indicating whether the true dependent variable y* ϭ xЈ␤ ϩ is observed (d ϭ 1) or "censored" (d ϭ 0). For the special case of interval censoring considered above, d is an indicator for whether the true variable y* is in the uncensored region <ref type="bibr">[a, b]</ref>. More generally, though, d will depend on regressors and error terms that are related to, but distinct from, those in the equation for y*. For example, market wages may only be observed for individuals with positive labor supply, which is a different form of censoring than top coding in wages.</p><p>In such selection models, parametric estimation methods for the coefficients ␤ are typically based on maximum likelihood <ref type="bibr" target="#b2">(Gronau, 1973)</ref> or the "two-step" strategy proposed by <ref type="bibr" target="#b2">Heckman (1976</ref><ref type="bibr" target="#b2">Heckman ( , 1979</ref>. When the error distribution is not parametrically specified, however, semiparametric estimation of the regression coefficients generally involves explicit nonparametric estimation of density or regression functions, unlike the simpler methods for interval censored data described above. <ref type="bibr" target="#b20">5</ref> Also, semiparametric identification of the censored selection model generally requires an "exclusion restriction"-that is, a regressor that is included in the set of regressors for the binary variable d must be excluded from the list of regressors x in the equation of interest. This exclusion restriction (or instrumental variable), which is not required for the interval-censoring model, may not be plausible in many empirical applications. Due to these difficulties, empirical applications of semiparametric selection models are even less common than applications of the semiparametric censored regression models described above. <ref type="bibr" target="#b21">6</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>An Empirical Application: Relative Earnings of Black Men in the South During the 1960s</head><p>Title VII of the Civil Rights Act of 1964, which went into effect on July 2, 1965, outlawed discrimination against black and female workers and established the Equal Employment Opportunity Commission to monitor compliance with Title VII and to enforce its statutes. Executive Order 11246, signed by President Johnson on September 24, 1965, prohibited discrimination by federal contractors and created its enforcement arm, the Office of Federal Contract Compliance, to monitor contractors. Many states had also adopted their own fair employment practice laws before 1964 forbidding discrimination among employers located within the state. These laws were similar to Title VII and established state-level commissions to hear individual discrimination claims. However, none of the 21 states with enforceable state laws before the passage of the 1964 Civil Rights Act were in the South.</p><p>We use longitudinal data on earnings to estimate the impact of these civil rights policies. In a joint project of the Census Bureau and the Social Security Administration (SSA), respondents to the 1973 and 1978 March Current Population Surveys were matched by their Social Security numbers to their Social Security earnings histories. The resulting files contain survey responses on race, gender, education, age and region of residence as of the survey year for persons in the March surveys linked to any earnings for which they paid Social Security taxes.</p><p>We examine the pooled data containing earnings information from 1958 to 1974, with a particular focus on the years 1963, 1964, 1970 and 1971. We use a sample of black and white men living in southern states who were born in the period 1910 -1939 (the youngest man in the sample was 24 in 1963, while the oldest was 61 in 1971). We focus on men in the South because none of the states in the South had fair employment practice laws before 1965, and Title VII enforcement activity was primarily directed at racial discrimination in the South. A within-cohort analysis is used to control for the changing composition of workers over time. The final sample consists of 10,105 men, and our analysis uses all men with nonzero earnings in a given year. <ref type="bibr" target="#b22">7</ref> A significant shortcoming of the earnings data is that many records are censored at the Social Security maximum taxable earnings level. In addition, the real value of the tax ceiling changed substantially during the time period of interest, rising from a little over <ref type="bibr">$15,000 (in 1982-1984</ref>  Consequently, any estimates of the impact of Title VII on the black-white earnings gap that do not explicitly account for censoring at the tax ceiling and changes in it could be severely biased.</p><p>We use several approaches to estimate the interval censoring model. The dependent variable in each case is the natural logarithm of annual taxable earnings, and the explanatory variables are race, level of education, age and agesquared. <ref type="table" target="#tab_0">Table 1</ref> presents the estimation results for the race and education coefficients based on the various estimators. The first column, headed OLS1, contains the ordinary least squares estimates based on all of the data. The second column, headed OLS2, presents the least squares results using only the observations that are not censored. The third column contains the Tobit maximum likelihood estimates under the assumption that the errors are normally distributed and homoskedastic. The remaining columns present the results for the three semiparametric estimators: CLAD, SCLS and ICLAD. The Tobit, CLAD and SCLS estimators were implemented using the Stata software package, while the ICLAD estimator was calculated using the Gauss package. For each estimator, we have created Stata "ado" files that are available at ͗http://elsa.berkeley.edu/ϳkenchay͘. <ref type="bibr" target="#b23">8</ref> It is clear from <ref type="table" target="#tab_0">Table 1</ref> that the least squares and maximum likelihood estimates of the black-white log-earnings gap and the returns to education are extremely biased when compared to the semiparametric estimators. We think of the CLAD estimator as the natural benchmark, since it is consistent under the normality of errors assumption justifying the maximum likelihood estimator, under the independence of errors assumption justifying the ICLAD estimator, and under the conditional symmetry of errors assumption justifying the SCLS estimator. When compared to the CLAD benchmark, the least squares estimator based on all of the data (OLS1) actually does better than the maximum likelihood estimator. For this application, it appears that misspecifying the errors as being normally distributed and using maximum likelihood estimation results in more biased estimates than ignoring the censoring problem entirely and using least squares estimation. A more formal test of the normality assumption also suggests that it is violated for the log-earnings model. <ref type="bibr" target="#b24">9</ref> There are sizeable differences in the estimated effects of education on earnings across the three semiparametric estimators. While the ICLAD and SCLS estimators of the education premium are similar, they are always greater than the CLAD estimator. These differences are significant given the precision of the estimates and range from 17 percent to 43 percent for the ICLAD estimator and <ref type="bibr" target="#b24">9</ref> Chay and Honoré (1998) calculate the test statistics for nonnormality and for heteroskedasticity in censored regression models discussed by <ref type="bibr">Chesher and Irish (1987)</ref>. The test statistic for detecting nonnormality ranges from 900.47 to 1200.68. Under the null, this statistic has an (asymptotic) <ref type="bibr" target="#b17">2</ref> (2) distribution with a 1 percent critical value of 9.21. Therefore, we easily reject the hypothesis that the errors are normally distributed. The test for heteroskedasticity yields statistics between 84.71 and 90.85. Under the null, these have (asymptotic) 2 (12) distributions with a 1 percent critical value of 26.22. We therefore also reject the null of no heteroskedasticity. 20 percent to 33 percent for the SCLS estimator. The differences in the estimates of the black-white earnings gap are smaller, with the CLAD estimator about 11 percent to 28 percent and 4 percent to 18 percent smaller in magnitude than the ICLAD and SCLS estimators, respectively. Strikingly, the semiparametric approaches all result in more precise estimates of the race coefficient than maximum likelihood estimation. For example, the standard errors of the CLAD estimator are 25 percent to 55 percent smaller than the standard errors of the Tobit estimator. <ref type="bibr" target="#b25">10</ref> The differences in the coefficient estimates across the various estimators can be used as a sort of specification check, similar in spirit to the <ref type="bibr" target="#b9">Newey (1987)</ref> specification analysis mentioned earlier. For the education coefficient, the large differences between the maximum likelihood and semiparametric estimates suggest that nonnormal errors are an important source of bias in the Tobit estimator. Further, the significant differences among the semiparametric estimates imply that heteroskedasticity and asymmetry of the errors are also sources of misspecification in the maximum likelihood estimator of the education premium. Conversely, for the black-white earnings gap, the smaller differences among the semiparametric estimates suggest that nonnormality is the biggest source of bias in the Tobit estimator, with heteroskedasticity and asymmetry playing smaller roles.</p><p>To examine the question of specification in more detail, we estimated the distribution of the error terms derived from the CLAD estimates, using the <ref type="bibr" target="#b6">Kaplan and Meier (1958)</ref> estimator. The resulting estimated error distribution for logearnings has fatter tails than does a normal distribution. The maximum likelihood estimator is sensitive to values in the tails, while the least absolute deviations estimator, which focuses on the median value, is unaffected by extreme observations. Since black men are more likely to be in the left-hand tail of the distribution, fat tails can explain the consistently larger (in magnitude) maximum likelihood estimates of the race coefficient. They can also explain the larger sampling errors of the Tobit estimator relative to the semiparametric estimators. Thus, abnormally long tails in the log-earnings distribution may be the major source of misspecification in the maximum likelihood estimates of the black-white earnings gap <ref type="bibr">(Chay, 1995;</ref><ref type="bibr">Chay and Honoré, 1998)</ref>.</p><p>Based on the series of cross-sectional estimators for the four years shown in <ref type="table" target="#tab_0">Table 1</ref>, the maximum likelihood and semiparametric approaches yield very similar estimates of changes in black-white relative earnings during the late 1960s. The maximum likelihood and semiparametric estimates all imply that the black-white earnings gap narrowed about 0.15 log points from <ref type="bibr">1963-1964 to 1970 -1971</ref>. We conclude from this that while there is bias in the Tobit estimator of the race coefficient, this bias is fixed over time. Thus, it is "differenced out" when one examines changes in the estimated race coefficient. However, the two ordinary least squares estimators imply that relative earnings only converged between 0.06 (OLS2) and 0.10 (OLS1) log points during the period of interest. Not accounting for the severe censoring in the earnings data results in downwardly biased estimates of the impact of Title VII. Also, although the CLAD estimator imposes the weakest stochastic restrictions on the error terms, it results in the most precise estimates of the policy effects.</p><p>Figures 3A and 3B provide a more detailed picture of the various estimators. The top panel shows the percentage of workers in the sample recorded as earning at the taxable maximum (the top-code rate) from 1958 to 1974, separately by race. The bottom panel plots the estimated black-white log-earnings gaps from the OLS1, OLS2, MLE and CLAD estimators for the series of cross-sections from 1958 -1974. There is a striking correspondence between changes in the top-code rate in the top panel and changes in the ordinary least squares estimates in the bottom panel. Indeed, it seems that most of the changes in the ordinary least squares estimates over time are being driven by changes in the amount of censoring varying by race. This results in a severe understatement of the racial earnings convergence in the late 1960s. The time series of the CLAD and maximum likelihood estimates, on the other hand, have no association with the top-code rates, although, as noted earlier, the maximum likelihood estimates systematically overstate the size of the blackwhite earnings gap when compared to the CLAD estimates. The maximum likelihood and CLAD estimates imply substantial black economic progress in the South after 1964; a result that is masked by the ordinary least squares estimates.</p><p>Finally, <ref type="table" target="#tab_1">Table 2</ref> presents the fixed-effects estimation results based on the ICLAD estimator for each of the six possible pairs of time periods in our panel data. The table entries give the estimated change in the race and education coefficients between the two specified periods. The analysis includes age and age-squared as explanatory variables. To compare the parameter estimates across the six columns, the sample is restricted to the 7,435 men with positive earnings in all four years. This reduces the sample size by about 10 percent to 13 percent relative to the cross-sectional samples.</p><p>The black-white earnings gap narrowed substantially during the period of interest, even after accounting for individual-specific fixed effects. The relative earnings of black men increased about 0.12-0.14 log-points from 1963 to 1971. These estimates are similar to those implied by the series of maximum likelihood and semiparametric estimates of the cross-sectional censored regression model in <ref type="table" target="#tab_0">Table 1</ref>. A key assumption underlying the fixed-effects ICLAD estimator is that the distribution of the unobservables is the same in all time periods for a given individual. A formal specification test did not reject the restrictions implied by this assumption at conventional levels of significance (Chay and Honoré, 1998). Notes: See notes to <ref type="table" target="#tab_0">Table 1</ref>. The sample is the 7,435 men with positive earnings in all four years. For each pair of years, the absolute error loss function was used to estimate the identically censored panel data model with fixed effects. The estimates represent the change in the coefficients between the two years.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>When data are censored, ordinary least squares regression can provide misleading estimates. The results from the semiparametric models show that there was significant earnings convergence among black and white men in the American South after the passage of the 1964 Civil Rights Act, a result that was masked by least squares analysis. The semiparametric methods can also provide information on the sources of misspecification in parametric estimation approaches. In the logearnings model, it appears that abnormally long tails are the major source of bias in the Tobit maximum likelihood estimates.</p><p>y We thank <ref type="bibr">Bo Honoré, David Lee, and especially Alan Krueger, Timothy Taylor and</ref> Michael Waldman for their helpful comments. Marcelo Moreira provided outstanding research assistance. Support from the Alfred P. Sloan Foundation and the Center for Advanced Study in the Behavioral Sciences is gratefully acknowledged.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Density of y and "Symmetrically Censored" Density</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>dollars) in 1963-1964 to about $20,000 in 1970 -1971. At least 32 percent of the sample is classified as earning the top-coded amount from 1958 to 1974, and this share fluctuates considerably during the key periods, reaching a peak of 54 percent in 1965.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3</head><label>3</label><figDesc>Top-Code Rate and Estimates of Black-White Log-Earnings Gap, 1958 -1974   </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 Estimated Effects of Race and Education on Log-Earnings</head><label>1</label><figDesc>The dependent variable is the natural logarithm of annual taxable earnings. Regressions also include a constant and age and age-squared as explanatory variables. Observations with nonpositive earnings are dropped from the analysis. The sample sizes for 1963, 1964, 1970 and 1971 are 8525, 8529, 8391 and 8275, respectively. The OLS2 specification also drops top-coded observations, leading to sample sizes of 4632, 4267, 4485 and 4163. MLE is Tobit maximum likelihood; CLAD is censored least absolute deviations; SCLS is symmetrically censored least squares; ICLAD is identically censored least absolute deviations.</figDesc><table><row><cell cols="3">(estimated standard errors in parentheses)</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>OLS1</cell><cell>OLS2</cell><cell>MLE</cell><cell>CLAD</cell><cell>SCLS</cell><cell>ICLAD</cell></row><row><cell>Black-White Gap</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1963</cell><cell>Ϫ0.355</cell><cell>Ϫ0.183</cell><cell>Ϫ0.629</cell><cell>Ϫ0.416</cell><cell>Ϫ0.444</cell><cell>Ϫ0.474</cell></row><row><cell></cell><cell>(0.033)</cell><cell>(0.038)</cell><cell>(0.044)</cell><cell>(0.027)</cell><cell>(0.031)</cell><cell>(0.032)</cell></row><row><cell>1964</cell><cell>Ϫ0.349</cell><cell>Ϫ0.154</cell><cell>Ϫ0.674</cell><cell>Ϫ0.428</cell><cell>Ϫ0.444</cell><cell>Ϫ0.473</cell></row><row><cell></cell><cell>(0.032)</cell><cell>(0.038)</cell><cell>(0.044)</cell><cell>(0.033)</cell><cell>(0.036)</cell><cell>(0.031)</cell></row><row><cell>1970</cell><cell>Ϫ0.262</cell><cell>Ϫ0.115</cell><cell>Ϫ0.508</cell><cell>Ϫ0.278</cell><cell>Ϫ0.302</cell><cell>Ϫ0.338</cell></row><row><cell></cell><cell>(0.032)</cell><cell>(0.037)</cell><cell>(0.044)</cell><cell>(0.020)</cell><cell>(0.031)</cell><cell>(0.029)</cell></row><row><cell>1971</cell><cell>Ϫ0.242</cell><cell>Ϫ0.111</cell><cell>Ϫ0.486</cell><cell>Ϫ0.244</cell><cell>Ϫ0.287</cell><cell>Ϫ0.312</cell></row><row><cell></cell><cell>(0.031)</cell><cell>(0.038)</cell><cell>(0.044)</cell><cell>(0.022)</cell><cell>(0.032)</cell><cell>(0.031)</cell></row><row><cell>Returns to Education</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>1963</cell><cell>0.041</cell><cell>0.012</cell><cell>0.102</cell><cell>0.051</cell><cell>0.068</cell><cell>0.073</cell></row><row><cell></cell><cell>(0.003)</cell><cell>(0.004)</cell><cell>(0.004)</cell><cell>(0.004)</cell><cell>(0.007)</cell><cell>(0.003)</cell></row><row><cell>1964</cell><cell>0.040</cell><cell>0.013</cell><cell>0.103</cell><cell>0.064</cell><cell>0.079</cell><cell>0.075</cell></row><row><cell></cell><cell>(0.003)</cell><cell>(0.005)</cell><cell>(0.004)</cell><cell>(0.006)</cell><cell>(0.007)</cell><cell>(0.003)</cell></row><row><cell>1970</cell><cell>0.037</cell><cell>0.003</cell><cell>0.101</cell><cell>0.055</cell><cell>0.066</cell><cell>0.071</cell></row><row><cell></cell><cell>(0.003)</cell><cell>(0.005)</cell><cell>(0.004)</cell><cell>(0.003)</cell><cell>(0.006)</cell><cell>(0.003)</cell></row><row><cell>1971</cell><cell>0.035</cell><cell>0.002</cell><cell>0.100</cell><cell>0.054</cell><cell>0.065</cell><cell>0.070</cell></row><row><cell></cell><cell>(0.002)</cell><cell>(0.004)</cell><cell>(0.004)</cell><cell>(0.003)</cell><cell>(0.005)</cell><cell>(0.003)</cell></row><row><cell>Notes:</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table><note></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 Fixed-Effects ICLAD Estimates of Effects of Race and Education</head><label>2</label><figDesc>(estimated standard errors in parentheses)</figDesc><table><row><cell></cell><cell>1963-64</cell><cell>1963-70</cell><cell>1963-71</cell><cell>1964-70</cell><cell>1964-71</cell><cell>1970-71</cell></row><row><cell>Change in</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Black-White Gap</cell><cell>0.011</cell><cell>0.102</cell><cell>0.136</cell><cell>0.095</cell><cell>0.108</cell><cell>0.015</cell></row><row><cell></cell><cell>(0.007)</cell><cell>(0.017)</cell><cell>(0.021)</cell><cell>(0.020)</cell><cell>(0.019)</cell><cell>(0.007)</cell></row><row><cell>Returns to Education</cell><cell>0.002</cell><cell>0.001</cell><cell>0.000</cell><cell>0.000</cell><cell>Ϫ0.003</cell><cell>0.000</cell></row><row><cell></cell><cell>(0.001)</cell><cell>(0.002)</cell><cell>(0.003)</cell><cell>(0.003)</cell><cell>(0.002)</cell><cell>(0.001)</cell></row></table><note></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">Quantile regression, as discussed by Koenker and Hallock in this issue, is based on a weighted version of the least absolute deviations approach<ref type="bibr" target="#b7">(Koenker and Bassett, 1978)</ref>. Indeed, it is straightforward to extend the CLAD approach to analyze the case of censored quantile regression (CRQ) estimation, as proposed by<ref type="bibr" target="#b12">Powell (1986a)</ref>.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3">In the empirical application, we focus on the least absolute deviations version of the estimator-ICLAD-rather than the least squares version (ICLS), since simulation evidence suggests that it performs better in small samples<ref type="bibr" target="#b3">(Honoré and Powell, 1994)</ref>.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4">Much of the theoretical literature on semiparametric estimation of censored regression models has focused on this assumption. However, some simulation evidence suggests that heteroskedasticity causes greater bias in standard maximum likelihood estimation than nonnormality<ref type="bibr" target="#b13">(Powell, 1986b)</ref>.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5">An exception is given by Honoré, Kyriazidou and Udry (1997).<ref type="bibr" target="#b21">6</ref> One example of an early implementation is provided by Newey, Powell and Walker (1990), which applied semiparametric estimation methods to the<ref type="bibr" target="#b8">Mroz (1987)</ref> data on the labor supply of married women.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7">Over 84 percent of the men in the sample have positive earnings in 1963-1964. This figure is 83 percent in 1970 -1971.<ref type="bibr" target="#b23">8</ref> The standard errors for OLS, MLE and ICLAD were calculated using standard approximations. The standard errors for CLAD and SCLS were calculated using the bootstrap techniques discussed by Brownstone and Valletta in this issue. It is much more efficient to calculate the ICLAD estimator using Gauss instead of Stata.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="10">The standard errors for the CLAD and SCLS estimators were calculated using 500 bootstrap replications. Applying the bootstrap to the Tobit maximum likelihood estimator results in standard errors that are nearly identical to those presented inTable 1, which are based on the asymptotic approximation. Thus, the bootstrap technique is not the source of the differences in the estimated standard errors.</note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>This article has been cited by:</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Estimation of Semiparametric Censored Regression Models: An Application to Changes in Black-White Earnings Inequality During the 1960s</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Takeshi</forename><surname>Amemiya</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abbas</forename><surname>Arabmazar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>Arabmazar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abbas</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Schmidt ; Buchinsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Moshe</forename><surname>Andrew</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Margaret</forename><surname>Irish</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advanced Econometrics</title>
+		<editor>Chay, Kenneth Y. and Bo E. Honoré</editor>
+		<meeting><address><addrLine>Cambridge; Chay, Kenneth Y</addrLine></address></meeting>
+		<imprint>
+			<publisher>Harvard University Press</publisher>
+			<date type="published" when="1963" />
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="4" to="38" />
+		</imprint>
+		<respStmt>
+			<orgName>Department of Economics, Princeton University</orgName>
+		</respStmt>
+	</monogr>
+	<note>Journal of Econometrics</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">ABNORMAL SELECTION BIAS</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">January/February ;</forename><surname>Goldberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arthur</forename><forename type="middle">S</forename></persName>
+		</author>
+		<idno type="DOI">10.1016/b978-0-12-398750-1.50009-7</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Studies in Econometrics, Time Series, and Multivariate Statistics</title>
+		<editor>S. Karlin et al.</editor>
+		<meeting><address><addrLine>New York</addrLine></address></meeting>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="1983" />
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="67" to="84" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The Common Structure of Statistical Models of Truncation, Sample Selection and Limited Dependent Variables and a Simple Estimator for Such Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Reuben</forename><surname>Gronau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">J</forename><surname>Heckman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annals of Economics and Social Measurement. Fall</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="153" to="61" />
+			<date type="published" when="1973-03" />
+			<publisher>Heckman</publisher>
+		</imprint>
+	</monogr>
+	<note>Econometrica</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Trimmed Lad and Least Squares Estimation of Truncated and Censored Regression Models with Fixed Effects</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bo</forename><forename type="middle">E</forename><surname>Honoré</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bo</forename><forename type="middle">E</forename><surname>Honoré</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bo</forename><forename type="middle">E</forename><surname>Honoré</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ekaterini</forename><surname>Kyriazidou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Udry</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2951583</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/7b8f/bff53c76b0a093d90f838b37d507f36314f9.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">533</biblScope>
+			<date type="published" when="1992-05" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+	<note>Econometrica. Estimation of Type 3</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Tobit Models Using Symmetric Trimming and Pairwise Comparisons</title>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">/</forename><surname>January</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>February</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page" from="107" to="135" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Nonparametric Estimation from Incomplete Observations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">L</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Meier</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2281868</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">282</biblScope>
+			<biblScope unit="page">457</biblScope>
+			<date type="published" when="1958-06" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Regression Quantiles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roger</forename><surname>Koenker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gilbert</forename><forename type="middle">S</forename><surname>Bassett</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1913643</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/c09d/b7439505f49a0958f68e782df94b3807341a.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">33</biblScope>
+			<date type="published" when="1978-01" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The Sensitivity of an Empirical Model of Married Women&apos;s Hours of Work to Economic and Statistical Assumptions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><forename type="middle">A</forename><surname>Mroz</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1911029</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/8541/7d00ddb15d468821568f70705c85e99b37c7.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">765</biblScope>
+			<date type="published" when="1987-07" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Specification tests for distributional assumptions in the Tobit model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Whitney</forename><forename type="middle">K</forename><surname>Newey</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0304-4076(87)90070-4</idno>
+		<idno type="PII">0304-4076(87)90070-4</idno>
+		<idno type="ark">ark:/67375/6H6-8CDNW7W5-M</idno>
+		<idno type="istexId">68E707622725A9C32C962B1AC6D3F5400A84BACA</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<title level="j" type="abbrev">Journal of Econometrics</title>
+		<idno type="ISSN">0304-4076</idno>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="125" to="145" />
+			<date type="published" when="1987-01" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Semiparametric Estimation of Selection Models: Some Empirical Results</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Whitney</forename><forename type="middle">K</forename><surname>Newey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">M</forename><surname>Powell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Walker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">American Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="324" to="352" />
+			<date type="published" when="1990-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Least absolute deviations estimation for the censored regression model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0304-4076(84)90004-6</idno>
+		<idno type="PII">0304-4076(84)90004-6</idno>
+		<idno type="ark">ark:/67375/6H6-R6F997Z0-Z</idno>
+		<idno type="istexId">23A0C09210720A00C84535CEC2EA60CE34ECF880</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<title level="j" type="abbrev">Journal of Econometrics</title>
+		<idno type="ISSN">0304-4076</idno>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="303" to="325" />
+			<date type="published" when="1984-07" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Censored regression quantiles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0304-4076(86)90016-3</idno>
+		<idno type="PII">0304-4076(86)90016-3</idno>
+		<idno type="ark">ark:/67375/6H6-4847713G-M</idno>
+		<idno type="istexId">CE815E3C2EDC06313B19C69BA12713F2B29E6EE2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<title level="j" type="abbrev">Journal of Econometrics</title>
+		<idno type="ISSN">0304-4076</idno>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="143" to="155" />
+			<date type="published" when="1986-06" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Symmetrically Trimmed Least Squares Estimation for Tobit Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1914308</idno>
+		<ptr type="open-access" target="https://dspace.mit.edu/bitstream/1721.1/64231/1/symmetricallytri00powe.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">1435</biblScope>
+			<date type="published" when="1986-11" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Chapter 41 Estimation of semiparametric models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">L</forename><surname>Powell</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s1573-4412(05)80010-8</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Handbook of Econometrics</title>
+		<editor>IV. Robert F. Engle and Daniel L. McFadden</editor>
+		<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="1994" />
+			<biblScope unit="page" from="2443" to="2521" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Estimation of Relationships for Limited Dependent Variables</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Tobin</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1907382</idno>
+		<ptr type="open-access" target="http://cowles.yale.edu/sites/default/files/files/pub/d00/d0003-r.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Econometrica</title>
+		<title level="j" type="abbrev">Econometrica</title>
+		<idno type="ISSN">0012-9682</idno>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">24</biblScope>
+			<date type="published" when="1958-01" />
+			<publisher>JSTOR</publisher>
+		</imprint>
+	</monogr>
+	<note>Econometrica</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Predicting EuroQoL 5 Dimensions 5 Levels (EQ-5D-5L) Utilities from Older People&apos;s Quality of Life Brief Questionnaire (OPQoL-Brief ) Scores</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julie</forename><surname>Billingsley Kaambwa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ratcliffe</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40271-017-0259-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Patient -Patient-Centered Outcomes Research</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="39" to="54" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Does Selecting Covariates Using Factor Analysis in Mapping Algorithms Improve Predictive Accuracy? A Case of Predicting EQ-5D-5L and SF-6D Utilities from the Women&apos;s Health Questionnaire. Value in Health</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Caroline</forename><surname>Billingsley Kaambwa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julie</forename><surname>Sheryl De Lacey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ratcliffe</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jval.2018.01.020</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Estimation of Some Nonlinear Panel Data Models With Both Time-Varying and Time-Invariant Explanatory Variables</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bo</forename><forename type="middle">E</forename><surname>Honoré</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michaela</forename><surname>Kesina</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/07350015.2015.1123635</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Business &amp; Economic Statistics</title>
+		<title level="j" type="abbrev">Journal of Business &amp; Economic Statistics</title>
+		<idno type="ISSN">0735-0015</idno>
+		<idno type="ISSNe">1537-2707</idno>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="543" to="558" />
+			<date type="published" when="2017-04-27" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Gaffe Appeal A Field Experiment on Partisan Selective Exposure to Election Messages</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timothy</forename><forename type="middle">J</forename><surname>Ryan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ted</forename><surname>Brader</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/psrm.2015.62</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Political Science Research and Methods</title>
+		<title level="j" type="abbrev">PSRM</title>
+		<idno type="ISSN">2049-8470</idno>
+		<idno type="ISSNe">2049-8489</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">04</biblScope>
+			<biblScope unit="page" from="667" to="687" />
+			<date type="published" when="2015-11-20" />
+			<publisher>Cambridge University Press (CUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">A simple consistent test of conditional symmetry in symmetrically trimmed tobit models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tao</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gautam</forename><surname>Tripathi</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jeconom.2016.12.003</idno>
+		<ptr type="open-access" target="http://wwwfr.uni.lu/content/download/69320/872097/file/2014-04_A%20simple%20consitent%20test%20%20GT.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Econometrics</title>
+		<title level="j" type="abbrev">Journal of Econometrics</title>
+		<idno type="ISSN">0304-4076</idno>
+		<imprint>
+			<biblScope unit="volume">198</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="40" />
+			<date type="published" when="2017-05" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Quantile regression for interval censored data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiuqing</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yanqin</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiuli</forename><surname>Du</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/03610926.2015.1073317</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Communications in Statistics - Theory and Methods</title>
+		<title level="j" type="abbrev">Communications in Statistics - Theory and Methods</title>
+		<idno type="ISSN">0361-0926</idno>
+		<idno type="ISSNe">1532-415X</idno>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="3848" to="3863" />
+			<date type="published" when="2016-05-04" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">The effects of Greek affiliation on academic performance</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>De Donato</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Thomas</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.econedurev.2017.01.004</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Economics of Education Review</title>
+		<title level="j" type="abbrev">Economics of Education Review</title>
+		<idno type="ISSN">0272-7757</idno>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="41" to="51" />
+			<date type="published" when="2017-04" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Where the two shall meet: Exploring the relationship between teacher professional culture and student learning culture</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennie</forename><forename type="middle">M</forename><surname>Weiner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Monica</forename><forename type="middle">C</forename><surname>Higgins</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10833-016-9292-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Educational Change</title>
+		<title level="j" type="abbrev">J Educ Change</title>
+		<idno type="ISSN">1389-2843</idno>
+		<idno type="ISSNe">1573-1812</idno>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="21" to="48" />
+			<date type="published" when="2016-12-17" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Dynamics of child development: Analysis of a longitudinal cohort in a very low income country</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emanuela</forename><surname>Galasso</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ann</forename><surname>Weber</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lia</forename><forename type="middle">C H</forename><surname>Fernald</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/wber/lhw065</idno>
+		<ptr type="open-access" target="http://documents.worldbank.org/curated/en/148061487168899514/pdf/WPS7973.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">The World Bank Economic Review</title>
+		<title level="j" type="abbrev">World Bank Econ Rev</title>
+		<idno type="ISSN">0258-6770</idno>
+		<idno type="ISSNe">1564-698X</idno>
+		<imprint>
+			<biblScope unit="page">lhw065</biblScope>
+			<date type="published" when="2017-01-09" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Holding or not holding a mega-event: case of the F1 Korea Grand Prix</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yeongbae</forename><surname>Choe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hyo-Yeun</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dae-Kwan</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10941665.2016.1182036</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Asia Pacific Journal of Tourism Research</title>
+		<title level="j" type="abbrev">Asia Pacific Journal of Tourism Research</title>
+		<idno type="ISSN">1094-1665</idno>
+		<idno type="ISSNe">1741-6507</idno>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="88" to="98" />
+			<date type="published" when="2016-05-06" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Mapping Between the Sydney Asthma Quality of Life Questionnaire (AQLQ-S) and Five Multi-Attribute Utility Instruments (MAUIs)</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gang</forename><surname>Billingsley Kaambwa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julie</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Angelo</forename><surname>Ratcliffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aimee</forename><surname>Iezzi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeff</forename><surname>Maxwell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Richardson</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40273-016-0446-4</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PharmacoEconomics</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="111" to="124" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Does Bank Failure Affect Client Firms? Micro Evidence from Estonia</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karin</forename><surname>Jõeveer</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0972652716666458</idno>
+		<ptr type="open-access" target="http://pdfs.semanticscholar.org/fd1b/7f91bdfcbe5f1fe05769d02e9d6cb670fc5f.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Emerging Market Finance</title>
+		<title level="j" type="abbrev">Journal of Emerging Market Finance</title>
+		<idno type="ISSN">0972-6527</idno>
+		<idno type="ISSNe">0973-0710</idno>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="310" to="332" />
+			<date type="published" when="2016-12" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">The effects of China&apos;s Sloping Land Conversion Program on agricultural households</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhen</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arne</forename><surname>Henningsen</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/agec.12230</idno>
+		<ptr type="open-access" target="https://econpapers.repec.org/scripts/redir.pf?u=http%3A%2F%2Fokonomi.foi.dk%2Fworkingpapers%2FWPpdf%2FWP2014%2FIFRO_WP_2014_10.pdf;h=repec:foi:wpaper:2014_10" />
+	</analytic>
+	<monogr>
+		<title level="j">Agricultural Economics</title>
+		<title level="j" type="abbrev">Agricultural Economics</title>
+		<idno type="ISSN">0169-5150</idno>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="295" to="307" />
+			<date type="published" when="2016-03-30" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Censored linear model in high dimensions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patric</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sara</forename><surname>Van De Geer</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11749-015-0441-7</idno>
+		<ptr type="open-access" target="http://arxiv.org/pdf/1405.0579" />
+	</analytic>
+	<monogr>
+		<title level="j">TEST</title>
+		<title level="j" type="abbrev">TEST</title>
+		<idno type="ISSN">1133-0686</idno>
+		<idno type="ISSNe">1863-8260</idno>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="75" to="92" />
+			<date type="published" when="2015-04-17" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Environmental Policy and Directed Technological Change: Evidence from the European Carbon Market</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Raphael</forename><surname>Calel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Antoine</forename><surname>Dechezleprêtre</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/rest_a_00470</idno>
+		<ptr type="open-access" target="http://cep.lse.ac.uk/pubs/download/dp1141.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Review of Economics and Statistics</title>
+		<title level="j" type="abbrev">Review of Economics and Statistics</title>
+		<idno type="ISSN">0034-6535</idno>
+		<idno type="ISSNe">1530-9142</idno>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="173" to="191" />
+			<date type="published" when="2016-03" />
+			<publisher>MIT Press - Journals</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Disparities in Public Service Provision in Niger: Cross-District Evidence on Access to Primary Schools and Healthcare</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefano</forename><surname>Mainardi</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00343404.2014.890705</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Regional Studies</title>
+		<title level="j" type="abbrev">Regional Studies</title>
+		<idno type="ISSN">0034-3404</idno>
+		<idno type="ISSNe">1360-0591</idno>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2017" to="2036" />
+			<date type="published" when="2014-03-19" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Mapping between the Roland Morris Questionnaire and Generic Preference-Based Measures</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kamran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stavros</forename><surname>Madan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><forename type="middle">E</forename><surname>Petrou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lamb</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jval.2014.07.001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Value in Health</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="686" to="695" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">When a son is born: The impact of fertility patterns on family finance in rural China</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Weili</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yuan</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chieco.2014.06.008</idno>
+	</analytic>
+	<monogr>
+		<title level="j">China Economic Review</title>
+		<title level="j" type="abbrev">China Economic Review</title>
+		<idno type="ISSN">1043-951X</idno>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="192" to="208" />
+			<date type="published" when="2014-09" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Mapping EQ-5D Utility Scores from the PedsQL™ Generic Core Scales</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kamran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stavros</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oliver</forename><surname>Petrou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><forename type="middle">J</forename><surname>Rivero-Arias</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Spencer</forename><forename type="middle">E</forename><surname>Walters</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Boyle</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s40273-014-0153-y</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PharmacoEconomics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="693" to="706" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">An investigation into the empirical relationship between time with peers, friendship, and delinquency</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bob</forename><forename type="middle">Edward</forename><surname>Vásquez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregory</forename><forename type="middle">M</forename><surname>Zimmerman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jcrimjus.2014.03.001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Criminal Justice</title>
+		<title level="j" type="abbrev">Journal of Criminal Justice</title>
+		<idno type="ISSN">0047-2352</idno>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="244" to="256" />
+			<date type="published" when="2014-05" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Health Care and Nonhealth Care Costs in the Treatment of Patients With Symptomatic Chronic Heart Failure in Spain</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Juan</forename><forename type="middle">F</forename><surname>Delgado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Juan</forename><surname>Oliva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miguel</forename><surname>Llano</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Domingo</forename><surname>Pascual-Figal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">José</forename><forename type="middle">J</forename><surname>Grillo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josep</forename><surname>Comín-Colet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Beatriz</forename><surname>Díaz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">León</forename><surname>Martínez De La Concha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Belén</forename><surname>Martí</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luz</forename><forename type="middle">M</forename><surname>Peña</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.rec.2013.12.014</idno>
+		<idno type="PMID">25037543</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Revista Española de Cardiología (English Edition)</title>
+		<title level="j" type="abbrev">Revista Española de Cardiología (English Edition)</title>
+		<idno type="ISSN">1885-5857</idno>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="643" to="650" />
+			<date type="published" when="2014-08" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+	<note>English Edition) 67:8, 643. [Crossref</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Costes sanitarios y no sanitarios de personas que padecen insuficiencia cardiaca crónica sintomática en España</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Juan</forename><forename type="middle">F</forename><surname>Delgado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Juan</forename><surname>Oliva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miguel</forename><surname>Llano</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Domingo</forename><surname>Pascual-Figal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">José</forename><forename type="middle">J</forename><surname>Grillo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josep</forename><surname>Comín-Colet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Beatriz</forename><surname>Díaz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">León</forename><surname>Martínez De La Concha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Belén</forename><surname>Martí</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luz</forename><forename type="middle">M</forename><surname>Peña</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.recesp.2013.12.016</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Revista Española de Cardiología</title>
+		<title level="j" type="abbrev">Revista Española de Cardiología</title>
+		<idno type="ISSN">0300-8932</idno>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="643" to="650" />
+			<date type="published" when="2014-08" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">SOX, corporate transparency, and the cost of debt</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sandro</forename><forename type="middle">C</forename><surname>Andrade</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gennaro</forename><surname>Bernile</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Frederick</forename><forename type="middle">M</forename><surname>Hood</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jbankfin.2013.10.001</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Banking &amp; Finance</title>
+		<title level="j" type="abbrev">Journal of Banking &amp; Finance</title>
+		<idno type="ISSN">0378-4266</idno>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="145" to="165" />
+			<date type="published" when="2014-01" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Exporting by Indian small and medium enterprises: role of regional technological knowledge, agglomeration and foreign direct investment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaya</forename><surname>Prakash Pradhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Keshab</forename><surname>Das</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/2157930X.2013.828884</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Innovation and Development</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="239" to="257" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Does the Jack of All Trades Hold the Winning Hand? Comparing the Role of Specialized versus General Skills in the Returns to an Agricultural Degree</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">M</forename><surname>Artz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">L</forename><surname>Kimle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">F</forename><surname>Orazem</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/ajae/aat063</idno>
+		<ptr type="open-access" target="http://www2.econ.iastate.edu/papers/p14591-2011-11-10.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Agricultural Economics</title>
+		<title level="j" type="abbrev">American Journal of Agricultural Economics</title>
+		<idno type="ISSN">0002-9092</idno>
+		<idno type="ISSNe">1467-8276</idno>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="193" to="212" />
+			<date type="published" when="2013-09-09" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Estimation of Censored Quantile Regression for Panel Data With Fixed Effects</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Antonio</forename><forename type="middle">F</forename><surname>Galvao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carlos</forename><surname>Lamarche</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luiz</forename><forename type="middle">Renato</forename><surname>Lima</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2013.818002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<title level="j" type="abbrev">Journal of the American Statistical Association</title>
+		<idno type="ISSN">0162-1459</idno>
+		<idno type="ISSNe">1537-274X</idno>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">503</biblScope>
+			<biblScope unit="page" from="1075" to="1089" />
+			<date type="published" when="2013-09" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">An assessment of the external validity of mapping QLQ-C30 to EQ-5D preferences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ralph</forename><surname>Crott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthijs</forename><surname>Versteegh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carin</forename><surname>Uyl-De-Groot</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11136-012-0220-9</idno>
+		<idno type="PMID">22743734</idno>
+		<idno type="ark">ark:/67375/VQC-KBLXG7SH-K</idno>
+		<idno type="istexId">4797AFD2B1BE89EC7C485209C1EC9F1AD937625B</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Quality of Life Research</title>
+		<title level="j" type="abbrev">Qual Life Res</title>
+		<idno type="ISSN">0962-9343</idno>
+		<idno type="ISSNe">1573-2649</idno>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1045" to="1054" />
+			<date type="published" when="2012-06-29" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Mapping utility scores from the Barthel index</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lucinda</forename><surname>Billingsley Kaambwa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stirling</forename><surname>Billingham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bryan</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10198-011-0364-5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The European Journal of Health Economics</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="231" to="241" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Uncertainty of Governmental Relief and the Crowding out of Flood Insurance</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><forename type="middle">A</forename><surname>Raschky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Reimund</forename><surname>Schwarze</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manijeh</forename><surname>Schwindt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ferdinand</forename><surname>Zahn</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10640-012-9586-y</idno>
+		<idno type="ark">ark:/67375/VQC-SL8PVSJ3-L</idno>
+		<idno type="istexId">F5543988ADDB8E78C63F8A4CBAA0A85B9F1E0B0D</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Environmental and Resource Economics</title>
+		<title level="j" type="abbrev">Environ Resource Econ</title>
+		<idno type="ISSN">0924-6460</idno>
+		<idno type="ISSNe">1573-1502</idno>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="179" to="200" />
+			<date type="published" when="2012-08-11" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Regional Policies, Firm Characteristics and Exporting in the Indian State of Karnataka</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaya</forename><surname>Prakash Pradhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohammad</forename><surname>Zohair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Mallikarjun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Alagawadi</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001573251204800103</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Foreign Trade Review</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="45" to="81" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Basel l and Basel ll compliance issues for banks in India</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sreejata</forename><surname>Banerjee</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/17520843.2012.688754</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Macroeconomics and Finance in Emerging Market Economies</title>
+		<title level="j" type="abbrev">Macroeconomics and Finance in Emerging Market Economies</title>
+		<idno type="ISSN">1752-0843</idno>
+		<idno type="ISSNe">1752-0851</idno>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="228" to="245" />
+			<date type="published" when="2012-09" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Debts on debts</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ricardo</forename><surname>João</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Le</forename><surname>Faria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhongmin</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.najef.2012.02.003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The North American Journal of Economics and Finance</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="203" to="219" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Outlay equivalence analysis of child gender bias in household expenditure data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ziyodullo</forename><surname>Parpiev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kakhramon</forename><surname>Yusupov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nurmukhammad</forename><surname>Yusupov</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-0351.2012.00440.x</idno>
+		<idno type="ark">ark:/67375/WNG-D1WP0PV0-K</idno>
+		<idno type="istexId">61AF507FADFF10894BFF882EC57CEE327C6A9221</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Economics of Transition</title>
+		<idno type="ISSN">0967-0750</idno>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="549" to="567" />
+			<date type="published" when="2012-05-11" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">EMPIRICAL ANALYSIS OF SPECULATIVE ATTACKS WITH CONTRACTIONARY REAL EFFECTS</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ismael Arciniegas Rueda</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/isaf.1325</idno>
+		<idno type="ark">ark:/67375/WNG-Z0BQXD6B-R</idno>
+		<idno type="istexId">FBD6056DAA4BFFC7FE386AD10B4E1B429B4BCC0B</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Intelligent Systems in Accounting, Finance and Management</title>
+		<title level="j" type="abbrev">Intell. Sys. Acc. Fin. Mgmt.</title>
+		<idno type="ISSN">1055-615X</idno>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="102" to="127" />
+			<date type="published" when="2012-04" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">R&amp;D Strategy of Small and Medium Enterprises in India</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaya</forename><surname>Prakash Pradhan</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/097172181101600307</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science, Technology and Society</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="373" to="395" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Regional heterogeneity and firms&apos; R&amp;D in India</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaya</forename><surname>Prakash Pradhan</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/2157930x.2011.614797</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Innovation and Development</title>
+		<title level="j" type="abbrev">Innovation and Development</title>
+		<idno type="ISSN">2157-930X</idno>
+		<idno type="ISSNe">2157-9318</idno>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="259" to="282" />
+			<date type="published" when="2011-10" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Nonparametric structural estimation of labor supply in the presence of censoring</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Che-Yuan</forename><surname>Liang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jpubeco.2011.08.009</idno>
+		<ptr type="open-access" target="http://uu.diva-portal.org/smash/get/diva2:219040/FULLTEXT01.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Public Economics</title>
+		<title level="j" type="abbrev">Journal of Public Economics</title>
+		<idno type="ISSN">0047-2727</idno>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="89" to="103" />
+			<date type="published" when="2012-02" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Some models for estimation of total of a study variable having many zero values</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Danutė</forename><surname>Krapavickaitė</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10986-011-9133-5</idno>
+		<idno type="ark">ark:/67375/VQC-46GQZ9D1-F</idno>
+		<idno type="istexId">AF1AB518F82462813EFEC4F077A95F39D48C773C</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Lithuanian Mathematical Journal</title>
+		<title level="j" type="abbrev">Lith Math J</title>
+		<idno type="ISSN">0363-1672</idno>
+		<idno type="ISSNe">1573-8825</idno>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="370" to="384" />
+			<date type="published" when="2011-07" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Complex constituencies: intense environmentalists and representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><forename type="middle">E</forename><surname>Anderson</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/09644016.2011.589579</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Environmental Politics</title>
+		<title level="j" type="abbrev">Environmental Politics</title>
+		<idno type="ISSN">0964-4016</idno>
+		<idno type="ISSNe">1743-8934</idno>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="547" to="565" />
+			<date type="published" when="2011-07" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Do Interruptions Pay off? Effects of Interruptive Ads on Consumers&apos; Willingness to Pay</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alessandro</forename><surname>Acquisti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><surname>Spiekermann</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.intmar.2011.04.003</idno>
+		<ptr type="open-access" target="http://epub.wu.ac.at/3317/1/2011_JIM_acquisti%2Dspiekermann%2Dfinal%2Dsubmit.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Interactive Marketing</title>
+		<title level="j" type="abbrev">Journal of Interactive Marketing</title>
+		<idno type="ISSN">1094-9968</idno>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="226" to="240" />
+			<date type="published" when="2011-11" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Understanding the Demand for Flood Insurance</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carolyn</forename><surname>Kousky</surname></persName>
+		</author>
+		<idno type="DOI">10.1061/(asce)nh.1527-6996.0000025</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Natural Hazards Review</title>
+		<title level="j" type="abbrev">Nat. Hazards Rev.</title>
+		<idno type="ISSN">1527-6988</idno>
+		<idno type="ISSNe">1527-6996</idno>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="96" to="110" />
+			<date type="published" when="2011-05" />
+			<publisher>American Society of Civil Engineers (ASCE)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Quantile regression with doubly censored data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guixian</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><surname>Portnoy</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.csda.2011.03.009</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Statistics &amp; Data Analysis</title>
+		<title level="j" type="abbrev">Computational Statistics &amp; Data Analysis</title>
+		<idno type="ISSN">0167-9473</idno>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="797" to="812" />
+			<date type="published" when="2012-04" />
+			<publisher>Elsevier BV</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Quantitative Microbial Risk Assessment of Cryptosporidiosis and Giardiasis from Very Small Private Water Supplies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><forename type="middle">R</forename><surname>Hunter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marianna</forename><forename type="middle">Anderle</forename><surname>De Sylor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Helen</forename><forename type="middle">L</forename><surname>Risebro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gordon</forename><forename type="middle">L</forename><surname>Nichols</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Kay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philippe</forename><surname>Hartemann</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1539-6924.2010.01499.x</idno>
+		<idno type="PMID">20880218</idno>
+		<idno type="ark">ark:/67375/WNG-QT38LB7H-Q</idno>
+		<idno type="istexId">4539887ACDF70C3374B1F8BB98E51562551D3CF8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Risk Analysis</title>
+		<idno type="ISSN">0272-4332</idno>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="228" to="236" />
+			<date type="published" when="2010-09-29" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Utilizing the Flexibility of the Epsilon-Skew-Normal Distribution for Tobit Regression Problems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Terry</forename><forename type="middle">L</forename><surname>Mashtare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alan</forename><forename type="middle">D</forename><surname>Hutson</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/03610920903377773</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Communications in Statistics - Theory and Methods</title>
+		<title level="j" type="abbrev">Communications in Statistics - Theory and Methods</title>
+		<idno type="ISSN">0361-0926</idno>
+		<idno type="ISSNe">1532-415X</idno>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="408" to="423" />
+			<date type="published" when="2011-01-10" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">EVIDENCE ON GENDER WAGE DISCRIMINATION IN PORTUGAL: PARAMETRIC AND SEMI-PARAMETRIC APPROACHES</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aurora</forename><surname>Galego</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">João</forename><surname>Pereira</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1475-4991.2010.00413.x</idno>
+		<idno type="ark">ark:/67375/WNG-Q0082L1H-3</idno>
+		<idno type="istexId">26067117E038FC42082C0F8C3BC57EAD2426E715</idno>
+		<ptr type="open-access" target="http://dspace.uevora.pt/rdpc/bitstream/10174/2687/1/abstract_%20roiw_413.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Review of Income and Wealth</title>
+		<idno type="ISSN">0034-6586</idno>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="651" to="666" />
+			<date type="published" when="2010-12" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Estimating the Prevalence and Frequency of Adolescent Drug Use: Do the Models Fit the Measures?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">P</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><forename type="middle">J</forename><surname>Bahr</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/002204261004000406</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Drug Issues</title>
+		<title level="j" type="abbrev">Journal of Drug Issues</title>
+		<idno type="ISSN">0022-0426</idno>
+		<idno type="ISSNe">1945-1369</idno>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="871" to="899" />
+			<date type="published" when="2010-10" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Mapping the QLQ-C30 quality of life cancer questionnaire to EQ-5D patient preferences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ralph</forename><surname>Crott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Briggs</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10198-010-0233-7</idno>
+		<idno type="PMID">20473703</idno>
+		<idno type="ark">ark:/67375/VQC-JG1NHNDW-2</idno>
+		<idno type="istexId">53033E62BADEA8225AD6E4F7C6FB1E7099E83726</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The European Journal of Health Economics</title>
+		<title level="j" type="abbrev">Eur J Health Econ</title>
+		<idno type="ISSN">1618-7598</idno>
+		<idno type="ISSNe">1618-7601</idno>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="427" to="434" />
+			<date type="published" when="2010-05-16" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Censored Regression in Response to the Distributional Realities of Crime and Justice Measures</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">J</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tara</forename><surname>Livelsberger</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/10511251003693710</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Criminal Justice Education</title>
+		<title level="j" type="abbrev">Journal of Criminal Justice Education</title>
+		<idno type="ISSN">1051-1253</idno>
+		<idno type="ISSNe">1745-9117</idno>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="197" to="208" />
+			<date type="published" when="2010-06" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Nonparametric estimation of the impact of taxes on female labor supply</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anil</forename><surname>Kumar</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jae.1205</idno>
+		<idno type="ark">ark:/67375/WNG-5MS0983F-7</idno>
+		<idno type="istexId">AA1B16384A31643F42E8D97E0BC95537F40DAB04</idno>
+		<ptr type="open-access" target="http://dallasfed.org/assets/documents/research/papers/2005/wp0505.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Econometrics</title>
+		<title level="j" type="abbrev">J. Appl. Econ.</title>
+		<idno type="ISSN">0883-7252</idno>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="415" to="439" />
+			<date type="published" when="2010-09-27" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Plants&apos; self-selection, agglomeration economies and regional productivity in Chile</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Gopinath</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/jeg/lbp010</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Geography</title>
+		<title level="j" type="abbrev">Journal of Economic Geography</title>
+		<idno type="ISSN">1468-2702</idno>
+		<idno type="ISSNe">1468-2710</idno>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="539" to="558" />
+			<date type="published" when="2009-03-04" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Border effects in the enlarged EU area: evidence from imports to accession countries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miriam</forename><surname>Manchin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><forename type="middle">Maria</forename><surname>Pinna</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00036840601044974</idno>
+		<ptr type="open-access" target="https://hal.archives-ouvertes.fr/hal-00581996/file/PEER_stage2_10.1080%252F00036840601044974.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Economics</title>
+		<title level="j" type="abbrev">Applied Economics</title>
+		<idno type="ISSN">0003-6846</idno>
+		<idno type="ISSNe">1466-4283</idno>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page" from="1835" to="1854" />
+			<date type="published" when="2009-06" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Estimating Preference-Based Health Utilities Index Mark 3 Utility Scores for Childhood Conditions in England and Scotland</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stavros</forename><surname>Petrou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emil</forename><surname>Kupek</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0272989x08327398</idno>
+		<idno type="PMID">19264726</idno>
+		<idno type="ark">ark:/67375/M70-LC4XBRJL-K</idno>
+		<idno type="istexId">CFBE56F1407E9D8B8B6ABCCF08D8C3A21E6BC343</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Decision Making</title>
+		<title level="j" type="abbrev">Med Decis Making</title>
+		<idno type="ISSN">0272-989X</idno>
+		<idno type="ISSNe">1552-681X</idno>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="291" to="303" />
+			<date type="published" when="2009-03-04" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Modeling the Deviant Y in Criminology: An Examination of the Assumptions of Censored Normal Regression and Potential Alternatives</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">J</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean</forename><forename type="middle">Marie</forename><surname>Mcgloin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><forename type="middle">R</forename><surname>Piquero</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10940-008-9051-9</idno>
+		<idno type="ark">ark:/67375/VQC-WKLGS5J9-H</idno>
+		<idno type="istexId">2D3436B2AD2DB8D834AF8451B36BEB9BBEF603A1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Quantitative Criminology</title>
+		<title level="j" type="abbrev">J Quant Criminol</title>
+		<idno type="ISSN">0748-4518</idno>
+		<idno type="ISSNe">1573-7799</idno>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="399" to="421" />
+			<date type="published" when="2008-06-21" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Quick-service expenditure in Ireland: parametric vs. semiparametric analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Conor</forename><surname>Keelan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carol</forename><surname>Newman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maeve</forename><surname>Henchion</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00036840600970286</idno>
+		<ptr type="open-access" target="https://www.ssoar.info/ssoar/bitstream/document/24091/1/ssoar-appecon-2008-20-keelan_et_al-quick-service_expenditure_in_ireland_parametric.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Applied Economics</title>
+		<title level="j" type="abbrev">Applied Economics</title>
+		<idno type="ISSN">0003-6846</idno>
+		<idno type="ISSNe">1466-4283</idno>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">20</biblScope>
+			<biblScope unit="page" from="2659" to="2669" />
+			<date type="published" when="2008-10" />
+			<publisher>Informa UK Limited</publisher>
+		</imprint>
+	</monogr>
+	<note>Maeve Henchion</note>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">Methodological Challenges in Causal Research on Racial and Ethnic Patterns of Cognitive Trajectories: Measurement, Selection, and Bias</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maria</forename><surname>Glymour</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennifer</forename><surname>Weuve</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jarvis</forename><forename type="middle">T</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11065-008-9066-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Neuropsychology Review</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="194" to="213" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title level="a" type="main">Practical Considerations for Choosing Between Tobit and SCLS or CLAD Estimators for Censored Regression Models with an Application to Charitable Giving*</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wilhelm</forename><surname>Mark Ottoni</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1468-0084.2008.00506.x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oxford Bulletin of Economics and Statistics</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="559" to="582" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title level="a" type="main">Bequest and Tax Planning: Evidence from Estate Tax Returns</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wojciech</forename><surname>Kopczuk</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/qjec.2007.122.4.1801</idno>
+		<idno type="ark">ark:/67375/HXZ-GX0K8QFJ-3</idno>
+		<idno type="istexId">343490CD5EB63A73B11C7263329158C0C17B96EF</idno>
+		<ptr type="open-access" target="http://www.nber.org/papers/w12701.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">The Quarterly Journal of Economics</title>
+		<title level="j" type="abbrev">The Quarterly Journal of Economics</title>
+		<idno type="ISSN">0033-5533</idno>
+		<idno type="ISSNe">1531-4650</idno>
+		<imprint>
+			<biblScope unit="volume">122</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1801" to="1854" />
+			<date type="published" when="2007-11-01" />
+			<publisher>Oxford University Press (OUP)</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title level="a" type="main">The Takeover Deterrent Effect of Open Market Share Repurchases</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><forename type="middle">T</forename><surname>Billett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hui</forename><surname>Xue</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1540-6261.2007.01258.x</idno>
+		<idno type="ark">ark:/67375/WNG-7H6FT89H-3</idno>
+		<idno type="istexId">CAD75E481251F6483B083E9FEAAD3834B870370A</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<idno type="ISSN">0022-1082</idno>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1827" to="1850" />
+			<date type="published" when="2007-08" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title level="a" type="main">Local Life Circumstances and Offending Specialization/Versatility</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">J</forename><surname>Jean Marie Mcgloin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><forename type="middle">R</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Travis</forename><forename type="middle">C</forename><surname>Piquero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pratt</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/0022427807302664</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Research in Crime and Delinquency</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="321" to="346" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<analytic>
+		<title level="a" type="main">Is the Magic Still There? The Use of the Heckman Two-Step Correction for Selection Bias in Criminology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shawn</forename><surname>Bushway</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><forename type="middle">D</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lee</forename><forename type="middle">Ann</forename><surname>Slocum</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10940-007-9024-4</idno>
+		<idno type="ark">ark:/67375/VQC-W7M7TFM7-B</idno>
+		<idno type="istexId">915F2297F91AADAB80792A1ED98139E6EA64EA78</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Quantitative Criminology</title>
+		<title level="j" type="abbrev">J Quant Criminol</title>
+		<idno type="ISSN">0748-4518</idno>
+		<idno type="ISSNe">1573-7799</idno>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="151" to="178" />
+			<date type="published" when="2007-03-23" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title level="a" type="main">Estimators of Regression Parameters for Truncated and Censored Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maria</forename><surname>Karlsson</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00184-005-0023-x</idno>
+		<idno type="ark">ark:/67375/VQC-NP09WN9C-0</idno>
+		<idno type="istexId">6FC6498E44B4663792730B06CC133A6DFB36F85B</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Metrika</title>
+		<title level="j" type="abbrev">Metrika</title>
+		<idno type="ISSN">0026-1335</idno>
+		<idno type="ISSNe">1435-926X</idno>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="329" to="341" />
+			<date type="published" when="2006-02-15" />
+			<publisher>Springer Nature</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title level="a" type="main">Bilateral Donors&apos; Interest vs. Recipients&apos; Development Motives in Aid Allocation: Do All Donors Behave the Same?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean-Claude</forename><surname>Berthelemy</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1467-9361.2006.00311.x</idno>
+		<idno type="ark">ark:/67375/WNG-948VMP4G-D</idno>
+		<idno type="istexId">9E1EE6074565704613C12048D5772C996415E245</idno>
+		<ptr type="open-access" target="https://halshs.archives-ouvertes.fr/halshs-00193273/file/Bla05001.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Review of Development Economics</title>
+		<title level="j" type="abbrev">Rev Development Economics</title>
+		<idno type="ISSN">1363-6669</idno>
+		<idno type="ISSNe">1467-9361</idno>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="179" to="194" />
+			<date type="published" when="2006-05" />
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title level="a" type="main">When Is Baseline Adjustment Useful in Analyses of Change? An Example with Education and Cognitive Change</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maria</forename><surname>Glymour</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennifer</forename><surname>Weuve</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lisa</forename><forename type="middle">F</forename><surname>Berkman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ichiro</forename><surname>Kawachi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">M</forename><surname>Robins</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/aje/kwi187</idno>
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Epidemiology</title>
+		<imprint>
+			<biblScope unit="volume">162</biblScope>
+			<biblScope unit="page" from="267" to="278" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title level="a" type="main">Epidemiologic Evaluation of Measurement Data in the Presence of Detection Limits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jay</forename><forename type="middle">H</forename><surname>Lubin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joanne</forename><forename type="middle">S</forename><surname>Colt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Camann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">R</forename><surname>Cerhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><forename type="middle">K</forename><surname>Severson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Leslie</forename><surname>Bernstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patricia</forename><surname>Hartge</surname></persName>
+		</author>
+		<idno type="DOI">10.1289/ehp.7199</idno>
+		<idno type="PMID">15579415</idno>
+		<idno type="PMCID">PMC1253661</idno>
+		<ptr type="open-access" target="http://europepmc.org/articles/pmc1253661?pdf=render" />
+	</analytic>
+	<monogr>
+		<title level="j">Environmental Health Perspectives</title>
+		<title level="j" type="abbrev">Environmental Health Perspectives</title>
+		<idno type="ISSN">0091-6765</idno>
+		<idno type="ISSNe">1552-9924</idno>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page" from="1691" to="1696" />
+			<date type="published" when="2004-12" />
+			<publisher>Environmental Health Perspectives</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title level="a" type="main">Unions, Work-Related Training, and Wages: Evidence for British Men</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alison</forename><forename type="middle">L</forename><surname>Booth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marco</forename><surname>Francesconi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gylfi</forename><surname>Zoega</surname></persName>
+		</author>
+		<idno type="DOI">10.1177/001979390305700104</idno>
+		<ptr type="open-access" target="https://www.econstor.eu/bitstream/10419/20431/1/dp737.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ILR Review</title>
+		<title level="j" type="abbrev">ILR Review</title>
+		<idno type="ISSN">0019-7939</idno>
+		<idno type="ISSNe">2162-271X</idno>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="68" to="91" />
+			<date type="published" when="2003-10" />
+			<publisher>SAGE Publications</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<monogr>
+		<title level="m" type="main">VALUING INTERNET RETAILERS: AMAZON AND BARNES AND NOBLE 73-84</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Judith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Austan</forename><surname>Chevalier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Goolsbee</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0278-0984(03)12003-2</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

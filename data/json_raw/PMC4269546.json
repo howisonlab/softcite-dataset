@@ -1,0 +1,1284 @@
+{
+    "level": "paragraph",
+    "abstract": [
+        {
+            "text": "To respond appropriately to objects, we must process visual inputs rapidly and assign them meaning. This involves highly dynamic, interactive neural processes through which information accumulates and cognitive operations are resolved across multiple time scales. However, there is currently no model of object recognition which provides an integrated account of how visual and semantic information emerge over time; therefore, it remains unknown how and when semantic representations are evoked from visual inputs. Here, we test whether a model of individual objects-based on combining the HMax computational model of vision with semantic-feature information-can account for and predict time-varying neural activity recorded with magnetoencephalography. We show that combining HMax and semantic properties provides a better account of neural object representations compared with the HMax alone, both through model fit and classification performance. Our results show that modeling and classifying individual objects is significantly improved by adding semantic-feature information beyond \u223c200 ms. These results provide important insights into the functional properties of visual processing across time.",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        }
+    ],
+    "body_text": [
+        {
+            "text": "Introduction",
+            "section_rank": 1
+        },
+        {
+            "section": "Introduction",
+            "text": "Object representations in the ventral stream undergo a transition in the first half-second, becoming increasingly finegrained and specific (Sugase et al. 1999;Hochstein and Ahissar 2002;Hegd\u00e9 2008;Mace et al. 2009;Clarke et al. 2013). This requires highly dynamic and interactive brain mechanisms through which visual information accumulates and cognitive operations are rapidly resolved across multiple time scales, with a continuing interplay between visual and cognitive factors (Humphreys et al. 1988;Humphreys and Forde 2001). However, it is currently unclear when different forms of visual and semantic information emerge across time, and when visual signals contribute to semantic representations. Early models claimed that basic level (e.g., dog) information about objects is available prior to (superordinate) category information (Rosch et al. 1976;Jolicoeur et al. 1984); however, recent evidence has challenged this presupposition in favor of a coarse-to-fine model (Fei-Fei et al. 2007;Mace et al. 2009;Loschky and Larson 2010;Fabre-Thorpe 2011;Pra\u00df et al. 2013). This research suggests that category information is present within the first-pass of neural propagations along the ventral stream (Kirchner and Thorpe 2006;Liu et al. 2009;Chan, Baker et al. 2011), while object-specific, basic-level, semantic information emerges after 150-200 ms supported by recurrent interactions within the stream (Martinovic et al. 2008;Schendan and Maher 2009;Clarke et al. 2011Clarke et al. , 2013. Thus, information sufficient for categorical (e.g., \"tool\") and object-specific (e.g., \"hammer\") dissociations seem to be differentially represented over time.",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b53",
+                    "start": 139,
+                    "text": "(Sugase et al. 1999;",
+                    "end": 159
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b18",
+                    "start": 159,
+                    "text": "Hochstein and Ahissar 2002;",
+                    "end": 186
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "start": 186,
+                    "text": "Hegd\u00e9 2008;",
+                    "end": 197
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 197,
+                    "text": "Mace et al. 2009;",
+                    "end": 214
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 214,
+                    "text": "Clarke et al. 2013)",
+                    "end": 233
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 482,
+                    "text": "(Humphreys et al. 1988;",
+                    "end": 505
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 505,
+                    "text": "Humphreys and Forde 2001)",
+                    "end": 530
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "start": 840,
+                    "text": "(Rosch et al. 1976;",
+                    "end": 859
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 859,
+                    "text": "Jolicoeur et al. 1984)",
+                    "end": 881
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "start": 978,
+                    "text": "(Fei-Fei et al. 2007;",
+                    "end": 999
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "start": 999,
+                    "text": "Mace et al. 2009;",
+                    "end": 1016
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "start": 1016,
+                    "text": "Loschky and Larson 2010;",
+                    "end": 1040
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "start": 1040,
+                    "text": "Fabre-Thorpe 2011;",
+                    "end": 1058
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "start": 1058,
+                    "text": "Pra\u00df et al. 2013)",
+                    "end": 1075
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 1207,
+                    "text": "(Kirchner and Thorpe 2006;",
+                    "end": 1233
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 1233,
+                    "text": "Liu et al. 2009;",
+                    "end": 1249
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 1249,
+                    "text": "Chan, Baker et al. 2011)",
+                    "end": 1273
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "start": 1411,
+                    "text": "(Martinovic et al. 2008;",
+                    "end": 1435
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 1435,
+                    "text": "Schendan and Maher 2009;",
+                    "end": 1459
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1459,
+                    "text": "Clarke et al. 2011",
+                    "end": 1477
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 1477,
+                    "text": "Clarke et al. , 2013",
+                    "end": 1497
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "In the current study, we ask what kind of model of object representations can account for such categorical and objectspecific semantic effects, by modeling both visual and semantic properties of individual objects, and testing the efficacy of the model against time-sensitive neural activity using magnetoencephalography (MEG).",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "section": "Introduction",
+            "text": "Several biologically plausible computational models have been developed based on hierarchical stages of the ventral processing stream. The HMax model is a biologically inspired feedforward model of visual processing with different levels of the model being linked to different stages in the ventral visual pathway from V1 to posterior IT (Riesenhuber and Poggio 1999), and matches human behavioral performance in a rapid visual categorization task (Serre et al. 2007). However, the extent to which the model can account for human neural object representations and whether object representations are better modeled by adding semantic information are both unknown.",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 338,
+                    "text": "(Riesenhuber and Poggio 1999)",
+                    "end": 367
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 448,
+                    "text": "(Serre et al. 2007)",
+                    "end": 467
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "While there are well-developed computational models of human vision, models of object semantics-specifically those able to capture both category and object-specific conceptual information-are less well characterized at the neural level. Feature-based accounts of semantic representations can model both types of information (Farah and McClelland 1991;Humphreys et al. 1995;Garrard et al. 2001;Tyler and Moss 2001;Cree and McRae 2003;Rogers and McClelland 2004;Vigliocco et al. 2004;Taylor et al. 2011) but have only been explicitly tested against neural activity in a few cases (e.g., Clarke et al. 2013;Tyler et al. 2013). The semantic features from property norming studies (e.g., has ears, made of metal; McRae et al. 2005;) provide a means of estimating semantic content, capturing categorical structure as similar concepts have similar features, while also differentiating between concepts as each concept has a unique set of features. Such semantic content can be used as a proxy for the underlying neural representation of object meaning.",
+            "paragraph_rank": 5,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "start": 324,
+                    "text": "(Farah and McClelland 1991;",
+                    "end": 351
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "start": 351,
+                    "text": "Humphreys et al. 1995;",
+                    "end": 373
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "start": 373,
+                    "text": "Garrard et al. 2001;",
+                    "end": 393
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b58",
+                    "start": 393,
+                    "text": "Tyler and Moss 2001;",
+                    "end": 413
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "start": 413,
+                    "text": "Cree and McRae 2003;",
+                    "end": 433
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "start": 433,
+                    "text": "Rogers and McClelland 2004;",
+                    "end": 460
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b60",
+                    "start": 460,
+                    "text": "Vigliocco et al. 2004;",
+                    "end": 482
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b55",
+                    "start": 482,
+                    "text": "Taylor et al. 2011)",
+                    "end": 501
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 585,
+                    "text": "Clarke et al. 2013;",
+                    "end": 604
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b57",
+                    "start": 604,
+                    "text": "Tyler et al. 2013)",
+                    "end": 622
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 708,
+                    "text": "McRae et al. 2005;",
+                    "end": 726
+                }
+            ]
+        },
+        {
+            "section": "Introduction",
+            "text": "Here, we test whether a visuo-semantic model-based on combining the HMax computational model of object recognition and semantic-feature information-can capture the timevarying neural activity of individual objects. Multiple linear regressions are used to 1) ask how well our model fits MEG signals over time, and 2) test whether the mapping between the MEG signals and visual and semantic measures can predict MEG signals for novel items using a leave-two-out cross-validation approach ( Fig. 1; Mitchell et al. 2008). Furthermore, we evaluate the performance of this model compared with models based only on HMax. The predictive accuracy of different combinations of model parameters was used to reveal how specific forms of visual and semantic information are represented across time and source localization was used to reveal the neural regions primarily supporting these types of information.",
+            "paragraph_rank": 6,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 488,
+                    "text": "Fig. 1",
+                    "end": 494
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 496,
+                    "text": "Mitchell et al. 2008)",
+                    "end": 517
+                }
+            ]
+        },
+        {
+            "text": "Materials and Methods",
+            "section_rank": 2
+        },
+        {
+            "text": "Participants",
+            "section_rank": 3
+        },
+        {
+            "section": "Participants",
+            "text": "Fourteen participants (9 females, mean age 23.2 years) took part in the study. All gave informed consent and the study was approved by the Cambridge Psychology Research Ethics Committee. All were righthanded and had normal, or corrected to normal vision.",
+            "paragraph_rank": 7,
+            "section_rank": 3
+        },
+        {
+            "text": "Procedure and Stimuli",
+            "section_rank": 4
+        },
+        {
+            "section": "Procedure and Stimuli",
+            "text": "Participants performed a basic-level naming task (e.g., \"tiger\") with 302 objects from 11 categories (animals, buildings, clothing, food, furniture, household items, musical instruments, plant life, tools, vehicles, weapons) that represented concepts from an anglicized version of a large property generation study (McRae et al. 2005;Taylor et al. 2012). All objects were presented in color as single objects on a white background. Each trial began with a black fixation cross on a white background for 500 ms before the object was shown for 500 ms, and followed by a blank screen lasting between 2400 and 2700 ms. The order of stimuli was pseudo-randomized such that consecutive stimuli were not phonologically related (i.e., shared an initial phoneme) and no more than 4 living or nonliving items could occur in a row. The stimuli were presented in 3 blocks. Stimuli were presented using Eprime (version 2; Psychology Software Tools, Pittsburgh, PA, USA) and object naming accuracy was recorded by the experimenter during data acquisition.",
+            "paragraph_rank": 8,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 315,
+                    "text": "(McRae et al. 2005;",
+                    "end": 334
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 334,
+                    "text": "Taylor et al. 2012)",
+                    "end": 353
+                }
+            ]
+        },
+        {
+            "text": "Stimulus Measures",
+            "section_rank": 5
+        },
+        {
+            "section": "Stimulus Measures",
+            "text": "For each object, we obtained measures capturing the low and highlevel visual attributes of the picture in addition to feature-based semantic measures.",
+            "paragraph_rank": 9,
+            "section_rank": 5
+        },
+        {
+            "section": "Stimulus Measures",
+            "text": "The low-and high-level visual information about objects was derived from the HMax computational model of vision downloaded from http://cbcl.mit.edu/software-datasets/standardmodel. Different levels of the model have been linked to different stages in the ventral visual pathway from V1 to posterior IT. Here, we extract responses from 2 levels of the HMax model to capture low and high-level visual object information: namely, the C1 responses relating to early visual cortex (V1/V2), and C2 responses relating to V4/posterior IT (Riesenhuber and Poggio 1999;Serre et al. 2007).",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b44",
+                    "start": 530,
+                    "text": "(Riesenhuber and Poggio 1999;",
+                    "end": 559
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 559,
+                    "text": "Serre et al. 2007)",
+                    "end": 577
+                }
+            ]
+        },
+        {
+            "section": "Stimulus Measures",
+            "text": "The input to the HMax model were gray-scale versions of the images seen during the MEG recording that were resized to 92 \u00d7 92 pixels. Responses from different layers of the HMax model, the C1 and C2 responses, were extracted using the settings described by Serre et al. (2005) and precomputed S2 features from natural image fragments (downloaded http://cbcl.mit.edu/software-datasets/standardmodel). For each object, the responses at the 2 layers were extracted separately, and C1 and C2 matrices were constructed containing responses for all 302 objects (C1 matrix dimensions 302 \u00d7 28608, C2 matrix dimensions 302 \u00d7 2000). Principal components analyses were then performed on each matrix (using the MATLAB function princomp). The number of components used in the final model was determined based on maximum model classification performance for data in the time window 100-300 ms using an independent group of participants performing the same task with similar objects (see Clarke et al. 2013). This procedure identified that 12 HMaxC1 components and 6 HMaxC2 components resulted in maximum classification accuracy and so these values were used in the final set of models (range tested: 1-12, 30, and 50 components).",
+            "paragraph_rank": 11,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b50",
+                    "start": 257,
+                    "text": "Serre et al. (2005)",
+                    "end": 276
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 974,
+                    "text": "Clarke et al. 2013)",
+                    "end": 993
+                }
+            ]
+        },
+        {
+            "section": "Stimulus Measures",
+            "text": "The semantic content of objects was modeled using semanticfeature norms (McRae et al. 2005;Taylor et al. 2012). The feature norms contain lists of features associated with a large range of objects (e.g., \"has 4 legs,\" \"has stripes,\" and \"lives in Africa\" are features of a \"zebra\"). As similar concepts have similar features, feature-based models capture categorical structure by virtue of feature overlap, while also capturing the properties of a concept that differentiates it from other concepts of the same semantic category, because each concept is composed of a unique set of features. Based on the feature norms, each object can be represented by a binary vector indicating whether each feature is associated with the object or not. The 302 objects used in this study were associated with 1510 features in total. Modeling semantic content was achieved using a binary concept-feature matrix derived from the property norms. The matrix had dimensions of 302 concepts by 1510 features, with cell values of 1 indicating which features are true for concepts and 0 in all other cells. A principal components analysis was used to reduce the dimensionality of this matrix, and the first 6 semantic-feature components were selected based on maximum model classification performance for the time window 100-300 ms using an independent group of participants.",
+            "paragraph_rank": 12,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "start": 72,
+                    "text": "(McRae et al. 2005;",
+                    "end": 91
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b54",
+                    "start": 91,
+                    "text": "Taylor et al. 2012)",
+                    "end": 110
+                }
+            ]
+        },
+        {
+            "text": "MEG/MRI Recording",
+            "section_rank": 6
+        },
+        {
+            "section": "MEG/MRI Recording",
+            "text": "Continuous MEG data were recorded using a whole-head 306 channel (102 magnetometers, 204 planar gradiometers) Vector-view system (Elekta Neuromag, Helsinki, Finland) located at the MRC Cognition Figure 1. Schematic of data analysis. Multiple linear regression was performed using MEG signals from each sensor and time point independently for the HMaxC1-only, HMax, and HMax + SemFeat sets of predictors. For the model fit analyses (top path), model fit (R 2 ) was calculated for each predictor set for statistic comparison. For the classification analysis (bottom path), the regression coefficients from the multiple linear regression (based on all but 2 objects) were used to predict the MEG signals to the 2 left-out objects at each time point. The predicted data were constructed by applying the learned regression coefficients to the known visual and semantic parameters for the 2 left-out objects. The predicted patterns were classified as correct if they matched the observed patterns. The process is repeated for all possible leave-out object pairs, and accuracy is calculated as the proportion of pairs correctly classified at each time point. The classification accuracy time course for each predictor set are then compared.",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 195,
+                    "text": "Figure 1",
+                    "end": 203
+                }
+            ]
+        },
+        {
+            "section": "MEG/MRI Recording",
+            "text": "and Brain Sciences Unit, Cambridge, UK. Participants were in a seated position. Eye movements and blinks were monitored with electrooculogram (EOG) electrodes placed around the eyes, and 5 headposition indicator (HPI) coils were used to record the head position (every 200 ms) within the MEG helmet. The participants' head shape was digitally recorded using a 3D digitizer (Fastrak Polhemus, Inc., Colchester, VA, USA), along with the positions of the EOG electrodes, HPI coils, and fiducial points (nasion, left and right periaricular). MEG signals were recorded at a sampling rate of 1000 Hz, with a band-pass filter from 0.03 to 125 Hz. To facilitate source reconstruction, 1-mm 3 T 1 -weighted MPRAGE scans were acquired during a separate session with a Siemens 3 T Tim Trio scanner (Siemens Medical Solutions, Camberley, UK) located at the MRC Cognition and Brain Sciences Unit, Cambridge, UK.",
+            "paragraph_rank": 14,
+            "section_rank": 6
+        },
+        {
+            "text": "MEG Preprocessing",
+            "section_rank": 7
+        },
+        {
+            "section": "MEG Preprocessing",
+            "text": "Initial processing of the raw data used MaxFilter version 2.0 (Elektra-Neuromag). First, static bad channels were detected that were subsequently reconstructed by interpolating neighboring channels, as were bad channels containing long periods of high amplitude or noisy signals. The temporal extension of the signal-space separation technique was applied to the data every 4 s to segregate the signals originating from within the participants' head from those generated by external sources of noise, along with head movement compensation and transformation of head position to a common head position. An artifact removal procedure was applied to the continuous data based on independent components analysis (ICA), implemented using EEGLab (Delorme and Makeig 2004). Components of the data that showed a correlation greater than a Pearson's r of 0.4 with either EOG channel were removed from the data. ICA was applied to the magnetometers and gradiometers separately.",
+            "paragraph_rank": 15,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "start": 740,
+                    "text": "(Delorme and Makeig 2004)",
+                    "end": 765
+                }
+            ]
+        },
+        {
+            "section": "MEG Preprocessing",
+            "text": "The resulting MEG data were low-pass filtered at 40 Hz in forward and reverse directions using a fifth-order Butterworth digital filter, epoched from \u2212200 to 600 ms, and downsampled to 100 Hz using SPM8 (Wellcome Institute of Imaging Neuroscience, London, UK). Items that were incorrectly named were excluded, where an incorrect name was defined as a response that did not match the correct concept. We did not explicitly account for potential muscle artifacts produced by the overt naming task as this should not affect our data considering the duration of the epoch examined and frequency range included in relation to the typical onset of muscle artifacts and their frequency distribution (mean naming latency: 991 ms, standard deviation over participants: 109 ms). Furthermore, any such artifacts are unlikely to be confounded with visual or semantic processing in such a way to affect classification accuracy or model fit.",
+            "paragraph_rank": 16,
+            "section_rank": 7
+        },
+        {
+            "text": "Model fit",
+            "section_rank": 8
+        },
+        {
+            "section": "Model fit",
+            "text": "To determine how much variance in the MEG signals was captured by each of the 3 models, we calculated each model's R 2 using multiple linear regression (no regularization) at each sensor and for each time point independently. We performed an item-wise analysis where the MEG activity to each object was averaged over participants, which also acted to increase signal-to-noise ratio. The 3 models tested contained different numbers of predictors-HMaxC1 predictors alone (n = 12), HMaxC1 and HMaxC2 predictors (n = 18), and HMax and semanticfeature predictors (n = 24). Significant changes in model fit were calculated by the F-ratio of the change in R 2 between models with different sets of predictors, and corrected for multiple comparisons over sensors and time using a false discovery rate (FDR) with an \u03b1 of 0.05.",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "Concept Classification",
+            "section_rank": 9
+        },
+        {
+            "section": "Concept Classification",
+            "text": "A leave-two-out cross validation approach was used to assess each model's ability to predict and classify individual concepts using multiple linear regressions ( Fig. 1; Mitchell et al. 2008) where the predictors of the regression model were composed of different combinations of C1, C2, and semantic measures. The data were split into a training set and the 2 left-out concepts. Multiple linear regression was performed at each sensor and each time point independently, resulting in a spatiotemporal beta map of regression coefficients (weights) where the betas capture the relationship between the observed MEG signals and a single predictor. The MEG signals for the 2 left-out concepts were then constructed through a weighted sum of the beta maps, where the weights are derived from the known C1, C2, and semantic values for those 2 concepts. The 2 predicted MEG patterns are then compared with the actual recorded signals, where correct classification is defined as higher Pearson's correlation between the correct predicted-observed pairs than the incorrect predicted-observed pairings (Mitchell et al. 2008). Classification accuracy is determined for each time point between \u2212200 and 600 ms, using a 30-ms sliding time window, creating a concept classification time course. The process was then repeated across all possible leave-out pairs 45 451and for each model.",
+            "paragraph_rank": 18,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 162,
+                    "text": "Fig. 1",
+                    "end": 168
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 170,
+                    "text": "Mitchell et al. 2008)",
+                    "end": 191
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "start": 1092,
+                    "text": "(Mitchell et al. 2008)",
+                    "end": 1114
+                },
+                {
+                    "start": 1347,
+                    "text": "45 451",
+                    "end": 1353
+                }
+            ]
+        },
+        {
+            "section": "Concept Classification",
+            "text": "Classification accuracy was computed for all 3 models (HMaxC1, HMaxC1 and HMaxC2, and HMax and semantic features). As there was some degree of correlation between the predictors ( Supplementary  Fig. 1), an additional analysis was conducted showing unique effects of semantic features. This was achieved by performing multiple linear regression on the MEG data using the HMax model parameters and obtaining the residuals. The classification analysis was then performed using the semantic-feature predictors and the residuals to show unique effects of semantic features that cannot be accounted for by the HMax model.",
+            "paragraph_rank": 19,
+            "section_rank": 9,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 180,
+                    "text": "Supplementary  Fig. 1",
+                    "end": 201
+                }
+            ]
+        },
+        {
+            "section": "Concept Classification",
+            "text": "As with model fit, concept classification was calculated with data where the MEG activity for an object was averaged across participants (except for a complementary analysis where classification was run for each participant independently; see Results). Classification accuracy was calculated for each leave-out pair, and an accuracy measure was calculated for each individual object as the mean accuracy over all leave-out pairs that contained the object. Overall classification accuracy for each model, as well as within-and between-category accuracies, was tested against chance (50%) at each time point using the Wilcoxon signed-rank test, which was also used to statistically compare classification accuracy between pairs of models. Where classification accuracy was calculated for individual participants, two-tailed paired-sampled t-tests were used in place of Wilcoxon signed-rank test. All tests were corrected for multiple comparisons across time using FDR with an \u03b1 of 0.05.",
+            "paragraph_rank": 20,
+            "section_rank": 9
+        },
+        {
+            "section": "Concept Classification",
+            "text": "To compare the onset of significant between-and within-category classification accuracies, we created 10 000 bootstrapped samples by sampling with replacement. For classifications based on the group averaged data, the object pairs were sampled with replacement, and for classification statistics based on individual participant classifications, participants were sampled with replacement. For each bootstrap sample, we calculated the classification accuracy and determined the onset of above chance classification accuracy for between-and withincategory classification (defined as the first time after 50 ms that was significantly above chance). This allowed us to calculate bootstrap estimates of the difference in onsets for between-and within-category classification accuracy, which were used to calculate the probability that between or within-category classification was significantly earlier than the other.",
+            "paragraph_rank": 21,
+            "section_rank": 9
+        },
+        {
+            "text": "Source Localization: Visualizing Regression Coefficients",
+            "section_rank": 10
+        },
+        {
+            "section": "Source Localization: Visualizing Regression Coefficients",
+            "text": "To visualize the cortical representation of the regression weights, the minimum norm source localization technique was implemented in SPM8 using the IID option. Instead of using the regression weights derived from MEG data averaged over participants (those used for model fit and classification), for source localization, we calculated the regression weights for each participant separately, that were then used as the inputs to the source localization procedure. These individual participant localizations were used to provide more accurate source reconstructions than those that localizing the grand averaged data would have produced. Since the regression weights are obtained using linear equations with standardized predictors, they can be used for source localization (Hauk et al. 2006). MRI images were segmented and spatially normalized to an MNI template brain in Talairach space. A template cortical mesh with 8196 vertices was inverse normalized to the individual's specific MRI space. MEG sensor locations were coregistered to MRI space using the fiducial and digitized head-points obtained during acquisition. The forward model was created using the single shell option to calculate the lead-fields for the sources oriented normal to the cortical surface. The data from both magnetometers and gradiometers were inverted together (Henson et al. 2009) to estimate activity at each cortical source using a minimum norm solution, where the inversion was performed simultaneously for all the regression weights for the epoch \u2212200 to 600 ms. No depth weighting was applied. The estimated cortical activity was averaged across the specified time windows (70-160 and 200-400 ms-see Results) before generating an image in MNI space (absolute regression coefficient values), which was smoothed with a 6-mm FWHM Gaussian smoothing kernel. This produces a cortical representation of the regression weights for each predictor, which were then averaged across participants, and displayed on an inflated cortex using Caret (http://www.nitrc.org/projects/caret/). The color scale used was defined by the maximum absolute regression coefficient over all time windows and conditions with no thresholds applied.",
+            "paragraph_rank": 22,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 773,
+                    "text": "(Hauk et al. 2006)",
+                    "end": 791
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "start": 1341,
+                    "text": "(Henson et al. 2009)",
+                    "end": 1361
+                }
+            ]
+        },
+        {
+            "text": "Source Localization: Regional Model fit",
+            "section_rank": 11
+        },
+        {
+            "section": "Source Localization: Regional Model fit",
+            "text": "To obtain regional measures of model fit, and test for changes in model fit when adding predictors, required estimating regional responses for single trials that could be entered into multiple linear regression models. This was achieved using a minimum norm source localization of the individual participant preprocessed MEG signals using the same parameters described above. After inversion, the time course for each single trial was extracted from 6 regions along the ventral stream before the trial data were averaged over participants. The locations of the regions were defined as the peaks from the localized regression coefficients after averaging over time windows and all predictors, and had a 10 mm radius. The MNI coordinates for the peak locations were in the occipital (left: \u221210, \u221294, \u221216, right: 22, \u221292, \u221214), inferior temporal (left: \u221250, \u221252, \u221220, right: 52, \u221256, \u221216) and anterior temporal lobes (left: \u221230, \u22126, \u221240, right: 30, \u22124, \u221242). Each model's R 2 was calculated for 2 time windows (as above) and 6 regions separately using multiple linear regression between the mean source activity in the time window and the 3 models (HMaxC1, HMaxC1 and HMaxC2, and HMax and semantic features). Significant changes in model fit were calculated by the F-ratio of the change in R 2 between models with different sets of predictors.",
+            "paragraph_rank": 23,
+            "section_rank": 11
+        },
+        {
+            "text": "Results",
+            "section_rank": 12
+        },
+        {
+            "section": "Results",
+            "text": "Our initial analysis aimed to determine whether semantic information plays a significant role in object representations over and above that played by visual information. We tested this by evaluating the performance of a combined visuo-semantic model compared with a computational model of visual object recognition in accounting for neural representations over time. The evaluation was performed both in terms of overall measures of model fit, and each model's accuracy at predicting time-varying neural representations for individual objects. Following this, we tested if our semantic model can dissociate categorical and object-specific semantic processing.",
+            "paragraph_rank": 24,
+            "section_rank": 12
+        },
+        {
+            "text": "Computational Visual and Semantic Models",
+            "section_rank": 13
+        },
+        {
+            "section": "Computational Visual and Semantic Models",
+            "text": "We tested 3 principal models with varying model parameters. The first model, \"HMaxC1-only,\" reflects a model of early visual cortical responses and is based on the C1 layer of the HMax computational model of object recognition. The second model, \"HMax,\" included both the C1 and C2 layers of the HMax model, and captures both low-and high-level visual object representations. Finally, HMax + SemFeat, represents a more complex visuo-semantic model and included the HMax parameters along with semantic-feature information. The semantic information captures category information as similar concepts will have similar semantic features, while also capturing object-specific semantic information as each concept is composed of a unique set of features. Therefore, we capture both category and object-specific semantic information in the same model.",
+            "paragraph_rank": 25,
+            "section_rank": 13
+        },
+        {
+            "text": "Object Representations Require Semantic Information: Model fit & Concept Classification",
+            "section_rank": 14
+        },
+        {
+            "section": "Object Representations Require Semantic Information: Model fit & Concept Classification",
+            "text": "We first determined how much variance in the MEG data was captured by each of the 3 models by calculating each model's R 2 at each sensor and for each time point for the multiple linear regression models. This approach allows us to test how each model relates to the data across time, and importantly can show time-specific improvements in model fit.",
+            "paragraph_rank": 26,
+            "section_rank": 14
+        },
+        {
+            "section": "Object Representations Require Semantic Information: Model fit & Concept Classification",
+            "text": "The maximum R 2 for all models occurred between 50 and 150 ms, while models including the C2 responses and semantic-feature information showed an increased fit following this period (Fig. 2a). The HMax model (combining C1 and C2 layers) showed a significant improvement in model fit compared with the HMaxC1-only model from 100 to 150 ms in posterior sensors, followed by fewer effects primarily between 290 and 450 ms (all qs < 0.05, FDR corrected; Fig. 2b). Importantly, the model including semantic-feature information showed a significant and sustained increase in R 2 compared with the HMax model from 200 to 580 ms with a focus over left anterior sensors (all qs < 0.05, FDR corrected; Fig. 2c). As all models include the C1 responses, our results suggest that object representations are initially well modelled by low-level image properties before size and position invariant information about object shape (captured in the C2 responses) begins to be processed from 100 ms. Finally, adding semantic information into the model significantly increases model fit post 200 ms showing that object-specific semantic information is processed after this time. These findings show that a model combining low-and high-level visual properties with semantic information provides a better model of the underlying neural representations than one based only on computational models of vision.",
+            "paragraph_rank": 27,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 182,
+                    "text": "(Fig. 2a",
+                    "end": 190
+                },
+                {
+                    "type": "figure",
+                    "start": 450,
+                    "text": "Fig. 2b",
+                    "end": 457
+                },
+                {
+                    "type": "figure",
+                    "start": 692,
+                    "text": "Fig. 2c",
+                    "end": 699
+                }
+            ]
+        },
+        {
+            "section": "Object Representations Require Semantic Information: Model fit & Concept Classification",
+            "text": "A further test of the efficacy of each model is provided by the accuracy with which they can predict novel concepts. Prediction accuracy was evaluated at each time point using a leave-two-out cross-validation approach. All 3 models could predict concepts significantly above chance (50%) from 50 ms lasting until 600 ms (all qs < 0.05 FDR, Wilcoxon signed-rank tests), with an initial maximum in classification accuracy between 70 and 160 ms and a maximum 85% accuracy (HMaxC1-only: 83%, 110 ms; HMax: 85%, 120 ms; HMax + SemFeat: 84%, 110 ms; Fig. 3). All models showed a second sustained increase in classification performance between 200 and 400 ms, during which the model including semantic information showed an increase in performance compared with both HMax models (maximum accuracy: HMaxC1-only: 73%, 290 ms; HMax: 74%, 290 ms; HMax + SemFeat: 77%, 290 ms). A statistical comparison of classification performance over time showed the model including semantic information was significantly better able to predict concepts than both the HMaxC1-only and HMax models between 190 and 600 ms (all qs < 0.05 FDR, Wilcoxon signed-rank tests). To rule out the possibility that the increased classification performance for the HMax + SemFeat model was driven by having a greater number of predictors in the model (number of predictors: HMaxC1-only 12, HMax 18, HMax + SemFeat 24), we ran an additional control analysis where all models had an equal number of predictors [i.e., 12 extra predictors were added to the HMaxC1-only model, and 6 extra were added to the HMax model (3 from C1 and 3 from C2)]. The results replicated those of the original analyses ( Supplementary Fig. 2) and further support the claim that the added semantic information represents a qualitative, rather than quantitative, improvement to modeling neural activity. Together with the model fit results, our findings suggest that object-specific semantic information is present after approximately 200 ms, and that a model including semantic-feature information provided the best description of the underlying neural representations.",
+            "paragraph_rank": 28,
+            "section_rank": 14,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "start": 544,
+                    "text": "Fig. 3",
+                    "end": 550
+                },
+                {
+                    "type": "figure",
+                    "start": 1657,
+                    "text": "Supplementary Fig. 2",
+                    "end": 1677
+                }
+            ]
+        },
+        {
+            "text": "Categorical versus Object-specific Semantic Representations",
+            "section_rank": 15
+        },
+        {
+            "section": "Categorical versus Object-specific Semantic Representations",
+            "text": "The analysis up to this point has concentrated on modeling the representations of individual objects, rather than categorical representations. To test the models' ability to account for categorical and object-specific semantic representations, we can break down the predictive accuracy of the semantic-feature model when the 2 left-out items are from different categories (between-category, e.g., when one item is an animal and the other a tool) or the same category (within-category, e.g., when both items are animals, or both items are tools). Partitioning classification accuracies in this manner gives us information about whether the semantic-feature model can successfully perform both categorical (between-category) and fine-grained (within-category) distinctions between objects.",
+            "paragraph_rank": 29,
+            "section_rank": 15
+        },
+        {
+            "section": "Categorical versus Object-specific Semantic Representations",
+            "text": "Using the full HMax + SemFeat model, both between-and within-category classifications were significantly better than chance after 50 ms (all qs < 0.05 FDR, Wilcoxon signed-rank test). Comparing the latency of the onsets for between-and within-category classification using bootstrapping showed no significant difference in latency (P = 0.96). While early classification accuracies were similar overall, after 120 ms accuracy Figure 2. Regression model fits. (a) Model fits across MEG sensors and time showing R 2 values for the HMaxC1-only, HMax, and HMax + SemFeat models. (b) F-Ratio of the change in R 2 from the HMaxC1-only to the HMax model, and (c) from the HMax model to the HMax + SemFeat model. Plots show the F-ratio across sensors and time with a significant change in F-ratio shown by the gray plane (P < 0.05 FDR corrected over time and sensors). Sensor topographies are shown for peak times for both magnetometers and the mean F-ratio over the planar gradiometer pairs.",
+            "paragraph_rank": 30,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 425,
+                    "text": "Figure 2",
+                    "end": 433
+                }
+            ]
+        },
+        {
+            "section": "Categorical versus Object-specific Semantic Representations",
+            "text": "was significantly higher for between-category distinctions (maximum 79%) than within-category distinctions (72%) (all qs < 0.05 FDR, Wilcoxon signed-rank tests; Fig. 4a). As both within-and between-category predictions were successful from 50 ms, the full model (HMax + SemFeat) does not dissociate the timing of categorical and object-specific semantic distinctions. This may be because both types of information are rapidly accessed, or due to the HMax parameters supporting a high degree of classification in early time periods; showing that fine-grained low-and high-level visual information is present and able to dissociate any 2 images (regardless of category). If the latter case is true, this may mask any differences between categorical and fine-grained classification accuracy that is only driven by semantic information. Therefore, we evaluated the HMax and SemFeat components of the model independently. As there is some degree of correlation between the predictors for the HMax and SemFeat models (Supplementary Fig. 1), the classification analysis was performed based on the HMax model first, before being performed using the SemFeat model after removing any variance in the MEG signals that correlated with the HMax model. This was achieved by first running multiple linear regressions against the MEG signals with the HMax model predictors to obtain the residuals, which were then used in the classification analysis based on the SemFeat model predictors. This allows us to determine if the SemFeat model can still classify between-and withincategory objects, even when all the variance that can be accounted for by the HMax model has been removed. Using the HMax model, both within and between-category distinctions were significant from 50 ms (all qs < 0.05 FDR, Wilcoxon signed-rank test) and the onsets for between-and within-category effects were not significantly different (P = 0.98). Again classification accuracies were similar for the initial peak, before accuracy was significantly higher for betweencategory distinctions than within-category distinctions from 150 ms to the end of the analysis window (all qs < 0.05 FDR, Wilcoxon signed-rank tests; Fig. 4b). For the SemFeat model, between-category classification was significantly better than chance after 110 ms with an initial maximum at 130 ms (q < 0.05, Wilcoxon signed-rank test, FDR corrected; maximum 59%; Fig. 4c) while within-category classification only became significant at later time points from 150 to 250 ms, reaching a maximum at 230 ms (all qs < 0.05 FDR, Wilcoxon signed-rank test; maximum 59%). Furthermore, within-category classifications were significantly better than chance between 330 and 360 ms and again from 400 to 500 ms. Bootstrapping revealed that the onset of successful between-category classification was reliably earlier than successful within-category classification (P = 0.027). Direct comparisons of between-and withincategory accuracies showed that between-category accuracy was significantly higher than within-category accuracy between 120 and 140 ms, and from 200 ms to the end of the analysis window (all qs < 0.05 FDR, Wilcoxon signed-rank tests). These analyses indicate that the semantic information reflected in the MEG signals is able to dissociate between members of different categories significantly earlier than dissociations can occur within a category.",
+            "paragraph_rank": 31,
+            "section_rank": 15,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 161,
+                    "text": "Fig. 4a",
+                    "end": 168
+                },
+                {
+                    "type": "figure",
+                    "start": 1026,
+                    "text": "Fig. 1",
+                    "end": 1032
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 2178,
+                    "text": "Fig. 4b)",
+                    "end": 2186
+                },
+                {
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "start": 2393,
+                    "text": "Fig. 4c",
+                    "end": 2400
+                }
+            ]
+        },
+        {
+            "text": "Concept Classification: Single-participant Models",
+            "section_rank": 16
+        },
+        {
+            "section": "Concept Classification: Single-participant Models",
+            "text": "The above classification analyses assessed the ability to construct and classify concepts using a model trained and tested on MEG responses averaged over participants. Here we ask whether these effects are conserved when training and testing the models on single-trial data from individual participants. To test between the 3 models, classification accuracy was tested in 2 time windows for each participant -from 70 to 160 ms where we saw strong effects of the visual model, and from 200 to 400 ms where the semantic-feature information led to a significantly better model of the data. Within these 2 time windows, we predicted/classified the MEG signals for the left-out objects based on the spatiotemporal response patterns  across all sensors and all time points within the time window. In both time windows, all participants performed better than chance, ranging between 54 and 83% (Fig. 5a,b). In the first time window, the HMaxC1 model had the highest overall accuracy (HMaxC1 mean: 72.1%, HMax mean: 71.7%, HMaxSemfeat mean: 70.2%) and was significantly higher than the HMaxSemfeat model (t (13) = 2.76, P = 0.016). There were no significant differences between the HMax model and either the HMaxC1 (t (13) = 0.39, P = 0.70) or HMaxSemfeat models (t (13) = 1.35, P = 0.20). In the 200-400 ms time window, the HMaxSemfeat model had the highest overall accuracy (HMaxC1 mean: 63.2%, HMax mean: 63.0%, HMaxSemfeat mean: 64.9%) and was significantly higher than both the HMax (t (13) = 8.76, P < 0.0001) and HMaxC1 models (t (13) = 3.81, P = 0.002). There was no significant difference between the HMax and HMaxC1 models (t (13) = 0.52, P = 0.66).",
+            "paragraph_rank": 32,
+            "section_rank": 16,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "start": 887,
+                    "text": "(Fig. 5a,b",
+                    "end": 897
+                }
+            ]
+        },
+        {
+            "section": "Concept Classification: Single-participant Models",
+            "text": "Between-and within-category classification time courses were also calculated for each participant based on the SemFeat model (after removing effects of the HMax model). This revealed that between-category effects are significantly better than chance from 120 to 600 ms (all qs < 0.05, FDR), and that within-category classifications are significantly better than chance from 210 to 350 ms, and from 410 to 460 ms (all qs < 0.05, FDR). Furthermore, between-category classifications are significantly better than within-category classifications between 120 and 140 ms, and from 180 to 600 ms (all qs < 0.05, FDR). Finally, bootstrapping showed the onset of significant between-category classification was prior to the onset of within-category classifications (P = 0.013). These results show that the pattern of results described above is also apparent at the individual participant level, and that our effects cannot be explained by a minority of the participants driving the effects in the averaged MEG data.",
+            "paragraph_rank": 33,
+            "section_rank": 16
+        },
+        {
+            "text": "Source Localisation of Regression Weights and Regional Model fit",
+            "section_rank": 17
+        },
+        {
+            "section": "Source Localisation of Regression Weights and Regional Model fit",
+            "text": "The analyses so far highlight that early object representations -principally between 70 and 160 ms-can be modeled with the low-and higher level visual object properties of the HMax model. Furthermore, within this timeframe, we also find evidence for the processing of semantic information that can dissociate between members of different object categories prior to more specific conceptual representations largely between 150-200 and 400 ms. To visualize the neural regions that are most important to object-specific classification, we mapped the regression weights of each model predictor to the cortical surface. To achieve this, source localization was performed for each predictor's regression weights that were calculated for the MEG sensors (Hauk et al. 2006). The absolute cortical regression weights for each type of predictor were averaged to create single maps for HMaxC1, HMaxC2, and semantic information.",
+            "paragraph_rank": 34,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "start": 747,
+                    "text": "(Hauk et al. 2006)",
+                    "end": 765
+                }
+            ]
+        },
+        {
+            "section": "Source Localisation of Regression Weights and Regional Model fit",
+            "text": "We found the strongest weights associated with HMaxC1 responses from 70 to 160 ms in early visual cortex, highlighting this variable's relationship to low-level visual processing of objects (Fig. 6). The HMaxC2 response weights were overall weaker but with peaks in the posterior inferior temporal (IT) cortex, while the semantic-feature weights had maximal regression weights in posterior IT and the anterior temporal lobe. During the later time window from 200 to 400 ms, the strongest regression weights for semantic features were focused in bilateral IT and the anterior temporal lobes. Furthermore, regression weights for the HMaxC2 predictors were maximal in the right IT while HMaxC1 weights were overall reduced compared with the early time window.",
+            "paragraph_rank": 35,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_2",
+                    "start": 190,
+                    "text": "(Fig. 6)",
+                    "end": 198
+                }
+            ]
+        },
+        {
+            "section": "Source Localisation of Regression Weights and Regional Model fit",
+            "text": "Finally, we tested to what extent the 3 different models could account for regional responses along the ventral stream and at which times and locations adding different predictors resulted in an improved model fit (Fig. 7). We found that in the time window 70-160 ms, adding the HMaxC2 responses to HMaxC1 model led to a significantly better fit to the data in bilateral occipital (left: F = 3.03, P = 0.0068, right: F = 5.41, P = 0. 0.00003) and right IT (F = 2.15, P = 0.048). During the later time window, 200-400 ms, adding semantic-feature information into the model led to a significant improvement in model fit in the bilateral anterior temporal lobe (left: F = 3.12, P = 0.0057, right: F = 2.18, P = 0.045), left IT (F = 2.31, P = 0.034) and the right occipital lobe (F = 5.25, P = 0.000038). Together, Figure 5. Concept classification accuracy based on single-participant MEG data. Accuracy for individual participants for the 3 models for the time windows (a) 70-160 ms and (b) 200-400 ms. Participants ordered by highest accuracies over both time windows. (c) Average between-and within-category classification accuracy over time for the SemFeat model based on single-participant classification time courses. Vertical lines in (c) show the onsets of effects, with between-category effects being significantly earlier than within-category effects.",
+            "paragraph_rank": 36,
+            "section_rank": 17,
+            "ref_spans": [
+                {
+                    "type": "figure",
+                    "ref_id": "fig_3",
+                    "start": 214,
+                    "text": "(Fig. 7)",
+                    "end": 222
+                },
+                {
+                    "type": "figure",
+                    "start": 811,
+                    "text": "Figure 5",
+                    "end": 819
+                }
+            ]
+        },
+        {
+            "section": "Source Localisation of Regression Weights and Regional Model fit",
+            "text": "the localization of the regression weights and regional model fit analysis indicate that HMaxC1 effects are primarily driven by early visual regions while HMaxC2 responses are additionally reflected in the posterior occipital lobe and IT. Finally, the object-specific semantic information captured with the SemFeat predictors was encoded in IT and the anterior temporal lobes.",
+            "paragraph_rank": 37,
+            "section_rank": 17
+        },
+        {
+            "text": "Discussion",
+            "section_rank": 18
+        },
+        {
+            "section": "Discussion",
+            "text": "The current study aimed to characterize when different forms of visual and semantic information emerge over time. To address these issues, we tested the efficacy of a visuo-semantic model based on a computational model of vision and semanticfeature statistics by evaluating its ability to model and predict time-varying neural activity patterns associated with individual objects.",
+            "paragraph_rank": 38,
+            "section_rank": 18
+        },
+        {
+            "section": "Discussion",
+            "text": "This study provides clear evidence that semantic information plays a key role during the temporal formation of object representations. The model including semantic-feature information outperformed the HMax computational model of vision in terms of classification accuracy and in the model fit to the data after 200 ms. This shows that a model of meaningful object representations based on combinations of visual and semantic-feature-based measures provides a better account of underlying object representations than one based on computational models of vision alone. Furthermore, this suggests that models based just on visual information do not sufficiently model meaningful object representations beyond the first \u223c150 ms. This may be expected given the HMax model is only claimed to capture immediate vision based on feedforward processing alone (Serre et al. 2005(Serre et al. , 2007). The HMax model does not reflect any form of more abstract object information not directly related to the visual input, one class of which is semantic information that is required to fully model object representations. This is not to suggest that the feature representations used in our semantic model (e.g., \"has legs,\" \"made of metal\") are literally coded in neural populations, but that the statistical regularities observed across features share some properties with the regularities observed in neural semantic object representations.",
+            "paragraph_rank": 39,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b50",
+                    "start": 849,
+                    "text": "(Serre et al. 2005",
+                    "end": 867
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "start": 867,
+                    "text": "(Serre et al. , 2007",
+                    "end": 887
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "The timing of these semantic-feature effects, post 200 ms, provides evidence that the concept-level individuation of specific objects is not accomplished through an initial feedforward propagation of signals thought to be completed within 100-150 ms, suggesting it relies on more dynamic recurrent processing. This interpretation is supported by other MEG/EEG studies showing that fine-grained object-specific semantic information emerges beyond 150-200 ms, after which longrange recurrent processes are engaged (involving prefrontal cortex, anterior temporal, and posterior temporal regions) that function to disambiguate the object, enabling semantic individuation and the formation of concept-specific representations (Bar et al. 2006;Schendan and Maher 2009;Clarke et al. 2011Clarke et al. , 2013Scholl et al. 2014).",
+            "paragraph_rank": 40,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "start": 721,
+                    "text": "(Bar et al. 2006;",
+                    "end": 738
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 738,
+                    "text": "Schendan and Maher 2009;",
+                    "end": 762
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 762,
+                    "text": "Clarke et al. 2011",
+                    "end": 780
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 780,
+                    "text": "Clarke et al. , 2013",
+                    "end": 800
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "start": 800,
+                    "text": "Scholl et al. 2014)",
+                    "end": 819
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "The effects driven by semantic-feature information were significant in the anterior temporal lobes, posterior IT, and the  right occipital lobe. Aspects of the anterior temporal lobe are considered key to representing conceptual representations (Tyler et al. 2004(Tyler et al. , 2013Moss et al. 2005;Patterson et al. 2007;Lambon Ralph et al. 2010;Mion et al. 2010;Clarke and Tyler 2014), which is also consistent with intracranial recording data from the human medial temporal lobes showing modality invariant responses to individual concepts from around 300 ms (Quian Quiroga et al. 2007. However, we believe it is unlikely that individual conceptual representations only rely on the anterior temporal lobes, as shown by the localization of the semantic-feature regression coefficients in IT and the region's improved model fit when adding semantic information. Therefore, the anterior temporal lobes may function in cooperation with more posterior temporal regions and is concordant with previous research which shows that interactions between the anterior temporal lobe and the posterior fusiform are crucial for processing fine-grained information about objects (Clarke et al. 2011). This is further supported by evidence showing that, when the anterior temporal lobes are damaged, there is decreased functional activation in the posterior ventral stream during semantic tasks (Mummery et al. 1999) and reduced feedback from anterior to posterior ventral stream regions (Campo et al. 2013). One hypothesis of the putative function of this interaction is the integration of semantic information coded in the posterior temporal lobes, which is driven by conjunctive neurons in the perirhinal cortex that act to bind together complex object information (Miyashita et al. 1996;Moss et al. 2005;Taylor et al. 2006;Mion et al. 2010;Chan, Baker et al. 2011;Clarke et al. 2011;Tyler et al. 2013;Clarke and Tyler 2014). This is not to suggest that semantic information is only represented beyond \u223c200 ms. We also found evidence that early semantic processing can underpin the dissociation of objects from different categories, and was observed significantly earlier than semantic information than can dissociate between members of the same category. This was based on a model including only semantic-feature information, and after any effects accounted for by the HMax model had been removed, and so directly reveals when there is sufficient semantic information captured in MEG data to make different kinds of object dissociations. The purely semantic-feature model showed significant between-category classification after 110 ms (initial maximum was 130 ms) and significant within-category classification from 160 ms (maximum at 210 ms; note the onset latency of within-category effects was 210 ms using the singleparticipant classifications though both analysis show similar time courses and peaks).",
+            "paragraph_rank": 41,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b59",
+                    "start": 245,
+                    "text": "(Tyler et al. 2004",
+                    "end": 263
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b57",
+                    "start": 263,
+                    "text": "(Tyler et al. , 2013",
+                    "end": 283
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 283,
+                    "text": "Moss et al. 2005;",
+                    "end": 300
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "start": 300,
+                    "text": "Patterson et al. 2007;",
+                    "end": 322
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "start": 322,
+                    "text": "Lambon Ralph et al. 2010;",
+                    "end": 347
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 347,
+                    "text": "Mion et al. 2010;",
+                    "end": 364
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 364,
+                    "text": "Clarke and Tyler 2014)",
+                    "end": 386
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "start": 562,
+                    "text": "(Quian Quiroga et al. 2007",
+                    "end": 588
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1166,
+                    "text": "(Clarke et al. 2011)",
+                    "end": 1186
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "start": 1381,
+                    "text": "(Mummery et al. 1999)",
+                    "end": 1402
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "start": 1474,
+                    "text": "(Campo et al. 2013)",
+                    "end": 1493
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "start": 1754,
+                    "text": "(Miyashita et al. 1996;",
+                    "end": 1777
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "start": 1777,
+                    "text": "Moss et al. 2005;",
+                    "end": 1794
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b56",
+                    "start": 1794,
+                    "text": "Taylor et al. 2006;",
+                    "end": 1813
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "start": 1813,
+                    "text": "Mion et al. 2010;",
+                    "end": 1830
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 1830,
+                    "text": "Chan, Baker et al. 2011;",
+                    "end": 1854
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 1854,
+                    "text": "Clarke et al. 2011;",
+                    "end": 1873
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b57",
+                    "start": 1873,
+                    "text": "Tyler et al. 2013;",
+                    "end": 1891
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "start": 1891,
+                    "text": "Clarke and Tyler 2014)",
+                    "end": 1913
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "While between-category classification accuracy became statistically significant after 110 ms, the maximum accuracy overall was observed after 350 ms and later than the maximum for within-category classifications (230 ms). The within-category classification effects we observed were not sustained throughout the epoch, showing intermittent above chance effects. One reason why the significant within-category classifications may not be sustained after the onset could be that our analysis focuses on the aspects of the MEG signal that are time-locked to the onset of the image (the evoked signals). The initial between-category and within-category classification effects will be largely underpinned by the evoked information in the MEG signals. However, if there is information relevant to within-category classifications in the MEG signals that is jittered in time across trials, then our approach will not fully utilize this information, and as a consequence may underperform. Future research into the contribution of evoked and induced frequency-specific oscillations, and the functional relevance of these time windows will be required to fully understand the encoding of specific visual and semantic parameters and how they support behavior.",
+            "paragraph_rank": 42,
+            "section_rank": 18
+        },
+        {
+            "section": "Discussion",
+            "text": "Despite this, we do not take the sustained between-category effects and intermittent within-category effects to reflect the later processing of category information compared with objectspecific semantic information, but rather we focus on when there is sufficient information to make between-and withincategory distinctions. The early significant category distinctions, after 110 ms, show a similar latency to previously reported categorical distinctions in the ventral stream (Liu et al. 2009;Chan, Baker et al. 2011). The latency and duration of the significant within-category distinctions (150-250 ms) is consistent with research showing increased activity in the ventral stream from 170 to 258 ms for object-specific semantic information compared with general category information (Clarke et al. 2011), and that after \u223c200 ms neural activity begins to correlate with naming latencies (Costa et al. 2009).",
+            "paragraph_rank": 43,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 477,
+                    "text": "(Liu et al. 2009;",
+                    "end": 494
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 494,
+                    "text": "Chan, Baker et al. 2011)",
+                    "end": 518
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 786,
+                    "text": "(Clarke et al. 2011)",
+                    "end": 806
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "start": 889,
+                    "text": "(Costa et al. 2009)",
+                    "end": 908
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "This suggests that in addition to processing visual aspects of the image, more abstract semantic information is also processed within the initial feedforward processing, providing a sufficient level of representational detail to support coarse semantic decisions prior to the formation of specific conceptual representations. These results are in contrast to claims that basic-level conceptual information is available prior to superordinate category information (Rosch et al. 1976;Jolicoeur et al. 1984), instead supporting a model of object recognition where the initial feedforward responses support coarse, categorical knowledge about objects (Kirchner and Thorpe 2006;Liu et al. 2009;Chan, Baker et al. 2011), while the information required for individual semantic concepts emerges subsequently and depends on recurrent interactions (Schendan and Maher 2009;Clarke et al. 2011Clarke et al. , 2013 and the continued interplay between visual and semantic factors (Humphreys et al. 1988;Humphreys and Forde 2001). This progression of semantic information over time does not necessarily suggest discrete stages of initial category representations and later conceptspecific representations, but instead can be formulated in terms of information emerging and accumulating over time, where different kinds of decisions can be made at different latencies based on the information available in current representations (Mack and Palmeri 2011).",
+            "paragraph_rank": 44,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "start": 463,
+                    "text": "(Rosch et al. 1976;",
+                    "end": 482
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "start": 482,
+                    "text": "Jolicoeur et al. 1984)",
+                    "end": 504
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "start": 647,
+                    "text": "(Kirchner and Thorpe 2006;",
+                    "end": 673
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 673,
+                    "text": "Liu et al. 2009;",
+                    "end": 689
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "start": 689,
+                    "text": "Chan, Baker et al. 2011)",
+                    "end": 713
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "start": 838,
+                    "text": "(Schendan and Maher 2009;",
+                    "end": 863
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "start": 863,
+                    "text": "Clarke et al. 2011",
+                    "end": 881
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "start": 881,
+                    "text": "Clarke et al. , 2013",
+                    "end": 901
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "start": 966,
+                    "text": "(Humphreys et al. 1988;",
+                    "end": 989
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "start": 989,
+                    "text": "Humphreys and Forde 2001)",
+                    "end": 1014
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "start": 1414,
+                    "text": "(Mack and Palmeri 2011)",
+                    "end": 1437
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "In this study, we used machine learning techniques to generate neural predictions for the representation of objects. By training a model which incorporated both visual and semantic measures, we were able to successfully construct neural representations for untrained objects with a high degree of accuracy. As the predicted neural representations were novel concepts, this approach allows us to generalize and construct spatiotemporal neural activations for a potentially limitless set of meaningful objects. However, it is worth noting that some of our analyses are based on MEG signals averaged over participants, and so future analyses can be used to determine to what extent the models fully generalize across participants. Visual object classification studies utilizing time-sensitive methods, such as EEG, intracranial recordings and MEG have successfully shown that different categories of object and word can be classified very rapidly (Liu et al. 2009; Simanova et al. 2010; Chan, Halgren et al. 2011; Murphy et al. 2011). For example, EEG patterns can successfully predict whether an object is an animal or a tool within 200 ms (Simanova et al. 2010), although it is unclear if the basis of classification success is visual or semantic (or both). The regression approach used here is based on specific, theoretically motivated predictors, and the relevance of these predictors governs whether classification accuracy improves or fails. This is in contrast to many decoding classification approaches that seek to find differences between 2 (or more) classes of stimuli, but which do not reveal the underlying basis of that difference (Kriegeskorte 2011;Naselaris et al. 2011). Therefore, the classification approach we have adopted provides important information about the basis on which classification works (also see Sudre et al. 2012 for a related approach).",
+            "paragraph_rank": 45,
+            "section_rank": 18,
+            "ref_spans": [
+                {
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "start": 944,
+                    "text": "(Liu et al. 2009",
+                    "end": 960
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b51",
+                    "start": 1138,
+                    "text": "(Simanova et al. 2010)",
+                    "end": 1160
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "start": 1643,
+                    "text": "(Kriegeskorte 2011;",
+                    "end": 1662
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "start": 1662,
+                    "text": "Naselaris et al. 2011)",
+                    "end": 1684
+                },
+                {
+                    "type": "bibr",
+                    "ref_id": "b52",
+                    "start": 1828,
+                    "text": "Sudre et al. 2012",
+                    "end": 1845
+                }
+            ]
+        },
+        {
+            "section": "Discussion",
+            "text": "Understanding how visual objects are represented in the brain is one of the central questions in neuroscience, but has traditionally been tackled using methods insensitive to the time-varying neural dynamics. Here, we utilized time-sensitive MEG recordings to model the visual and semantic representations of individual objects. Object representations are composed of complex visual and semantic information, both of which are necessary to comprehensively model the processing of such representations. We demonstrate that a visuo-semantic model that includes low and high-level visual properties together with semantic-feature information provides an effective model of the time-varying neural representations of individual objects. Our results are supported by measures of model fit as well as predictive performance in constructing and classifying individual objects, and clearly highlight the need to incorporate complex semantic information about objects to understand how objects are represented and processed in the brain.",
+            "paragraph_rank": 46,
+            "section_rank": 18
+        },
+        {
+            "text": "Supplementary Material",
+            "section_rank": 19
+        },
+        {
+            "section": "Supplementary Material",
+            "text": "Supplementary material can be found at: http://www.cercor.oxford journals.org/.",
+            "paragraph_rank": 47,
+            "section_rank": 19
+        },
+        {
+            "text": "Figure 3 .",
+            "section_rank": 20
+        },
+        {
+            "section": "Figure 3 .",
+            "text": "Concept classification accuracy over time for the HMaxC1-only, HMax, and HMax + SemFeat models. Shaded areas show the standard errors of the mean.",
+            "paragraph_rank": 48,
+            "section_rank": 20
+        },
+        {
+            "text": "Figure 4 .",
+            "section_rank": 21
+        },
+        {
+            "section": "Figure 4 .",
+            "text": "Between-and within-category classification accuracy over time for (a) the HMax + SemFeat model, (b) HMax model, and (c) the SemFeat model after removing effects of the HMax model from the MEG signals. Vertical lines in (c) show the onsets where between-category effects are significantly earlier than within-category effects.",
+            "paragraph_rank": 49,
+            "section_rank": 21
+        },
+        {
+            "text": "Figure 6 .",
+            "section_rank": 22
+        },
+        {
+            "section": "Figure 6 .",
+            "text": "Cortical distribution of regression weights for each type of predictor along the ventral stream.",
+            "paragraph_rank": 50,
+            "section_rank": 22
+        },
+        {
+            "text": "Figure 7 .",
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Regional model fits for peak locations along the ventral stream in the left and right hemisphere for the HMaxC1-only (dark gray), HMax (light gray), and HMax + SemFeat (white) models. Asterisks show significant improvements in model fit between models. MNI coordinates shown for each region.",
+            "paragraph_rank": 51,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Predicting Individual Objects with MEG \u2022 Clarke et al.",
+            "paragraph_rank": 52,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Predicting Individual Objects with MEG \u2022 Clarke et al.",
+            "paragraph_rank": 53,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Cerebral Cortex October 2015, V 25 N 10 3607",
+            "paragraph_rank": 54,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Predicting Individual Objects with MEG \u2022 Clarke et al.",
+            "paragraph_rank": 55,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Cerebral Cortex October 2015, V 25 N 10 3609",
+            "paragraph_rank": 56,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Predicting Individual Objects with MEG \u2022 Clarke et al.",
+            "paragraph_rank": 57,
+            "section_rank": 23
+        },
+        {
+            "section": "Figure 7 .",
+            "text": "Predicting Individual Objects with MEG \u2022 Clarke et al.",
+            "paragraph_rank": 58,
+            "section_rank": 23
+        }
+    ]
+}

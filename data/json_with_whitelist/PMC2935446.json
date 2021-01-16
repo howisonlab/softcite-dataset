@@ -1,0 +1,2905 @@
+{
+    "level": "sentence",
+    "id": "b43a32e471",
+    "abstract": [
+        {
+            "text": "Motivation: Intrinsically disordered proteins play a crucial role in numerous regulatory processes. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Their abundance and ubiquity combined with a relatively low quantity of their annotations motivate research toward the development of computational models that predict disordered regions from protein sequences. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Although the prediction quality of these methods continues to rise, novel and improved predictors are urgently needed. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Results: We propose a novel method, named MFDp (Multilayered Fusion-based Disorder predictor), that aims to improve over the current disorder predictors. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "MFDp is as an ensemble of 3 Support Vector Machines specialized for the prediction of short, long and generic disordered regions. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "It combines three complementary disorder predictors, sequence, sequence profiles, predicted secondary structure, solvent accessibility, backbone dihedral torsion angles, residue flexibility and B-factors. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "Our method utilizes a custom-designed set of features that are based on raw predictions and aggregated raw values and recognizes various types of disorder. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "The MFDp is compared at the residue level on two datasets against eight recent disorder predictors and top-performing methods from the most recent CASP8 experiment. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "In spite of using training chains with \u226425% similarity to the test sequences, our method consistently and significantly outperforms the other methods based on the MCC index. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "The MFDp outperforms modern disorder predictors for the binary disorder assignment and provides competitive real-valued predictions. ",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        },
+        {
+            "text": "The MFDp's outputs are also shown to outperform the other methods in the identification of proteins with long disordered regions.",
+            "paragraph_rank": 1,
+            "section_rank": 0
+        }
+    ],
+    "body_text": [
+        {
+            "text": "INTRODUCTION",
+            "section_rank": 1
+        },
+        {
+            "text": "The intrinsically disordered proteins (IDPs), also referred to as unstructured proteins, lack stable tertiary structure under physiological conditions in vitro. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The IDPs play a crucial role in transcriptional regulation, translation and cellular signal transduction (Dunker et al., 2008). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 105,
+                    "end": 126,
+                    "type": "bibr",
+                    "ref_id": "b5",
+                    "text": "(Dunker et al., 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Their prevalence was also implicated in various human disorders including the neurodegenerative diseases such as Huntington, Parkinson's and Alzheimer's disease (Raychaudhuri et al., 2009). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 161,
+                    "end": 188,
+                    "type": "bibr",
+                    "ref_id": "b29",
+                    "text": "(Raychaudhuri et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "However, the functional role of IDPs is not as well understood when compared with the well-packed proteins. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Importantly, the annotations of the disorder lag behind the rapidly accumulating number of known * To whom correspondence should be addressed. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "protein chains. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "To compare, the curated DisProt database (Sickmeier et al., 2007) includes little over 500 chains, the PDB database (Berman et al., 2000) that allows finding unstructured segments in the solved tertiary structures (which are assumed to be equivalent to disordered segments) includes \u223c58 000 proteins, while the overall number of known protein chains is >9 million. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 41,
+                    "end": 65,
+                    "type": "bibr",
+                    "ref_id": "b36",
+                    "text": "(Sickmeier et al., 2007)"
+                },
+                {
+                    "start": 116,
+                    "end": 137,
+                    "type": "bibr",
+                    "ref_id": "b1",
+                    "text": "(Berman et al., 2000)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 103,
+                    "end": 106,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w0"
+                }
+            ]
+        },
+        {
+            "text": "The disorder is frequently observed in regions with low-sequence complexity and with low content of hydrophobic amino acids, which would often form a core of a folded globular protein (Dyson and Wright, 2005;Uversky et al., 2000). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 184,
+                    "end": 208,
+                    "type": "bibr",
+                    "ref_id": "b6",
+                    "text": "(Dyson and Wright, 2005;"
+                },
+                {
+                    "start": 208,
+                    "end": 229,
+                    "type": "bibr",
+                    "ref_id": "b41",
+                    "text": "Uversky et al., 2000)"
+                }
+            ]
+        },
+        {
+            "text": "These and other sequence characteristics can be used to differentiate between disordered and ordered regions, which in turn implies that disorder is predictable from the sequence. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "The past decade observed development of a number of computational models for the prediction of the disordered regions. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "These methods allow for high-throughput annotations of protein chains which provide a viable solution to close the annotation gap. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "These predictors could be categorized into four groups: ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "(i) methods based on relative propensity of amino acids to form disorder/ordered regions which include GlobPlot (Linding et al., 2003), IUPred (Doszt\u00e1nyi et al., 2005), FoldIndex (Prilusky et al., 2005) and Ucon (Schlessinger et al., 2007a); ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 134,
+                    "type": "bibr",
+                    "ref_id": "b16",
+                    "text": "(Linding et al., 2003)"
+                },
+                {
+                    "start": 143,
+                    "end": 167,
+                    "type": "bibr",
+                    "ref_id": "b4",
+                    "text": "(Doszt\u00e1nyi et al., 2005)"
+                },
+                {
+                    "start": 179,
+                    "end": 202,
+                    "type": "bibr",
+                    "ref_id": "b25",
+                    "text": "(Prilusky et al., 2005)"
+                },
+                {
+                    "start": 212,
+                    "end": 240,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "(Schlessinger et al., 2007a)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 103,
+                    "end": 111,
+                    "rawForm": "GlobPlot",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w1"
+                },
+                {
+                    "type": "software",
+                    "start": 136,
+                    "end": 142,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w2"
+                },
+                {
+                    "type": "software",
+                    "start": 169,
+                    "end": 178,
+                    "rawForm": "FoldIndex",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w3"
+                },
+                {
+                    "type": "software",
+                    "start": 207,
+                    "end": 211,
+                    "rawForm": "Ucon",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w4"
+                }
+            ]
+        },
+        {
+            "text": "(ii) methods built utilizing machine-learning classifiers, such as DISpro (Hecker et al., 2008), DISOPRED (Jones and Ward, 2003) DISOPRED2 (Ward et al., 2004), PrDOS (Ishida and Kinoshita, 2007), POODLE-S (Shimizu et al., 2007a), POODLE-L (Hirose et al., 2007), POODLE-W (Shimizu et al., 2007b), Spritz (Vullo et al., 2006), DisPSSMP (Su et al., 2006), DisPSSMP2 (Su et al., 2007), IUP (Yang and Yang, 2006), NORSnet (Schlessinger et al., 2007b) and OnD-CRFs (Wang and Sauer, 2008); ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 74,
+                    "end": 95,
+                    "type": "bibr",
+                    "ref_id": "b10",
+                    "text": "(Hecker et al., 2008)"
+                },
+                {
+                    "start": 106,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b15",
+                    "text": "(Jones and Ward, 2003)"
+                },
+                {
+                    "start": 139,
+                    "end": 158,
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "text": "(Ward et al., 2004)"
+                },
+                {
+                    "start": 166,
+                    "end": 194,
+                    "type": "bibr",
+                    "ref_id": "b12",
+                    "text": "(Ishida and Kinoshita, 2007)"
+                },
+                {
+                    "start": 205,
+                    "end": 228,
+                    "type": "bibr",
+                    "ref_id": "b34",
+                    "text": "(Shimizu et al., 2007a)"
+                },
+                {
+                    "start": 239,
+                    "end": 260,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "(Hirose et al., 2007)"
+                },
+                {
+                    "start": 271,
+                    "end": 294,
+                    "type": "bibr",
+                    "ref_id": "b35",
+                    "text": "(Shimizu et al., 2007b)"
+                },
+                {
+                    "start": 303,
+                    "end": 323,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "(Vullo et al., 2006)"
+                },
+                {
+                    "start": 334,
+                    "end": 351,
+                    "type": "bibr",
+                    "ref_id": "b39",
+                    "text": "(Su et al., 2006)"
+                },
+                {
+                    "start": 363,
+                    "end": 380,
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "text": "(Su et al., 2007)"
+                },
+                {
+                    "start": 386,
+                    "end": 407,
+                    "type": "bibr",
+                    "ref_id": "b48",
+                    "text": "(Yang and Yang, 2006)"
+                },
+                {
+                    "start": 417,
+                    "end": 445,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "(Schlessinger et al., 2007b)"
+                },
+                {
+                    "start": 459,
+                    "end": 481,
+                    "type": "bibr",
+                    "ref_id": "b45",
+                    "text": "(Wang and Sauer, 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 67,
+                    "end": 73,
+                    "rawForm": "DISpro",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w5"
+                },
+                {
+                    "type": "software",
+                    "start": 97,
+                    "end": 105,
+                    "rawForm": "DISOPRED",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w6"
+                },
+                {
+                    "type": "software",
+                    "start": 196,
+                    "end": 204,
+                    "rawForm": "POODLE-S",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w7"
+                },
+                {
+                    "type": "software",
+                    "start": 230,
+                    "end": 238,
+                    "rawForm": "POODLE-L",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w8"
+                },
+                {
+                    "type": "software",
+                    "start": 262,
+                    "end": 270,
+                    "rawForm": "POODLE-W",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w9"
+                },
+                {
+                    "type": "software",
+                    "start": 296,
+                    "end": 302,
+                    "rawForm": "Spritz",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w10"
+                },
+                {
+                    "type": "software",
+                    "start": 325,
+                    "end": 333,
+                    "rawForm": "DisPSSMP",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w11"
+                },
+                {
+                    "type": "software",
+                    "start": 382,
+                    "end": 385,
+                    "rawForm": "IUP",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w12"
+                },
+                {
+                    "type": "software",
+                    "start": 409,
+                    "end": 416,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w13"
+                }
+            ]
+        },
+        {
+            "text": "(iii) methods based on a metaapproach which combines predictions from multiple base predictors including recent MD (Schlessinger et al., 2009), metaPrDOS (Ishida and Kinoshita, 2008), GS-metaDisorder (J.Bujnicki, unpublished data) and MULTICOM (Cheng et al., 2005); and ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 115,
+                    "end": 142,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                },
+                {
+                    "start": 154,
+                    "end": 182,
+                    "type": "bibr",
+                    "ref_id": "b13",
+                    "text": "(Ishida and Kinoshita, 2008)"
+                },
+                {
+                    "start": 244,
+                    "end": 264,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "(Cheng et al., 2005)"
+                }
+            ]
+        },
+        {
+            "text": "(iv) methods based on analysis of predicted 3D structural models, such as DISOclust (McGuffin, 2008). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 84,
+                    "end": 100,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "(McGuffin, 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 74,
+                    "end": 83,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w14"
+                }
+            ]
+        },
+        {
+            "text": "Since 2002, the sequence-based disorder predictors are biannually assessed and compared during the critical assessment of structure prediction (CASP) experiments. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1
+        },
+        {
+            "text": "Although the prediction quality continues to rise, as shown in the most recent CASP8 (Noivirt-Brik et al., 2009), improved prediction methods are still urgently needed (Schlessinger et al., 2009).",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 2,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 85,
+                    "end": 112,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Noivirt-Brik et al., 2009)"
+                },
+                {
+                    "start": 168,
+                    "end": 195,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "We propose a novel architecture, named MFDp (Multilayered Fusion-based Disorder predictor), that aims to improve the overall quality of the prediction when compared with modern methods. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "We analyze and quantify improvements provided by MFDp for a generic prediction of all disordered segments and also for the prediction of long-disordered segments. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "The latter is motivated by recent results that show that long-disordered regions are useful for target selection for structure determination of integral membrane protein (Punta  Ward et al. (2004) et al., 2009), they are implicated in protein-protein recognition (Tompa et al., 2009) and were found helpful in prediction of protein crystallization propensity (Slabinski et al., 2007). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 178,
+                    "end": 196,
+                    "type": "bibr",
+                    "ref_id": "b46",
+                    "text": "Ward et al. (2004)"
+                },
+                {
+                    "start": 200,
+                    "end": 210,
+                    "type": "bibr",
+                    "text": "al., 2009)"
+                },
+                {
+                    "start": 263,
+                    "end": 283,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "(Tompa et al., 2009)"
+                },
+                {
+                    "start": 359,
+                    "end": 383,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "(Slabinski et al., 2007)"
+                }
+            ]
+        },
+        {
+            "text": "The MFDp is based on four novel ideas. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "First, motivated by the observation that combining orthogonal predictors is helpful (Oldfield et al., 2005;Schlessinger et al., 2009), we fuse four complementary disorder predictors. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 84,
+                    "end": 107,
+                    "type": "bibr",
+                    "ref_id": "b21",
+                    "text": "(Oldfield et al., 2005;"
+                },
+                {
+                    "start": 107,
+                    "end": 133,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "This is in contrast to earlier ensemble-based solutions that combined predictors selected in an ad hoc manner. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "When compared to the recently proposed orthogonal ensemble-based MD predictor (Schlessinger et al., 2009), we consider different aspects to judge dissimilarity. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 78,
+                    "end": 105,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "MD combines four predictors that tackle different 'types' of disorder, while we combine three methods that differ in their approach to perform predictions. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "We use a machine learning-based predictor DISOPRED2, residue propensity-based IUPred and a recent DISOclust that is based on tertiary structure predictions (i.e. prediction based on the sequencederived tertiary structure). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 78,
+                    "end": 84,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w15"
+                },
+                {
+                    "type": "software",
+                    "start": 98,
+                    "end": 107,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w16"
+                }
+            ]
+        },
+        {
+            "text": "The usage of the 3D-based predictor is the novel aspect of our ensemble. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1
+        },
+        {
+            "text": "We select DISOPRED2 since it was demonstrated to provide high-quality predictions and to be orthogonal to other machine learning-based methods (Schlessinger et al., 2009). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 143,
+                    "end": 170,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "The IUPred provides two models that specialize in prediction of long-and short-disordered regions, respectively. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 10,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w17"
+                }
+            ]
+        },
+        {
+            "text": "The DISOclust utilizes a premise that ordered residues should be conserved in 3D space in multiple models, whereas residues that vary or are consistently missing are correlated with the disorder. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 13,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w18"
+                }
+            ]
+        },
+        {
+            "text": "It predicts per-residue error in multiple fold recognition models which is followed by an analysis of the conservation of the per-residue errors across all models (McGuffin, 2008).",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 3,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 163,
+                    "end": 179,
+                    "type": "bibr",
+                    "ref_id": "b17",
+                    "text": "(McGuffin, 2008)"
+                }
+            ]
+        },
+        {
+            "text": "Second, we use the most comprehensive selection of the input information sources when compared with the recent methods (Table 1). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 119,
+                    "end": 128,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "(Table 1)"
+                }
+            ]
+        },
+        {
+            "text": "Similar to MD, DISpro and MULTICOM, we use the sequence profiles (the most widely used inputs; Table 1), predicted secondary structure (SS) [disordered regions are characterized by lack of SS (Radivojac et al., 2004(Radivojac et al., , 2007Vucetic et al., 2003)] and solvent accessibility [unstructured regions have a large solventaccessible area (Schlessinger et al., 2009)]. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 192,
+                    "end": 215,
+                    "type": "bibr",
+                    "ref_id": "b27",
+                    "text": "(Radivojac et al., 2004"
+                },
+                {
+                    "start": 215,
+                    "end": 240,
+                    "type": "bibr",
+                    "ref_id": "b28",
+                    "text": "(Radivojac et al., , 2007"
+                },
+                {
+                    "start": 240,
+                    "end": 261,
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "text": "Vucetic et al., 2003)"
+                },
+                {
+                    "start": 347,
+                    "end": 374,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 15,
+                    "end": 21,
+                    "rawForm": "DISpro",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w19"
+                }
+            ]
+        },
+        {
+            "text": "We also utilize sequencebased predictions of backbone dihedral torsion angles, B-factor [which are associated with disordered regions (Zhang et al., 2009)] and the sequence terminus indicator [similarly to PrDOS (Su et al., 2007)]. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 134,
+                    "end": 155,
+                    "type": "bibr",
+                    "ref_id": "b49",
+                    "text": "(Zhang et al., 2009)]"
+                },
+                {
+                    "start": 212,
+                    "end": 229,
+                    "type": "bibr",
+                    "ref_id": "b38",
+                    "text": "(Su et al., 2007)"
+                }
+            ]
+        },
+        {
+            "text": "The usage of the backbone angles is motivated by their usefulness in building-scoring function for fold recognition and 3D structure prediction (Wu and Zhang, 2008), and by the success of the 3D-based DISOclust that ranked fourth in CASP8 (Noivirt-Brik et al., 2009). ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1,
+            "ref_spans": [
+                {
+                    "start": 144,
+                    "end": 164,
+                    "type": "bibr",
+                    "ref_id": "b47",
+                    "text": "(Wu and Zhang, 2008)"
+                },
+                {
+                    "start": 239,
+                    "end": 266,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Noivirt-Brik et al., 2009)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 201,
+                    "end": 210,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w20"
+                }
+            ]
+        },
+        {
+            "text": "We tried predictions of signal peptides, but we did not find them useful.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 4,
+            "section_rank": 1
+        },
+        {
+            "text": "Third, we aggregate the predictions, before feeding them into a classifier, using a sliding window to facilitate predictions of longdisordered regions. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "The aggregation utilizes neighboring predictions to perform averaging, to find maximal and minimal prediction value/probability and to analyze local SS conformations, which helps the classifier to find longer stretches of disordered residues.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 5,
+            "section_rank": 1
+        },
+        {
+            "text": "Fourth, we use two-layered architecture where the first layer includes three predictors, one designed for all disordered residues, one for short (<30 residues), and one for long segments. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
+        },
+        {
+            "text": "These predictors use different inputs encoded using numerical descriptors derived from the abovementioned sources. ",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
+        },
+        {
+            "text": "The second layer combines their outputs to generate our disorder predictions.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 6,
+            "section_rank": 1
+        },
+        {
+            "text": "MFDp is capable of recognizing various types of disorder, since it is trained using a dataset that includes residues from disordered regions of all sizes and that combines proteins from the DisProt database and X-ray structures from the PDB.",
+            "section": "INTRODUCTION",
+            "paragraph_rank": 7,
+            "section_rank": 1,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 237,
+                    "end": 240,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w21"
+                }
+            ]
+        },
+        {
+            "text": "METHODS",
+            "section_rank": 2
+        },
+        {
+            "text": "Datasets",
+            "section_rank": 3
+        },
+        {
+            "text": "The proposed method was designed and tested on a dataset with 514 protein sequences. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "These sequences were harvested from the PDB and the DisProt databases. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 40,
+                    "end": 43,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w22"
+                }
+            ]
+        },
+        {
+            "text": "The PDB sequences were filtered using the culled PDB list (Wang and Dunbrack, 1993) to extract a high-quality and low-sequence identity subset. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 58,
+                    "end": 83,
+                    "type": "bibr",
+                    "text": "(Wang and Dunbrack, 1993)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 7,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w23"
+                },
+                {
+                    "type": "software",
+                    "start": 49,
+                    "end": 52,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w24"
+                }
+            ]
+        },
+        {
+            "text": "We selected sequences that have structures with R-factor <0.2 and resolution <2.0 \u00c5, and that are characterized by sequence identity <5%. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The above follows the selection process used by GS-metaDisorder, one of the leading methods in CASP8. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Since most protein chains in PDB are completely ordered, we kept randomly selected 20% of the ordered proteins. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 29,
+                    "end": 32,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w25"
+                }
+            ]
+        },
+        {
+            "text": "We extracted the entire set of 1195 proteins from the current release 4.9 of the DisProt and we merged them with the PDB chains. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 117,
+                    "end": 120,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w26"
+                }
+            ]
+        },
+        {
+            "text": "The combined set was i490 filtered at 25% sequence identity as follows. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "For a given pair of sequences that share >25% identity, we remove the chain that has fewer disordered residues. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "Next, we removed any of the remaining 522 sequences that share significant similarity with chains in the CASP8 dataset that is also used to validate our predictions; we removed each sequence that shares >25% identity to any of the CASP8 targets. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3
+        },
+        {
+            "text": "The resulting dataset, named mixed disorder (MxD) dataset, has 514 protein sequences, with 309 from DisProt and 205 from PDB. ",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 121,
+                    "end": 124,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w27"
+                }
+            ]
+        },
+        {
+            "text": "Our method is also compared against other solutions using the CASP8 dataset, which contains 122 proteins; details concerning this dataset are given in Noivirt-Brik et al. (2009).",
+            "section": "Datasets",
+            "paragraph_rank": 8,
+            "section_rank": 3,
+            "ref_spans": [
+                {
+                    "start": 151,
+                    "end": 177,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "Noivirt-Brik et al. (2009)"
+                }
+            ]
+        },
+        {
+            "text": "Definition of disorder",
+            "section_rank": 4
+        },
+        {
+            "text": "Prior works show that the assignment of the disordered regions performed using different experimental methods is not always consistent (Vucetic et al., 2003). ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 135,
+                    "end": 157,
+                    "type": "bibr",
+                    "ref_id": "b42",
+                    "text": "(Vucetic et al., 2003)"
+                }
+            ]
+        },
+        {
+            "text": "The disorder predictors that were trained on regions identified by one experimental method could be less accurate for prediction of disordered regions that were characterized by other methods (Schlessinger et al., 2007a, b). ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 192,
+                    "end": 223,
+                    "type": "bibr",
+                    "text": "(Schlessinger et al., 2007a, b)"
+                }
+            ]
+        },
+        {
+            "text": "To date, there is no golden standard for the assignment of the disordered regions. ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "In the past CASP experiments the disordered regions were defined as residues that lack coordinates in structures solved by X-ray crystallography and as residues that exhibit high variability within ensemble or are annotated as disordered in REMARK 465 by experimentalists for the structures solved by NMR (Bordoli et al., 2007;Noivirt-Brik et al., 2009). ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "ref_spans": [
+                {
+                    "start": 305,
+                    "end": 327,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(Bordoli et al., 2007;"
+                },
+                {
+                    "start": 327,
+                    "end": 353,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "Noivirt-Brik et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "Consequently, the above definition is used to annotate disordered residues in the CASP8 dataset. ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The MxD dataset utilizes two types of annotations to generalize the proposed predictive model. ",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4
+        },
+        {
+            "text": "The chains extracted from PDB are annotated using the above definition, while the chains from DisProt use the curated annotations extracted from this database.",
+            "section": "Definition of disorder",
+            "paragraph_rank": 9,
+            "section_rank": 4,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 26,
+                    "end": 29,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w28"
+                }
+            ]
+        },
+        {
+            "text": "Evaluation criteria and test procedures",
+            "section_rank": 5
+        },
+        {
+            "text": "The assessment of the predictions uses the same criteria as in the CASP experiments (Bordoli et al., 2007;Noivirt-Brik et al., 2009). ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 84,
+                    "end": 106,
+                    "type": "bibr",
+                    "ref_id": "b2",
+                    "text": "(Bordoli et al., 2007;"
+                },
+                {
+                    "start": 106,
+                    "end": 132,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "Noivirt-Brik et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "The evaluation was performed per-residue since per-protein predictions are more prone to overfitting (Schlessinger et al., 2009). ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 128,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "The predictions are at two levels: ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "(i) the binary value that defines whether a given residue is or is not disordered; and ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "(ii) the real value that quantifies probability of disorder. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "The binary predictions were assessed using five measures:",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 10,
+            "section_rank": 5
+        },
+        {
+            "text": "where TP is the number of true positives (correctly predicted disordered residues), FP denotes false positives (ordered residues that were predicted as disordered), TN denotes true negatives (correctly predicted ordered residues), FN stands for false negatives (disordered residues that were predicted ordered), W disorder is the total percent of ordered residues, W order is the total percent of disordered residues and N order and N disorder are the total number of ordered and disordered residues, respectively. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The S w and MCC values range between \u22121 and 1 and they are equal zero when all residues are predicted to be ordered or disordered. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The higher the values of these measures the better the predictions. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "The receiver operating characteristic (ROC) curve was used to examine the predicted probabilities. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "For each value of probability P achieved by a given method (between 0 and 1), all the residues with probability equal to or greater than P are set as disordered, and all other residues are set as ordered. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "Next, the TP-rate and the FP-rate are calculated and we use the area under the curve (AUC) to quantify the predictive quality.",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 11,
+            "section_rank": 5
+        },
+        {
+            "text": "We designed the proposed predictor (which includes selection of features that are used to encode the inputs, parameterization of the Support Vector Machine (SVM)-based classifiers and selection of the threshold for the predicted disorder probabilities to obtain binary predictions) using 5-fold cross validation on the MxD dataset. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "In this test, we divide the dataset into five equal-sized subsets of protein chains. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "We use four of these subsets to form a training dataset that is utilized to compute the model and the fifth subset constitutes the testing dataset that is used to perform the evaluation. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "This is repeated five times, each time choosing a different subset to be the test dataset. ",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "The test on the CASP 8 was performed using the model trained on the MxD dataset.",
+            "section": "Evaluation criteria and test procedures",
+            "paragraph_rank": 12,
+            "section_rank": 5
+        },
+        {
+            "text": "Architecture",
+            "section_rank": 6
+        },
+        {
+            "text": "Predictions are performed using an ensemble of three SVM classifiers that are designated to predict all disordered residues (SVM ALL ), and disordered residues in long (\u226530 residues) (SVM LONG ) and short segments (<30 residues) (SVM SHORT ). ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "Each classifier is designed individually, i.e. uses different parameters and different set of input features (see Sections 2.5 and 2.6) computed from the IUPred, DISOclust and DISOPRED2 predictions, the sequence, the sequence profiles and the various relevant sequence-based predictions. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 154,
+                    "end": 160,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w29"
+                },
+                {
+                    "type": "software",
+                    "start": 162,
+                    "end": 171,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w30"
+                }
+            ]
+        },
+        {
+            "text": "The latter predictions are performed using methods chosen based on two criteria: ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "(i) their quality is comparable to the leading relevant predictors; and ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "(ii) they provide a stand-alone implementation that could be utilized to build an autonomous implementation of the proposed disorder predictor. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "We utilize PSIPRED (McGuffin et al., 2000) for the SS prediction, Real-SPINE3 for the prediction of the relative solvent accessibility (RSA) and backbone dihedral torsion angles (Faraggi et al., 2009), PROFbval for the B-factor prediction and residue flexibility prediction (Schlessinger et al., 2006) and RPSP for the signal peptide prediction (Plewczynski et al., 2008). ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 11,
+                    "end": 42,
+                    "type": "bibr",
+                    "text": "PSIPRED (McGuffin et al., 2000)"
+                },
+                {
+                    "start": 178,
+                    "end": 200,
+                    "type": "bibr",
+                    "ref_id": "b8",
+                    "text": "(Faraggi et al., 2009)"
+                },
+                {
+                    "start": 274,
+                    "end": 301,
+                    "type": "bibr",
+                    "ref_id": "b30",
+                    "text": "(Schlessinger et al., 2006)"
+                },
+                {
+                    "start": 345,
+                    "end": 371,
+                    "type": "bibr",
+                    "ref_id": "b24",
+                    "text": "(Plewczynski et al., 2008)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 11,
+                    "end": 18,
+                    "rawForm": "PSIPRED",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w31"
+                },
+                {
+                    "type": "software",
+                    "start": 66,
+                    "end": 77,
+                    "rawForm": "Real-SPINE3",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w32"
+                },
+                {
+                    "type": "software",
+                    "start": 202,
+                    "end": 210,
+                    "rawForm": "PROFbval",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w33"
+                }
+            ]
+        },
+        {
+            "text": "We also use IUPred to predict globular domains. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 12,
+                    "end": 18,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w34"
+                }
+            ]
+        },
+        {
+            "text": "The selection of the SVM as the classifiers was motivated by its prior extensive use in disorder prediction (Hirose et al., 2007;Kinoshita 2007, 2008;Peng et al., 2006;Shimizu et al., 2007a, b;Vullo, et al. 2006). ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 108,
+                    "end": 129,
+                    "type": "bibr",
+                    "ref_id": "b11",
+                    "text": "(Hirose et al., 2007;"
+                },
+                {
+                    "start": 129,
+                    "end": 150,
+                    "type": "bibr",
+                    "text": "Kinoshita 2007, 2008;"
+                },
+                {
+                    "start": 150,
+                    "end": 168,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "Peng et al., 2006;"
+                },
+                {
+                    "start": 168,
+                    "end": 193,
+                    "type": "bibr",
+                    "text": "Shimizu et al., 2007a, b;"
+                },
+                {
+                    "start": 193,
+                    "end": 212,
+                    "type": "bibr",
+                    "ref_id": "b43",
+                    "text": "Vullo, et al. 2006)"
+                }
+            ]
+        },
+        {
+            "text": "We use a linear-kernel-based SVM introduced in Fan et al. (2008). ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 47,
+                    "end": 64,
+                    "type": "bibr",
+                    "ref_id": "b7",
+                    "text": "Fan et al. (2008)"
+                }
+            ]
+        },
+        {
+            "text": "The real-valued prediction is computed as a maximum among the probabilities generated by SVM ALL , SVM SHORT and SVM LONG (we combine all predicted disordered residues) and the resulting value is binarized using the threshold that equals 0.37. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "The value of the threshold was found using the MxD dataset. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "We 'smooth out' our binary predictions by filtering out short segments (\u22642 residues). ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "On the first pass, we convert predicted ordered residues in segments \u22642 residues to disordered residues with probability of 0.37. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "One the second pass, we reassign the short, \u22642 residues, segments of disordered residues as ordered with probability of 0.369. ",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6
+        },
+        {
+            "text": "The MFDp predictor is shown in Figure 1.",
+            "section": "Architecture",
+            "paragraph_rank": 13,
+            "section_rank": 6,
+            "ref_spans": [
+                {
+                    "start": 31,
+                    "end": 39,
+                    "type": "figure",
+                    "ref_id": "fig_0",
+                    "text": "Figure 1"
+                }
+            ]
+        },
+        {
+            "text": "Feature space representation",
+            "section_rank": 7
+        },
+        {
+            "text": "The MFDp utilizes four complementary disorder predictors, IUPred LONG (IUPREDL), IUPred SHORT (IUPREDS), DISOPRED2 and DISOclust; the sequence, the PSSM profile (Altschul et al., 1997), the predicted SS, the predicted RSA, the predicted globular domains (IUPREDG), backbone dihedral torsion angles and signal peptides. ",
+            "section": "Feature space representation",
+            "paragraph_rank": 14,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 161,
+                    "end": 184,
+                    "type": "bibr",
+                    "ref_id": "b0",
+                    "text": "(Altschul et al., 1997)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 58,
+                    "end": 64,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w35"
+                },
+                {
+                    "type": "software",
+                    "start": 71,
+                    "end": 78,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w36"
+                },
+                {
+                    "type": "software",
+                    "start": 81,
+                    "end": 87,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w37"
+                },
+                {
+                    "type": "software",
+                    "start": 119,
+                    "end": 128,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w38"
+                }
+            ]
+        },
+        {
+            "text": "The predictors were run with their default parameters. ",
+            "section": "Feature space representation",
+            "paragraph_rank": 14,
+            "section_rank": 7
+        },
+        {
+            "text": "The PSSM profiles were generated using the nonredundant (nr) database from NCBI (downloaded on November 19, 2009), which was filtered using PFILT (Jones and Swindells, 2002) to remove low-complexity regions, transmembrane regions and coiled-coil segments.",
+            "section": "Feature space representation",
+            "paragraph_rank": 14,
+            "section_rank": 7,
+            "ref_spans": [
+                {
+                    "start": 146,
+                    "end": 173,
+                    "type": "bibr",
+                    "ref_id": "b14",
+                    "text": "(Jones and Swindells, 2002)"
+                }
+            ]
+        },
+        {
+            "text": "We utilize a sliding window of size 15 centered over the predicted residue to extract the features. ",
+            "section": "Feature space representation",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "We use the raw numerical values for each of the 15 positions, which include: the probability of the prediction of disordered residues from IUPREDL, IUPREDS, DISOPRED2 and DISOclust; the PSSM values; the probabilities of prediction of helix, coil and strand conformations from PSIPRED; the predicted B-factor values; the predicted solvent accessibility and backbone angles; and the binary values denoting whether a given position in the window is predicted as a signal peptide, i491 outputs probability = max {SVM ALL , SVM SHORT , SVM LONG } binary prediction using threshold = 0.37 on probability belongs to a globular domain, is part of a purification tag or is predicted as flexible by PROFbval, to encode the features. ",
+            "section": "Feature space representation",
+            "paragraph_rank": 15,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 139,
+                    "end": 146,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w39"
+                },
+                {
+                    "type": "software",
+                    "start": 171,
+                    "end": 180,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w40"
+                },
+                {
+                    "type": "software",
+                    "start": 276,
+                    "end": 283,
+                    "rawForm": "PSIPRED",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w41"
+                },
+                {
+                    "type": "software",
+                    "start": 689,
+                    "end": 697,
+                    "rawForm": "PROFbval",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w42"
+                }
+            ]
+        },
+        {
+            "text": "We also aggregate the raw numerical values (except for the predicted backbone angles) by computing averages in the sliding widows of sizes between 3 and 41, and by taking maximal and minimal value in the sliding widows of sizes between 3 and 15. ",
+            "section": "Feature space representation",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "The averages for the residue at the i-th position in the sequence are computed as follows:",
+            "section": "Feature space representation",
+            "paragraph_rank": 15,
+            "section_rank": 7
+        },
+        {
+            "text": "where X \u2208{PSSM_{AA j }, SS_{SS k }, RSA, IUPREDL, IUPREDS, DISOPRED, DISOCLUST} is the name of a given feature, AA j with j \u2208{1,2,...,20} is the amino acid type, SS k with k \u2208{H, E, C} is the type of the SS, avg m with m \u2208{3,5,7,.",
+            "section": "Feature space representation",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 41,
+                    "end": 48,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w43"
+                },
+                {
+                    "type": "software",
+                    "start": 59,
+                    "end": 67,
+                    "rawForm": "DISOPRED",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w44"
+                }
+            ]
+        },
+        {
+            "text": "..39,41} is the size of the window, w n with n \u2208{\u221220,\u221219,...,19,20} is the position in the window where 0 denotes the position of the predicted residue, and X_w{w n } is the value of feature X for the residue at position w n (the actual position in the sequence equals i+w n ). When aggregating, we ignore the positions in the window that are outside of the chain for the residues close to the sequence terminus, i.e. we sum only the values for the positions in the chain and this sum is dived by the total number of these positions. The features are divided into 17 categories based on the source information used including sequence, PSSM, amino-acid frequency, conservation, SS, RSA, torsion angles, DISOPRED2, DISOclust, IUPREDL, IUPREDS, B-factor, signal peptides, purification tag, globular domains, strict flexibility and non-strict flexibility. Detailed description is provided in the appendix at http://biomine.ece.ualberta.ca/MFDp.html.",
+            "section": "Feature space representation",
+            "paragraph_rank": 16,
+            "section_rank": 7,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 713,
+                    "end": 722,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w45"
+                },
+                {
+                    "type": "software",
+                    "start": 724,
+                    "end": 731,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w46"
+                },
+                {
+                    "type": "software",
+                    "start": 918,
+                    "end": 922,
+                    "rawForm": ".ece",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w47"
+                },
+                {
+                    "type": "software",
+                    "start": 939,
+                    "end": 944,
+                    "rawForm": ".html",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w48"
+                }
+            ]
+        },
+        {
+            "text": "Feature selection and parameterization of SVMs",
+            "section_rank": 8
+        },
+        {
+            "text": "We designed three SVMs using different versions of the MxD dataset. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "The SVM ALL was designed using the entire MxD dataset, while SVM LONG and SVM SHORT were developed using the MxD dataset where the disorder residues from short (<30 residues) and from long (\u226530 residues) disorder segments were removed, respectively. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For each of the three models we used the following procedure. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "In the 'first step' we remove all highly correlated features within each of the 17 feature categories. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For each feature we compute its average biserial correlation (over five correlations computed from the five training subsets of the MxD dataset) with the outcomes, i.e. annotation of ordered and disorder residues. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "We sort the features in each category according to their average biserial correlations. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "The set of the selected features is initialized with the feature that has the highest biserial correlation. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "Next, for each following features we calculate its average correlation (over the five training subsets) with any of the features which were already selected, and we add it to the set of selected features only if the correlation <0.9. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "We discard the features that were not selected. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "In the 'second step' we quantify predictive quality of the features selected in the first step using the linear SVMs. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "We construct feature sets by selecting top t features, according to their average biserial correlations, from each category. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "We take all features in a given category if their number < t. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "Next, we run 5-fold cross validation on the MxD dataset where we vary the value of t between 1 and 15, and for each t we parameterize the value of constant C of the linear SVM classifiers. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "We consider C in consecutive powers of 2 between 2 \u22128 and 2 5 . ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For each of the prediction models (ALL, LONG and SHORT) t = 1 provides the best values of AUC in the 5-fold cross validation on the MxD dataset. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "Next, starting from the least correlated feature from the selected 17 features, we removed a given feature if it increases AUC value for the 5-fold cross validation-based prediction on the MxD dataset; this lead to removal of the features related to the annotation of the signal peptides. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For the remaining relevant feature categories, we attempt to add additional features which improve predictive quality. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For each of the remaining categories, starting with the category with the most correlated feature, we keep adding features (starting with secondbest feature from the category) as long as the addition of a feature increased the AUC value for the 5-fold cross validation on the MxD dataset. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For each removal/addition, we tuned the C parameter of the SVM. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "For the ALL model, we selected 16 features from 11 categories; for the SHORT model, we selected 30 features from 12 categories; and for the LONG model, we have 17 features from 12 categories. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "The selected features are shown in the Table 1 in the appendix at http://biomine.ece.ualberta.ca/MFDp.html. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8,
+            "ref_spans": [
+                {
+                    "start": 39,
+                    "end": 46,
+                    "type": "table",
+                    "ref_id": "tab_0",
+                    "text": "Table 1"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 80,
+                    "end": 84,
+                    "rawForm": ".ece",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w49"
+                },
+                {
+                    "type": "software",
+                    "start": 101,
+                    "end": 106,
+                    "rawForm": ".html",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w50"
+                }
+            ]
+        },
+        {
+            "text": "A significant fraction of the features (27 out of the entire set of 63) are based on the aggregated information, which suggests that our features provide better discriminatory power than the raw values. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "The selected features consider almost all sources, except for the signal peptides annotations. ",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "The entire process, including feature selection and SVM parameterization, was consistently carried using 5-fold cross validation on MxD dataset.",
+            "section": "Feature selection and parameterization of SVMs",
+            "paragraph_rank": 17,
+            "section_rank": 8
+        },
+        {
+            "text": "RESULTS",
+            "section_rank": 9
+        },
+        {
+            "text": "Comparison with existing predictors",
+            "section_rank": 10
+        },
+        {
+            "text": "We compare MFDp with relevant predictors on the MxD and CASP8 datasets. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "For the MxD dataset, we use 5-fold cross validation to assess our predictions; we use 75% of each of the five training subsets to compute SVMs, the other 25% to find the threshold used for binarization of the probabilities, and the test subsets to evaluate predictions. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "In contrast, predictions from other method are generated on the entire dataset (without cross-validation) using either webservers or stand-alone implementations provided by the authors. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "For the test on the CASP8 dataset, the MFDp is trained, including computation of SVMs (using the same parameters as for the MxD dataset) and the selection of the threshold, using all fully disordered and PDB chains in the MxD dataset; these chains have similar disorder characteristics to the chains in the CASP8. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 204,
+                    "end": 207,
+                    "rawForm": "PDB",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w51"
+                }
+            ]
+        },
+        {
+            "text": "The training chains from the MxD dataset share at most 25% identity to any chain the CASP8 set making it challenging to perform predictions. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "On the contrary, the methods we compare with use large training datasets that may share substantial similarity to the CASP8 targets (i.e only a handful of CASP8 target were consider as free-modeling), which could raise their predictive quality.",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 18,
+            "section_rank": 10
+        },
+        {
+            "text": "The cross-validated predictions of MFDp are compared to its input predictors, including: DISOPRED2; IUPredL and IUPredS (IUPred predictions for short and long segments); DISOclust; and PROFBval, and with selected other recent methods including the i492 consensus-based MD (Schlessinger et al., 2009), the propensitybased Ucon (Schlessinger et al., 2007a) and the machine learningbased NORSnet (Schlessinger et al., 2007b). ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 272,
+                    "end": 299,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                },
+                {
+                    "start": 326,
+                    "end": 354,
+                    "type": "bibr",
+                    "ref_id": "b31",
+                    "text": "(Schlessinger et al., 2007a)"
+                },
+                {
+                    "start": 393,
+                    "end": 421,
+                    "type": "bibr",
+                    "ref_id": "b32",
+                    "text": "(Schlessinger et al., 2007b)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 100,
+                    "end": 107,
+                    "rawForm": "IUPredL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w52"
+                },
+                {
+                    "type": "software",
+                    "start": 112,
+                    "end": 119,
+                    "rawForm": "IUPredS",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w53"
+                },
+                {
+                    "type": "software",
+                    "start": 121,
+                    "end": 127,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w54"
+                },
+                {
+                    "type": "software",
+                    "start": 170,
+                    "end": 179,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w55"
+                },
+                {
+                    "type": "software",
+                    "start": 185,
+                    "end": 193,
+                    "rawForm": "PROFBval",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w56"
+                },
+                {
+                    "type": "software",
+                    "start": 321,
+                    "end": 325,
+                    "rawForm": "Ucon",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w57"
+                },
+                {
+                    "type": "software",
+                    "start": 385,
+                    "end": 392,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w58"
+                }
+            ]
+        },
+        {
+            "text": "Our results on the CASP8 dataset are also compared against five top-performing methods in the CASP8 experiments (Noivirt-Brik et al., 2009). ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 112,
+                    "end": 139,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Noivirt-Brik et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "These methods are identified by the group number in square brackets (as registered for the CASP8 meeting) and the group name.  ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "(Cheng et al., 2005), DISOclust [97] (McGuffin, 2008) and McGuffin [379], which is a humanbased consensus that uses DISOclust. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 20,
+                    "type": "bibr",
+                    "ref_id": "b3",
+                    "text": "(Cheng et al., 2005)"
+                },
+                {
+                    "start": 32,
+                    "end": 53,
+                    "type": "bibr",
+                    "text": "[97] (McGuffin, 2008)"
+                },
+                {
+                    "start": 58,
+                    "end": 72,
+                    "type": "bibr",
+                    "text": "McGuffin [379]"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 22,
+                    "end": 31,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w59"
+                },
+                {
+                    "type": "software",
+                    "start": 116,
+                    "end": 125,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w60"
+                }
+            ]
+        },
+        {
+            "text": "More detailed description of these predictors can be found in the CASP8 abstracts at http://predictioncenter.org/casp8/doc/CASP8_book.pdf. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "We compare predictive quality when considering all disordered regions and for the regions that are at least 30 residues long, respectively. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "The selection of the length threshold is consistent with values used in the recent investigation of protein-protein recognition mechanisms (Tompa et al. 2009) and in design of predictors for long segments (Han et al. 2009;Peng et al. 2006). ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 139,
+                    "end": 158,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "(Tompa et al. 2009)"
+                },
+                {
+                    "start": 205,
+                    "end": 222,
+                    "type": "bibr",
+                    "ref_id": "b9",
+                    "text": "(Han et al. 2009;"
+                },
+                {
+                    "start": 222,
+                    "end": 239,
+                    "type": "bibr",
+                    "ref_id": "b23",
+                    "text": "Peng et al. 2006)"
+                }
+            ]
+        },
+        {
+            "text": "The same as in the CASP8, we discard the disordered regions with three or fewer residues (Noivirt-Brik et al., 2009; private correspondence with authors), i.e. these residues are ignored when computing the quality measures. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 89,
+                    "end": 115,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Noivirt-Brik et al., 2009"
+                }
+            ]
+        },
+        {
+            "text": "Similarly, for the results on the long segments we discard the shorter regions. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Following the CASP8, predictions were assessed using bootstrapping in which 80% of the targets were randomly selected 1000 times and we report the corresponding averages and standard deviations see Tables 2 and 3. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 198,
+                    "end": 212,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Tables 2 and 3"
+                }
+            ]
+        },
+        {
+            "text": "We recomputed the results for the CASP8 submissions and we found them consistent with the original report (Noivirt-Brik et al., 2009). ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 106,
+                    "end": 133,
+                    "type": "bibr",
+                    "ref_id": "b19",
+                    "text": "(Noivirt-Brik et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "We also analyze statistical significance of the differences between MFDp and the other methods. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "We compared the 1000 paired average results for MCC, S w and AUC obtained from using the bootstrapping with 80% of the targets on both CASP8 and MxD datasets. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Since the averages do not follow normal distribution, as tested using Shapiro-Wilk test at the 0.05 significance, we use Wilcoxon rank sum test and we measure significance of the differences at 0.01 level. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Tables 2 and 3 show that MFDp consistently outperforms all methods based on the MCC index. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 14,
+                    "type": "table",
+                    "ref_id": "tab_2",
+                    "text": "Tables 2 and 3"
+                }
+            ]
+        },
+        {
+            "text": "These improvements are statistically significant with P < 0.01 when compared with all considered competitors on both datasets and for both all and long-disordered segments, except for NORSnet and IUPREDL on the long regions and the CASP8 dataset. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 184,
+                    "end": 191,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w61"
+                },
+                {
+                    "type": "software",
+                    "start": 196,
+                    "end": 203,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w62"
+                }
+            ]
+        },
+        {
+            "text": "Results on the MxD dataset demonstrate that MFDp significantly outperforms its input methods as well as MD, NORSnet and Ucon when considering the S w and AUC values and for both all and long-disordered segments. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 108,
+                    "end": 115,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w63"
+                },
+                {
+                    "type": "software",
+                    "start": 120,
+                    "end": 124,
+                    "rawForm": "Ucon",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w64"
+                }
+            ]
+        },
+        {
+            "text": "Only MD method is shown to be comparable with respect to the AUC values. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "For the prediction of both all and long segments on the smaller CASP8 dataset, the MFDp significantly improves over its input predictors, MD, NORSnet and Ucon for the binary prediction measured using MCC and S w . ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 142,
+                    "end": 149,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w65"
+                },
+                {
+                    "type": "software",
+                    "start": 154,
+                    "end": 158,
+                    "rawForm": "Ucon",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w66"
+                }
+            ]
+        },
+        {
+            "text": "The fact that MFDp is successful in maintaining high-quality predictions for the long segments is important given that predictors designed for long disordered regions are usually less successful in predicting short regions (Obradovic et al., 2005;Peng et al., 2005). ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 223,
+                    "end": 247,
+                    "type": "bibr",
+                    "ref_id": "b20",
+                    "text": "(Obradovic et al., 2005;"
+                },
+                {
+                    "start": 247,
+                    "end": 265,
+                    "type": "bibr",
+                    "ref_id": "b22",
+                    "text": "Peng et al., 2005)"
+                }
+            ]
+        },
+        {
+            "text": "Our method is outperformed on the S w and AUC values for the prediction of all segments by the top five CASP8 methods, but we significantly improve over these methods based on the MCC index. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "We also significantly improve over their binary assignments, measured with MCC and S w , for the long-disordered segments. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Our improvement are achieved in spite of the fact that our training chains share <25% identity to CASP8 targets, while the top predictors in CASP8 use training sequences that likely share more significant similarity.  ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Figure 2. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 8,
+                    "type": "figure",
+                    "ref_id": "fig_1",
+                    "text": "Figure 2"
+                }
+            ]
+        },
+        {
+            "text": "This figure focuses on the FP rates < 0.5; the entire curve is given in the appendix at http://biomine.ece.ualberta.ca/MFDp.html. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 102,
+                    "end": 106,
+                    "rawForm": ".ece",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w67"
+                },
+                {
+                    "type": "software",
+                    "start": 123,
+                    "end": 128,
+                    "rawForm": ".html",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w68"
+                }
+            ]
+        },
+        {
+            "text": "The curve reveals that MFDp provides favorable TP rates for the FP values between 0 and 0.4 on the MxD dataset and between 0.1 and 0.4 on the CASP8 dataset when compared with all predictors except the top-performing methods in the CASP8. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Our method provides comparable TP rates for the FP rates >0.2 when compared with the top performers from the CASP8 experiment. ",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Overall, we conclude that MFDp outperforms modern existing predictors for binary disorder predictions and provides competitive real-valued predictions.",
+            "section": "Comparison with existing predictors",
+            "paragraph_rank": 19,
+            "section_rank": 10
+        },
+        {
+            "text": "Predictions of proteins with long-disordered segments",
+            "section_rank": 11
+        },
+        {
+            "text": "We investigate the quality of our predictions applied to find proteins with long (\u226530 residues)-disordered regions. ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11
+        },
+        {
+            "text": "This binary prediction is motivated by the fact that this information is useful for target selection (Punta et al., 2009;Slabinski et al., 2007) and proteinprotein recognition (Tompa et al., 2009). ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 101,
+                    "end": 121,
+                    "type": "bibr",
+                    "ref_id": "b26",
+                    "text": "(Punta et al., 2009;"
+                },
+                {
+                    "start": 121,
+                    "end": 144,
+                    "type": "bibr",
+                    "ref_id": "b37",
+                    "text": "Slabinski et al., 2007)"
+                },
+                {
+                    "start": 176,
+                    "end": 196,
+                    "type": "bibr",
+                    "ref_id": "b40",
+                    "text": "(Tompa et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "Similar evaluation was also performed for the MD (Schlessinger et al., 2009). ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 49,
+                    "end": 76,
+                    "type": "bibr",
+                    "ref_id": "b33",
+                    "text": "(Schlessinger et al., 2009)"
+                }
+            ]
+        },
+        {
+            "text": "Although \u223c43% of disordered residues in CASP8 are in the long segments (allowing for a relatively robust per-residues evaluations), there are only 15 such segments and thus we did not use this dataset. ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11
+        },
+        {
+            "text": "The results on the MD dataset obtained using 5-fold cross validation for the MFDp and the predictions from the servers for MD, DISOPRED2, IUPred, NORSnet, DISOclust, Ucon and PROFbval are summarized   in Table 4. ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 204,
+                    "end": 211,
+                    "type": "table",
+                    "ref_id": "tab_7",
+                    "text": "Table 4"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 138,
+                    "end": 144,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w69"
+                },
+                {
+                    "type": "software",
+                    "start": 146,
+                    "end": 153,
+                    "rawForm": "NORSnet",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w70"
+                },
+                {
+                    "type": "software",
+                    "start": 155,
+                    "end": 164,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w71"
+                },
+                {
+                    "type": "software",
+                    "start": 166,
+                    "end": 170,
+                    "rawForm": "Ucon",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w72"
+                },
+                {
+                    "type": "software",
+                    "start": 175,
+                    "end": 183,
+                    "rawForm": "PROFbval",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w73"
+                }
+            ]
+        },
+        {
+            "text": "The corresponding ROC curves are shown in Figure 3 (for 0-0.5-TP-rate range) and in the appendix (for the entire range).",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 20,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 42,
+                    "end": 50,
+                    "type": "figure",
+                    "text": "Figure 3"
+                }
+            ]
+        },
+        {
+            "text": "The results demonstrate that MFDp outperforms all considered predictors as measured using MCC, ACC and AUC values. ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "This suggests that our method is a useful resource for annotation of proteins with long disordered regions.  ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "Fig. 3. ",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 21,
+            "section_rank": 11,
+            "ref_spans": [
+                {
+                    "start": 0,
+                    "end": 6,
+                    "type": "figure",
+                    "text": "Fig. 3"
+                }
+            ]
+        },
+        {
+            "text": "ROCs for the predictions of proteins with long-disordered segments on the MxD dataset.",
+            "section": "Predictions of proteins with long-disordered segments",
+            "paragraph_rank": 21,
+            "section_rank": 11
+        },
+        {
+            "text": "Case studies",
+            "section_rank": 12
+        },
+        {
+            "text": "We selected CASP8 target T0480 (PDBid 2K4X) which was solved with NMR, and CASP8 target T0404 (PDBid 2DFE) which was solved with X-ray crystallography, as our case studies. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "We compare side-by-side prediction of MFDp, its input predictors DISOPRED2, IUPred, DISOclust, the recent ensemble-based MD, and two topperforming on the CASP8 (with respect to MCC) McGuffin [379] and GeneSilicoMetaServer [297] methods (Fig. 4). ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "ref_spans": [
+                {
+                    "start": 191,
+                    "end": 196,
+                    "type": "bibr",
+                    "text": "[379]"
+                },
+                {
+                    "start": 236,
+                    "end": 244,
+                    "type": "figure",
+                    "text": "(Fig. 4)"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "start": 201,
+                    "end": 221,
+                    "type": "software",
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "#annotator4",
+                    "used": true,
+                    "id": "b43a32e471-software-simple-0",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 76,
+                    "end": 82,
+                    "rawForm": "IUPred",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w74"
+                },
+                {
+                    "type": "software",
+                    "start": 84,
+                    "end": 93,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w75"
+                },
+                {
+                    "type": "software",
+                    "start": 201,
+                    "end": 221,
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w76"
+                }
+            ]
+        },
+        {
+            "text": "For the T0480, which is a small protein with \u223c50% disordered residues located at sequence termini, MFDp finds both disordered segments, achieves below-average MCC of 0.59 and improves over predictions of its ensemble predictors. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "The MD over-predicts disorder andGeneSilicoMetaServer generates predictions comparable to that of MFDp. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 33,
+                    "end": 53,
+                    "type": "software",
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "#annotator4",
+                    "used": true,
+                    "id": "b43a32e471-software-simple-1",
+                    "cert": "1.0"
+                }
+            ]
+        },
+        {
+            "text": "The T0404 includes 25% disordered residues with one longer segment away from the termini. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "Most of the predictors find both disordered segments, and they also incorrectly annotate another disordered segment at the N-terminus, except IUPREDL which predicts only the middle segment. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 142,
+                    "end": 149,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w77"
+                }
+            ]
+        },
+        {
+            "text": "The GeneSilicoMetaServer and MD slightly over-predict disorder, and the segment in the center of the chain is most accurately predicted by MFDp, DISOPRED2 and McGuffin. ",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12,
+            "entity_spans": [
+                {
+                    "start": 4,
+                    "end": 24,
+                    "type": "software",
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "#annotator4",
+                    "used": true,
+                    "id": "b43a32e471-software-simple-2",
+                    "cert": "1.0"
+                },
+                {
+                    "type": "software",
+                    "start": 4,
+                    "end": 24,
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w78"
+                }
+            ]
+        },
+        {
+            "text": "Although these predictions should not be assumed typical, they demonstrate that the MFDp can outperform all of its input predictors.",
+            "section": "Case studies",
+            "paragraph_rank": 22,
+            "section_rank": 12
+        },
+        {
+            "text": "CONCLUSIONS",
+            "section_rank": 13
+        },
+        {
+            "text": "The MFDp predicts disordered regions of all sizes and different types. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "On average, it improves over the predictions of current solutions for the binary disorder assignment and provides competitive real-value predictions, as evaluated on two datasets with low-sequence similarity. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "The MFDp's outputs are also shown to outperform other predictors for the identification of proteins with long-disordered regions. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "The main reasons for the improvements are the application of a comprehensive set of information sources including complementary disorder predictions, sequence profiles and other relevant sequence-based predictors of structural and functional protein characteristics, novel two-layer architecture and the usage of custom features that aggregate raw prediction inputs .  0  4  0  T  t  e  g  r  a  t  8  P  S  A  C  0  8  4  0  T  t  e  g  r  a  t  8  P  S  A  C   379and GeneSilicoMetaServer (297) for CASP8 targets T0480 (on the left) and T0404 (on the right). ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13,
+            "ref_spans": [
+                {
+                    "start": 366,
+                    "end": 460,
+                    "type": "table",
+                    "ref_id": "tab_7",
+                    "text": ".  0  4  0  T  t  e  g  r  a  t  8  P  S  A  C  0  8  4  0  T  t  e  g  r  a  t  8  P  S  A  C"
+                },
+                {
+                    "start": 463,
+                    "end": 466,
+                    "text": "379"
+                }
+            ],
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 470,
+                    "end": 490,
+                    "rawForm": "GeneSilicoMetaServer",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w79"
+                }
+            ]
+        },
+        {
+            "text": "The '-' and 'D' denote the ordered and disordered residues, respectively. ",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "The actual disorder annotations are shown in the first line.",
+            "section": "CONCLUSIONS",
+            "paragraph_rank": 23,
+            "section_rank": 13
+        },
+        {
+            "text": "Fig. 1 .",
+            "section_rank": 14
+        },
+        {
+            "text": "Architecture of the MFDp method.",
+            "section": "Fig. 1 .",
+            "paragraph_rank": 24,
+            "section_rank": 14
+        },
+        {
+            "text": "Fig. 2 .",
+            "section_rank": 15
+        },
+        {
+            "text": "ROCs for the predictions on the (A) MxD and (B) CASP8 datasets.",
+            "section": "Fig. 2 .",
+            "paragraph_rank": 25,
+            "section_rank": 15
+        },
+        {
+            "text": "Fig. 4 .",
+            "section_rank": 16
+        },
+        {
+            "text": "trueDDDDDDDDDDDDDDDDDD------------------------------DDDDDDDtrue ---------------------------------------DDDDDDDDDDDDDDDDDD--------------------------------------------DDDDDDDDDMFDp DDDDDDD----------------------------------------DDDDDDDD MFDp DDDDD-----------------------------------DDDDDDDDDDDDDDDDD----------------------------------------------DDDDDDD DP2 DD---------------------------------------------D--DDDDD DP2 DDDD------------------------------------DDDDDDDDDDDDDDD---------------------------------------------------DDDD IUPL -------------------------------------------------------IUPL ---------------------------------------DDDDDDDDDDDDDD--DDDDDD-------------------------------------------------IUPS DDDDDD---------------------------------------------DDDD IUPS DDDDD-------------------------------------DDDDDDDDDDDDDDDDDDD------------------------------------------------D DISOc DD-------------------------------------------DDDDDDDDDD DISOc DDDDDDDDDDD------------------------DDDDDDDDDDDDDDDDDDDDD----------------------------------------------D---DDDD MD DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD MD DDDDDDD---DDDDDD-DDDDD-------------DDDDDDDDDDDDDDDDDDDDDDD--------DDDDD------------------------------DDDDDDDDD 379 DD---------------------------------------------D-DDDDDD 379 DDDD------------------------------------DDDDDDDDDDDDDDD-----------------------------------------------D--DDDDD 297 DDDDDD---------------D-----------------------DDDDDDDDDD 297 DDDDDDDDDD----------------DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD---------------------------------------------DDDD Comparison of predictions from MFDp, DISOPRED2 (DP2), IUPREDL (IUPL), IUPREDS (IUPS) and DISOclust (DISOc), MD; and two CASP8 predictors with the highest MCC, McGuffin",
+            "section": "Fig. 4 .",
+            "paragraph_rank": 26,
+            "section_rank": 16,
+            "entity_spans": [
+                {
+                    "type": "software",
+                    "start": 1634,
+                    "end": 1641,
+                    "rawForm": "IUPREDL",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w80"
+                },
+                {
+                    "type": "software",
+                    "start": 1669,
+                    "end": 1678,
+                    "rawForm": "DISOclust",
+                    "resp": "whitelist",
+                    "id": "b43a32e471-software-simple-w81"
+                }
+            ]
+        },
+        {
+            "text": "Table 1 .",
+            "section_rank": 17
+        },
+        {
+            "text": "List of input information sources used by disorder predictors based on machine learning classifiers (sorted by the year of publication)",
+            "section": "Table 1 .",
+            "paragraph_rank": 27,
+            "section_rank": 17
+        },
+        {
+            "text": "Table 2 .",
+            "section_rank": 18
+        },
+        {
+            "text": "Comparison of predictive quality measured on the MxD and CASP8 datasets when considering all disordered regionsWe report the averages and corresponding SDs for bootstrapping with 1000 repetitions of 80% of chains. ",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "Underlined methods are used as inputs for MFDp. ",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "The methods are sorted by the MCC values and the highest values are shown in bold. ",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "Results of tests of significance of the differences between MFDp and the other methods are given in the 'significance' columns. ",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "The tests compare average values from 1000 bootstrapping repetitions. ",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "The + and -mean that MFDp is statistically significantly better/worse with P < 0.01, and = means that results are not significantly different.",
+            "section": "Table 2 .",
+            "paragraph_rank": 29,
+            "section_rank": 18
+        },
+        {
+            "text": "Table 3 .",
+            "section_rank": 19
+        },
+        {
+            "text": "Comparison of predictive quality measured on the MxD and CASP8 datasets when considering disordered regions that are \u226530-residues longWe report the averages and corresponding SDs for bootstrapping with 1000 repetitions of 80% of chains. ",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "Underlined methods are used as inputs for MFDp. ",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "The methods are sorted by the MCC values and the highest values are shown in bold. ",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "Results of tests of significance of the differences between MFDp and the other methods are given in the 'significance' columns. ",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "The tests compare average values from 1000 bootstrapping repetitions. ",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "The + and \u2212 mean that MFDp is statistically significantly better/worse with P < 0.01, and = means that results are not significantly different.",
+            "section": "Table 3 .",
+            "paragraph_rank": 31,
+            "section_rank": 19
+        },
+        {
+            "text": "Table 4 .",
+            "section_rank": 20
+        },
+        {
+            "text": "Comparison of predictions of proteins with long (\u226530 residues) disordered segments on the MxD datasets Underlined methods are used as inputs for MFDp. ",
+            "section": "Table 4 .",
+            "paragraph_rank": 33,
+            "section_rank": 20
+        },
+        {
+            "text": "The methods are sorted by the MCC values and the highest values are shown in bold.",
+            "section": "Table 4 .",
+            "paragraph_rank": 33,
+            "section_rank": 20
+        },
+        {
+            "text": "Funding: NSERC Canada (to L.K.); Icore/Alberta Ingenuity Scholarships (to W.S., K.C. and K.D.K.).",
+            "section": "Table 4 .",
+            "paragraph_rank": 35,
+            "section_rank": 22
+        },
+        {
+            "text": "Conflict of Interest: none declared.",
+            "section": "Table 4 .",
+            "paragraph_rank": 36,
+            "section_rank": 22
+        }
+    ]
+}
