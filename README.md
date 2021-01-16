@@ -1,23 +1,23 @@
 # Softcite dataset
 
-**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and Science-miner.**
+**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and [Science-miner](https://science-miner.com/).**
 
 
 ## Why creating this dataset
 Software lays a critical foundation for measureless research activities today. However, researchers are often frustrated by redundant, incompatible, or poorly supported pieces of software ([Howison et al., 2015](https://academic.oup.com/rev/article/24/4/454/1518466)). One pathway to improve software for research is to increase the visibility of software in the bibliometric-based system of research impact. So that software contributions to research can be well acknowledged, software creators, funders, and other stakeholders have more incentives to cooperate and provide more sound, quality-assured software work.
 
-We have annotated ~5k open access research publications in areas of life sciences and social sciences. As a result, we annotated 5,171 software mentions in published research. Largely these software mentions are not indexed, formal citations ([Howison & Bullard, 2016](https://asistdl.onlinelibrary.wiley.com/doi/pdf/10.1002/asi.23538?casa_token=2HjchVhidz8AAAAA:kHyNwZA_kwysafi_7_H3HtcBCAhAgqG96LB9z0_iNtv1lviA7Xo1riWv59IEx-_8hLGVq2SU_iMkGg)). So we have ferreted out a lot of software that contributed to research but currently are not visible to academic databases and systems of information retrieval.
+We have annotated ~5k open access research publications in areas of life sciences and social sciences. As a result, we identified 4,093 software mentions in these publications. Largely these software mentions are not indexed, formal citations ([Howison & Bullard, 2016](https://asistdl.onlinelibrary.wiley.com/doi/pdf/10.1002/asi.23538?casa_token=2HjchVhidz8AAAAA:kHyNwZA_kwysafi_7_H3HtcBCAhAgqG96LB9z0_iNtv1lviA7Xo1riWv59IEx-_8hLGVq2SU_iMkGg)). So we have ferreted out a lot of software that contributed to research but currently are not visible to academic databases and systems of information retrieval.
 
 
 ## Dataset content
-Our [released dataset](https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/data/corpus/softcite_corpus-full.tei.xml) is a TEI/XML corpus file that contains metadata of annotated research publications and software mentions identified in these publications. The software mentions are further annotated with details about the software, including software `version`, `publisher`, and access `url`, if present in the publication text. The annotated software mentions are presented in their paragraph context considering that they are contextual specific. Below is an example of software mentions in annotated publication with all metadata encoded with the TEI/XML schema. You can find thousands of entries like this in the Softcite dataset.
+Our [released dataset](https://github.com/howisonlab/softcite-dataset/releases/tag/v1.0) is a TEI/XML corpus file that contains metadata of annotated research publications and software mentions identified in these publications. The software mentions are further annotated with details about the software, including software `version`, `publisher`, and access `url`, if present in the publication text. The annotated software mentions are presented in their paragraph context considering that they are contextual specific. Below is an example of software mentions in annotated publication with all metadata encoded with the TEI/XML schema. You can find thousands of entries like this in the Softcite dataset.
 
 ![snapshot of an annotated article entry with encoded software annotations in the Softcite dataset](https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/docs/images/tei_entry_ex.png)
 _Image: Snapshot of an annotated article entry with encoded software annotations in the Softcite dataset_
 
 
 ## Use scenarios
-We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to create a [Discussion](discussions/) (or email [Fan Du](mailto:cfdu@utexas.edu) if for some reason discussion on a public forum is not possible).
+We created the Softcite dataset in a machine-readable (TEI/XML) format for immediate machine learning use. It is designed to accommodate training/validation for supervised learning based scholarly text mining. You could use it to train your model for software entity recognition in text, to develop utilities for increasing software visibility to information systems, or to investigate how software has been used for research. We have prototyped machine learning training ourselves and validated that the Softcite dataset is effective for machine learning use. If you need help for a safe jumpstart for your project, feel free to create a [Discussion](https://github.com/howisonlab/softcite-dataset/discussions) (or email [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand)) if for some reason discussion on a public forum is not possible).
 
 
 ## The Softcite approach
@@ -35,7 +35,8 @@ _Image: From annotating software mentions in PDFs to a TEI/XML corpus_
 
 
 ## Release and Change
-See our [changelog](https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/CHANGELOG.md).
+The first formal and latest release is [softcite-dataset v1.0](https://github.com/howisonlab/softcite-dataset/releases/tag/v1.0). It is also available in [Zenodo](https://zenodo.org/record/4445202#.YANCG-j0k2w).
+For changes to the dataset, please see our [changelog](https://raw.githubusercontent.com/howisonlab/softcite-dataset/master/CHANGELOG.md).
 
 
 ## Implementation
@@ -47,7 +48,7 @@ We have utilized the Softcite dataset to train a set of machine learning models 
 * We also have developed [CiteAs.org](http://citeas.org/) in collaboration with [Our Research](https://our-research.org/). [CiteAs.org](http://citeas.org/) is an interactive search engine for discovering software and other research outputs online. It offers citation recommendation and provenance according to your search query, and our goal is to integrate the Software Knowledge Base into [CiteAs.org](http://citeas.org/) for enhanced recommendation.
 * We have crowdsourced more software annotation data based on our annotation scheme in different domain literature. We expect to release this data for the community working on software entity recognition in the future.
 
-If you have suggestions, comment, welcome to contact [Fan Du](mailto:cfdu@utexas.edu), or start an issue or discussion in this repository.
+If you have any suggestions, comments, welcome to [start an issue](https://github.com/howisonlab/softcite-dataset/issues) or [discussion](https://github.com/howisonlab/softcite-dataset/discussions) in this repository, or contact [Fan Du](mailto:cfdu@utexas.edu) ([@caifand](https://github.com/caifand).
 
 
 ## License
