@@ -1,6 +1,6 @@
 # Softcite XML Corpus files
 
-The corpus follows the [TEI XML encoding standard](https://tei-c.org/) with a corpus-level decription (`<teiCorpus>`) and an article-level description (`<TEI>`). We provide the full paragraph context for every annotations. Possible attributes of a softare mention (`version`, `url`, `publisher`) are associated to the `@xml:id` of the software name via a `@corresp` XML pointer attribute. 
+The corpus follows the [TEI XML encoding standard](https://tei-c.org/) with a corpus-level decription (`<teiCorpus>`) and an article-level description (`<TEI>`). We provide the full paragraph context for every annotation. Possible attributes of a softare mention (`version`, `url`, `publisher`) are associated to the `@xml:id` of the software name via a `@corresp` XML pointer attribute. 
 
 The following "gold" versions of the corpus are available:
 
