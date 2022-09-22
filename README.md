@@ -1,6 +1,6 @@
 # Softcite dataset
 
-**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and [Science-miner](https://science-miner.com/).**
+**A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and [Science-miner](https://science-miner.com/), with funding support from the Sloan Foundation.**
 
 
 ## Why creating this dataset
