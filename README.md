@@ -2,6 +2,8 @@
 
 **A gold-standard dataset of software mentions in research publications for supervised learning based named entity recognition, by Howison Lab at the University of Texas at Austin and [Science-miner](https://science-miner.com/), with funding support from the Sloan Foundation.**
 
+This repository is for v1 of the dataset. We have since published v2 with additional data and annotation codes: https://github.com/softcite/softcite_dataset_v2 and https://zenodo.org/record/7995565.
+
 
 ## Why creating this dataset
 Software lays a critical foundation for measureless research activities today. However, researchers are often frustrated by redundant, incompatible, or poorly supported pieces of software ([Howison et al., 2015](https://academic.oup.com/rev/article/24/4/454/1518466)). One pathway to improve software for research is to increase the visibility of software in the bibliometric-based system of research impact. So that software contributions to research can be well acknowledged, software creators, funders, and other stakeholders have more incentives to cooperate and provide more sound, quality-assured software work.
